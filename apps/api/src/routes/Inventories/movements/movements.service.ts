@@ -3,18 +3,13 @@ import jwt from 'jsonwebtoken';
 import { z } from 'zod';
 import sql from 'src/utils/db';
 import {
-  exportSchema,
   idSchema,
-  IEFilterSchema,
-  importSchema,
   movementsFilterSchema,
   repositionSchema,
   returnSchema,
   scrapSchema,
   suppliesSchema,
   updateAmountSchema,
-  updateExportSchema,
-  updateImportSchema,
 } from './movements.schema';
 import { updateMaterialAmount } from 'src/utils/functions';
 import exceljs from 'exceljs';
@@ -40,33 +35,6 @@ export class MovementsService {
       ${body.checked !== null ? sql`materialmovements.active = ${body.checked === 'true'}` : sql`TRUE`}
       ORDER BY materialmovements.active, materialie.due DESC, materialie.jobpo DESC, materials.code DESC, materialmovements.amount DESC, materialmovements.id DESC
       LIMIT 150`;
-    return movements;
-  }
-
-  async getIE(body: z.infer<typeof IEFilterSchema>) {
-    const movements = await sql`
-      SELECT * 
-      FROM materialie
-      WHERE 
-      ${
-        body.type === 'imports'
-          ? sql`"import" IS NOT NULL`
-          : body.type === 'exports'
-            ? sql`"jobpo" IS NOT NULL`
-            : sql`TRUE`
-      }
-      ${
-        body.code
-          ? sql`AND (
-          "import" ILIKE ${'%' + body.code + '%'} OR 
-          "jobpo" ILIKE ${'%' + body.code + '%'} OR 
-          "programation" ILIKE ${'%' + body.code + '%'}
-          )`
-          : sql``
-      }
-      AND due <> '2024-01-01' AND due <> '2024-01-02'
-      ORDER BY due DESC, jobpo DESC, import DESC`;
-
     return movements;
   }
 
@@ -114,128 +82,6 @@ export class MovementsService {
     return;
   }
 
-  async updateImport(body: z.infer<typeof updateImportSchema>, token: string) {
-    const user: any = await jwt.verify(token, process.env.JWT_SECRET);
-    if (user.username !== 'juan' && user.username !== 'admin')
-      throw new HttpException(
-        'No tienes permisos para eliminar movimientos',
-        403,
-      );
-
-    const materials = [];
-    for (const movement of body.materials) {
-      const [material] =
-        await sql`select id from materials where code = ${movement.code}`;
-
-      if (!material) throw new HttpException('Material no existente', 400);
-
-      materials.push({
-        amount: Math.abs(parseFloat(movement.amount)),
-        realAmount: Math.abs(parseFloat(movement.amount)),
-        active: true,
-        materialId: material.id,
-        movementId: body.id,
-        activeDate: body.due,
-      });
-    }
-
-    delete body.materials;
-
-    await sql.begin(async (sql) => {
-      const previousObj = (
-        await sql`select import, location from materialie where id = ${body.id}`
-      )[0];
-
-      const newObj = (
-        await sql`update materialie set ${sql(body)} where id = ${body.id} returning import, location`
-      )[0];
-
-      const prevMaterials =
-        await sql`delete from materialmovements where "movementId" = ${body.id} and not extra returning "materialId"`;
-
-      const newMaterials =
-        await sql`insert into materialmovements ${sql(materials)} returning "materialId"`;
-
-      const filteredIds = [
-        ...new Set(
-          [...prevMaterials, ...newMaterials].map((v) => v.materialId),
-        ),
-      ];
-
-      for (const id of filteredIds) {
-        await updateMaterialAmount(id, sql);
-      }
-
-      await this.req.record(
-        `Actualizo la importacion: ${previousObj?.import} con status: ${previousObj?.location} a ${newObj?.import}, ${newObj?.location}`,
-        sql,
-      );
-    });
-
-    return;
-  }
-
-  async updateExport(body: z.infer<typeof updateExportSchema>, token: string) {
-    const user: any = await jwt.verify(token, process.env.JWT_SECRET);
-    if (user.username !== 'juan' && user.username !== 'admin')
-      throw new HttpException(
-        'No tienes permisos para eliminar movimientos',
-        403,
-      );
-
-    const materials = [];
-    for (const movement of body.materials) {
-      const [material] =
-        await sql`select id from materials where code = ${movement.code}`;
-
-      if (!material) throw new HttpException('Material no existente', 400);
-
-      materials.push({
-        amount: -Math.abs(parseFloat(movement.amount)),
-        realAmount: -Math.abs(parseFloat(movement.realAmount)),
-        active: movement.active,
-        materialId: material.id,
-        movementId: body.id,
-        activeDate: movement.active ? new Date() : null,
-      });
-    }
-
-    delete body.materials;
-
-    await sql.begin(async (sql) => {
-      const previousObj = (
-        await sql`select jobpo, programation from materialie where id = ${body.id}`
-      )[0];
-
-      const newObj = (
-        await sql`update materialie set ${sql(body)} where id = ${body.id} returning jobpo, programation`
-      )[0];
-
-      const prevMaterials =
-        await sql`delete from materialmovements where "movementId" = ${body.id} and not extra returning "materialId"`;
-
-      const newMaterials =
-        await sql`insert into materialmovements ${sql(materials)} returning "materialId"`;
-
-      const filteredIds = [
-        ...new Set(
-          [...prevMaterials, ...newMaterials].map((v) => v.materialId),
-        ),
-      ];
-
-      for (const id of filteredIds) {
-        await updateMaterialAmount(id, sql);
-      }
-
-      await this.req.record(
-        `Actualizo la exportacion: ${previousObj?.jobpo}, programacion: ${previousObj?.programation} a ${newObj?.jobpo}, ${newObj?.programation}`,
-        sql,
-      );
-    });
-
-    return;
-  }
-
   async activateMovement(body: z.infer<typeof idSchema>) {
     const [movement] =
       await sql`select active, (select code from materials where id = "materialId"), (select jobpo from materialie where id = "movementId") from materialmovements where id = ${body.id}`;
@@ -255,65 +101,6 @@ export class MovementsService {
     });
 
     return movement.active;
-  }
-
-  async postInput(body: z.infer<typeof importSchema>) {
-    const materials = [
-      ...new Set(body.materials.map((item: any) => item.code)),
-    ];
-    await sql.begin(async (sql) => {
-      const materialRows =
-        await sql`SELECT code FROM materials WHERE code in ${sql(materials)}`;
-
-      if (materialRows.length !== materials.length)
-        throw new HttpException(
-          'Uno o varios de los materiales incorrectos',
-          400,
-        );
-
-      await sql`insert into materialie (import, due, location) values (${body.import},${body.due}, ${body.location})`;
-
-      await this.req.record(`Registro la importación: ${body.import}`, sql);
-
-      for (const material of body.materials) {
-        const [movement] =
-          await sql`insert into materialmovements ("materialId", "movementId", amount, "realAmount", active, "activeDate") values
-         ((select id from materials where code = ${material.code}),(select id from materialie where import = ${body.import}), ${Math.abs(parseFloat(material.amount))},${Math.abs(parseFloat(material.amount))}, true, ${body.due}) returning "materialId"`;
-
-        await updateMaterialAmount(movement.materialId);
-      }
-    });
-  }
-
-  async postExport(body: z.infer<typeof exportSchema>) {
-    const materials = body.materials.map((item: any) => item.code);
-
-    const materialRows =
-      await sql`SELECT code FROM materials WHERE code in ${sql(materials)}`;
-    if (materialRows.length !== materials.length)
-      throw new HttpException(
-        'Uno o varios de los materiales incorrectos',
-        400,
-      );
-
-    await sql.begin(async (sql) => {
-      await sql`Select id from materials where code in (${materials})`;
-
-      await sql`Insert into materialie (jobpo, programation, due) values (${body.jobpo}, ${body.programation}, ${body.due})`;
-
-      await this.req.record(`Registro el job: ${body.jobpo}`, sql);
-
-      for (const material of body.materials) {
-        const [movement] =
-          await sql`insert into materialmovements ("materialId", "movementId", amount, "realAmount", active, "activeDate") values
-         ((select Id from materials where code = ${material.code}),(select id from materialie where jobpo = ${body.jobpo}),${-Math.abs(parseFloat(material.amount))},${-Math.abs(parseFloat(material.realAmount))}, ${material.active}, ${material.active ? new Date() : null}) returning "materialId"`;
-
-        if (material.active)
-          await updateMaterialAmount(movement.materialId, sql);
-      }
-    });
-
-    return;
   }
 
   async postScrap(body: z.infer<typeof scrapSchema>) {

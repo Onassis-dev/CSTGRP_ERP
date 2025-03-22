@@ -12,8 +12,8 @@ import multipart from 'fastify-multipart';
 import { DBFilter } from './interceptors/db/db.filter';
 import dotenv from 'dotenv';
 import { patchNestJsSwagger } from 'nestjs-zod';
-
 dotenv.config();
+process.env.TZ = 'UTC';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(

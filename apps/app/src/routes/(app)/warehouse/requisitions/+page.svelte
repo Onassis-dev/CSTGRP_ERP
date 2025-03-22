@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { preventDefault } from 'svelte/legacy';
+
 	import { format } from 'date-fns';
 	import CusTable from '$lib/components/basic/CusTable.svelte';
 	import { Badge } from '$lib/components/ui/badge';
@@ -13,20 +15,20 @@
 	import RequisitionForm from './RequisitionForm.svelte';
 	import { es } from 'date-fns/locale';
 	import SuppliesForm from './SuppliesForm.svelte';
-	let clients: any = {};
-	let show = false;
-	let show2 = false;
+	let clients: any = $state({});
+	let show = $state(false);
+	let show2 = $state(false);
 
-	let filters = {
+	let filters = $state({
 		programation: '',
 		import: '',
 		jobpo: '',
 		code: '',
 		checked: ''
-	};
+	});
 
-	let movements: any[] = [];
-	let selectedMovement: any;
+	let movements: any[] = $state([]);
+	let selectedMovement: any = $state();
 
 	async function getMovements() {
 		const result = (await api.get(`/requisitions/movements`, { params: filters })).data;
@@ -74,17 +76,19 @@
 </script>
 
 <MenuBar>
-	<form class="flex flex-col gap-1 lg:flex-row" on:submit|preventDefault={getMovements} action={''}>
+	<form class="flex flex-col gap-1.5 lg:flex-row" onsubmit={preventDefault(getMovements)}>
 		<Input menu bind:value={filters.programation} placeholder="Programacion" />
 		<Input menu bind:value={filters.jobpo} placeholder="Job" />
 		<Input menu bind:value={filters.code} placeholder="Material" />
-		<Button type="submit"><Search class="mr-1.5 size-3.5" />Buscar</Button>
+		<Button type="submit" variant="outline" size="icon"><Search class="size-3.5" /></Button>
 	</form>
 
-	<svelte:fragment slot="right">
-		<Button on:click={exportUncheckedMovements}><FileDown class="size-3.5" /></Button>
-		<Button on:click={() => (show2 = true)}><FilePlus2 class="mr-1.5 size-3.5" />Insumos</Button>
-	</svelte:fragment>
+	{#snippet right()}
+		<Button onclick={exportUncheckedMovements} variant="outline" size="icon"
+			><FileDown class="size-3.5" /></Button
+		>
+		<Button onclick={() => (show2 = true)}><FilePlus2 class=" size-3.5" />Insumos</Button>
+	{/snippet}
 </MenuBar>
 
 <CusTable>

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import Label from '$lib/components/basic/Label.svelte';
 	import MaterialInput from '$lib/components/basic/MaterialInput.svelte';
@@ -8,13 +10,19 @@
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
 
-	export let show: boolean;
-	export let reload: any;
+	interface Props {
+		show: boolean;
+		reload: any;
+	}
 
-	let selected = '';
-	let formData: any = {};
+	let { show = $bindable(), reload }: Props = $props();
 
-	$: if (!show) formData = {};
+	let selected = $state('');
+	let formData: any = $state({});
+
+	run(() => {
+		if (!show) formData = {};
+	});
 
 	async function submit() {
 		await api.post(`/materialmovements/${selected}`, formData);
@@ -52,7 +60,7 @@
 				</Label>
 			</div>
 
-			<Button on:click={submit} variant="default" class="mt-4 w-full">Guardar cambios</Button>
+			<Button onclick={submit} variant="default" class="mt-4 w-full">Guardar cambios</Button>
 		</DialogBody>
 	</DialogContent>
 </Dialog>

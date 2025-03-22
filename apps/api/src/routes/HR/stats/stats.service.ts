@@ -8,7 +8,52 @@ import { z } from 'zod';
 export class StatsService {
   async birthDays(body: z.infer<typeof dateSchema>) {
     const rows =
-      await sql`SELECT "noEmpleado", CONCAT(name, ' ', "paternalLastName", ' ', "maternalLastName") as name, "bornDate" from employees where extract(month from "bornDate") = extract(month from ${body.date}::DATE)`;
+      await sql`SELECT "noEmpleado", photo, CONCAT(name, ' ', "paternalLastName", ' ', "maternalLastName") as name, "bornDate" from employees where extract(month from "bornDate") = extract(month from ${body.date}::DATE)`;
+
+    return rows;
+  }
+
+  async contractExpiration() {
+    const today = new Date();
+
+    const fiveDaysAhead = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate() + 5,
+    );
+
+    // Calculate renewal dates based on admission date and contract number
+    const rows = await sql`
+      SELECT 
+        "noEmpleado", 
+        photo, 
+        CONCAT(name, ' ', "paternalLastName", ' ', "maternalLastName") as name, 
+        "admissionDate", 
+        contract,
+        CASE 
+          WHEN contract = 0 THEN "admissionDate" -- Initial contract
+          WHEN contract = 1 THEN "admissionDate" + INTERVAL '1 month' -- First renewal
+          WHEN contract = 2 THEN "admissionDate" + INTERVAL '2 months' -- Second renewal
+          WHEN contract = 3 THEN "admissionDate" + INTERVAL '3 months' -- Third renewal (before indefinite)
+        END as next_renewal_date
+
+      FROM employees
+      WHERE 
+        -- Only include employees with contracts 0-3 (pre-indefinite contract)
+        contract < 4
+        -- Alert when renewal date is today, in the past (overdue), or within next 5 days
+        AND (
+          CASE 
+            WHEN contract = 0 THEN "admissionDate"
+            WHEN contract = 1 THEN "admissionDate" + INTERVAL '1 month'
+            WHEN contract = 2 THEN "admissionDate" + INTERVAL '2 months'
+            WHEN contract = 3 THEN "admissionDate" + INTERVAL '3 months'
+          END
+        ) <= ${fiveDaysAhead}
+      ORDER BY next_renewal_date
+    `;
+
+    console.log(rows);
 
     return rows;
   }
@@ -32,7 +77,7 @@ export class StatsService {
   async assistance(body: z.infer<typeof dateSchema>) {
     const [firstDate] = getWeekDays(body.date);
     const rows = [];
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 7; i++) {
       const evaluatedWeek = new Date(
         new Date(firstDate).setDate(new Date(firstDate).getDate() - i * 7),
       )
@@ -65,7 +110,8 @@ export class StatsService {
 
   async assistanceInfo(body: z.infer<typeof dateSchema>) {
     const [firstDate] = getWeekDays(body.date);
-    const dayNumber = getDayNumber(body.date);
+    let dayNumber = getDayNumber(body.date);
+    if (dayNumber === 5 || dayNumber === -1) dayNumber = 4;
 
     const rows =
       await sql`SELECT (select name from incidences where id = ${sql('incidenceId' + dayNumber)}) as name, COUNT(*) as value FROM assistance WHERE "mondayDate" = ${firstDate} GROUP BY ${sql('incidenceId' + dayNumber)}`;
@@ -73,12 +119,36 @@ export class StatsService {
     return rows;
   }
 
+  async dailyAssistance(body: z.infer<typeof dateSchema>) {
+    const [firstDate] = getWeekDays(body.date);
+    let dayNumber = getDayNumber(body.date);
+    if (dayNumber === 5 || dayNumber === -1) dayNumber = 4;
+
+    const total = await sql`
+      SELECT COUNT(*) as count 
+      FROM assistance 
+      WHERE "mondayDate" = ${firstDate}
+    `;
+
+    const present = await sql`
+      SELECT COUNT(*) as count 
+      FROM assistance 
+      WHERE "mondayDate" = ${firstDate} 
+      AND ${sql('incidenceId' + dayNumber)} = 1
+    `;
+
+    return (
+      (Number(present[0].count) / Number(total[0].count)) * 100 || 0
+    ).toFixed(2);
+  }
+
   async dailyIncidencesList(body: z.infer<typeof dateSchema>) {
     const [firstDate] = getWeekDays(body.date);
-    const dayNumber = getDayNumber(body.date);
+    let dayNumber = getDayNumber(body.date);
+    if (dayNumber === 5 || dayNumber === -1) dayNumber = 4;
 
     const rows =
-      await sql`SELECT (select name from incidences where id = ${sql('incidenceId' + dayNumber)}) as incidence, 
+      await sql`SELECT (select name from incidences where id = ${sql('incidenceId' + dayNumber)}) as incidence, (select photo from employees where id = "employeeId"), 
         (select CONCAT(name, ' ', "paternalLastName", ' ', "maternalLastName") as name from employees where id = "employeeId"),
         (select "areaId" from employees where id = "employeeId")
       FROM assistance WHERE "mondayDate" = ${firstDate}
@@ -90,7 +160,8 @@ export class StatsService {
 
   async areaAssistanceInfo(query: z.infer<typeof areaAssistanceInfoSchema>) {
     const [firstDate] = getWeekDays(query.date);
-    const dayNumber = getDayNumber(query.date);
+    let dayNumber = getDayNumber(query.date);
+    if (dayNumber === 5 || dayNumber === -1) dayNumber = 4;
 
     const rows =
       await sql`SELECT (select name from incidences where id = ${sql('incidenceId' + dayNumber)}) as name, COUNT(*) as value FROM assistance WHERE "mondayDate" = ${firstDate} and "employeeId" in (select id from employees where "areaId" = ${query.areaId}) GROUP BY ${sql('incidenceId' + dayNumber)}`;
@@ -113,13 +184,12 @@ export class StatsService {
     const dayMiliSeconds = 24 * 60 * 60 * 1000;
 
     const initialDate = new Date(
-      new Date(firstDate).getTime() - 28 * dayMiliSeconds,
+      new Date(firstDate).getTime() - 365 * dayMiliSeconds,
     )
       .toISOString()
       .split('T')[0];
-    const finalDate = new Date(
-      new Date(secondDate).getTime() - 7 * dayMiliSeconds,
-    )
+
+    const finalDate = new Date(new Date(secondDate).getTime())
       .toISOString()
       .split('T')[0];
 
@@ -135,8 +205,10 @@ export class StatsService {
 
     const initalEmployees = finalEmployees + fires - hires;
 
-    const result =
-      ((fires + hires) / 2 / ((initalEmployees + finalEmployees) / 2)) * 100;
+    const result = (
+      ((fires + hires) / 2 / ((initalEmployees + finalEmployees) / 2)) *
+      100
+    ).toFixed(2);
 
     return result;
   }

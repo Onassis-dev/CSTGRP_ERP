@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run, preventDefault } from 'svelte/legacy';
+
 	import Label from '$lib/components/basic/Label.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import {
@@ -12,12 +14,14 @@
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
 
-	export let show = false;
-	export let reload: any;
-	export let selectedDevice: any;
-	let formData: any;
+	interface Props {
+		show?: boolean;
+		reload: any;
+		selectedDevice: any;
+	}
 
-	$: if (show || true) setFormData();
+	let { show = $bindable(false), reload, selectedDevice = $bindable({}) }: Props = $props();
+	let formData: any = $state();
 
 	function setFormData() {
 		formData = { ...selectedDevice };
@@ -37,6 +41,9 @@
 		await reload();
 		show = false;
 	}
+	run(() => {
+		if (show || true) setFormData();
+	});
 </script>
 
 <Dialog bind:open={show}>
@@ -48,7 +55,7 @@
 		</DialogHeader>
 
 		<DialogBody>
-			<form on:submit|preventDefault={handleSubmit}>
+			<form onsubmit={preventDefault(handleSubmit)}>
 				<div class="grid w-full grid-cols-2 gap-4">
 					<Label name="Correo">
 						<Input name="text" bind:value={formData.email} />

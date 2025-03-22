@@ -6,17 +6,21 @@
 		password?: string;
 	};
 
-	let className: $$Props['class'] = undefined;
-	export { className as class };
-	export let password = '';
+	interface Props {
+		class?: $$Props['class'];
+		password?: string;
+		[key: string]: any;
+	}
 
-	let show = false;
+	let { class: className = undefined, password = '', ...rest }: Props = $props();
+
+	let show = $state(false);
 </script>
 
 <td
 	class={cn('h-[35px] border-r px-3 align-middle', className)}
-	{...$$restProps}
-	on:click={() => (show = !show)}
+	{...rest}
+	onclick={() => (show = !show)}
 >
 	{#if password}
 		{#if show}

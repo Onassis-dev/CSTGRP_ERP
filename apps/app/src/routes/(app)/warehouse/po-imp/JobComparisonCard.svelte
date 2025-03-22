@@ -17,18 +17,22 @@
 	} from '$lib/components/ui/table';
 	import api from '$lib/utils/server';
 
-	export let show: boolean;
-	export let selectedJob: any;
+	interface Props {
+		show: boolean;
+		selectedJob: any;
+	}
 
-	let movements: any[] = [];
+	let { show = $bindable(), selectedJob = $bindable({}) }: Props = $props();
+
+	let movements: any[] = $state([]);
 
 	async function fetchData() {
-		movements = (await api.get('/materialmovements/job/comparison/' + selectedJob.id)).data;
+		movements = (await api.get('/po-imp/job/comparison/' + selectedJob.id)).data;
 	}
 
-	$: if (selectedJob.id) {
-		fetchData();
-	}
+	$effect(() => {
+		if (selectedJob.id) fetchData();
+	});
 </script>
 
 <Dialog bind:open={show}>

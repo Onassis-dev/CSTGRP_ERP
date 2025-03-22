@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import {
 		Dialog,
 		DialogBody,
@@ -22,9 +24,13 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Trash } from 'lucide-svelte';
 
-	export let show: boolean;
-	export let reload: any;
-	export let selectedMovement: any = {};
+	interface Props {
+		show: boolean;
+		reload: any;
+		selectedMovement?: any;
+	}
+
+	let { show = $bindable(), reload, selectedMovement = {} }: Props = $props();
 
 	interface material {
 		code: string;
@@ -34,22 +40,18 @@
 		active: boolean;
 	}
 
-	let materials: material[] = [];
-	let formData: any = {};
-	let files: any;
-	$: inputDisabled = !!files;
-	$: if (files) processPDF();
-	$: if (!show || show) cleanData();
-	$: if (selectedMovement.id) getData();
+	let materials: material[] = $state([]);
+	let formData: any = $state({});
+	let files: any = $state();
 
 	async function handleSubmit() {
 		if (selectedMovement.id) {
-			await api.put('/materialmovements/export', {
+			await api.put('/po-imp/export', {
 				...formData,
 				materials
 			});
 		} else {
-			await api.post('/materialmovements/export', {
+			await api.post('/po-imp/export', {
 				...formData,
 				materials
 			});
@@ -100,12 +102,25 @@
 	}
 
 	async function getData() {
-		const { data } = await api.get('/materialmovements/ie/' + selectedMovement.id);
+		const { data } = await api.get('/po-imp/' + selectedMovement.id);
 		materials = data.materials;
 		formData = { id: data.id, jobpo: data.jobpo, programation: data.programation, due: data.due };
 		files = null;
 		inputDisabled = false;
 	}
+	let inputDisabled;
+	run(() => {
+		inputDisabled = !!files;
+	});
+	run(() => {
+		if (files) processPDF();
+	});
+	run(() => {
+		if (!show || show) cleanData();
+	});
+	run(() => {
+		if (selectedMovement.id) getData();
+	});
 </script>
 
 <Dialog bind:open={show}>
@@ -155,14 +170,14 @@
 							<TableCell class="p-0 px-[1px]"
 								><Input
 									class="rounded-none border-none !opacity-100"
-									type="number"
+									type="text"
 									bind:value={materials[i].amount}
 								/></TableCell
 							>
 							<TableCell class="p-0 px-[1px]"
 								><Input
 									class="rounded-none border-none !opacity-100"
-									type="number"
+									type="text"
 									bind:value={materials[i].realAmount}
 								/></TableCell
 							>
@@ -172,9 +187,9 @@
 							>
 							<TableCell class="flex h-8 justify-center p-0 px-[1px]"
 								><Button
-									on:click={() => deleteMaterial(i)}
+									onclick={() => deleteMaterial(i)}
 									variant="ghost"
-									class="aspect-square p-1 text-destructive-foreground"
+									class="text-destructive-foreground aspect-square p-1"
 									><Trash class="size-5" /></Button
 								></TableCell
 							>
@@ -182,14 +197,14 @@
 					{/each}
 					<TableRow>
 						<TableCell class="border-l" colspan={6}
-							><Button on:click={addMaterial} class="w-full max-w-40">Anadir material</Button
+							><Button onclick={addMaterial} class="w-full max-w-40">Anadir material</Button
 							></TableCell
 						>
 					</TableRow>
 				</TableBody>
 			</Table>
 
-			<Button on:click={handleSubmit} type="submit" class="mt-4 w-full">Guardar cambios</Button>
+			<Button onclick={handleSubmit} type="submit" class="mt-4 w-full">Guardar cambios</Button>
 		</DialogBody>
 	</DialogContent>
 </Dialog>

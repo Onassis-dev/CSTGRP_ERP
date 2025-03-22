@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { preventDefault } from 'svelte/legacy';
+
 	import { format } from 'date-fns';
 	import CusTable from '$lib/components/basic/CusTable.svelte';
 	import { Badge } from '$lib/components/ui/badge';
@@ -13,13 +15,13 @@
 	import DeletePopUp from '$lib/components/complex/DeletePopUp.svelte';
 	import { showSuccess } from '$lib/utils/showToast';
 
-	let filters = {
+	let filters = $state({
 		folio: ''
-	};
+	});
 
-	let rows: any[] = [];
-	let show = false;
-	let selectedMovement: any;
+	let rows: any[] = $state([]);
+	let show = $state(false);
+	let selectedMovement: any = $state();
 
 	async function getPetitions() {
 		rows = (await api.get(`/petitions`, { params: filters })).data;
@@ -57,9 +59,9 @@
 </script>
 
 <MenuBar>
-	<form class="flex flex-col gap-1 lg:flex-row" on:submit|preventDefault={getPetitions} action={''}>
+	<form class="flex flex-col gap-1 lg:flex-row" onsubmit={preventDefault(getPetitions)} action={''}>
 		<Input menu bind:value={filters.folio} placeholder="Folio" />
-		<Button type="submit"><Search class="mr-1.5 size-3.5" />Buscar</Button>
+		<Button type="submit" variant="outline" size="icon"><Search class="size-3.5" /></Button>
 	</form>
 </MenuBar>
 

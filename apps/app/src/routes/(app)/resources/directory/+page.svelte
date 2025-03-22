@@ -13,11 +13,11 @@
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
 	import OptionsCell from '$lib/components/basic/OptionsCell.svelte';
 
-	let show: boolean;
-	let show1: boolean;
-	let selectedDevice: any = {};
+	let show = $state(false);
+	let show1 = $state(false);
+	let selectedDevice = $state({});
 
-	let devices: any[] = [];
+	let devices: any[] = $state([]);
 
 	async function getDevices() {
 		devices = (await api.get('/resources/directory')).data;
@@ -43,9 +43,9 @@
 
 {#if parseInt(Cookies.get('perm_it') || '0') == 2}
 	<MenuBar>
-		<svelte:fragment slot="right">
-			<Button on:click={createDevice}><PlusCircle class="mr-1.5 size-3.5" />Añadir fila</Button>
-		</svelte:fragment>
+		{#snippet right()}
+			<Button onclick={createDevice}><PlusCircle class=" size-3.5" />Añadir fila</Button>
+		{/snippet}
 	</MenuBar>
 {/if}
 
@@ -80,7 +80,7 @@
 		bind:show={show1}
 		text="Borrar fila"
 		deleteFunc={async () => {
-			await api.delete('/directory', { data: { id: parseInt(selectedDevice.id || '') } });
+			await api.delete('/directory', { data: { id: parseInt((selectedDevice as any).id || '') } });
 			showSuccess('Fila eliminada');
 			await getDevices();
 			show1 = false;

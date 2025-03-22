@@ -21,18 +21,19 @@
 	} from '$lib/components/ui/dropdown-menu';
 	import { Button } from '$lib/components/ui/button';
 	import ImportMovementsForm from './ImportMovementsForm.svelte';
+	import { preventDefault } from 'svelte/legacy';
 
-	let show2 = false;
-	let show3 = false;
-	let show4 = false;
-	let show5 = false;
+	let show2 = $state(false);
+	let show3 = $state(false);
+	let show4 = $state(false);
+	let show5 = $state(false);
 
-	let filters = {
+	let filters = $state({
 		type: 'both',
 		code: ''
-	};
+	});
 
-	let selectedMovement: any = {};
+	let selectedMovement: any = $state({});
 
 	let options = [
 		{ value: 'both', name: 'Ambos' },
@@ -40,10 +41,10 @@
 		{ value: 'exports', name: 'Exportaciones' }
 	];
 
-	let movements: any[] = [];
+	let movements: any[] = $state([]);
 
 	async function getMovements() {
-		const result = (await api.get(`/materialmovements/ie`, { params: filters })).data;
+		const result = (await api.get(`/po-imp`, { params: filters })).data;
 
 		movements = result.map((e: any) => {
 			return { ...e, realAmount: e.realAmount?.toString() };
@@ -68,7 +69,7 @@
 	}
 
 	async function handleDelete() {
-		await api.delete('/materialmovements/ie/' + selectedMovement.id);
+		await api.delete('/po-imp/' + selectedMovement.id);
 		selectedMovement = {};
 		showSuccess('Movimiento eliminado');
 		await getMovements();
@@ -81,29 +82,29 @@
 </script>
 
 <MenuBar>
-	<form class="flex flex-col gap-2 lg:flex-row" on:submit|preventDefault={getMovements} action={''}>
+	<form class="flex flex-col gap-2 lg:flex-row" onsubmit={preventDefault(getMovements)} action={''}>
 		<Select
-			class="min-w-36"
 			menu
+			class="min-w-36"
 			items={options}
 			bind:value={filters.type}
 			onSelectedChange={getMovements}
 		/>
 		<Input menu bind:value={filters.code} placeholder="Identificador" />
 	</form>
-	<svelte:fragment slot="right">
+	{#snippet right()}
 		<DropdownMenu>
 			<DropdownMenuTrigger>
-				<Button><Pen class="mr-1.5 size-3.5" />Registrar</Button>
+				<Button><Pen class=" size-3.5" />Registrar</Button>
 				<DropdownMenuContent>
 					<DropdownMenuItem
-						on:click={() => {
+						onclick={() => {
 							selectedMovement = {};
 							show4 = true;
 						}}>Importacion</DropdownMenuItem
 					>
 					<DropdownMenuItem
-						on:click={() => {
+						onclick={() => {
 							selectedMovement = {};
 							show5 = true;
 						}}>Job - PO</DropdownMenuItem
@@ -111,7 +112,7 @@
 				</DropdownMenuContent>
 			</DropdownMenuTrigger>
 		</DropdownMenu>
-	</svelte:fragment>
+	{/snippet}
 </MenuBar>
 
 <CusTable>

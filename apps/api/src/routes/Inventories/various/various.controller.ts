@@ -1,7 +1,6 @@
 import {
   Controller,
   Post,
-  UseGuards,
   UploadedFile,
   UseInterceptors,
   Get,
@@ -9,7 +8,6 @@ import {
 } from '@nestjs/common';
 import { VariousService } from './various.service';
 import { ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { FileInterceptor, File } from '@nest-lab/fastify-multer';
 
 @ApiTags('Inventory various')
@@ -20,6 +18,11 @@ export class VariousController {
   @Get('measurement')
   getMeasurement(@Query() query) {
     return this.variousService.getMeasurement(query);
+  }
+
+  @Get('materials')
+  getMaterials() {
+    return this.variousService.getMaterials();
   }
 
   @Get('clients')

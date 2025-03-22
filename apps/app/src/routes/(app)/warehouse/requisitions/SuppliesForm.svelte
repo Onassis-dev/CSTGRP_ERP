@@ -22,21 +22,24 @@
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
 	import { Trash } from 'lucide-svelte';
-	import { onMount } from 'svelte';
+	import { onMount, untrack } from 'svelte';
 	import Cookies from 'js-cookie';
-	export let show: boolean;
-	let formData: any = {
+	interface Props {
+		show: boolean;
+	}
+
+	let { show = $bindable() }: Props = $props();
+	let formData: any = $state({
 		petitioner: Cookies.get('username')
-	};
-	let areas: any[];
+	});
+	let areas: any[] = $state();
 	interface material {
 		code: string;
 		amount: string;
 		measurement: string;
 	}
 
-	let materials: material[] = [];
-	$: if (!show || show) cleanData();
+	let materials: material[] = $state([]);
 
 	async function handleSubmit() {
 		await api.post('/requisitions/supplies', {
@@ -68,12 +71,13 @@
 		materials = materials;
 	}
 
-	function cleanData() {
-		materials = [{ code: '', measurement: '', amount: '' }];
-	}
-
 	onMount(() => {
 		fetchOptions();
+	});
+
+	$effect(() => {
+		show;
+		materials = [{ code: '', measurement: '', amount: '' }];
 	});
 </script>
 
@@ -115,14 +119,14 @@
 							<TableCell class="p-0 px-[1px]"
 								><Input
 									class="rounded-none border-none"
-									type="number"
+									type="text"
 									bind:value={materials[i].amount}
 								/></TableCell
 							>
 							<TableCell class="w-5">{materials[i].measurement}</TableCell>
 							<TableCell class="flex h-8 justify-center p-0 px-[1px]"
 								><Button
-									on:click={() => deleteMaterial(i)}
+									onclick={() => deleteMaterial(i)}
 									variant="ghost"
 									class="text-destructive-foreground aspect-square p-1"
 									><Trash class="size-5" /></Button
@@ -132,7 +136,7 @@
 					{/each}
 					<TableRow>
 						<TableCell class="border-l" colspan={4}
-							><Button on:click={addMaterial} class="w-full max-w-40" color="light"
+							><Button onclick={addMaterial} class="w-full max-w-40" color="light"
 								>Anadir material</Button
 							></TableCell
 						>
@@ -140,7 +144,7 @@
 				</TableBody>
 			</Table>
 
-			<Button on:click={handleSubmit} type="submit" class="mt-4 w-full">Guardar cambios</Button>
+			<Button onclick={handleSubmit} type="submit" class="mt-4 w-full">Guardar cambios</Button>
 		</DialogBody>
 	</DialogContent>
 </Dialog>

@@ -1,38 +1,28 @@
 <script lang="ts">
+	import { getTraduction } from '$lib/components/layout/traduction';
 	import { cn } from '$lib/utils.js';
 	import { location } from '$lib/utils/store';
-	import { Dot } from 'lucide-svelte';
-	import { fade, scale } from 'svelte/transition';
 
-	let className = '';
-	export { className as class };
-	export let href = '';
-	$: active = href === $location;
+	interface Props {
+		class?: string;
+		href?: string;
+	}
+
+	let { class: className = '', href = '' }: Props = $props();
+	let active = $derived(href === $location);
+
+	let traduction = getTraduction(href);
 </script>
 
-<a {href} class={cn(' relative flex h-[34px] items-center py-[1px] text-sm', className)} on:click>
-	<div class="absolute left-0 top-0 size-8">
-		<svg width="32" height="34" xmlns="http://www.w3.org/2000/svg" class="absolute -top-3.5 left-0">
-			<line x1="16" y1="0" x2="16" y2="34" stroke="#bcbeb3" stroke-width="1" />
-		</svg>
-	</div>
-
-	{#if active}
-		<div
-			class="absolute left-0 top-0 z-50"
-			in:scale={{ duration: 300 }}
-			out:fade={{ duration: 200 }}
-		>
-			<Dot class="size-8 text-[#5c5e63]" />
-		</div>
-	{/if}
-
+<a {href} class={cn(' relative flex h-7 items-center text-sm', className)}>
 	<span
 		class={cn(
-			'flex h-full w-full items-center rounded-sm pl-8 hover:bg-muted',
+			'hover:bg-muted flex h-full w-full items-center rounded-sm p-2',
 			active ? 'bg-muted' : ''
 		)}
 	>
-		<slot />
+		<span class="flex items-center gap-2">
+			{traduction.text}
+		</span>
 	</span>
 </a>

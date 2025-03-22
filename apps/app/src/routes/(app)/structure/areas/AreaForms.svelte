@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { preventDefault } from 'svelte/legacy';
+
 	import Label from '$lib/components/basic/Label.svelte';
 	import Select from '$lib/components/basic/Select.svelte';
 	import { Button } from '$lib/components/ui/button';
@@ -13,17 +15,20 @@
 	import { Input } from '$lib/components/ui/input';
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
+	import { untrack } from 'svelte';
 
-	export let show = false;
-	export let reload: any;
-	export let selectedArea: any;
-	let formData: any;
-
-	$: if (show || true) setFormData();
-
-	function setFormData() {
-		formData = { ...selectedArea };
+	interface Props {
+		show?: boolean;
+		reload: any;
+		selectedArea: any;
 	}
+
+	let { show = $bindable(false), reload, selectedArea = $bindable({}) }: Props = $props();
+	let formData: any = $state({
+		name: '',
+		captured: false,
+		color: ''
+	});
 
 	async function handleSubmit() {
 		if (selectedArea.id) {
@@ -53,6 +58,9 @@
 		{ value: 'yellow', name: 'Amarillo' },
 		{ value: 'pink', name: 'Rosa' }
 	];
+	$effect(() => {
+		if (show || true) formData = untrack(() => ({ ...formData, ...selectedArea }));
+	});
 </script>
 
 <Dialog bind:open={show}>
@@ -63,7 +71,7 @@
 			</DialogTitle>
 		</DialogHeader>
 		<DialogBody>
-			<form on:submit|preventDefault={handleSubmit}>
+			<form onsubmit={preventDefault(handleSubmit)}>
 				<div class="grid w-full grid-cols-2 gap-4">
 					<Label name="Nombre">
 						<Input name="text" bind:value={formData.name} />

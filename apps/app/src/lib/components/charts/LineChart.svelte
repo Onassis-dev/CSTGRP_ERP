@@ -1,18 +1,34 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import Chart from 'chart.js/auto';
 	import { type ColorKeys, colors } from '../../utils/colors';
 	import { browser } from '$app/environment';
-	export let color: ColorKeys;
-	export let data: { value: number; name: string }[];
-	export let label;
-	export let maxValue: number | undefined = undefined;
-	export let stepSize: number | undefined = undefined;
-	export let minValue: number | undefined = undefined;
-	let canvas: HTMLCanvasElement;
+	interface Props {
+		color: ColorKeys;
+		data: { value: number; name: string }[];
+		label: any;
+		maxValue?: number | undefined;
+		stepSize?: number | undefined;
+		minValue?: number | undefined;
+	}
 
-	$: if (!maxValue) maxValue = Math.max(...data.map((e) => e.value));
+	let {
+		color,
+		data,
+		label,
+		maxValue = $bindable(undefined),
+		stepSize = undefined,
+		minValue = undefined
+	}: Props = $props();
+	let canvas: HTMLCanvasElement | undefined = $state();
+
+	run(() => {
+		if (!maxValue) maxValue = Math.max(...data.map((e) => e.value));
+	});
 
 	const drawChart = () => {
+		if (!canvas) return;
 		if (Chart.getChart(canvas)) {
 			Chart.getChart(canvas)?.destroy();
 		}
@@ -41,6 +57,10 @@
 			options: {
 				responsive: true,
 				maintainAspectRatio: false,
+				animation: {
+					duration: 0
+				},
+
 				interaction: {
 					intersect: false,
 					axis: 'x'
@@ -68,23 +88,30 @@
 						grid: {
 							display: false
 						},
+						border: {
+							display: false
+						},
 						ticks: {
-							color: '#333',
-							display: false,
-							font: {
-								size: 12
-							}
+							display: false
 						}
 					},
 					y: {
 						suggestedMax: maxValue ? maxValue + 1 : null,
 						suggestedMin: minValue,
 						grid: {
-							color: '#eee'
+							color: '#eee',
+							drawTicks: false
+						},
+						border: {
+							display: false
 						},
 						ticks: {
 							stepSize: stepSize,
-							color: '#6b7280'
+							color: '#6b7280',
+							font: {
+								size: 12,
+								family: 'Inter'
+							}
 						}
 					}
 				}
@@ -92,7 +119,9 @@
 		});
 	};
 
-	$: if (data[0] && browser && canvas) drawChart();
+	run(() => {
+		if (data[0] && browser && canvas) drawChart();
+	});
 </script>
 
-<canvas bind:this={canvas} class="h-full max-h-96 w-full"></canvas>
+<canvas bind:this={canvas} class="max-h-[calc(100%-1.5rem)] w-full"></canvas>

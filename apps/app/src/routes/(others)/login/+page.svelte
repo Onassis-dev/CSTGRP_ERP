@@ -7,17 +7,20 @@
 	import { showSuccess } from '$lib/utils/showToast';
 	import { onMount } from 'svelte';
 
-	let credentials = {
+	let credentials = $state({
 		username: '',
 		password: ''
-	};
+	});
 
 	async function logout() {
 		await api.get('/auth/logout');
 	}
 
-	async function login() {
+	async function login(e: Event) {
+		e.preventDefault();
 		await api.post('/auth/login', credentials);
+		if (credentials.username === 'kiosko') return goto('/kiosko');
+
 		goto('/');
 		showSuccess('Sesión iniciada');
 	}
@@ -32,7 +35,7 @@
 			<CardTitle>Ingresar</CardTitle>
 		</CardHeader>
 		<CardContent>
-			<form on:submit|preventDefault={login}>
+			<form onsubmit={login}>
 				<div class="mb-6 grid gap-6">
 					<div class="mb-6">
 						<p class="mb-2">Nombre de usuario</p>

@@ -1,38 +1,40 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
 	import Chart from 'chart.js/auto';
-	import { type ColorKeys, colors } from '../../utils/colors';
+	import { greens } from '../../utils/colors';
 	import { browser } from '$app/environment';
-	export let data: { value: number; name: string }[];
-	export let label: string;
+	interface Props {
+		data: { value: number; name: string }[];
+	}
 
-	let canvas: HTMLCanvasElement;
+	let { data }: Props = $props();
 
-	$: maxValue = Math.max(...data.map((e) => e.value));
+	let canvas: HTMLCanvasElement | undefined = $state();
 
 	const drawChart = () => {
+		if (!canvas) return;
 		if (Chart.getChart(canvas)) {
 			Chart.getChart(canvas)?.destroy();
 		}
 
-		console.log(data);
-
 		new Chart(canvas, {
-			type: 'doughnut',
+			type: 'pie',
 
 			data: {
 				labels: data.map((row) => row.name),
 				datasets: [
 					{
-						label: label,
 						data: data.map((row) => row.value),
-						backgroundColor: Object.keys(colors).map((key) => colors[key].balanced)
+						backgroundColor: greens,
+						borderAlign: 'center',
+						borderWidth: 0
 					}
 				]
 			},
 
 			options: {
 				responsive: true,
-				maintainAspectRatio: false,
+				maintainAspectRatio: true,
 				interaction: {
 					intersect: false,
 					axis: 'x'
@@ -40,8 +42,7 @@
 				layout: {},
 				plugins: {
 					legend: {
-						display: true,
-						position: 'bottom'
+						display: false
 					},
 					tooltip: {
 						backgroundColor: '#fff',
@@ -53,12 +54,21 @@
 						mode: 'index',
 						displayColors: true
 					}
+				},
+				cutout: '60%',
+				radius: '90%',
+				hoverBorderColor: 'transparent',
+				animation: {
+					animateScale: false,
+					animateRotate: false
 				}
 			}
 		});
 	};
 
-	$: if (data[0] && browser && canvas) drawChart();
+	run(() => {
+		if (data[0] && browser && canvas) drawChart();
+	});
 </script>
 
-<canvas bind:this={canvas} class="h-full max-h-96 w-full"></canvas>
+<canvas bind:this={canvas} class="max-h-[calc(100%-1.5rem)] w-full"></canvas>

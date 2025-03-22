@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { preventDefault } from 'svelte/legacy';
+
 	import CusTable from '$lib/components/basic/CusTable.svelte';
 	import Select from '$lib/components/basic/Select.svelte';
 	import { Badge } from '$lib/components/ui/badge';
@@ -18,20 +20,20 @@
 
 	let show = false;
 	let show1 = false;
-	let show2 = false;
-	let show3 = false;
-	let movementI = 0;
+	let show2 = $state(false);
+	let show3 = $state(false);
+	let movementI = $state(0);
 
-	let clients: any = {};
+	let clients: any = $state({});
 
-	let filters = {
+	let filters = $state({
 		programation: '',
 		import: '',
 		jobpo: '',
 		code: '',
 		req: '',
 		checked: ''
-	};
+	});
 
 	let checkStatus = [
 		{ value: '', name: 'Sin filtro' },
@@ -39,7 +41,7 @@
 		{ value: 'false', name: 'No surtido' }
 	];
 
-	let movements: any[] = [];
+	let movements: any[] = $state([]);
 
 	async function getMovements() {
 		const result = (await api.get(`/materialmovements`, { params: filters })).data;
@@ -107,20 +109,22 @@
 </script>
 
 <MenuBar>
-	<form class="flex flex-col gap-1 lg:flex-row" on:submit|preventDefault={getMovements} action={''}>
+	<form class="flex flex-col gap-1.5 lg:flex-row" onsubmit={preventDefault(getMovements)}>
 		<Input menu bind:value={filters.import} placeholder="Importacion" class="max-w-32" />
 		<Input menu bind:value={filters.programation} placeholder="Programacion" class="max-w-32" />
 		<Input menu bind:value={filters.jobpo} placeholder="Job" class="max-w-32" />
 		<Input menu bind:value={filters.code} placeholder="Material" class="max-w-32" />
 		<Input menu bind:value={filters.req} placeholder="Req" class="max-w-32" />
 		<Select menu items={checkStatus} bind:value={filters.checked} class="min-w-32 max-w-32" />
-		<Button type="submit"><Search class="size-3.5" /></Button>
+		<Button type="submit" variant="outline" size="icon"><Search class="size-3.5" /></Button>
 	</form>
-	<svelte:fragment slot="right">
-		<Button on:click={exportUncheckedMovements}><FileDown class="size-3.5" /></Button>
+	{#snippet right()}
+		<Button variant="outline" size="icon" onclick={exportUncheckedMovements}
+			><FileDown class="size-3.5" /></Button
+		>
 
-		<Button on:click={() => (show3 = true)}><Pen class="mr-1.5 size-3.5" />Registrar</Button>
-	</svelte:fragment>
+		<Button onclick={() => (show3 = true)}><Pen class=" size-3.5" />Registrar</Button>
+	{/snippet}
 </MenuBar>
 
 <CusTable>
@@ -162,9 +166,9 @@
 					><Input
 						menu
 						class="w-24"
-						type="number"
+						type="text"
 						bind:value={movement.realAmount}
-						on:blur={() => changeAmount(movement.id, movement.realAmount)}
+						onblur={() => changeAmount(movement.id, movement.realAmount)}
 					/></TableCell
 				>
 				<TableCell>{movement.measurement}</TableCell>

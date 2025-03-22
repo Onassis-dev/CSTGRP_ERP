@@ -13,6 +13,11 @@ export class VariousService {
     return rows[0].measurement;
   }
 
+  async getMaterials() {
+    const rows = await sql`select code from materials`;
+    return rows.map((row) => row.code);
+  }
+
   async getClients() {
     const rows = await sql`select id as value, name, color from clients`;
     return rows;

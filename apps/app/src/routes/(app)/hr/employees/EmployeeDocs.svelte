@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import {
 		DropdownMenu,
 		DropdownMenuContent,
@@ -20,13 +22,18 @@
 	import { Check, FileDown, Trash, Upload } from 'lucide-svelte';
 	import { downloadFile, openFilePreview } from '$lib/utils/functions';
 	import { cn } from '$lib/utils';
+	import { format } from 'date-fns';
+	import { es } from 'date-fns/locale';
+	interface Props {
+		employee: any;
+	}
 
-	export let employee: any;
-	let docs: any[] = [];
-	let newDoc = {
+	let { employee = $bindable() }: Props = $props();
+	let docs: any[] = $state([]);
+	let newDoc = $state({
 		name: '',
 		file: null
-	};
+	});
 
 	let predefinedDocs = [
 		'Formato de alta',
@@ -119,12 +126,24 @@
 		fetchData();
 	}
 
-	$: if (employee.id) fetchData();
+	run(() => {
+		if (employee.id) fetchData();
+	});
+
+	function getIcon(url: string) {
+		if (!url) return 'unknown.svg';
+		if (url.includes('.pdf')) return 'pdf.svg';
+		if (url.includes('.jpg') || url.includes('.jpeg') || url.includes('.png')) return 'image.svg';
+		if (url.includes('.doc') || url.includes('.docx')) return 'word.svg';
+		if (url.includes('.xls') || url.includes('.xlsx')) return 'excel.svg';
+		return 'file.svg';
+	}
 </script>
 
 <Table>
 	<TableHeader class="sticky top-0 border-t">
 		<TableHead class="w-full border-l">Nombre</TableHead>
+		<TableHead class="w-full border-l">Actualizado</TableHead>
 		<TableHead colspan={3}></TableHead>
 	</TableHeader>
 	<TableBody>
@@ -132,17 +151,29 @@
 			<TableRow>
 				<TableCell
 					class={cn('border-l', !row.url && 'text-muted-foreground')}
-					on:click={() => openPreview(row.url, row.name)}>{row.name}</TableCell
+					onclick={() => openPreview(row.url, row.name)}
 				>
+					<div class="flex items-center gap-3">
+						<img src={`/${getIcon(row.url)}`} alt={row.name} class="size-4" />
+						{row.name}
+					</div>
+				</TableCell>
+				<TableCell class={cn('border-l')}>
+					<div class="text-muted-foreground flex items-center gap-3">
+						{#if row?.created_at}
+							{format(new Date(row?.created_at), 'dd/MM/yyyy HH:mm', { locale: es })}
+						{/if}
+					</div>
+				</TableCell>
 
 				<TableCell class="p-0">
 					<label
 						class="flex aspect-square h-full w-auto cursor-pointer items-center justify-center"
 					>
-						<Upload class="size-4" />
+						<Upload class="size-3.5" />
 						<input
 							type="file"
-							on:change={(e) => uploadDocument(e?.target?.files?.[0], row.name, row.id)}
+							onchange={(e) => uploadDocument(e?.target?.files?.[0], row.name, row.id)}
 							class="hidden"
 						/>
 					</label>
@@ -150,11 +181,11 @@
 				<TableCell class="p-0">
 					{#if row.url}
 						<Button
-							on:click={() => downloadDoc(row.url, row.name)}
+							onclick={() => downloadDoc(row.url, row.name)}
 							class="aspect-square h-full rounded-none"
 							variant="ghost"
 						>
-							<FileDown class="size-4" />
+							<FileDown class="size-3.5" />
 						</Button>
 					{/if}
 				</TableCell>
@@ -163,10 +194,10 @@
 						<DropdownMenu>
 							<DropdownMenuTrigger>
 								<Button class="aspect-square h-full rounded-none" variant="ghost"
-									><Trash class="size-4" /></Button
+									><Trash class="size-3.5" /></Button
 								>
 								<DropdownMenuContent>
-									<DropdownMenuItem on:click={() => deleteDocument(row.id)}
+									<DropdownMenuItem onclick={() => deleteDocument(row.id)}
 										>Eliminar</DropdownMenuItem
 									>
 								</DropdownMenuContent>
@@ -177,19 +208,19 @@
 			</TableRow>
 		{/each}
 		<TableRow>
-			<TableCell class="border-l px-[1px]"
+			<TableCell class="border-l px-[1px]" colspan={2}
 				><Input class="rounded-none border-none" bind:value={newDoc.name} /></TableCell
 			>
 
 			<TableCell class="p-0">
 				<label class="flex aspect-square h-full w-auto cursor-pointer items-center justify-center">
-					<Upload class={cn('size-4', newDoc?.file?.[0] && 'text-green-foreground')} />
+					<Upload class={cn('size-3.5', newDoc?.file?.[0] && 'text-green-foreground')} />
 					<input bind:files={newDoc.file} type="file" class="hidden" />
 				</label>
 			</TableCell>
-			<TableCell colspan={2} class="p-0"
-				><Button on:click={uploadNewDocument} class="h-full w-full rounded-none" variant="ghost"
-					><Check class="size-4" /></Button
+			<TableCell colspan={3} class="p-0"
+				><Button onclick={uploadNewDocument} class="h-full w-full rounded-none" variant="ghost"
+					><Check class="size-3.5" /></Button
 				></TableCell
 			>
 		</TableRow>

@@ -121,4 +121,4 @@
 	}
 </script>
 
-<Button on:click={exportFile}><FileExportOutline class="size-3.5" /></Button> -->
+<Button onclick={exportFile}><FileExportOutline class="size-3.5" /></Button> -->

@@ -1,44 +1,48 @@
 <script lang="ts">
-	import type { HTMLInputAttributes } from 'svelte/elements';
-	import type { InputEvents } from './index.js';
+	import type { HTMLInputAttributes, HTMLInputTypeAttribute } from 'svelte/elements';
+	import type { WithElementRef } from 'bits-ui';
 	import { cn } from '$lib/utils.js';
 
-	type $$Props = HTMLInputAttributes & { menu?: boolean };
-	type $$Events = InputEvents;
+	type InputType = Exclude<HTMLInputTypeAttribute, 'file'>;
 
-	let className: $$Props['class'] = undefined;
-	export let value: $$Props['value'] = undefined;
-	export { className as class };
+	type Props = WithElementRef<
+		Omit<HTMLInputAttributes, 'type'> &
+			({ type: 'file'; files?: FileList } | { type?: InputType; files?: undefined })
+	> & { menu?: boolean };
 
-	// Workaround for https://github.com/sveltejs/svelte/issues/9305
-	// Fixed in Svelte 5, but not backported to 4.x.
-	export let readonly: $$Props['readonly'] = undefined;
-	export let menu = false;
+	let {
+		ref = $bindable(null),
+		menu = false,
+		value = $bindable(),
+		type,
+		files = $bindable(),
+		class: className,
+		...restProps
+	}: Props = $props();
 </script>
 
-<input
-	class={cn(
-		'flex h-8 w-full rounded-sm border  border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-1 focus-visible:ring-ring  disabled:cursor-not-allowed disabled:opacity-50',
-		menu ? 'h-[28px]' : '',
-		className
-	)}
-	bind:value
-	{readonly}
-	on:blur
-	on:change
-	on:click
-	on:focus
-	on:focusin
-	on:focusout
-	on:keydown
-	on:keypress
-	on:keyup
-	on:mouseover
-	on:mouseenter
-	on:mouseleave
-	on:mousemove
-	on:paste
-	on:input
-	on:wheel|passive
-	{...$$restProps}
-/>
+{#if type === 'file'}
+	<input
+		bind:this={ref}
+		class={cn(
+			'border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-sm border px-3 py-2 text-base file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
+			className
+		)}
+		type="file"
+		bind:files
+		bind:value
+		{...restProps}
+	/>
+{:else}
+	<input
+		bind:this={ref}
+		class={cn(
+			'border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring  flex h-8 w-full rounded-sm border px-3 py-2 text-sm  focus-visible:outline-none focus-visible:ring-1  disabled:cursor-not-allowed disabled:opacity-50',
+			menu ? 'h-[28px]' : '',
+			className
+		)}
+		{type}
+		bind:value
+		{...restProps}
+	/>
+{/if}

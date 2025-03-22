@@ -12,14 +12,14 @@
 	import { onMount } from 'svelte';
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
 
-	let assistances: any[] = [];
+	let assistances: any[] = $state([]);
 	let areas: any = {};
-	let positions: any = {};
+	let positions: any = $state({});
 	let incidences: any = {};
-	let incidencesList: any = [];
-	let areasList: any = [];
-	let dateSelected: any = new Date().toISOString().split('T')[0];
-	let areaSelected: string = '';
+	let incidencesList: any = $state([]);
+	let areasList: any = $state([]);
+	let dateSelected: any = $state(new Date().toISOString().split('T')[0]);
+	let areaSelected: string = $state('');
 
 	async function getAssistance() {
 		assistances = (await api.get('/assistance/week/' + dateSelected)).data;
@@ -47,9 +47,11 @@
 		});
 	}
 
-	$: filteredAssistances = assistances.filter((e) => {
-		return e.areaId === areaSelected;
-	});
+	let filteredAssistances = $derived(
+		assistances.filter((e) => {
+			return e.areaId === areaSelected;
+		})
+	);
 
 	async function editAssistance(i: number) {
 		await api.put('assistance', {
@@ -102,17 +104,25 @@
 </script>
 
 <MenuBar>
-	<svelte:fragment slot="left">
-		<Select class="w-72" placeholder="Eligir Area" items={areasList} bind:value={areaSelected} />
-		<Input type="date" bind:value={dateSelected} on:change={getAssistance} />
-	</svelte:fragment>
-	<svelte:fragment slot="right">
+	{#snippet left()}
+		<Select
+			menu
+			class="w-72"
+			placeholder="Eligir Area"
+			items={areasList}
+			bind:value={areaSelected}
+		/>
+		<Input menu type="date" bind:value={dateSelected} onchange={getAssistance} class="max-w-36" />
+	{/snippet}
+	{#snippet right()}
 		{#if Cookies.get('perm_assistance_areas') === 'Todas'}
 			<!-- <ExportAssistance date={dateSelected} /> -->
-			<Button on:click={exportList}><FileDown class="size-3.5" /></Button>
-			<Button on:click={createWeek}><PlusCircle class="mr-1.5 size-3.5" />Generar semana</Button>
+			<Button onclick={exportList} size="icon" variant="outline"
+				><FileDown class="size-3.5" /></Button
+			>
+			<Button onclick={createWeek}><PlusCircle class="size-3.5" />Generar semana</Button>
 		{/if}
-	</svelte:fragment>
+	{/snippet}
 </MenuBar>
 
 <CusTable>
@@ -142,7 +152,7 @@
 						cell={true}
 						items={incidencesList}
 						bind:value={filteredAssistances[i].incidenceId0}
-						onSelectedChange={() => editAssistance(i)}
+						onValueChange={() => editAssistance(i)}
 					/>
 				</TableCell>
 				<TableCell class="px-1">
@@ -150,7 +160,7 @@
 						cell={true}
 						items={incidencesList}
 						bind:value={filteredAssistances[i].incidenceId1}
-						onSelectedChange={() => editAssistance(i)}
+						onValueChange={() => editAssistance(i)}
 					/>
 				</TableCell>
 				<TableCell class="px-1">
@@ -158,7 +168,7 @@
 						cell={true}
 						items={incidencesList}
 						bind:value={filteredAssistances[i].incidenceId2}
-						onSelectedChange={() => editAssistance(i)}
+						onValueChange={() => editAssistance(i)}
 					/>
 				</TableCell>
 				<TableCell class="px-1">
@@ -166,7 +176,7 @@
 						cell={true}
 						items={incidencesList}
 						bind:value={filteredAssistances[i].incidenceId3}
-						onSelectedChange={() => editAssistance(i)}
+						onValueChange={() => editAssistance(i)}
 					/>
 				</TableCell>
 				<TableCell class="px-1">
@@ -174,7 +184,7 @@
 						cell={true}
 						items={incidencesList}
 						bind:value={filteredAssistances[i].incidenceId4}
-						onSelectedChange={() => editAssistance(i)}
+						onValueChange={() => editAssistance(i)}
 					/>
 				</TableCell>
 			</TableRow>

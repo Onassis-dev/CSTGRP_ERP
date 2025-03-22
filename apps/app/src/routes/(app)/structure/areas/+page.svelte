@@ -13,11 +13,11 @@
 	import OptionsCell from '$lib/components/basic/OptionsCell.svelte';
 	import { Badge } from '$lib/components/ui/badge';
 
-	let show: boolean;
-	let show1: boolean;
-	let selectedArea: any = {};
+	let show: boolean = $state(false);
+	let show1: boolean = $state(false);
+	let selectedArea: any = $state({});
 
-	let areas: any[] = [];
+	let areas: any[] = $state([]);
 
 	async function getAreas() {
 		const result = await api.get('/areas');
@@ -43,9 +43,9 @@
 </script>
 
 <MenuBar>
-	<svelte:fragment slot="right">
-		<Button on:click={createArea}><PlusCircle class="mr-1.5 size-3.5" />Añadir area</Button>
-	</svelte:fragment>
+	{#snippet right()}
+		<Button onclick={createArea}><PlusCircle class="size-3.5" />Añadir area</Button>
+	{/snippet}
 </MenuBar>
 
 <CusTable>

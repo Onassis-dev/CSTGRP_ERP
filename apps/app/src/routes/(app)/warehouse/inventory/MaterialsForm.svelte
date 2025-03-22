@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run, preventDefault } from 'svelte/legacy';
+
 	import Label from '$lib/components/basic/Label.svelte';
 	import Select from '$lib/components/basic/Select.svelte';
 	import { Button } from '$lib/components/ui/button';
@@ -14,17 +16,20 @@
 	import { showSuccess } from '$lib/utils/showToast';
 	import { onMount } from 'svelte';
 
-	export let show = false;
-	export let reload: any;
-	export let selectedMaterial: any;
-	let formData: any;
-	let files: FileList | undefined;
+	interface Props {
+		show?: boolean;
+		reload: any;
+		selectedMaterial: any;
+	}
 
-	$: if (show || true) setFormData();
+	let { show = $bindable(false), reload, selectedMaterial }: Props = $props();
+	let formData: any = $state();
+	let files: FileList | undefined = $state();
+
 	function setFormData() {
 		formData = { ...selectedMaterial };
 	}
-	let clients: any[];
+	let clients: any[] = $state();
 
 	const measurements = [
 		{ name: 'YARDAS', value: 'YD' },
@@ -65,6 +70,9 @@
 	onMount(() => {
 		getClients();
 	});
+	run(() => {
+		if (show || true) setFormData();
+	});
 </script>
 
 <Dialog bind:open={show}>
@@ -76,7 +84,7 @@
 		</DialogHeader>
 		<DialogBody>
 			<img src={selectedMaterial.image} alt="" class="w-full" />
-			<form on:submit|preventDefault={handleSubmit}>
+			<form onsubmit={preventDefault(handleSubmit)}>
 				<div class="grid w-full grid-cols-2 gap-4">
 					<Label name="Imagen" class="col-span-2">
 						<FileInput name="text" bind:files />
@@ -97,7 +105,7 @@
 						<Select items={measurements} bind:value={formData.measurement} />
 					</Label>
 					<Label name="Cantidad minima">
-						<Input name="" type="number" bind:value={formData.minAmount} />
+						<Input name="" type="text" bind:value={formData.minAmount} />
 					</Label>
 				</div>
 

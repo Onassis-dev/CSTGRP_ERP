@@ -4,10 +4,12 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { z } from 'zod';
 import sql from 'src/utils/db';
 import { formatDate, getWeekDays } from 'src/utils/functions';
-import { getSingleSchema, weekSchema } from './assistance.schema';
-
+import { editSchema, getSingleSchema, weekSchema } from './assistance.schema';
+import { ContextProvider } from 'src/interceptors/context.provider';
 @Injectable()
 export class AssistanceService {
+  constructor(private readonly req: ContextProvider) {}
+
   async getWeek(body: z.infer<typeof weekSchema>) {
     const [firstDate] = getWeekDays(body.date);
 
@@ -37,18 +39,30 @@ export class AssistanceService {
       await sql`select 1 from assistance where "mondayDate" = ${firstDate}`;
     if (alreadyExists) throw new HttpException('Ya se genero esa semana', 400);
 
-    await sql`INSERT INTO assistance ("employeeId", "areaId", "positionId", "mondayDate", "incidenceId0", "incidenceId1", "incidenceId2", "incidenceId3", "incidenceId4")
+    await sql.begin(async (sql) => {
+      await sql`INSERT INTO assistance ("employeeId", "areaId", "positionId", "mondayDate", "incidenceId0", "incidenceId1", "incidenceId2", "incidenceId3", "incidenceId4")
     SELECT id, "areaId", "positionId", ${firstDate}, 1,1,1,1,1 FROM employees where active`;
 
-    await sql`INSERT INTO employeeproductivity ("assistanceId")
+      await sql`INSERT INTO employeeproductivity ("assistanceId")
     select id from assistance where "mondayDate" = ${firstDate} and (select captured from areas where id = assistance."areaId") = true`;
 
-    return;
+      await this.req.record(
+        `Generó una semana de asistencia para el ${firstDate}`,
+        sql,
+      );
+    });
   }
 
-  async editSingle(body) {
-    await sql`update assistance set ${sql(body)} where id = ${body.id}`;
-    return;
+  async editSingle(body: z.infer<typeof editSchema>) {
+    await sql.begin(async (sql) => {
+      const [week] =
+        await sql`update assistance set ${sql(body)} where id = ${body.id} returning "mondayDate"`;
+
+      await this.req.record(
+        `Editó una semana de asistencia para el ${week.mondayDate}`,
+        sql,
+      );
+    });
   }
 
   async export(body: z.infer<typeof weekSchema>) {

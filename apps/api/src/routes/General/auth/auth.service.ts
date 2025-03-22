@@ -50,7 +50,13 @@ export class AuthService {
     }
 
     const secret: Secret = process.env.JWT_SECRET || 'sin secreto';
-    const token = jwt.sign(user, secret, { expiresIn: '200h' });
+
+    let token;
+    if (user.username === 'kiosko') {
+      token = jwt.sign(user, secret, { expiresIn: '365d' });
+    } else {
+      token = jwt.sign(user, secret, { expiresIn: '200h' });
+    }
 
     res.setCookie('token', token, httpCookieConfig);
     delete user.password;

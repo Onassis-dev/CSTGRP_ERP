@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import { Badge } from '$lib/components/ui/badge';
 	import {
 		Dialog,
@@ -17,18 +19,24 @@
 	} from '$lib/components/ui/table';
 	import api from '$lib/utils/server';
 
-	export let show: boolean;
-	export let selectedJob: any;
+	interface Props {
+		show: boolean;
+		selectedJob: any;
+	}
 
-	let movements: any[] = [];
+	let { show = $bindable(), selectedJob }: Props = $props();
+
+	let movements: any[] = $state([]);
 
 	async function fetchData() {
 		movements = (await api.get('/clients/job/comparison/' + selectedJob.id)).data;
 	}
 
-	$: if (selectedJob.id) {
-		fetchData();
-	}
+	run(() => {
+		if (selectedJob.id) {
+			fetchData();
+		}
+	});
 </script>
 
 <Dialog bind:open={show}>

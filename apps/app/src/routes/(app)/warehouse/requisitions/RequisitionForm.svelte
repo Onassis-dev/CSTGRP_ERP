@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import Label from '$lib/components/basic/Label.svelte';
 	import Select from '$lib/components/basic/Select.svelte';
 	import { Button } from '$lib/components/ui/button';
@@ -25,13 +27,16 @@
 	import { onMount } from 'svelte';
 	import Cookies from 'js-cookie';
 
-	export let show = false;
-	export let selectedMovement: any;
-	let areas: any[] = [];
-	let formData: any;
-	let jobs: any[] = [];
+	interface Props {
+		show?: boolean;
+		selectedMovement: any;
+	}
 
-	$: if (show || true) setFormData();
+	let { show = $bindable(false), selectedMovement }: Props = $props();
+	let areas: any[] = $state([]);
+	let formData: any = $state({});
+	let jobs: any[] = $state([]);
+
 	function setFormData() {
 		formData = { ...selectedMovement };
 		formData.petitioner = Cookies.get('username');
@@ -48,24 +53,37 @@
 		).data;
 	}
 
-	$: if (selectedMovement?.code) getJobs();
-	$: formData.necessary = jobs.reduce(
-		(prev, v) => (v.selected ? prev + Number(v.amount) : prev),
-		0
-	);
-
 	async function fetchOptions() {
 		areas = (await api.get('/hrvarious/areas')).data;
 	}
 
 	async function handleSubmit() {
-		await api.post('requisitions', {
-			...formData,
-			jobIds: jobs.filter((v) => v.selected).map((v) => v.id)
-		});
-		showSuccess('Requisicion registrado');
+		const data = await api.post(
+			'requisitions',
+			{
+				...formData,
+				jobIds: jobs.filter((v) => v.selected).map((v) => v.id)
+			},
+			{ responseType: 'arraybuffer' }
+		);
+		data.data.forEach((v: any) => download({ response: { data: v } }));
 
 		show = false;
+	}
+
+	async function download(response: any) {
+		console.log(response);
+		const blob = new Blob([response.data], {
+			type: 'application/pdf'
+		});
+
+		const link = document.createElement('a');
+		link.href = URL.createObjectURL(blob);
+		link.target = '_blank';
+
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
 	}
 
 	const motives = [
@@ -78,10 +96,19 @@
 	onMount(() => {
 		fetchOptions();
 	});
+	run(() => {
+		if (show || true) setFormData();
+	});
+	run(() => {
+		if (selectedMovement?.code) getJobs();
+	});
+	run(() => {
+		formData.necessary = jobs.reduce((prev, v) => (v.selected ? prev + Number(v.amount) : prev), 0);
+	});
 </script>
 
 <Dialog bind:open={show}>
-	<DialogContent class="max-w-4xl">
+	<DialogContent class="grid h-[90%] max-w-4xl grid-rows-[auto_1fr] gap-4">
 		<DialogHeader>
 			<DialogTitle>Requerir {selectedMovement?.code}</DialogTitle>
 		</DialogHeader>
@@ -131,7 +158,7 @@
 				</TableBody>
 			</Table>
 
-			<Button on:click={handleSubmit} class="mt-4 w-full">Guardar cambios</Button>
+			<Button onclick={handleSubmit} class="mt-4 w-full">Guardar cambios</Button>
 		</DialogBody>
 	</DialogContent>
 </Dialog>

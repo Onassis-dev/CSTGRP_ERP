@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
 	import Label from '$lib/components/basic/Label.svelte';
 	import Select from '$lib/components/basic/Select.svelte';
 	import { Button } from '$lib/components/ui/button';
@@ -16,18 +17,21 @@
 		DropdownMenuContent
 	} from '$lib/components/ui/dropdown-menu';
 	import { Input } from '$lib/components/ui/input';
-	import { LabelBase } from '$lib/components/ui/label';
+	import { Label as LabelBase } from '$lib/components/ui/label';
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
 	import { ChevronDown } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 
-	export let show = false;
-	export let reload: any;
-	export let selectedUser: any;
-	let formData: any;
+	interface Props {
+		show?: boolean;
+		reload: any;
+		selectedUser: any;
+	}
 
-	$: if (show || true) setFormData();
+	let { show = $bindable(false), reload, selectedUser = $bindable({}) }: Props = $props();
+	let formData: any = $state();
+
 	function setFormData() {
 		selectedAreas = selectedUser?.perm_assistance_areas?.split(',') || [];
 		formData = { ...selectedUser };
@@ -38,9 +42,9 @@
 		{ value: 1, name: 'Leer' },
 		{ value: 2, name: 'Modificar' }
 	];
-	let selectedAreas: any[] = [];
+	let selectedAreas: any[] = $state([]);
 
-	let areas: any[];
+	let areas: any[] = $state();
 
 	async function getAreas() {
 		areas = (await api.get('/hrvarious/areas')).data;
@@ -92,6 +96,9 @@
 
 	onMount(() => {
 		getAreas();
+	});
+	run(() => {
+		if (show || true) setFormData();
 	});
 </script>
 
@@ -149,11 +156,14 @@
 				<Label name="Perm. Po-Imp">
 					<Select items={permissions} bind:value={formData.perm_poimp} />
 				</Label>
+				<Label name="Perm. Recursos">
+					<Select items={permissions} bind:value={formData.perm_resources} />
+				</Label>
 				<Label name="Areas">
 					<DropdownMenu>
 						<DropdownMenuTrigger>
 							<Button variant="outline" class="w-full"
-								>Seleccionar<ChevronDown class="text-primary ms-2 size-4" /></Button
+								>Seleccionar<ChevronDown class="text-primary ms-2 size-3.5" /></Button
 							>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent>
@@ -188,7 +198,7 @@
 				</Label>
 			</div>
 
-			<Button type="submit" class="mt-4 w-full" on:click={handleSubmit}>Guardar cambios</Button>
+			<Button type="submit" class="mt-4 w-full" onclick={handleSubmit}>Guardar cambios</Button>
 		</DialogBody>
 	</DialogContent>
 </Dialog>

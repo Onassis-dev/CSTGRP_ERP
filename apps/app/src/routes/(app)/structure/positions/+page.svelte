@@ -1,7 +1,6 @@
 <script lang="ts">
 	import CusTable from '$lib/components/basic/CusTable.svelte';
 	import { Button } from '$lib/components/ui/button';
-
 	import { TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
 	import { PlusCircle } from 'lucide-svelte';
 	import PositionsForm from './PositionsForm.svelte';
@@ -13,11 +12,11 @@
 	import OptionsCell from '$lib/components/basic/OptionsCell.svelte';
 	import Badge from '$lib/components/ui/badge/badge.svelte';
 
-	let show: boolean;
-	let show1: boolean;
-	let selectedPosition: any = {};
+	let show: boolean = $state(false);
+	let show1: boolean = $state(false);
+	let selectedPosition: any = $state({});
 
-	let positions: any[] = [];
+	let positions: any[] = $state([]);
 
 	async function getPositions() {
 		const result = await api.get('/positions');
@@ -43,9 +42,9 @@
 </script>
 
 <MenuBar>
-	<svelte:fragment slot="right">
-		<Button on:click={createPosition}><PlusCircle class="mr-1.5 size-3.5" />Añadir posicion</Button>
-	</svelte:fragment>
+	{#snippet right()}
+		<Button onclick={createPosition}><PlusCircle class=" size-3.5" />Añadir posicion</Button>
+	{/snippet}
 </MenuBar>
 
 <CusTable>

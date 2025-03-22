@@ -3,9 +3,13 @@
 	import { Button } from '../ui/button';
 	import { Dialog, DialogBody, DialogContent } from '../ui/dialog';
 
-	export let show = false;
-	export let deleteFunc;
-	export let text;
+	interface Props {
+		show?: boolean;
+		deleteFunc: any;
+		text: any;
+	}
+
+	let { show = $bindable(false), deleteFunc, text }: Props = $props();
 </script>
 
 <Dialog bind:open={show}>
@@ -16,8 +20,8 @@
 				<h3 class=" text-lg font-normal text-gray-500 dark:text-gray-400">{text}</h3>
 			</div>
 			<div class="text-center">
-				<Button on:click={deleteFunc} variant="destructive" class="me-2">Eliminar</Button>
-				<Button on:click={() => (show = false)} variant="outline">Cancelar</Button>
+				<Button onclick={deleteFunc} variant="destructive" class="me-2">Eliminar</Button>
+				<Button onclick={() => (show = false)} variant="outline">Cancelar</Button>
 			</div>
 		</DialogBody>
 	</DialogContent>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
 	import { Input } from '$lib/components/ui/input';
 	import {
 		DropdownMenu,
@@ -13,55 +14,44 @@
 	import ReactivateForm from './ReactivateForm.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import CusTable from '$lib/components/basic/CusTable.svelte';
-	import { RotateCcw, FileDown, PlusCircle } from 'lucide-svelte';
+	import { RotateCcw, FileDown, PlusCircle, Grid3x3, Grid2X2 } from 'lucide-svelte';
 	import { TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
 	import { Badge } from '$lib/components/ui/badge';
-	import { browser } from '$app/environment';
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
 	import OptionsCell from '$lib/components/basic/OptionsCell.svelte';
+	import Select from '$lib/components/basic/Select.svelte';
 
-	let show1: boolean;
-	let show2: boolean;
-	let show3: boolean;
-	let selectedEmployee: any = {};
-	let employees: any[] = [];
-	let filteredEmployees: any[];
-	let searchParams = {
+	let show1: boolean = $state(false);
+	let show2: boolean = $state(false);
+	let show3: boolean = $state(false);
+	let selectedEmployee: any = $state({});
+	let employees: any[] = $state([]);
+	let searchParams = $state({
 		noEmpleado: '',
-		name: ''
-	};
+		name: '',
+		areaId: '',
+		positionId: ''
+	});
 
-	let areas: any = {};
-	let positions: any = {};
-	let searchActive: boolean = true;
-
-	$: if (searchActive || true) if (browser) getEmployees();
-	$: {
-		filteredEmployees = employees.filter((e) => {
-			if (searchParams.noEmpleado) return e.noEmpleado === searchParams.noEmpleado;
-			if (searchParams.name)
-				return (
-					e.name?.toUpperCase()?.includes(searchParams.name.toUpperCase()) ||
-					e.paternalLastName?.toUpperCase()?.includes(searchParams.name.toUpperCase()) ||
-					e.maternalLastName?.toUpperCase()?.includes(searchParams.name.toUpperCase())
-				);
-			return true;
-		});
-	}
+	let areas: any = $state({});
+	let positions: any = $state({});
+	let areasOptions: any = $state([]);
+	let positionsOptions: any = $state([]);
+	let searchActive: string = $state('active');
 
 	async function fetchOptions() {
-		const areasArray = (await api.get('/hrvarious/areas')).data;
-		areasArray.forEach((area: any) => {
+		areasOptions = (await api.get('/hrvarious/areas')).data;
+		areasOptions.forEach((area: any) => {
 			areas[area.value] = { name: area.name, color: area.color };
 		});
-		const positionsArray = (await api.get('/hrvarious/positions')).data;
-		positionsArray.forEach((position: any) => {
+		positionsOptions = (await api.get('/hrvarious/positions')).data;
+		positionsOptions.forEach((position: any) => {
 			positions[position.value] = { name: position.name, color: position.color };
 		});
 	}
 
 	async function getEmployees() {
-		if (searchActive) {
+		if (searchActive === 'active') {
 			const result = await api.get('/employees');
 			employees = result.data;
 		} else {
@@ -112,28 +102,78 @@
 		await fetchOptions();
 		getEmployees();
 	});
+
+	$effect(() => {
+		if (searchActive) getEmployees();
+	});
+
+	let filteredEmployees = $derived(
+		employees.filter((e) => {
+			const noMatch = searchParams.noEmpleado
+				? e.noEmpleado.toString().includes(searchParams.noEmpleado)
+				: true;
+			const nameMatch = searchParams.name
+				? e.name?.toUpperCase()?.includes(searchParams.name.toUpperCase()) ||
+					e.paternalLastName?.toUpperCase()?.includes(searchParams.name.toUpperCase()) ||
+					e.maternalLastName?.toUpperCase()?.includes(searchParams.name.toUpperCase())
+				: true;
+			const areaMatch = searchParams.areaId ? e.areaId === searchParams.areaId : true;
+			const positionMatch = searchParams.positionId
+				? e.positionId === searchParams.positionId
+				: true;
+			return nameMatch && areaMatch && positionMatch && noMatch;
+		})
+	);
 </script>
 
 <MenuBar>
-	<svelte:fragment slot="left">
-		<Input bind:value={searchParams.noEmpleado} placeholder="No. Empleado" />
-		<Input bind:value={searchParams.name} placeholder="Nombre" />
+	{#snippet left()}
+		<Input menu bind:value={searchParams.noEmpleado} placeholder="No." class="w-20" />
+		<Input menu bind:value={searchParams.name} placeholder="Nombre" class="w-32" />
 
-		<Button on:click={() => (searchActive = true)} value={'active'}>Activos</Button>
-		<Button on:click={() => (searchActive = false)} value={'inactive'}>Inactivos</Button>
-	</svelte:fragment>
-	<svelte:fragment slot="right">
+		<Select
+			menu
+			allowDeselect
+			bind:value={searchParams.areaId}
+			items={areasOptions}
+			placeholder="Área"
+			class="min-w-48"
+		></Select>
+		<Select
+			menu
+			allowDeselect
+			bind:value={searchParams.positionId}
+			items={positionsOptions}
+			placeholder="Posición"
+			class="min-w-72"
+		></Select>
+
+		<Select
+			class="min-w-28"
+			menu
+			bind:value={searchActive}
+			items={[
+				{ name: 'Activos', value: 'active' },
+				{ name: 'Inactivos', value: 'inactive' }
+			]}
+		></Select>
+	{/snippet}
+	{#snippet right()}
 		<DropdownMenu>
 			<DropdownMenuTrigger class="h-7">
-				<Button><FileDown class="size-3.5" /></Button>
-				<DropdownMenuContent>
-					<DropdownMenuItem on:click={() => exportList()}>Basico</DropdownMenuItem>
-					<DropdownMenuItem on:click={() => exportList('full')}>Completo</DropdownMenuItem>
+				<Button size="icon" variant="outline"><FileDown class="size-3.5" /></Button>
+				<DropdownMenuContent align="end">
+					<DropdownMenuItem onclick={() => exportList()}
+						><Grid2X2 class="size-3.5 " strokeWidth={1.6} /> Basico</DropdownMenuItem
+					>
+					<DropdownMenuItem onclick={() => exportList('full')}
+						><Grid3x3 class="size-3.5 " strokeWidth={1.6} />Completo</DropdownMenuItem
+					>
 				</DropdownMenuContent>
 			</DropdownMenuTrigger>
 		</DropdownMenu>
-		<Button on:click={createEmployee}><PlusCircle class="mr-1.5 size-3.5" />Añadir empleado</Button>
-	</svelte:fragment>
+		<Button onclick={createEmployee}><PlusCircle class=" size-3.5" />Añadir empleado</Button>
+	{/snippet}
 </MenuBar>
 
 <CusTable>
@@ -156,13 +196,13 @@
 					deleteFunc={employee.active ? () => deleteEmployee(i) : undefined}
 				>
 					{#if !employee.active}
-						<DropdownMenuItem on:click={() => reactivateEmployee(i)}>
+						<DropdownMenuItem onclick={() => reactivateEmployee(i)}>
 							<RotateCcw class="size-3.5" /> Recontratar
 						</DropdownMenuItem>
 					{/if}
 				</OptionsCell>
 				<TableCell>{employee.noEmpleado || ''}</TableCell>
-				<TableCell class="cursor-pointer whitespace-nowrap" on:click={() => previewEmployee(i)}
+				<TableCell class="cursor-pointer whitespace-nowrap" onclick={() => previewEmployee(i)}
 					>{employee.name || ''}</TableCell
 				>
 				<TableCell>{employee.paternalLastName || ''}</TableCell>

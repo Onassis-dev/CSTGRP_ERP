@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import { Badge } from '$lib/components/ui/badge';
 	import {
 		Dialog,
@@ -18,11 +20,19 @@
 	import { formatDate } from '$lib/utils/functions';
 	import api from '$lib/utils/server';
 
-	export let show: boolean;
-	export let selectedMaterial: any;
-	export let selectedClient: any;
+	interface Props {
+		show: boolean;
+		selectedMaterial: any;
+		selectedClient: any;
+	}
 
-	let movements: any[] = [];
+	let {
+		show = $bindable(),
+		selectedMaterial = $bindable(),
+		selectedClient = $bindable()
+	}: Props = $props();
+
+	let movements: any[] = $state([]);
 
 	async function fetchData() {
 		movements = (
@@ -31,9 +41,11 @@
 			})
 		).data;
 	}
-	$: if (selectedMaterial.id) {
-		fetchData();
-	}
+	run(() => {
+		if (selectedMaterial.id) {
+			fetchData();
+		}
+	});
 </script>
 
 <Dialog bind:open={show}>

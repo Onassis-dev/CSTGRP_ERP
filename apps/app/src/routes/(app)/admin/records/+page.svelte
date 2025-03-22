@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { preventDefault } from 'svelte/legacy';
 	import CusTable from '$lib/components/basic/CusTable.svelte';
 	import { TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
 	import api from '$lib/utils/server';
@@ -9,13 +10,13 @@
 	import Select from '$lib/components/basic/Select.svelte';
 	import { Input } from '$lib/components/ui/input';
 
-	let records: any[] = [];
+	let records: any[] = $state([]);
 
-	let filters = {
+	let filters = $state({
 		module: 'users',
 		text: '',
 		user: ''
-	};
+	});
 
 	async function getRecords() {
 		records = (
@@ -41,28 +42,30 @@
 		{ value: 'users', name: 'Usuarios' },
 		{ value: 'auth', name: 'Sesión' }
 	];
+
+	$effect(() => {
+		if (filters.module) {
+			getRecords();
+		}
+	});
 </script>
 
 <MenuBar>
-	<form class="flex flex-col gap-2 lg:flex-row" on:submit|preventDefault={getRecords}>
-		<Select
-			class="min-w-36"
-			menu
-			items={options}
-			bind:value={filters.module}
-			onSelectedChange={getRecords}
-		/>
+	<form class="flex flex-col gap-2 lg:flex-row" onsubmit={preventDefault(getRecords)}>
+		<Select class="min-w-36" menu items={options} bind:value={filters.module} />
 		<Input
+			menu
 			bind:value={filters.text}
 			placeholder="Texto..."
-			on:keydown={(e) => {
+			onkeydown={(e) => {
 				if (e.key === 'Enter') getRecords();
 			}}
 		/>
 		<Input
+			menu
 			bind:value={filters.user}
 			placeholder="Usuario..."
-			on:keydown={(e) => {
+			onkeydown={(e) => {
 				if (e.key === 'Enter') getRecords();
 			}}
 		/>

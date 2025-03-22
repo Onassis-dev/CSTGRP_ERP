@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import { Image } from 'lucide-svelte';
 	import { Badge } from '$lib/components/ui/badge';
 	import {
@@ -19,17 +21,23 @@
 	import { formatDate, getImage } from '$lib/utils/functions';
 	import api from '$lib/utils/server';
 
-	export let show: boolean;
-	export let selectedMaterial: any;
+	interface Props {
+		show: boolean;
+		selectedMaterial: any;
+	}
 
-	let movements: any[] = [];
+	let { show = $bindable(), selectedMaterial }: Props = $props();
+
+	let movements: any[] = $state([]);
 
 	async function fetchData() {
 		movements = (await api.get('/inventory/history/' + selectedMaterial.id)).data;
 	}
-	$: if (selectedMaterial.id) {
-		fetchData();
-	}
+	run(() => {
+		if (selectedMaterial.id) {
+			fetchData();
+		}
+	});
 </script>
 
 <Dialog bind:open={show}>

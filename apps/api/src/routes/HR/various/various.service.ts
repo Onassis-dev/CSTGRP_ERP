@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import sql from 'src/utils/db';
-import Jimp from 'jimp';
+import { createCanvas, loadImage, registerFont } from 'canvas';
 import path from 'path';
 import { formatDate } from 'src/utils/functions';
 
@@ -22,10 +22,38 @@ export class VariousService {
   }
 
   async generateImage(query) {
+    // Get employee data from database
     const [employee] =
-      await sql`select "bornDate", "noEmpleado", name from employees where "noEmpleado" = ${query.noEmpleado}`;
+      await sql`select "bornDate", photo, name from employees where "noEmpleado" = ${query.noEmpleado}`;
 
-    const baseImage = await Jimp.read(
+    // Define paths
+    const baseImagePath = path.resolve(
+      __dirname,
+      '..',
+      '..',
+      '..',
+      '..',
+      'static',
+      'templates',
+      'birthday.png',
+    );
+
+    const employeePhotoPath = path.resolve(
+      __dirname,
+      '..',
+      '..',
+      '..',
+      '..',
+      'storage',
+      employee.photo,
+    );
+
+    // Load images
+    const baseImage = await loadImage(baseImagePath);
+    const overlayImage = await loadImage(employeePhotoPath);
+
+    // Load fonts
+    registerFont(
       path.resolve(
         __dirname,
         '..',
@@ -33,66 +61,81 @@ export class VariousService {
         '..',
         '..',
         'static',
-        'templates',
-        'birthday.png',
+        'fonts',
+        'coustard',
+        'Coustard-Regular.ttf',
       ),
+      { family: 'Coustard' },
     );
 
-    const overlayImage = await Jimp.read(
-      `http://192.168.0.38/Servidor_Recursos_Humanos/RECURSOS%20HUMANOS%202024/CREDENCIALES/FOTOS%20PARA%20CREDENCIALES/Foto%20Sin%20fondo/${employee.noEmpleado}.png`,
+    // Create canvas with base image dimensions
+    const canvas = createCanvas(baseImage.width, baseImage.height);
+    const ctx = canvas.getContext('2d');
+
+    // Draw base image
+    ctx.drawImage(baseImage, 0, 0);
+
+    // Handle the cover functionality (similar to Jimp's cover)
+    const overlayWidth = 700;
+    const overlayHeight = 850;
+
+    // Calculate scaling and position to cover the target dimensions
+    const scale = Math.max(
+      overlayWidth / overlayImage.width,
+      overlayHeight / overlayImage.height,
     );
 
-    overlayImage.cover(700, 850);
+    const scaledWidth = overlayImage.width * scale;
+    const scaledHeight = overlayImage.height * scale;
 
-    baseImage.composite(overlayImage, (baseImage.bitmap.width - 700) / 2, 370);
+    const cropX = (scaledWidth - overlayWidth) / 2;
+    const cropY = (scaledHeight - overlayHeight) / 2;
 
-    const font1 = await Jimp.loadFont(
-      path.resolve(
-        __dirname,
-        '..',
-        '..',
-        '..',
-        '..',
-        'static',
-        'templates',
-        'coustard80',
-        'font.fnt',
-      ),
+    // Draw the overlay image (centered horizontally)
+    const xPosition = (baseImage.width - overlayWidth) / 2;
+    const yPosition = 370;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(xPosition, yPosition, overlayWidth, overlayHeight);
+    ctx.clip();
+    ctx.drawImage(
+      overlayImage,
+      -cropX + xPosition,
+      -cropY + yPosition,
+      scaledWidth,
+      scaledHeight,
     );
+    ctx.restore();
 
-    const font2 = await Jimp.loadFont(
-      path.resolve(
-        __dirname,
-        '..',
-        '..',
-        '..',
-        '..',
-        'static',
-        'templates',
-        'coustard40',
-        'font.fnt',
-      ),
-    );
-
-    const text = employee.name.split(' ').slice(0, 3).join(' ');
-    const textWidth = Jimp.measureText(font1, text);
-    const textX = (baseImage.bitmap.width - textWidth) / 2;
-
-    const text2 = employee.name.split(' ').slice(3).join(' ');
-    const textWidth2 = Jimp.measureText(font1, text2);
-    const textX2 = (baseImage.bitmap.width - textWidth2) / 2;
-
+    // Set up text rendering
+    const nameParts = employee.name.split(' ');
+    const text = nameParts.slice(0, 3).join(' ');
+    const text2 = nameParts.slice(3).join(' ');
     const text1 =
       formatDate(employee.bornDate.toISOString()).slice(0, -4) +
       new Date().getFullYear();
-    const textWidth1 = Jimp.measureText(font2, text1);
-    const textX1 = (baseImage.bitmap.width - textWidth1) / 2;
 
-    baseImage.print(font1, textX, 1260, text);
-    baseImage.print(font1, textX2, 1340, text2);
-    baseImage.print(font2, textX1, 1450, text1);
+    // Configure text styles
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillStyle = '#0066ff';
 
-    const buffer = await baseImage.getBufferAsync(Jimp.MIME_JPEG);
+    // Print first part of name
+    ctx.font = '80px Coustard';
+    ctx.fillText(text, baseImage.width / 2, 1260);
+
+    // Print second part of name (if it exists)
+    if (text2) {
+      ctx.fillText(text2, baseImage.width / 2, 1340);
+    }
+
+    // Print date
+    ctx.font = '40px Coustard';
+    ctx.fillText(text1, baseImage.width / 2, 1450);
+
+    // Convert canvas to buffer
+    const buffer = canvas.toBuffer('image/jpeg');
 
     return buffer;
   }

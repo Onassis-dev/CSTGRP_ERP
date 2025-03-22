@@ -9,10 +9,13 @@ import {
   suppliesSchema,
 } from './requsitions.schema';
 import { ContextProvider } from 'src/interceptors/context.provider';
-
+import { PetitionsService } from '../petitions/petitions.service';
 @Injectable()
 export class RequisitionsService {
-  constructor(private readonly req: ContextProvider) {}
+  constructor(
+    private readonly req: ContextProvider,
+    private readonly petitionsService: PetitionsService,
+  ) {}
 
   async getMovements(body: z.infer<typeof movementsFilterSchema>) {
     const movements = await sql`SELECT
@@ -34,7 +37,7 @@ export class RequisitionsService {
 
   async getPendingJobs(body: z.infer<typeof jobsSchema>) {
     const movements = await sql`SELECT
-      -materialmovements.amount as amount, materialie.due, materialie.jobpo, materialie.programation, materialmovements.id
+      -materialmovements.amount as amount, materialie.due, materialie.jobpo, materialie.programation, materialmovements.id, false as selected
       FROM materialmovements
       JOIN materials on materials.id = materialmovements."materialId"
       JOIN materialie on materialie.id = materialmovements."movementId"
@@ -60,7 +63,7 @@ export class RequisitionsService {
     if (data?.req)
       throw new HttpException('Uno de los jobs ya tiene una requisicion', 400);
 
-    await sql.begin(async (sql) => {
+    const inserted = await sql.begin(async (sql) => {
       const [inserted] =
         await sql`insert into requisitions (folio, petitioner, "user", motive, area, "materialId", jobs, requested, necesary) values
         (
@@ -73,13 +76,16 @@ export class RequisitionsService {
           ${data.jobs},
           ${Math.abs(Number(body.requested))},
           ${Math.abs(Number(data.necessary))}
-        ) returning folio`;
+        ) returning id, folio`;
 
       await this.req.record(
         `Hizo una requisicion de folio: ${inserted.folio}`,
         sql,
       );
+      return inserted;
     });
+
+    return this.petitionsService.download({ id: inserted.id });
   }
 
   async createSupplyRequisition(body: z.infer<typeof suppliesSchema>) {

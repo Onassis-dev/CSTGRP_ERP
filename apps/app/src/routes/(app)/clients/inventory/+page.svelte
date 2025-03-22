@@ -12,9 +12,9 @@
 	import Select from '$lib/components/basic/Select.svelte';
 	import { hasAccess } from '$lib/utils/functions';
 
-	let show = false;
+	let show = $state(false);
 
-	let selectedMaterial: any = {
+	let selectedMaterial: any = $state({
 		code: '',
 		measurement: '',
 		description: '',
@@ -22,21 +22,23 @@
 		clientId: '',
 		id: '',
 		leftoverAmount: ''
-	};
+	});
 
-	let inventory: any[] = [];
+	let inventory: any[] = $state([]);
 	let clients: any = {};
-	let clientList: any[] = [];
+	let clientList: any[] = $state([]);
 
-	let filters = {
+	let filters = $state({
 		code: '',
 		clientId: ''
-	};
-
-	$: filteredInventory = inventory.filter((material) => {
-		if (filters.code) return material.code?.toUpperCase()?.includes(filters.code.toUpperCase());
-		return true;
 	});
+
+	let filteredInventory = $derived(
+		inventory.filter((material) => {
+			if (filters.code) return material.code?.toUpperCase()?.includes(filters.code.toUpperCase());
+			return true;
+		})
+	);
 
 	async function getInventory() {
 		clientList = (await api.get('/clients/clients')).data;

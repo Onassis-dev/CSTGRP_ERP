@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { createBubbler, passive } from 'svelte/legacy';
+
+	const bubble = createBubbler();
 	import type { HTMLInputAttributes } from 'svelte/elements';
 	import type { InputEvents } from './index.js';
 	import { cn } from '$lib/utils.js';
@@ -6,9 +9,13 @@
 	type $$Props = HTMLInputAttributes & { files: FileList | undefined };
 	type $$Events = InputEvents;
 
-	let className: $$Props['class'] = undefined;
-	export let files: $$Props['files'] = undefined;
-	export { className as class };
+	interface Props {
+		class?: $$Props['class'];
+		files?: $$Props['files'];
+		[key: string]: any;
+	}
+
+	let { class: className = undefined, files = $bindable(undefined), ...rest }: Props = $props();
 </script>
 
 <input
@@ -18,21 +25,21 @@
 	)}
 	bind:files
 	type="file"
-	on:blur
-	on:change
-	on:click
-	on:focus
-	on:focusin
-	on:focusout
-	on:keydown
-	on:keypress
-	on:keyup
-	on:mouseover
-	on:mouseenter
-	on:mouseleave
-	on:mousemove
-	on:paste
-	on:input
-	on:wheel|passive
-	{...$$restProps}
+	onblur={bubble('blur')}
+	onchange={bubble('change')}
+	onclick={bubble('click')}
+	onfocus={bubble('focus')}
+	onfocusin={bubble('focusin')}
+	onfocusout={bubble('focusout')}
+	onkeydown={bubble('keydown')}
+	onkeypress={bubble('keypress')}
+	onkeyup={bubble('keyup')}
+	onmouseover={bubble('mouseover')}
+	onmouseenter={bubble('mouseenter')}
+	onmouseleave={bubble('mouseleave')}
+	onmousemove={bubble('mousemove')}
+	onpaste={bubble('paste')}
+	oninput={bubble('input')}
+	use:passive={['wheel', () => bubble('wheel')]}
+	{...rest}
 />

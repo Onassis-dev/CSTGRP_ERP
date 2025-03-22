@@ -12,15 +12,15 @@
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
 
 	let productivity: any[] = [];
-	let separatedProductivity: any = {};
-	let show = false;
-	let areas: any = {};
-	let positions: any = {};
-	let incidences: any = {};
+	let separatedProductivity: any = $state({});
+	let show = $state(false);
+	let areas: any = $state({});
+	let positions: any = $state({});
+	let incidences: any = $state({});
 	let incidencesList: any = [];
-	let dateSelected: any = new Date().toISOString().split('T')[0];
-	let viewComplete = false;
-	let weekDays: string[] = [];
+	let dateSelected: any = $state(new Date().toISOString().split('T')[0]);
+	let viewComplete = $state(false);
+	let weekDays: string[] = $state([]);
 
 	async function getProductivity() {
 		productivity = (await api.get('/productivity/' + dateSelected)).data;
@@ -118,28 +118,28 @@
 </script>
 
 <MenuBar>
-	<svelte:fragment slot="left">
-		<Input type="date" bind:value={dateSelected} on:change={getProductivity} />
+	{#snippet left()}
+		<Input menu type="date" bind:value={dateSelected} onchange={getProductivity} />
 		{#if viewComplete}
-			<Button class="flex-none" on:click={() => (viewComplete = !viewComplete)}
-				><Book class="mr-1.5 size-3.5" />Ver resumen</Button
+			<Button class="flex-none" variant="outline" onclick={() => (viewComplete = !viewComplete)}
+				><Book class=" size-3.5" />Ver resumen</Button
 			>
 		{:else}
-			<Button class="flex-none" on:click={() => (viewComplete = !viewComplete)}
-				><BookOpen class="mr-1.5 size-3.5" />Ver todo</Button
+			<Button class="flex-none" variant="outline" onclick={() => (viewComplete = !viewComplete)}
+				><BookOpen class=" size-3.5" />Ver todo</Button
 			>
 		{/if}
-	</svelte:fragment>
-	<svelte:fragment slot="right">
-		<Button on:click={() => (show = true)}><Pen class="mr-1.5 size-3.5" />Capturar</Button>
+	{/snippet}
+	{#snippet right()}
+		<Button onclick={() => (show = true)}><Pen class=" size-3.5" />Capturar</Button>
 		<!-- <ExportProductivity productivity={separatedProductivity} {areas} {positions} {weekDays} /> -->
-	</svelte:fragment>
+	{/snippet}
 </MenuBar>
 
 <CusTable>
 	{#each Object.keys(separatedProductivity) as areaId, i}
 		<TableHeader class=" text-md sticky top-0 z-30 text-left uppercase ">
-			<TableHead colspan={100} class="bg-foreground font-semibold text-background"
+			<TableHead colspan={100} class="bg-foreground text-background font-semibold"
 				>{areas[areaId]}</TableHead
 			>
 		</TableHeader>

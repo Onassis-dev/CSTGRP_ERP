@@ -8,10 +8,9 @@ const curpRegex =
 const bloodRegex = /^(A|B|AB|O)[+-]$/;
 const nssRegex = /^[0-9]{11}$/;
 const infonavitRegex = /^[0-9]{10}$/;
-const accountRegex = /^[0-9]{10}$/; //Actualizar cantidad de digitos
-const noEmpleadoRegex = /^[0-9]{5}$/; //Actualizar cantidad de digitos
+const accountRegex = /^[0-9]{10}$/;
+const noEmpleadoRegex = /^[0-9]{5}$/;
 const phoneRegex = /^((\+\d{1,2}\d{10})|(\d{10}))$/;
-//Telefono
 
 export const createSchema = z.object({
   noEmpleado: z.string().refine((value) => noEmpleadoRegex.test(value)),
@@ -76,7 +75,7 @@ export const createSchema = z.object({
   positionType: z.string().min(1).optional().nullable(),
   shift: z.string().min(1).optional().nullable(),
   nominaSalary: z.number().min(0).optional().nullable(),
-  immsSalary: z.number().min(0).optional().nullable(),
+  immsSalary: z.string().or(z.number()).optional().nullable(),
   studies: z.string().min(1).optional().nullable(),
   bornDate: z
     .string()
@@ -86,6 +85,8 @@ export const createSchema = z.object({
   civilStatus: z.string().min(1).optional().nullable(),
   nationality: z.string().min(1).optional().nullable(),
   positionId: z.number(),
+  route: z.string().min(1).optional().nullable(),
+  contract: z.number().min(0).optional().nullable(),
 });
 
 export const editSchema = z.object({
@@ -159,7 +160,7 @@ export const editSchema = z.object({
   positionType: z.string().min(1).optional().nullable(),
   shift: z.string().min(1).optional().nullable(),
   nominaSalary: z.number().min(0).optional().nullable(),
-  immsSalary: z.number().min(0).optional().nullable(),
+  immsSalary: z.string().or(z.number()).optional().nullable(),
   studies: z.string().min(1).optional().nullable(),
   bornDate: z
     .string()
@@ -178,6 +179,8 @@ export const editSchema = z.object({
   quitStatus: z.string().min(1).optional().nullable(),
   quitNotes: z.string().optional().optional().nullable(),
   quitReason: z.string().min(1).optional().nullable(),
+  route: z.string().min(1).optional().nullable(),
+  contract: z.number().min(0).optional().nullable(),
 });
 
 export const reactivateSchema = z.object({
@@ -195,45 +198,10 @@ export const quitSchema = z.object({
   quitReason: z.string().min(1),
 });
 
-export const getDocumentsSchema = z.object({
-  employeeId: z.string(),
-});
-
-export const getEmployeeHistorySchema = z.object({
-  employeeId: z.string(),
-});
-
-export const getEvaluationsSchema = z.object({
-  employeeId: z.string(),
-});
-
-export const editDocSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-});
-
-export const createDocSchema = z.object({
-  employeeId: z.string(),
-  name: z.string(),
-});
-
-export const createEvaluationSchema = z.object({
-  employeeId: z.string(),
-  score: z.number(),
-  date: z.string().refine((value) => dateRegex.test(value)),
-});
-
-export const createRecordSchema = z.object({
-  employeeId: z.string(),
-  date: z.string().refine((value) => dateRegex.test(value)),
-  type: z.string(),
-  text: z.string(),
+export const idSchema = z.object({
+  id: z.string().min(1),
 });
 
 export const templateSchema = z.object({
   template: z.number().min(1),
-});
-
-export const idSchema = z.object({
-  id: z.string().min(1),
 });

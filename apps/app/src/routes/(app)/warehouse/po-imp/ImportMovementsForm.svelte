@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import MaterialInput from '$lib/components/basic/MaterialInput.svelte';
 	import Select from '$lib/components/basic/Select.svelte';
 	import { Button } from '$lib/components/ui/button';
@@ -22,31 +24,31 @@
 	import { showSuccess } from '$lib/utils/showToast';
 	import { Trash } from 'lucide-svelte';
 
-	export let show: boolean;
-	export let reload: any;
-	export let selectedMovement: any = {};
+	interface Props {
+		show: boolean;
+		reload: any;
+		selectedMovement?: any;
+	}
+
+	let { show = $bindable(), reload, selectedMovement = {} }: Props = $props();
 	interface material {
 		code: string;
 		amount: string;
 		measurement: string;
 	}
 
-	let materials: material[] = [];
-	let formData: any = {};
-	let files: any;
-	$: inputDisabled = !!files;
-	$: if (files) processPDF();
-	$: if (!show || show) cleanData();
-	$: if (selectedMovement.id) getData();
+	let materials: material[] = $state([]);
+	let formData: any = $state({});
+	let files: any = $state();
 
 	async function handleSubmit() {
 		if (selectedMovement.id) {
-			await api.put('/materialmovements/import', {
+			await api.put('/po-imp/import', {
 				...formData,
 				materials
 			});
 		} else {
-			await api.post('/materialmovements/import', {
+			await api.post('/po-imp/import', {
 				...formData,
 				materials
 			});
@@ -86,7 +88,7 @@
 
 	async function getData() {
 		cleanData();
-		const { data } = await api.get('/materialmovements/ie/' + selectedMovement.id);
+		const { data } = await api.get('/po-imp/' + selectedMovement.id);
 		materials = data.materials;
 		formData = { id: data.id, import: data.import, location: data.location, due: data.due };
 		files = null;
@@ -98,6 +100,19 @@
 		{ value: 'At CST, In revision', name: 'En revisión' },
 		{ value: 'At CST, Qtys verified', name: 'Listo' }
 	];
+	let inputDisabled;
+	run(() => {
+		inputDisabled = !!files;
+	});
+	run(() => {
+		if (files) processPDF();
+	});
+	run(() => {
+		if (!show || show) cleanData();
+	});
+	run(() => {
+		if (selectedMovement.id) getData();
+	});
 </script>
 
 <Dialog bind:open={show}>
@@ -147,16 +162,16 @@
 							<TableCell class="p-0 px-[1px]"
 								><Input
 									class="rounded-none border-none"
-									type="number"
+									type="text"
 									bind:value={materials[i].amount}
 								/></TableCell
 							>
 							<TableCell class="w-5">{materials[i].measurement}</TableCell>
 							<TableCell class="flex h-8 justify-center p-0 px-[1px]"
 								><Button
-									on:click={() => deleteMaterial(i)}
+									onclick={() => deleteMaterial(i)}
 									variant="ghost"
-									class="aspect-square p-1 text-destructive-foreground"
+									class="text-destructive-foreground aspect-square p-1"
 									><Trash class="size-5" /></Button
 								></TableCell
 							>
@@ -164,7 +179,7 @@
 					{/each}
 					<TableRow>
 						<TableCell class="border-l" colspan={4}
-							><Button on:click={addMaterial} class="w-full max-w-40" color="light"
+							><Button onclick={addMaterial} class="w-full max-w-40" color="light"
 								>Anadir material</Button
 							></TableCell
 						>
@@ -172,7 +187,7 @@
 				</TableBody>
 			</Table>
 
-			<Button on:click={handleSubmit} type="submit" class="mt-4 w-full">Guardar cambios</Button>
+			<Button onclick={handleSubmit} type="submit" class="mt-4 w-full">Guardar cambios</Button>
 		</DialogBody>
 	</DialogContent>
 </Dialog>

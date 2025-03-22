@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
 	import { Tabs, TabsContent, TabsList, TabsTrigger } from '$lib/components/ui/tabs';
 	import { Dialog, DialogBody } from '$lib/components/ui/dialog';
 	import DialogContent from '$lib/components/ui/dialog/dialog-content.svelte';
@@ -9,7 +10,15 @@
 	import Badge from '$lib/components/ui/badge/badge.svelte';
 	import DisplayInput from '$lib/components/ui/input/display-input.svelte';
 	import { Button } from '$lib/components/ui/button';
-	import { Check, Edit2Icon } from 'lucide-svelte';
+	import {
+		Check,
+		CircleUser,
+		ClipboardList,
+		Edit2Icon,
+		FileText,
+		History,
+		LineChart
+	} from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import { showSuccess } from '$lib/utils/showToast';
 	import Select from '$lib/components/basic/Select.svelte';
@@ -18,51 +27,52 @@
 	import EmployeeStats from './EmployeeStats.svelte';
 	import EmployeeEvaluations from './EmployeeEvaluations.svelte';
 
-	export let show = false;
-	export let employee: any;
-	export let reload: any;
-	let edit = false;
-	let formData: any = {};
-	let files: FileList | undefined;
-	let preview: string = '';
-	let tab = '';
-	$: if (files?.[0] || formData.photo) getFilePreview();
-	$: if (!show) clean();
-	$: edit = !employee.id;
+	interface Props {
+		show?: boolean;
+		employee: any;
+		reload: any;
+	}
+
+	let { show = $bindable(false), employee = $bindable(), reload }: Props = $props();
+	let edit = $state(false);
+	let formData: any = $state({});
+	let files: FileList | undefined = $state();
+	let preview: string = $state('');
+	let tab = $state('');
 
 	async function getFilePreview() {
 		preview = (await getPreview(files?.[0])) || getImage(formData.photo) || '';
 	}
 
-	let banks = [
+	const banks = [
 		{ value: 'SCOTIABANK', name: 'SCOTIABANK' },
 		{ value: 'HSBC', name: 'HSBC' },
 		{ value: 'BBVA', name: 'BBVA' }
 	];
-	let status = [
+	const status = [
 		{ value: 'Recontratable', name: 'Recontratable' },
 		{ value: 'No recontratable', name: 'No recontratable' },
 		{ value: 'A considerar', name: 'A considerar' }
 	];
 
-	let positionTypes = [
+	const positionTypes = [
 		{ value: 'Tiempo completo', name: 'Tiempo completo' },
 		{ value: 'Medio tiempo', name: 'Medio tiempo' },
 		{ value: 'Practicante', name: 'Practicante' }
 	];
 
-	let shifts = [
+	const shifts = [
 		{ value: 'Diurno', name: 'Diurno' },
 		{ value: 'Nocturno', name: 'Nocturno' }
 	];
 
-	let genres = [
+	const genres = [
 		{ value: 'F', name: 'Femenino' },
 		{ value: 'M', name: 'Masculino' },
 		{ value: 'O', name: 'Otro' }
 	];
 
-	let civilStatus = [
+	const civilStatus = [
 		{ value: 'Casado(a)', name: 'Casado(a)' },
 		{ value: 'Soltero(a)', name: 'Soltero(a)' },
 		{ value: 'Divorciado(a)', name: 'Divorciado(a)' },
@@ -73,10 +83,23 @@
 		{ value: 'Sociedad de Convivencia', name: 'Sociedad de Convivencia' }
 	];
 
-	let areas: any;
-	let positions: any;
-	let areasDisplay: any = {};
-	let positionsDisplay: any = {};
+	const routes = [
+		{ value: 'Ruta 1', name: 'Ruta 1' },
+		{ value: 'Ruta 2', name: 'Ruta 2' },
+		{ value: 'Ruta 3', name: 'Ruta 3' }
+	];
+
+	const contracts = [
+		{ value: 1, name: 'Primer contrato' },
+		{ value: 2, name: 'Segundo contrato' },
+		{ value: 3, name: 'Tercer contrato' },
+		{ value: 4, name: 'Contrato indefinido' }
+	];
+
+	let areas: any = $state();
+	let positions: any = $state();
+	let areasDisplay: any = $state({});
+	let positionsDisplay: any = $state({});
 
 	async function fetchOptions() {
 		areas = (await api.get('/hrvarious/areas')).data;
@@ -88,8 +111,6 @@
 			positionsDisplay[position.value] = { name: position.name, color: position.color };
 		});
 	}
-
-	$: if (employee.id) setFormData();
 
 	async function setFormData() {
 		const [employeeData] = (await api.get(`/employees/${employee.id}`)).data;
@@ -148,24 +169,52 @@
 	onMount(() => {
 		fetchOptions();
 	});
+	run(() => {
+		if (files?.[0] || formData.photo) getFilePreview();
+	});
+	run(() => {
+		if (!show) clean();
+	});
+	run(() => {
+		edit = !employee.id;
+	});
+	run(() => {
+		if (employee.id) setFormData();
+	});
 </script>
 
 <Dialog bind:open={show}>
 	<DialogContent class="max-w-4xl">
 		<Tabs bind:value={tab}>
-			<DialogHeader class="py-2">
-				<TabsList class="bg-background w-min">
-					<TabsTrigger class="data-[state=active]:bg-muted" value="info">Informacion</TabsTrigger>
+			<DialogHeader class="py-0">
+				<TabsList class="h-10 w-min translate-y-[2.5px] gap-2.5 bg-transparent py-0">
+					<TabsTrigger
+						class="data-[state=active]:border-b-primary rounded-none border-b border-transparent px-0.5 py-2 !shadow-none "
+						value="info"
+					>
+						<CircleUser class="mr-1.5 size-3.5" />Informacion
+					</TabsTrigger>
 					{#if employee.id}
-						<TabsTrigger class="data-[state=active]:bg-muted" value="statics"
-							>Estadisticas</TabsTrigger
+						<TabsTrigger
+							class="data-[state=active]:border-b-primary rounded-none border-b border-transparent px-0.5 py-2 !shadow-none "
+							value="statics"
 						>
-						<TabsTrigger class="data-[state=active]:bg-muted" value="history">Historial</TabsTrigger
+							<LineChart class="mr-1.5 size-3.5" />Estadisticas</TabsTrigger
 						>
-						<TabsTrigger class="data-[state=active]:bg-muted" value="evaluations"
-							>Evaluaciones</TabsTrigger
+						<TabsTrigger
+							class="data-[state=active]:border-b-primary rounded-none border-b border-transparent px-0.5 py-2 !shadow-none "
+							value="history"><History class="mr-1.5 size-3.5" />Historial</TabsTrigger
 						>
-						<TabsTrigger class="data-[state=active]:bg-muted" value="docs">Documentos</TabsTrigger>
+						<TabsTrigger
+							class="data-[state=active]:border-b-primary rounded-none border-b border-transparent px-0.5 py-2 !shadow-none "
+							value="evaluations"><ClipboardList class="mr-1.5 size-3.5" />Evaluaciones</TabsTrigger
+						>
+						<TabsTrigger
+							class="data-[state=active]:border-b-primary rounded-none border-b border-transparent px-0.5 py-2 !shadow-none "
+							value="docs"
+						>
+							<FileText class="mr-1.5 size-3.5" />Documentos</TabsTrigger
+						>
 					{/if}
 				</TabsList>
 			</DialogHeader>
@@ -181,14 +230,14 @@
 									size="icon"
 									variant="ghost"
 									class="bg-background size-7 border"
-									on:click={handleSubmit}><Check class="size-3.5" /></Button
+									onclick={handleSubmit}><Check class="size-3.5" /></Button
 								>
 							{:else}
 								<Button
 									size="icon"
 									variant="ghost"
 									class="bg-background size-7 border"
-									on:click={() => {
+									onclick={() => {
 										edit = true;
 										tab = 'info';
 									}}><Edit2Icon class="size-3.5" /></Button
@@ -413,6 +462,21 @@
 							<p class="text-muted-foreground text-xs">Turno:</p>
 							<DisplayInput value={formData.shift} {edit}>
 								<Select items={shifts} bind:value={formData.shift} />
+							</DisplayInput>
+						</div>
+						<div>
+							<p class="text-muted-foreground text-xs">Ruta de camión:</p>
+							<DisplayInput value={formData.route} {edit}>
+								<Select items={routes} bind:value={formData.route} />
+							</DisplayInput>
+						</div>
+						<div>
+							<p class="text-muted-foreground text-xs">Tipo de contrato:</p>
+							<DisplayInput
+								value={contracts.find((c: any) => c.value === formData.contract)?.name}
+								{edit}
+							>
+								<Select items={contracts} bind:value={formData.contract} />
 							</DisplayInput>
 						</div>
 						<!-- <div>

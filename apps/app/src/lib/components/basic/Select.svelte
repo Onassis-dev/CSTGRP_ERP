@@ -1,50 +1,59 @@
 <script lang="ts">
-	import * as Select from '../ui/select/index';
+	import * as Select from '$lib/components/ui/select/index';
 	import { cn } from '$lib/utils.js';
-	let className = '';
-	export { className as class };
-	export let items: { value: string | number | boolean; name: string; label?: string }[];
-	export let placeholder = 'Selecciona una opción';
-	export let value: string | number;
-	export let onSelectedChange = () => {};
-	export let cell = false;
-	export let menu = false;
-	export let chevron: boolean = true;
-	export let disabled: boolean = false;
 
-	$: newItems = items?.map((item) => ({
-		value: item.value,
-		label: item.name
-	}));
+	interface Item {
+		value: string | number;
+		name: string;
+	}
 
-	let selected: any = {};
-	$: if (newItems && value) setSelected();
+	interface Props {
+		class?: string;
+		items: Item[];
+		placeholder?: string;
+		value: Item['name'];
+		cell?: boolean;
+		menu?: boolean;
+		disabled?: boolean;
+		children?: import('svelte').Snippet;
+		chevron?: boolean;
+		allowDeselect?: boolean;
+		onValueChange?: () => void;
+	}
 
-	const setSelected = () => {
-		selected = newItems.find((item) => item.value === value);
-	};
+	let {
+		class: className = '',
+		items,
+		placeholder = 'Selecciona una opción',
+		value = $bindable(),
+		cell = false,
+		menu = false,
+		disabled = false,
+		children,
+		chevron = true,
+		allowDeselect = false,
+		onValueChange
+	}: Props = $props();
+
+	const triggerContent = $derived(items?.find((f) => f.value === value)?.name ?? placeholder);
 </script>
 
-<Select.Root
-	bind:selected
-	onSelectedChange={(e) => {
-		value = String(e?.value);
-		onSelectedChange();
-	}}
->
+<Select.Root type="single" bind:value {allowDeselect} {onValueChange}>
 	<Select.Trigger
 		{chevron}
 		{disabled}
 		class={cn(className, cell ? 'h-full w-full border-none' : '', menu ? 'h-[28px]' : '')}
 	>
-		<slot>
-			<Select.Value {placeholder}></Select.Value>
-		</slot>
+		{#if children}{@render children()}{:else}
+			{triggerContent}
+		{/if}
 	</Select.Trigger>
 	<Select.Content>
 		<Select.Group>
-			{#each newItems as item}
-				<Select.Item value={item.value} label={item.label}>{item.label}</Select.Item>
+			{#each items as item}
+				<Select.Item value={item.value as string} label={item.name}>
+					{item.name}
+				</Select.Item>
 			{/each}
 		</Select.Group>
 	</Select.Content>

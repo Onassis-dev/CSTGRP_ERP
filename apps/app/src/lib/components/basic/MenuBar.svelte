@@ -6,9 +6,16 @@
 	} from '$lib/components/ui/dropdown-menu';
 	import { Filter } from 'lucide-svelte';
 	import { Button } from '../ui/button';
+	interface Props {
+		left?: import('svelte').Snippet;
+		children?: import('svelte').Snippet;
+		right?: import('svelte').Snippet;
+	}
+
+	let { left, children, right }: Props = $props();
 </script>
 
-<div class="flex h-[48px] items-center justify-between border-b px-2.5">
+<div class="flex h-[49px] items-center justify-between border-b px-2.5">
 	<div class="flex w-full justify-between lg:hidden">
 		<DropdownMenu>
 			<DropdownMenuTrigger>
@@ -19,21 +26,21 @@
 			</DropdownMenuTrigger>
 
 			<DropdownMenuContent class="grid gap-2 p-2">
-				<slot name="left" />
-				<slot></slot>
+				{@render left?.()}
+				{@render children?.()}
 			</DropdownMenuContent>
 		</DropdownMenu>
 		<div>
-			<slot name="right" />
+			{@render right?.()}
 		</div>
 	</div>
 	<div class="hidden w-full justify-between gap-2 lg:flex">
-		<div class="flex gap-1">
-			<slot name="left"></slot>
-			<slot></slot>
+		<div class="flex gap-1.5">
+			{@render left?.()}
+			{@render children?.()}
 		</div>
-		<div class="flex gap-1">
-			<slot name="right"></slot>
+		<div class="flex gap-1.5">
+			{@render right?.()}
 		</div>
 	</div>
 </div>

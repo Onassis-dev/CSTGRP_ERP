@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run, createBubbler, preventDefault } from 'svelte/legacy';
+	const bubble = createBubbler();
 	import Select from '$lib/components/basic/Select.svelte';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
@@ -14,19 +16,23 @@
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
 
-	export let show: boolean;
-	export let productivity: any[];
-	export let areas: any[];
-	export let reload: any;
-	let selectedRowId: string;
-	let selectedAreaId: string;
+	interface Props {
+		show: boolean;
+		productivity: any[];
+		areas: any[];
+		reload: any;
+	}
+
+	let { show = $bindable(), productivity, areas, reload }: Props = $props();
+	let selectedRowId: string = $state('');
+	let selectedAreaId: string = $state('');
 	let selectedRow: any;
-	let selectedDate = new Date().toISOString().split('T')[0];
-	let areasList: any[] = [];
-	let employees: any[];
+	let selectedDate = $state(new Date().toISOString().split('T')[0]);
+	let areasList: any[] = $state([]);
+	let employees: any[] = $state([]);
 	let dayNumber: number = getDayNumber(selectedDate);
 
-	let formData = {
+	let formData = $state({
 		code0: '',
 		code1: '',
 		code2: '',
@@ -37,7 +43,7 @@
 		produced1: '',
 		produced2: '',
 		comment: ''
-	};
+	});
 
 	async function handleSubmit() {
 		await api.put('/productivity', {
@@ -89,17 +95,6 @@
 		await reload();
 	}
 
-	$: if (productivity) {
-		areasList = [];
-		Object.keys(productivity).forEach((areaId) => {
-			areasList.push({
-				value: areaId,
-				name: areas[parseInt(areaId)]
-			});
-		});
-	}
-
-	$: if (selectedAreaId) selectArea();
 	function selectArea() {
 		employees = [];
 		productivity[parseInt(selectedAreaId)].map((row: any) => {
@@ -110,7 +105,6 @@
 		});
 	}
 
-	$: if (selectedRowId && selectedDate) handleDateSelect();
 	function handleDateSelect() {
 		dayNumber = getDayNumber(selectedDate);
 		selectedRow = productivity[parseInt(selectedAreaId)].filter(
@@ -152,6 +146,23 @@
 		if (number < 1.5) return 'green';
 		return 'blue';
 	}
+	run(() => {
+		if (productivity) {
+			areasList = [];
+			Object.keys(productivity).forEach((areaId) => {
+				areasList.push({
+					value: areaId,
+					name: areas[parseInt(areaId)]
+				});
+			});
+		}
+	});
+	run(() => {
+		if (selectedAreaId) selectArea();
+	});
+	run(() => {
+		if (selectedRowId && selectedDate) handleDateSelect();
+	});
 </script>
 
 <Dialog bind:open={show}>
@@ -160,7 +171,7 @@
 			<DialogTitle>Captura de produccion</DialogTitle>
 		</DialogHeader>
 		<DialogBody>
-			<div class="grid w-full gap-0.5" on:keydown={handleNegate} role="button" tabindex="0">
+			<div class="grid w-full gap-0.5" onkeydown={handleNegate} role="button" tabindex="0">
 				<div class="flex items-center justify-end gap-2">
 					<span class="w-[20%] text-right">Fecha</span>
 					<Input class="w-[80%]" type="date" bind:value={selectedDate}></Input>
@@ -171,7 +182,7 @@
 				</div>
 				<div class="flex items-center justify-end gap-2">
 					<span class="w-[20%] text-right">No.Empleado</span>
-					<Input class="xxx w-[80%]" type="number" on:change={handleNoEmpleado}></Input>
+					<Input class="xxx w-[80%]" type="number" onchange={handleNoEmpleado}></Input>
 				</div>
 				<div class="flex items-center justify-end gap-2">
 					<span class="w-[20%] text-right">Nombre</span>
@@ -180,7 +191,7 @@
 
 				<div class="my-2"></div>
 
-				<form on:submit|preventDefault class="grid w-full gap-0.5">
+				<form onsubmit={preventDefault(bubble('submit'))} class="grid w-full gap-0.5">
 					<div class="flex items-center justify-end gap-2">
 						<span class="w-[20%] text-right">Codigo1</span>
 						<Input bind:value={formData.code0} class="w-[80%]"></Input>
@@ -249,7 +260,7 @@
 						)}%</Badge
 					>
 
-					<Button on:click={handleSubmit} type="submit" class="mt-4 w-full">Guardar</Button>
+					<Button onclick={handleSubmit} type="submit" class="mt-4 w-full">Guardar</Button>
 				</form>
 			</div>
 		</DialogBody>

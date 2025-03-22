@@ -1,26 +1,34 @@
 <script lang="ts">
-	import { Accordion as AccordionPrimitive } from 'bits-ui';
-	import ChevronDown from 'lucide-svelte/icons/chevron-down';
+	import { Accordion as AccordionPrimitive, type WithoutChild } from 'bits-ui';
+	import ChevronDown from '@lucide/svelte/icons/chevron-down';
 	import { cn } from '$lib/utils.js';
 
-	type $$Props = AccordionPrimitive.TriggerProps;
-	type $$Events = AccordionPrimitive.TriggerEvents;
-
-	let className: $$Props['class'] = undefined;
-	export let level: AccordionPrimitive.HeaderProps['level'] = 3;
-	export { className as class };
+	let {
+		ref = $bindable(null),
+		class: className,
+		level = 3,
+		children,
+		...restProps
+	}: WithoutChild<AccordionPrimitive.TriggerProps> & {
+		level?: AccordionPrimitive.HeaderProps['level'];
+	} = $props();
 </script>
 
 <AccordionPrimitive.Header {level} class="flex">
 	<AccordionPrimitive.Trigger
+		bind:ref
 		class={cn(
-			'flex flex-1 items-center justify-between rounded-sm py-4 transition-all hover:underline [&[data-state=open]>svg]:rotate-0',
+			'flex flex-1 items-center justify-between py-4 font-medium transition-all hover:underline [&[data-state=closed]>svg.duration-200]:-rotate-90 [&[data-state=open]>svg.duration-200]:rotate-0',
 			className
 		)}
-		{...$$restProps}
-		on:click
+		{...restProps}
 	>
-		<slot />
-		<ChevronDown class="h-3.5 w-3.5 -rotate-90 transition-transform duration-200" />
+		<span class="flex items-center gap-2">
+			{@render children?.()}
+		</span>
+		<ChevronDown
+			class="size-3.5 shrink-0 text-[#5c5e63] transition-transform duration-200"
+			strokeWidth={1.2}
+		/>
 	</AccordionPrimitive.Trigger>
 </AccordionPrimitive.Header>
