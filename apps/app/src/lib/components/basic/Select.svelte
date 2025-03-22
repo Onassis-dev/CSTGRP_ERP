@@ -35,7 +35,7 @@
 		onValueChange
 	}: Props = $props();
 
-	const triggerContent = $derived(items.find((f) => f.value === value)?.name ?? placeholder);
+	const triggerContent = $derived(items?.find((f) => f.value === value)?.name ?? placeholder);
 </script>
 
 <Select.Root type="single" bind:value {allowDeselect} {onValueChange}>

@@ -15,27 +15,27 @@ export const movementsFilterSchema = z.object({
 
 export const updateAmountSchema = z.object({
   id: z.string(),
-  newAmount: z.string(),
+  newAmount: z.string().regex(/^\d*(?:\.\d{1,2})?$/),
 });
 
 export const scrapSchema = z.object({
   code: z.string(),
-  amount: z.string(),
+  amount: z.string().regex(/^\d*(?:\.\d{1,2})?$/),
 });
 
 export const suppliesSchema = z.object({
   code: z.string(),
-  amount: z.string(),
+  amount: z.string().regex(/^\d*(?:\.\d{1,2})?$/),
 });
 
 export const repositionSchema = z.object({
   code: z.string(),
-  amount: z.string(),
+  amount: z.string().regex(/^\d*(?:\.\d{1,2})?$/),
   job: z.string(),
 });
 
 export const returnSchema = z.object({
   code: z.string(),
-  amount: z.string(),
+  amount: z.string().regex(/^\d*(?:\.\d{1,2})?$/),
   job: z.string().optional().nullable(),
 });

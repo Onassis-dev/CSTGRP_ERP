@@ -2,11 +2,10 @@
 	import LineChart from '$lib/components/charts/LineChart.svelte';
 	import { Progress } from '$lib/components/ui/progress/index.js';
 	import PieChart from '$lib/components/charts/PieChart.svelte';
-	// import RadialChart from '$lib/components/charts/RadialChart.svelte';
 	import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
 	import { Input } from '$lib/components/ui/input';
 	import { Badge } from '$lib/components/ui/badge';
-	import { formatDate, getDayNumber, getImage } from '$lib/utils/functions';
+	import { formatDate, getImage } from '$lib/utils/functions';
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
 	import { onMount } from 'svelte';
@@ -14,7 +13,7 @@
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
 	import DashboardBody from '$lib/components/basic/DashboardBody.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import { Download, Image } from 'lucide-svelte';
+	import { Download } from 'lucide-svelte';
 
 	let employeeTemplate: any = $state();
 	let activeEmployees: any = $state();
@@ -22,37 +21,27 @@
 	let areaIncidences: any[] = $state([]);
 	let assistance: any[] = $state([]);
 	let selectedDate = $state(new Date().toISOString().split('T')[0]);
-	let areaSelected = $state('1');
+	let areaSelected = $state('');
 	let areas: any[] = $state([]);
 	let dailyIncidencesList: any[] = $state([]);
 	let birthDays: any[] = $state([]);
 	let rotation: number = $state(0);
+	let dailyAssistance = $state(0);
+	let contractExpiration: any[] = $state([]);
 
-	let textDate = $derived(
-		['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'][getDayNumber(selectedDate)] +
-			' ' +
-			selectedDate.split('-')[2] +
-			' de ' +
-			[
-				'Enero',
-				'Febrero',
-				'Marzo',
-				'Abril',
-				'Mayo',
-				'Junio',
-				'Julio',
-				'Agosto',
-				'Septiembre',
-				'Octubre',
-				'Noviembre',
-				'Diciembre'
-			][parseInt(selectedDate.split('-')[1])]
-	);
+	const contractTypes = {
+		0: 'Sin contrato',
+		1: 'Primer contrato',
+		2: 'Segundo contrato',
+		3: 'Tercer contrato'
+	};
 
 	async function fetchConstData() {
 		areas = (await api.get('/hrvarious/areas')).data;
+		areaSelected = areas.find((area) => area.name.toUpperCase() === 'ADMINISTRACION').value;
 		employeeTemplate = (await api.get('/hrstats/employeetemplate')).data[0].value;
 		activeEmployees = (await api.get('/hrstats/activeemployees')).data[0].count;
+		contractExpiration = (await api.get('/hrstats/contractexpiration')).data;
 		await getDailyData();
 	}
 
@@ -60,6 +49,7 @@
 		assistance = (await api.get('/hrstats/assistance/' + selectedDate)).data;
 		rotation = (await api.get('/hrstats/employeerotation/' + selectedDate)).data;
 		dailyIncidences = (await api.get('/hrstats/assistanceinfo/' + selectedDate)).data;
+		dailyAssistance = (await api.get('/hrstats/dailyassistance/' + selectedDate)).data;
 		areaIncidences = (
 			await api.get(`/hrstats/areaassistanceinfo?areaId=${areaSelected}&date=${selectedDate}`)
 		).data;
@@ -110,25 +100,23 @@
 	<Input menu class="w-fit" type="date" bind:value={selectedDate} onchange={getDailyData} />
 </MenuBar>
 
-<DashboardBody title="Recursos Humanos" class="grid grid-cols-12 place-items-stretch gap-4 ">
-	<Card class="col-span-2 max-h-96  w-full max-w-full">
+<DashboardBody
+	title="Recursos Humanos"
+	class="grid grid-cols-12 grid-rows-[7rem_19rem_22rem] place-items-stretch gap-4 "
+>
+	<Card class="col-span-3 w-full max-w-full">
 		<CardHeader>
-			<CardTitle>Rotacion semanal</CardTitle>
+			<CardTitle>Asistencia</CardTitle>
 		</CardHeader>
 		<CardContent>
-			<p class="text-2xl font-medium">{rotation.toFixed(2)}%</p>
-		</CardContent>
-	</Card>
-	<Card class="col-span-2 max-h-96  w-full max-w-full">
-		<CardHeader>
-			<CardTitle>Rotacion semanal</CardTitle>
-		</CardHeader>
-		<CardContent>
-			<p class="text-2xl font-medium">{rotation.toFixed(2)}%</p>
+			<div class="mb-2 flex items-center gap-2">
+				<p class="text-2xl font-medium">{dailyAssistance} %</p>
+			</div>
+			<Progress value={dailyAssistance} />
 		</CardContent>
 	</Card>
 
-	<Card class="col-span-2 max-h-96  w-full max-w-full">
+	<Card class="col-span-3 w-full max-w-full">
 		<CardHeader>
 			<CardTitle>Plantilla</CardTitle>
 		</CardHeader>
@@ -139,109 +127,59 @@
 				<Input
 					onblur={updateTemplate}
 					bind:value={employeeTemplate}
-					class="text-muted-foreground font- border-none p-0"
+					class="text-muted-foreground border-none p-0"
 				/>
 			</div>
 			<Progress value={(activeEmployees / employeeTemplate) * 100} />
 		</CardContent>
 	</Card>
-	<Card class="col-span-2 max-h-96  w-full max-w-full">
+
+	<Card class="col-span-3 w-full max-w-full">
 		<CardHeader>
-			<CardTitle>Asistencia</CardTitle>
+			<CardTitle>Rotación anual</CardTitle>
 		</CardHeader>
 		<CardContent>
-			<p class="text-2xl font-medium">{employeeTemplate}</p>
+			<div class="mb-2 flex items-center gap-2">
+				<p class="text-2xl font-medium">{rotation} %</p>
+			</div>
+			<Progress value={rotation} />
 		</CardContent>
 	</Card>
 
-	<Card class="col-span-4 row-span-2 w-full max-w-full">
+	<Card class="col-span-3 row-span-2 flex h-full w-full max-w-full flex-col">
 		<CardHeader>
 			<CardTitle>Lista de incidencias</CardTitle>
 		</CardHeader>
-		<CardContent class="grid grid-cols-[auto_1fr_auto] items-center gap-4 overflow-auto">
-			{#each dailyIncidencesList as row}
-				<img src={getImage(row.photo)} alt="" class="size-10 rounded-full border object-cover" />
-				<p class="text-sm font-medium">{row.name}</p>
-				<Badge color="green" class="h-min w-min justify-self-end whitespace-nowrap text-sm"
-					>{row.incidence}</Badge
-				>
-			{/each}
+		<CardContent class="max-h-[calc(100%-1.5rem)] px-0" chart>
+			<div
+				class="grid max-h-full grid-cols-[auto_1fr_auto] place-items-start items-center gap-4 overflow-auto px-4"
+			>
+				{#each dailyIncidencesList as row}
+					<img src={getImage(row.photo)} alt="" class="size-10 rounded-full border object-cover" />
+					<p class="text-sm font-medium">{row.name}</p>
+					<Badge color="green" class="h-min w-min justify-self-end whitespace-nowrap text-sm"
+						>{row.incidence}</Badge
+					>
+				{/each}
+			</div>
 		</CardContent>
 	</Card>
 
-	<Card class="col-span-8 max-h-96  w-full max-w-full">
+	<Card class="col-span-9 w-full max-w-full">
 		<CardHeader>
 			<CardTitle>Asistencia semanal</CardTitle>
 		</CardHeader>
 		<CardContent chart>
 			{#if assistance}
-				<LineChart label="Asistencia" data={assistance} color="green" minValue={0} maxValue={99}
+				<LineChart
+					label="Asistencia"
+					data={assistance}
+					color="green"
+					minValue={0}
+					maxValue={99}
+					stepSize={25}
 				></LineChart>
 			{/if}
-		</CardContent>
-	</Card>
-
-	<Card class="col-span-3 w-full max-w-full">
-		<div class="flex flex-col justify-between">
-			<CardHeader>
-				<CardTitle>Empleados</CardTitle>
-			</CardHeader>
-			<CardContent>
-				<p class="flex h-10 items-center text-base font-normal text-gray-500 dark:text-gray-400">
-					{activeEmployees} / <Input
-						onblur={updateTemplate}
-						bind:value={employeeTemplate}
-						class="ml-1 w-10 p-0 text-center !text-base font-normal text-gray-500 dark:text-gray-400"
-					/>
-				</p>
-			</CardContent>
-		</div>
-
-		<div class="mt-0 h-80">
-			{#if employeeTemplate && activeEmployees}
-				<PieChart
-					label="empleados"
-					data={[
-						{ value: activeEmployees, name: 'Cumplido' },
-						{ value: parseInt(employeeTemplate) - activeEmployees, name: 'Faltante' }
-					]}
-				></PieChart>
-			{/if}
-		</div>
-	</Card>
-
-	<Card class="col-span-3 w-full max-w-full">
-		<CardHeader>
-			<CardTitle>Incidencias diarias</CardTitle>
-		</CardHeader>
-		<CardContent>
-			<div>
-				{#if dailyIncidences[0]}
-					<PieChart label="Incidencias" data={dailyIncidences}></PieChart>
-				{/if}
-			</div>
-		</CardContent>
-	</Card>
-
-	<Card class="col-span-3 max-h-48 w-full max-w-full">
-		<CardHeader>
-			<CardTitle>Incidencias diarias por area</CardTitle>
-		</CardHeader>
-
-		<CardContent>
-			<PieChart label="Incidencias" data={areaIncidences}></PieChart>
-			<Select items={areas} bind:value={areaSelected} />
-		</CardContent>
-	</Card>
-
-	<Card class="col-span-3 max-h-48 w-full max-w-full">
-		<CardHeader>
-			<CardTitle>Rotacion</CardTitle>
-		</CardHeader>
-		<CardContent>
-			<p>
-				{rotation.toFixed(2)}%
-			</p>
 		</CardContent>
 	</Card>
 
@@ -249,19 +187,68 @@
 		<CardHeader>
 			<CardTitle>Cumpleaños del mes</CardTitle>
 		</CardHeader>
-		<CardContent class="grid grid-cols-[auto_1fr_auto] gap-4 overflow-auto">
-			{#each birthDays as row}
-				<img src={getImage(row.photo)} alt="" class="size-10 rounded-full border object-cover" />
-				<div>
-					<p class="text-sm font-medium">{row.name}</p>
-					<p class="text-muted-foreground text-xs">{formatDate(row.bornDate)}</p>
-				</div>
-				<div class="p-0">
-					<Button size="icon" variant="ghost" onclick={() => getBirthdayPhoto(row.noEmpleado)}>
-						<Download class="size-3.5" />
-					</Button>
-				</div>
-			{/each}
+		<CardContent class="max-h-[calc(100%-1.5rem)] px-0" chart>
+			<div class="grid max-h-full grid-cols-[auto_1fr_auto] gap-4 overflow-auto px-4">
+				{#each birthDays as row}
+					<img src={getImage(row.photo)} alt="" class="size-10 rounded-full border object-cover" />
+					<div>
+						<p class="text-sm font-medium">{row.name}</p>
+						<p class="text-muted-foreground text-xs">{formatDate(row.bornDate)}</p>
+					</div>
+					<div class="p-0">
+						<Button size="icon" variant="ghost" onclick={() => getBirthdayPhoto(row.noEmpleado)}>
+							<Download class="size-3.5" />
+						</Button>
+					</div>
+				{/each}
+			</div>
+		</CardContent>
+	</Card>
+
+	<Card class="col-span-3 w-full max-w-full">
+		<CardHeader>
+			<CardTitle>Contratos pendientes</CardTitle>
+		</CardHeader>
+		<CardContent class="max-h-[calc(100%-1.5rem)] px-0" chart>
+			<div class="grid max-h-full grid-cols-[auto_1fr_auto] gap-4 overflow-auto px-4">
+				{#each contractExpiration as row}
+					<img src={getImage(row.photo)} alt="" class="size-10 rounded-full border object-cover" />
+					<div>
+						<p class="text-sm font-medium">{row.name}</p>
+						<p class="text-muted-foreground text-xs">{formatDate(row.next_renewal_date)}</p>
+					</div>
+					<div class="p-0 text-sm">
+						{contractTypes[row.contract + 1]}
+					</div>
+				{/each}
+			</div>
+		</CardContent>
+	</Card>
+
+	<Card class="col-span-3 w-full max-w-full">
+		<CardHeader>
+			<CardTitle>Incidencias diarias</CardTitle>
+		</CardHeader>
+		<CardContent chart class="flex flex-col items-center pb-16">
+			{#if dailyIncidences[0]}
+				<PieChart data={dailyIncidences}></PieChart>
+			{/if}
+		</CardContent>
+	</Card>
+
+	<Card class="col-span-3 w-full max-w-full">
+		<CardHeader>
+			<CardTitle>Incidencias diarias por area</CardTitle>
+		</CardHeader>
+
+		<CardContent chart class="flex flex-col items-center pb-16">
+			<PieChart data={areaIncidences}></PieChart>
+			<Select
+				items={areas}
+				bind:value={areaSelected}
+				placeholder="Selecciona un area"
+				class="mt-2"
+			/>
 		</CardContent>
 	</Card>
 </DashboardBody>

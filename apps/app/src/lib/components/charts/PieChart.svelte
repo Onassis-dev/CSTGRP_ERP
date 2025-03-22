@@ -1,41 +1,40 @@
 <script lang="ts">
 	import { run } from 'svelte/legacy';
 	import Chart from 'chart.js/auto';
-	import { type ColorKeys, colors } from '../../utils/colors';
+	import { greens } from '../../utils/colors';
 	import { browser } from '$app/environment';
 	interface Props {
 		data: { value: number; name: string }[];
-		label: string;
 	}
 
-	let { data, label }: Props = $props();
+	let { data }: Props = $props();
 
-	let canvas: HTMLCanvasElement = $state();
-
-	let maxValue = $derived(Math.max(...data.map((e) => e.value)));
+	let canvas: HTMLCanvasElement | undefined = $state();
 
 	const drawChart = () => {
+		if (!canvas) return;
 		if (Chart.getChart(canvas)) {
 			Chart.getChart(canvas)?.destroy();
 		}
 
 		new Chart(canvas, {
-			type: 'doughnut',
+			type: 'pie',
 
 			data: {
 				labels: data.map((row) => row.name),
 				datasets: [
 					{
-						label: label,
 						data: data.map((row) => row.value),
-						backgroundColor: Object.keys(colors).map((key) => colors[key].balanced)
+						backgroundColor: greens,
+						borderAlign: 'center',
+						borderWidth: 0
 					}
 				]
 			},
 
 			options: {
 				responsive: true,
-				maintainAspectRatio: false,
+				maintainAspectRatio: true,
 				interaction: {
 					intersect: false,
 					axis: 'x'
@@ -43,8 +42,7 @@
 				layout: {},
 				plugins: {
 					legend: {
-						display: true,
-						position: 'bottom'
+						display: false
 					},
 					tooltip: {
 						backgroundColor: '#fff',
@@ -56,6 +54,13 @@
 						mode: 'index',
 						displayColors: true
 					}
+				},
+				cutout: '60%',
+				radius: '90%',
+				hoverBorderColor: 'transparent',
+				animation: {
+					animateScale: false,
+					animateRotate: false
 				}
 			}
 		});

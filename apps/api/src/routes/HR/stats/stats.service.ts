@@ -13,6 +13,51 @@ export class StatsService {
     return rows;
   }
 
+  async contractExpiration() {
+    const today = new Date();
+
+    const fiveDaysAhead = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate() + 5,
+    );
+
+    // Calculate renewal dates based on admission date and contract number
+    const rows = await sql`
+      SELECT 
+        "noEmpleado", 
+        photo, 
+        CONCAT(name, ' ', "paternalLastName", ' ', "maternalLastName") as name, 
+        "admissionDate", 
+        contract,
+        CASE 
+          WHEN contract = 0 THEN "admissionDate" -- Initial contract
+          WHEN contract = 1 THEN "admissionDate" + INTERVAL '1 month' -- First renewal
+          WHEN contract = 2 THEN "admissionDate" + INTERVAL '2 months' -- Second renewal
+          WHEN contract = 3 THEN "admissionDate" + INTERVAL '3 months' -- Third renewal (before indefinite)
+        END as next_renewal_date
+
+      FROM employees
+      WHERE 
+        -- Only include employees with contracts 0-3 (pre-indefinite contract)
+        contract < 4
+        -- Alert when renewal date is today, in the past (overdue), or within next 5 days
+        AND (
+          CASE 
+            WHEN contract = 0 THEN "admissionDate"
+            WHEN contract = 1 THEN "admissionDate" + INTERVAL '1 month'
+            WHEN contract = 2 THEN "admissionDate" + INTERVAL '2 months'
+            WHEN contract = 3 THEN "admissionDate" + INTERVAL '3 months'
+          END
+        ) <= ${fiveDaysAhead}
+      ORDER BY next_renewal_date
+    `;
+
+    console.log(rows);
+
+    return rows;
+  }
+
   async weeklyFires(body: z.infer<typeof dateSchema>) {
     const [firstDate] = getWeekDays(body.date);
     const rows =
@@ -74,6 +119,29 @@ export class StatsService {
     return rows;
   }
 
+  async dailyAssistance(body: z.infer<typeof dateSchema>) {
+    const [firstDate] = getWeekDays(body.date);
+    let dayNumber = getDayNumber(body.date);
+    if (dayNumber === 5 || dayNumber === -1) dayNumber = 4;
+
+    const total = await sql`
+      SELECT COUNT(*) as count 
+      FROM assistance 
+      WHERE "mondayDate" = ${firstDate}
+    `;
+
+    const present = await sql`
+      SELECT COUNT(*) as count 
+      FROM assistance 
+      WHERE "mondayDate" = ${firstDate} 
+      AND ${sql('incidenceId' + dayNumber)} = 1
+    `;
+
+    return (
+      (Number(present[0].count) / Number(total[0].count)) * 100 || 0
+    ).toFixed(2);
+  }
+
   async dailyIncidencesList(body: z.infer<typeof dateSchema>) {
     const [firstDate] = getWeekDays(body.date);
     let dayNumber = getDayNumber(body.date);
@@ -116,13 +184,12 @@ export class StatsService {
     const dayMiliSeconds = 24 * 60 * 60 * 1000;
 
     const initialDate = new Date(
-      new Date(firstDate).getTime() - 28 * dayMiliSeconds,
+      new Date(firstDate).getTime() - 365 * dayMiliSeconds,
     )
       .toISOString()
       .split('T')[0];
-    const finalDate = new Date(
-      new Date(secondDate).getTime() - 7 * dayMiliSeconds,
-    )
+
+    const finalDate = new Date(new Date(secondDate).getTime())
       .toISOString()
       .split('T')[0];
 
@@ -138,8 +205,10 @@ export class StatsService {
 
     const initalEmployees = finalEmployees + fires - hires;
 
-    const result =
-      ((fires + hires) / 2 / ((initalEmployees + finalEmployees) / 2)) * 100;
+    const result = (
+      ((fires + hires) / 2 / ((initalEmployees + finalEmployees) / 2)) *
+      100
+    ).toFixed(2);
 
     return result;
   }

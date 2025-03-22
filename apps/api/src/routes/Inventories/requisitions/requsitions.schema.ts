@@ -15,7 +15,7 @@ export const requisitionSchema = z.object({
   motive: z.string(),
   areaId: z.string(),
   code: z.string(),
-  requested: z.string().refine((v) => /^\d*(?:\.\d{1,2})?$/.test(v)),
+  requested: z.string().regex(/^\d*(?:\.\d{1,2})?$/),
   jobIds: z.array(z.string()).transform((v) => v.map((vv) => Number(vv))),
 });
 
@@ -26,7 +26,7 @@ export const suppliesSchema = z.object({
   materials: z.array(
     z.object({
       code: z.string(),
-      amount: z.string().refine((v) => /^\d*(?:\.\d{1,2})?$/.test(v)),
+      amount: z.string().regex(/^\d*(?:\.\d{1,2})?$/),
     }),
   ),
 });

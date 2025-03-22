@@ -162,7 +162,7 @@
 							<TableCell class="p-0 px-[1px]"
 								><Input
 									class="rounded-none border-none"
-									type="number"
+									type="text"
 									bind:value={materials[i].amount}
 								/></TableCell
 							>

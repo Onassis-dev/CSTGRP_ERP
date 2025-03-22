@@ -21,13 +21,14 @@
 		stepSize = undefined,
 		minValue = undefined
 	}: Props = $props();
-	let canvas: HTMLCanvasElement = $state();
+	let canvas: HTMLCanvasElement | undefined = $state();
 
 	run(() => {
 		if (!maxValue) maxValue = Math.max(...data.map((e) => e.value));
 	});
 
 	const drawChart = () => {
+		if (!canvas) return;
 		if (Chart.getChart(canvas)) {
 			Chart.getChart(canvas)?.destroy();
 		}
@@ -56,6 +57,10 @@
 			options: {
 				responsive: true,
 				maintainAspectRatio: false,
+				animation: {
+					duration: 0
+				},
+
 				interaction: {
 					intersect: false,
 					axis: 'x'

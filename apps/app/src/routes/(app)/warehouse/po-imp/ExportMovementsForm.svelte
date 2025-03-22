@@ -170,14 +170,14 @@
 							<TableCell class="p-0 px-[1px]"
 								><Input
 									class="rounded-none border-none !opacity-100"
-									type="number"
+									type="text"
 									bind:value={materials[i].amount}
 								/></TableCell
 							>
 							<TableCell class="p-0 px-[1px]"
 								><Input
 									class="rounded-none border-none !opacity-100"
-									type="number"
+									type="text"
 									bind:value={materials[i].realAmount}
 								/></TableCell
 							>

@@ -105,7 +105,7 @@
 						<Select items={measurements} bind:value={formData.measurement} />
 					</Label>
 					<Label name="Cantidad minima">
-						<Input name="" type="number" bind:value={formData.minAmount} />
+						<Input name="" type="text" bind:value={formData.minAmount} />
 					</Label>
 				</div>
 

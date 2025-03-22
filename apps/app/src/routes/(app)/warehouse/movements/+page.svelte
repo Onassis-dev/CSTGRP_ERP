@@ -166,9 +166,9 @@
 					><Input
 						menu
 						class="w-24"
-						type="number"
+						type="text"
 						bind:value={movement.realAmount}
-						on:blur={() => changeAmount(movement.id, movement.realAmount)}
+						onblur={() => changeAmount(movement.id, movement.realAmount)}
 					/></TableCell
 				>
 				<TableCell>{movement.measurement}</TableCell>

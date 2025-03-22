@@ -86,7 +86,7 @@ export const createSchema = z.object({
   nationality: z.string().min(1).optional().nullable(),
   positionId: z.number(),
   route: z.string().min(1).optional().nullable(),
-  contract: z.string().min(1).optional().nullable(),
+  contract: z.number().min(0).optional().nullable(),
 });
 
 export const editSchema = z.object({
@@ -180,7 +180,7 @@ export const editSchema = z.object({
   quitNotes: z.string().optional().optional().nullable(),
   quitReason: z.string().min(1).optional().nullable(),
   route: z.string().min(1).optional().nullable(),
-  contract: z.string().min(1).optional().nullable(),
+  contract: z.number().min(0).optional().nullable(),
 });
 
 export const reactivateSchema = z.object({

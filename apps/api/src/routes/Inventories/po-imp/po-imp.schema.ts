@@ -16,7 +16,7 @@ export const importSchema = z.object({
   materials: z.array(
     z.object({
       code: z.string(),
-      amount: z.string(),
+      amount: z.string().regex(/^\d*(?:\.\d{1,2})?$/),
     }),
   ),
 });
@@ -28,8 +28,8 @@ export const exportSchema = z.object({
   materials: z.array(
     z.object({
       code: z.string(),
-      amount: z.string(),
-      realAmount: z.string(),
+      amount: z.string().regex(/^\d*(?:\.\d{1,2})?$/),
+      realAmount: z.string().regex(/^\d*(?:\.\d{1,2})?$/),
       active: z.boolean(),
     }),
   ),
@@ -40,7 +40,12 @@ export const updateImportSchema = z.object({
   due: z.string(),
   import: z.string(),
   location: z.string(),
-  materials: z.array(z.any()),
+  materials: z.array(
+    z.object({
+      code: z.string(),
+      amount: z.string().regex(/^\d*(?:\.\d{1,2})?$/),
+    }),
+  ),
 });
 
 export const updateExportSchema = z.object({
@@ -48,5 +53,12 @@ export const updateExportSchema = z.object({
   due: z.string(),
   jobpo: z.string(),
   programation: z.string(),
-  materials: z.array(z.any()),
+  materials: z.array(
+    z.object({
+      code: z.string(),
+      amount: z.string().regex(/^\d*(?:\.\d{1,2})?$/),
+      realAmount: z.string().regex(/^\d*(?:\.\d{1,2})?$/),
+      active: z.boolean(),
+    }),
+  ),
 });

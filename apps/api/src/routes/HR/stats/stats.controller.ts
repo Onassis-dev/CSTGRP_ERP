@@ -41,6 +41,11 @@ export class StatsController {
     return this.statsService.assistanceInfo(params);
   }
 
+  @Get('dailyassistance/:date')
+  dailyAssistance(@Param(new ZodPiPe(dateSchema)) params) {
+    return this.statsService.dailyAssistance(params);
+  }
+
   @Get('areaassistanceinfo')
   areaAssistanceInfo(@Query(new ZodPiPe(areaAssistanceInfoSchema)) query) {
     return this.statsService.areaAssistanceInfo(query);
@@ -59,5 +64,10 @@ export class StatsController {
   @Get('employeetemplate')
   employeeTemplate() {
     return this.statsService.employeeTemplate();
+  }
+
+  @Get('contractexpiration')
+  contractExpiration() {
+    return this.statsService.contractExpiration();
   }
 }

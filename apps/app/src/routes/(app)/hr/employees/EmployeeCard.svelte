@@ -90,9 +90,10 @@
 	];
 
 	const contracts = [
-		{ value: 'Primer contrato', name: 'Primer contrato' },
-		{ value: 'Segundo contrato', name: 'Segundo contrato' },
-		{ value: 'Contrato indefinido', name: 'Contrato indefinido' }
+		{ value: 1, name: 'Primer contrato' },
+		{ value: 2, name: 'Segundo contrato' },
+		{ value: 3, name: 'Tercer contrato' },
+		{ value: 4, name: 'Contrato indefinido' }
 	];
 
 	let areas: any = $state();
@@ -471,7 +472,10 @@
 						</div>
 						<div>
 							<p class="text-muted-foreground text-xs">Tipo de contrato:</p>
-							<DisplayInput value={formData.contract} {edit}>
+							<DisplayInput
+								value={contracts.find((c: any) => c.value === formData.contract)?.name}
+								{edit}
+							>
 								<Select items={contracts} bind:value={formData.contract} />
 							</DisplayInput>
 						</div>

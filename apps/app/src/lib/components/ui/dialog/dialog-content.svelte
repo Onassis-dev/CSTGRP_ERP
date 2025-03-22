@@ -4,6 +4,7 @@
 	import type { Snippet } from 'svelte';
 	import * as Dialog from './index.js';
 	import { cn } from '$lib/utils.js';
+	import Conversor from '$lib/components/layout/Conversor.svelte';
 
 	let {
 		ref = $bindable(null),
@@ -27,6 +28,7 @@
 		)}
 		{...restProps}
 	>
+		<Conversor />
 		{@render children?.()}
 		<DialogPrimitive.Close
 			class="ring-offset-background focus:ring-ring absolute right-4 top-5 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none"

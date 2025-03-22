@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
 	import Label from '$lib/components/basic/Label.svelte';
 	import MaterialInput from '$lib/components/basic/MaterialInput.svelte';
 	import Select from '$lib/components/basic/Select.svelte';
@@ -24,7 +22,7 @@
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
 	import { Trash } from 'lucide-svelte';
-	import { onMount } from 'svelte';
+	import { onMount, untrack } from 'svelte';
 	import Cookies from 'js-cookie';
 	interface Props {
 		show: boolean;
@@ -73,15 +71,13 @@
 		materials = materials;
 	}
 
-	function cleanData() {
-		materials = [{ code: '', measurement: '', amount: '' }];
-	}
-
 	onMount(() => {
 		fetchOptions();
 	});
-	run(() => {
-		if (!show || show) cleanData();
+
+	$effect(() => {
+		show;
+		materials = [{ code: '', measurement: '', amount: '' }];
 	});
 </script>
 
@@ -123,7 +119,7 @@
 							<TableCell class="p-0 px-[1px]"
 								><Input
 									class="rounded-none border-none"
-									type="number"
+									type="text"
 									bind:value={materials[i].amount}
 								/></TableCell
 							>
@@ -132,7 +128,7 @@
 								><Button
 									onclick={() => deleteMaterial(i)}
 									variant="ghost"
-									class="aspect-square p-1 text-destructive-foreground"
+									class="text-destructive-foreground aspect-square p-1"
 									><Trash class="size-5" /></Button
 								></TableCell
 							>

@@ -22,6 +22,7 @@
 	import { cn } from '$lib/utils';
 	import { browser } from '$app/environment';
 	import { hasAccess } from '$lib/utils/functions';
+	import Notes from './Notes.svelte';
 
 	let showModal = $state(false);
 
@@ -52,6 +53,12 @@
 		<img src="/logo.png" alt="logo" class="h-6 w-6" />
 		CST Group
 	</a>
+
+	{#if hasAccess('resources')}
+		<div class="-y-1 mt-2 px-2 pb-2">
+			<Notes />
+		</div>
+	{/if}
 
 	<Accordion.Root class="px-2 pt-2" type="single">
 		{#if hasAccess('inventory') || hasAccess('materialmovements') || hasAccess('requisitions') || hasAccess('poimp')}

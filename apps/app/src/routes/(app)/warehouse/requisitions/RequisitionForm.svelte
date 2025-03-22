@@ -58,13 +58,32 @@
 	}
 
 	async function handleSubmit() {
-		await api.post('requisitions', {
-			...formData,
-			jobIds: jobs.filter((v) => v.selected).map((v) => v.id)
-		});
-		showSuccess('Requisicion registrado');
+		const data = await api.post(
+			'requisitions',
+			{
+				...formData,
+				jobIds: jobs.filter((v) => v.selected).map((v) => v.id)
+			},
+			{ responseType: 'arraybuffer' }
+		);
+		data.data.forEach((v: any) => download({ response: { data: v } }));
 
 		show = false;
+	}
+
+	async function download(response: any) {
+		console.log(response);
+		const blob = new Blob([response.data], {
+			type: 'application/pdf'
+		});
+
+		const link = document.createElement('a');
+		link.href = URL.createObjectURL(blob);
+		link.target = '_blank';
+
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
 	}
 
 	const motives = [
