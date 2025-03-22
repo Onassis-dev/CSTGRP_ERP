@@ -2,7 +2,7 @@
 	import { Toaster } from '$lib/components/ui/sonner';
 	import { showError } from '$lib/utils/showToast';
 	import { onDestroy, onMount } from 'svelte';
-	import '../../../app.css';
+	import '../../app.css';
 	import { browser } from '$app/environment';
 	interface Props {
 		children?: import('svelte').Snippet;

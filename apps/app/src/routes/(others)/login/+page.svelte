@@ -19,6 +19,8 @@
 	async function login(e: Event) {
 		e.preventDefault();
 		await api.post('/auth/login', credentials);
+		if (credentials.username === 'kiosko') return goto('/kiosko');
+
 		goto('/');
 		showSuccess('Sesión iniciada');
 	}

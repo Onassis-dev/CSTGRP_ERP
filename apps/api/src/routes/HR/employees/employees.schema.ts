@@ -75,7 +75,7 @@ export const createSchema = z.object({
   positionType: z.string().min(1).optional().nullable(),
   shift: z.string().min(1).optional().nullable(),
   nominaSalary: z.number().min(0).optional().nullable(),
-  immsSalary: z.number().min(0).optional().nullable(),
+  immsSalary: z.string().or(z.number()).optional().nullable(),
   studies: z.string().min(1).optional().nullable(),
   bornDate: z
     .string()
@@ -160,7 +160,7 @@ export const editSchema = z.object({
   positionType: z.string().min(1).optional().nullable(),
   shift: z.string().min(1).optional().nullable(),
   nominaSalary: z.number().min(0).optional().nullable(),
-  immsSalary: z.number().min(0).optional().nullable(),
+  immsSalary: z.string().or(z.number()).optional().nullable(),
   studies: z.string().min(1).optional().nullable(),
   bornDate: z
     .string()

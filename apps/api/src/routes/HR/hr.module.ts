@@ -7,6 +7,7 @@ import { ProductivityModule } from './productivity/productivity.module';
 import { RecordsModule } from './records/records.module';
 import { EvaluationsModule } from './evaluations/evaluations.module';
 import { DocumentsModule } from './documents/documents.module';
+import { KioskModule } from './kiosk/kiosk.module';
 @Module({
   imports: [
     EmployeesModule,
@@ -18,6 +19,7 @@ import { DocumentsModule } from './documents/documents.module';
     EvaluationsModule,
     DocumentsModule,
     EvaluationsModule,
+    KioskModule,
   ],
 })
 export class HRModule {}
