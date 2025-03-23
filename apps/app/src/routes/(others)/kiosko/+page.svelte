@@ -18,8 +18,8 @@
 
 	let isLoading = true;
 
-	let numberEmployee = $state('10259');
-	let rfc = $state('478');
+	let numberEmployee = $state('');
+	let rfc = $state('');
 	let employee: Record<string, string> | null = $state(null);
 
 	let activeInput: 'no' | 'rfc' | '' = $state('');
