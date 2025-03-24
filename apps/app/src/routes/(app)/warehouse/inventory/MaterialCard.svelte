@@ -1,7 +1,5 @@
 <script lang="ts">
 	import { run } from 'svelte/legacy';
-
-	import { Image } from 'lucide-svelte';
 	import { Badge } from '$lib/components/ui/badge';
 	import {
 		Dialog,
@@ -20,6 +18,8 @@
 	} from '$lib/components/ui/table';
 	import { formatDate, getImage } from '$lib/utils/functions';
 	import api from '$lib/utils/server';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import { Download } from 'lucide-svelte';
 
 	interface Props {
 		show: boolean;
@@ -38,6 +38,26 @@
 			fetchData();
 		}
 	});
+
+	async function downloadMovements() {
+		const response = await api.get('/inventory/history/download/' + selectedMaterial.id, {
+			responseType: 'arraybuffer'
+		});
+
+		const blob = new Blob([response.data], {
+			type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+		});
+
+		const link = document.createElement('a');
+		link.href = URL.createObjectURL(blob);
+		link.download = `${selectedMaterial.code}.xlsx`;
+
+		document.body.appendChild(link);
+
+		link.click();
+
+		document.body.removeChild(link);
+	}
 </script>
 
 <Dialog bind:open={show}>
@@ -48,7 +68,12 @@
 			</DialogTitle>
 		</DialogHeader>
 		<DialogBody class="h-full max-w-full">
-			<div class="mb-4">Ubicacion: {selectedMaterial.location}</div>
+			<div class="mb-4 flex items-center gap-2">
+				<Button variant="outline" size="icon" onclick={downloadMovements}>
+					<Download />
+				</Button>
+				<div>Ubicacion: {selectedMaterial.location}</div>
+			</div>
 			<img src={getImage(selectedMaterial.image)} alt="" class="w-full" />
 
 			<Table>

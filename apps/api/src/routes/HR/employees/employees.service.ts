@@ -295,7 +295,7 @@ export class EmployeesService {
 
   async exportBasic() {
     const workbook = new exceljs.Workbook();
-    const worksheet = workbook.addWorksheet('Inventario');
+    const worksheet = workbook.addWorksheet('Empleados');
 
     const rows =
       await sql`select CONCAT(employees.name, ' ', "paternalLastName", ' ', "maternalLastName") as "name", "noEmpleado", positions.name as position, areas.name as area from employees

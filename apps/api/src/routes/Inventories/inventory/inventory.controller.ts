@@ -21,6 +21,11 @@ export class InventoryController {
     return this.inventoryService.getMaterialMovements(params);
   }
 
+  @Get('history/download/:id')
+  exportMaterialMovements(@Param(new ZodPiPe(idSchema)) params) {
+    return this.inventoryService.exportMaterialmMovements(params);
+  }
+
   @Get('comparison/:id')
   getMaterialComparison(@Param(new ZodPiPe(idSchema)) params) {
     return this.inventoryService.getMaterialComparison(params);

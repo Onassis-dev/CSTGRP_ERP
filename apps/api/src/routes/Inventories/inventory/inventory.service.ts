@@ -41,6 +41,36 @@ export class InventoryService {
     return movements;
   }
 
+  async exportMaterialmMovements(body: z.infer<typeof idSchema>) {
+    const workbook = new exceljs.Workbook();
+    const worksheet = workbook.addWorksheet('Movimientos');
+
+    const movments = await this.getMaterialMovements(body);
+    const rows = movments.map((movement) => ({
+      ...movement,
+      jobpo: movement.jobpo || '' + (movement.extra ? ' -R' : ''),
+    }));
+
+    worksheet.columns = [
+      { header: 'Job', key: 'jobpo', width: 15 },
+      { header: 'Programación', key: 'programation', width: 15 },
+      { header: 'Importación', key: 'import', width: 15 },
+      { header: 'Cantidad Job', key: 'amount', width: 15 },
+      { header: 'Cantidad Real', key: 'realAmount', width: 15 },
+      { header: 'Fecha', key: 'activeDate', width: 15 },
+      { header: 'Balance', key: 'balance', width: 15 },
+      { header: 'Total Balance', key: 'totalBalance', width: 15 },
+    ];
+
+    worksheet.addRows(rows);
+
+    worksheet.getRow(1).eachCell((cell) => {
+      cell.style = { font: { bold: true } };
+    });
+
+    return workbook.xlsx.writeBuffer();
+  }
+
   async getMaterialComparison(body: z.infer<typeof idSchema>) {
     const movements = await sql`SELECT
     materialmovements."activeDate" as due,
