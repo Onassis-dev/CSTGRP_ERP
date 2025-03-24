@@ -30,10 +30,11 @@
 	let contractExpiration: any[] = $state([]);
 
 	const contractTypes = {
-		0: 'Sin contrato',
+		0: 'Prueba',
 		1: 'Primer contrato',
 		2: 'Segundo contrato',
-		3: 'Tercer contrato'
+		3: 'Tercer contrato',
+		4: 'Base'
 	};
 
 	function fetchConstData() {

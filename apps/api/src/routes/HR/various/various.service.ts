@@ -24,7 +24,7 @@ export class VariousService {
   async generateImage(query) {
     // Get employee data from database
     const [employee] =
-      await sql`select "bornDate", photo, name from employees where "noEmpleado" = ${query.noEmpleado}`;
+      await sql`select "bornDate", photo, CONCAT(name, ' ', "paternalLastName", ' ', "maternalLastName") as name from employees where "noEmpleado" = ${query.noEmpleado}`;
 
     // Define paths
     const baseImagePath = path.resolve(
@@ -119,10 +119,10 @@ export class VariousService {
     // Configure text styles
     ctx.textAlign = 'center';
     ctx.textBaseline = 'top';
-    ctx.fillStyle = '#0066ff';
+    ctx.fillStyle = '#3662ac';
 
     // Print first part of name
-    ctx.font = '80px Coustard';
+    ctx.font = '60px Coustard';
     ctx.fillText(text, baseImage.width / 2, 1260);
 
     // Print second part of name (if it exists)
@@ -131,8 +131,8 @@ export class VariousService {
     }
 
     // Print date
-    ctx.font = '40px Coustard';
-    ctx.fillText(text1, baseImage.width / 2, 1450);
+    ctx.font = '50px Coustard';
+    ctx.fillText(text1, baseImage.width / 2, 1440);
 
     // Convert canvas to buffer
     const buffer = canvas.toBuffer('image/jpeg');

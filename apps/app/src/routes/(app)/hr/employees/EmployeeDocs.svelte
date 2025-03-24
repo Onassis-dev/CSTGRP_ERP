@@ -47,8 +47,7 @@
 		'COMPROBANTE DE DOMICILIO',
 		'COMPROBANTE DE ESTUDIOS',
 		'RFC',
-		'NSS',
-		'PROTESTO SECUNDARIA '
+		'NSS'
 	];
 
 	async function fetchData() {
