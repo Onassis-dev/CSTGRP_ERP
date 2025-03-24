@@ -30,7 +30,7 @@ export class DirectoryService {
     const emails =
       await sql`select id as value, email as name from emails order by email`;
     const employees =
-      await sql`select id as value, name from employees order by name`;
+      await sql`select id as value, concat(name, ' ', "paternalLastName", ' ', "maternalLastName") as name from employees order by name`;
 
     return { emails, employees };
   }
