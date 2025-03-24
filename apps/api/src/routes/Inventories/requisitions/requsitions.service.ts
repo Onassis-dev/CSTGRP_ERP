@@ -26,7 +26,7 @@ export class RequisitionsService {
       WHERE
       NOT materialmovements.active AND
       NOT materialmovements.extra AND
-      (select folio from requisitions where jobs LIKE CONCAT('%', materialie.jobpo, '%') and materialie.jobpo is not null and requisitions."materialId" = materials.id) is null AND
+      (select STRING_AGG(folio, ', ') from requisitions where jobs LIKE CONCAT('%', materialie.jobpo, '%') and materialie.jobpo is not null and requisitions."materialId" = materials.id) is null AND
       ${body.jobpo ? sql`materialie.jobpo = ${body.jobpo}` : sql`TRUE`} AND
       ${body.programation ? sql`materialie.programation = ${body.programation}` : sql`TRUE`} AND
       ${body.code ? sql`materials.code LIKE ${'%' + body.code + '%'}` : sql`TRUE`}
