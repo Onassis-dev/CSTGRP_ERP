@@ -15,7 +15,7 @@ export const movementsFilterSchema = z.object({
 
 export const updateAmountSchema = z.object({
   id: z.string(),
-  newAmount: z.string().regex(/^\d*(?:\.\d{1,2})?$/),
+  newAmount: z.string().regex(/^-?\d*(?:\.\d{1,2})?$/),
 });
 
 export const scrapSchema = z.object({
