@@ -53,8 +53,6 @@ export class StatsService {
       ORDER BY next_renewal_date
     `;
 
-    console.log(rows);
-
     return rows;
   }
 

@@ -36,25 +36,29 @@
 		3: 'Tercer contrato'
 	};
 
-	async function fetchConstData() {
-		areas = (await api.get('/hrvarious/areas')).data;
-		areaSelected = areas.find((area) => area.name.toUpperCase() === 'ADMINISTRACION').value;
-		employeeTemplate = (await api.get('/hrstats/employeetemplate')).data[0].value;
-		activeEmployees = (await api.get('/hrstats/activeemployees')).data[0].count;
-		contractExpiration = (await api.get('/hrstats/contractexpiration')).data;
-		await getDailyData();
+	function fetchConstData() {
+		api.get('/hrvarious/areas').then((res) => {
+			areas = res.data;
+			areaSelected = areas.find((area) => area.name.toUpperCase() === 'ADMINISTRACION').value;
+		});
+		api.get('/hrstats/employeetemplate').then((res) => (employeeTemplate = res.data[0].value));
+		api.get('/hrstats/activeemployees').then((res) => (activeEmployees = res.data[0].count));
+		api.get('/hrstats/contractexpiration').then((res) => (contractExpiration = res.data));
+		getDailyData();
 	}
 
-	async function getDailyData() {
-		assistance = (await api.get('/hrstats/assistance/' + selectedDate)).data;
-		rotation = (await api.get('/hrstats/employeerotation/' + selectedDate)).data;
-		dailyIncidences = (await api.get('/hrstats/assistanceinfo/' + selectedDate)).data;
-		dailyAssistance = (await api.get('/hrstats/dailyassistance/' + selectedDate)).data;
-		areaIncidences = (
-			await api.get(`/hrstats/areaassistanceinfo?areaId=${areaSelected}&date=${selectedDate}`)
-		).data;
-		dailyIncidencesList = (await api.get(`/hrstats/dailyincidenceslist/${selectedDate}`)).data;
-		birthDays = (await api.get(`/hrstats/birthdays/${selectedDate}`)).data;
+	function getDailyData() {
+		api.get('/hrstats/assistance/' + selectedDate).then((res) => (assistance = res.data));
+		api.get('/hrstats/employeerotation/' + selectedDate).then((res) => (rotation = res.data));
+		api.get('/hrstats/assistanceinfo/' + selectedDate).then((res) => (dailyIncidences = res.data));
+		api.get('/hrstats/dailyassistance/' + selectedDate).then((res) => (dailyAssistance = res.data));
+		api
+			.get(`/hrstats/areaassistanceinfo?areaId=${areaSelected}&date=${selectedDate}`)
+			.then((res) => (areaIncidences = res.data));
+		api
+			.get(`/hrstats/dailyincidenceslist/${selectedDate}`)
+			.then((res) => (dailyIncidencesList = res.data));
+		api.get(`/hrstats/birthdays/${selectedDate}`).then((res) => (birthDays = res.data));
 	}
 
 	async function refetchAreaIncidences() {
