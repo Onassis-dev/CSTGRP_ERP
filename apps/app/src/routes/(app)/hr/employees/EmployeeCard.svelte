@@ -84,9 +84,11 @@
 	];
 
 	const routes = [
-		{ value: 'Ruta 1', name: 'Ruta 1' },
-		{ value: 'Ruta 2', name: 'Ruta 2' },
-		{ value: 'Ruta 3', name: 'Ruta 3' }
+		{ value: '5y10 - Otay', name: '5y10 - Otay' },
+		{ value: 'Nido - 10 de Mayo', name: 'Nido - 10 de Mayo' },
+		{ value: 'Mariano - Chilpancingo', name: 'Mariano - Chilpancingo' },
+		{ value: 'Villa del Campo - Terrazas', name: 'Villa del Campo - Terrazas' },
+		{ value: 'Delicias - Natura', name: 'Delicias - Natura' }
 	];
 
 	const contracts = [
