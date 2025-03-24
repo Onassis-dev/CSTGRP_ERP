@@ -1,4 +1,5 @@
 <script lang="ts">
+	import * as Popover from '$lib/components/ui/popover/index.js';
 	import { run } from 'svelte/legacy';
 	import { Tabs, TabsContent, TabsList, TabsTrigger } from '$lib/components/ui/tabs';
 	import { Dialog, DialogBody } from '$lib/components/ui/dialog';
@@ -226,7 +227,7 @@
 				<div
 					class="mb-8 grid grid-cols-[auto_1fr] grid-rows-[auto_auto] items-center gap-x-6 gap-y-1"
 				>
-					<div class="relative row-span-2 aspect-square w-24 cursor-pointer rounded-lg border">
+					<div class="relative row-span-2 aspect-square size-24 cursor-pointer rounded-lg border">
 						<div class="absolute -right-2.5 -top-2.5">
 							{#if edit}
 								<Button
@@ -248,14 +249,33 @@
 							{/if}
 						</div>
 
-						<label class="aspect-square w-full">
-							<img
-								class="h-full w-full cursor-pointer rounded-lg object-cover"
-								src={preview || '/person.svg'}
-								alt=""
-							/>
-							<input type="file" bind:files class="hidden" disabled={!edit} accept="image/*" />
-						</label>
+						{#if edit}
+							<label class="aspect-square w-full">
+								<img
+									class="h-full w-full cursor-pointer rounded-lg object-cover"
+									src={preview || '/person.svg'}
+									alt=""
+								/>
+								<input type="file" bind:files class="hidden" disabled={!edit} accept="image/*" />
+							</label>
+						{:else}
+							<Popover.Root>
+								<Popover.Trigger class="aspect-square h-min w-full rounded-lg p-0">
+									<img
+										class="h-full w-full rounded-lg object-cover"
+										src={preview || '/person.svg'}
+										alt=""
+									/>
+								</Popover.Trigger>
+								<Popover.Content>
+									<img
+										class="h-full w-full rounded-lg object-cover"
+										src={preview || '/person.svg'}
+										alt=""
+									/>
+								</Popover.Content>
+							</Popover.Root>
+						{/if}
 					</div>
 
 					<div class="flex gap-2">
