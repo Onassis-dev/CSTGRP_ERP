@@ -80,12 +80,14 @@
 		{#if selectedNote}
 			<div class="flex max-w-full flex-1 flex-col gap-[1px] overflow-y-auto">
 				<Input
+					placeholder="Titulo"
 					class="!ring-none rounded-none border-none p-3"
 					bind:value={selectedNote.title}
 					onblur={editNote}
 				/>
 				<div class="w-full border"></div>
 				<Textarea
+					placeholder="Escribe aqui..."
 					onblur={editNote}
 					class="h-full resize-none rounded-none border-none"
 					bind:value={selectedNote.content}
