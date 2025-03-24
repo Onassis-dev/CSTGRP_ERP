@@ -58,7 +58,7 @@
 	}
 
 	async function handleSubmit() {
-		const data = await api.post(
+		await api.post(
 			'requisitions',
 			{
 				...formData,
@@ -66,24 +66,10 @@
 			},
 			{ responseType: 'arraybuffer' }
 		);
-		data.data.forEach((v: any) => download({ response: { data: v } }));
+
+		showSuccess('Requisicion registrada');
 
 		show = false;
-	}
-
-	async function download(response: any) {
-		console.log(response);
-		const blob = new Blob([response.data], {
-			type: 'application/pdf'
-		});
-
-		const link = document.createElement('a');
-		link.href = URL.createObjectURL(blob);
-		link.target = '_blank';
-
-		document.body.appendChild(link);
-		link.click();
-		document.body.removeChild(link);
 	}
 
 	const motives = [
