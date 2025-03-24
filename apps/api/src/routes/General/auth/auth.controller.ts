@@ -23,6 +23,11 @@ export class AuthController {
     );
   }
 
+  @Get('update')
+  updatePermissions(@Res() res, @Req() req: FastifyRequest) {
+    return this.authService.updatePermissions(res, req.cookies);
+  }
+
   @Get('logout')
   logout(@Res() res) {
     return this.authService.logoutUser(res);

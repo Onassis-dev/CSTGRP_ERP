@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException } from '@nestjs/common';
 import { loginSchema } from './auth.schema';
 import { z } from 'zod';
 import sql from 'src/utils/db';
@@ -67,6 +67,20 @@ export class AuthService {
     await this.req.record(
       `${body.username} inicio sesion, IP: ${ip}, ${location}`,
     );
+    res.send();
+  }
+
+  async updatePermissions(res, cookies) {
+    if (!cookies || !cookies?.id)
+      throw new HttpException('No cuenta con credenciales', 401);
+    const [user] = await sql`select * from users where id = ${cookies.id}`;
+    if (!user) throw new HttpException('No se encontró el usuario', 401);
+
+    delete user.password;
+    Object.keys(user).forEach((key) => {
+      res.setCookie(key, user[key], cookieConfig);
+    });
+
     res.send();
   }
 

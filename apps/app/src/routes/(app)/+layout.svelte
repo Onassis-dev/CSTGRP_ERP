@@ -7,6 +7,7 @@
 	import '../../app.css';
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
+	import api from '$lib/utils/server';
 	import Cookies from 'js-cookie';
 	interface Props {
 		children?: import('svelte').Snippet;
@@ -21,6 +22,15 @@
 	onMount(() => {
 		if (!Cookies.get('username')) goto('/login');
 		window.addEventListener('unhandledrejection', handleUnhandledRejection);
+
+		const previousPermissions = Cookies.get();
+		api.get('/auth/update').then((res) => {
+			const newPermissions = Cookies.get();
+			const changed = Object.keys(previousPermissions).some(
+				(key) => previousPermissions[key] !== newPermissions[key]
+			);
+			if (changed) window.location.reload();
+		});
 	});
 
 	onDestroy(() => {
