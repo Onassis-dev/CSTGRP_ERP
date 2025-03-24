@@ -171,24 +171,6 @@
 							Información Personal
 						</div>
 						<div class="min-h-9">
-							<p class="text-muted-foreground text-xs">Nombre Completo:</p>
-							<p class="text-sm font-medium">
-								{employee.name}
-							</p>
-						</div>
-						<div class="min-h-9">
-							<p class="text-muted-foreground text-xs">No. Empleado:</p>
-							<p class="text-sm font-medium">{employee.noEmpleado}</p>
-						</div>
-						<div class="min-h-9">
-							<p class="text-muted-foreground text-xs">Área:</p>
-							<p class="text-sm font-medium">{employee.area}</p>
-						</div>
-						<div class="min-h-9">
-							<p class="text-muted-foreground text-xs">Posición:</p>
-							<p class="text-sm font-medium">{employee.position}</p>
-						</div>
-						<div class="min-h-9">
 							<p class="text-muted-foreground text-xs">Tipo de Posición:</p>
 							<p class="text-sm font-medium">{employee.positionType}</p>
 						</div>
