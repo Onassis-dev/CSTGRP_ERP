@@ -27,8 +27,10 @@ export class DirectoryService {
   }
 
   async getOptions() {
-    const emails = await sql`select id as value, email as name from emails`;
-    const employees = await sql`select id as value, name from employees`;
+    const emails =
+      await sql`select id as value, email as name from emails order by email`;
+    const employees =
+      await sql`select id as value, name from employees order by name`;
 
     return { emails, employees };
   }
