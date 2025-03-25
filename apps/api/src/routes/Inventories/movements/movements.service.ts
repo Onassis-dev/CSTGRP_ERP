@@ -31,7 +31,7 @@ export class MovementsService {
       ${body.import ? sql`materialie.import = ${body.import}` : sql`TRUE`} AND
       ${body.programation ? sql`materialie.programation = ${body.programation}` : sql`TRUE`} AND
       ${body.code ? sql`materials.code LIKE ${'%' + body.code + '%'}` : sql`TRUE`} AND
-      ${body.req ? sql`(select folio from requisitions where jobs LIKE CONCAT('%', materialie.jobpo, ',%') and materialie.jobpo is not null and requisitions."materialId" = materials.id) = ${body.req}` : sql`TRUE`} AND
+      ${body.req ? sql`(select STRING_AGG(folio::TEXT, ', ') from requisitions where jobs LIKE CONCAT('%', materialie.jobpo, ',%') and materialie.jobpo is not null and requisitions."materialId" = materials.id) = ${body.req}` : sql`TRUE`} AND
       ${body.checked !== null ? sql`materialmovements.active = ${body.checked === 'true'}` : sql`TRUE`}
       ORDER BY materialmovements.active, materialie.due DESC, materialie.jobpo DESC, materials.code DESC, materialmovements.amount DESC, materialmovements.id DESC
       LIMIT 150`;
