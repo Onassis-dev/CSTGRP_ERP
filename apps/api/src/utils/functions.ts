@@ -104,8 +104,18 @@ export async function updateMaterialAmount(id, dbInstance?: any) {
           AND materialmovements.amount < 0
           AND materials.id = ${id}
       )
-    ) * -1
-  
+    ) * -1,
+
+    "pendingAmount" = (
+    SELECT COALESCE(SUM(materialmovements."amount"), 0) AS balance
+      FROM materialmovements 
+        JOIN materials ON materials.id = materialmovements."materialId"
+        JOIN materialie ON materialie.id = materialmovements."movementId"
+      WHERE materialmovements.active = true
+        AND (materialie.location IS NOT NULL AND materialie.location <> 'At CST, Qtys verified')
+        AND materials.id = ${id}
+    )
+
     WHERE id = ${id} 
     returning amount`;
 }

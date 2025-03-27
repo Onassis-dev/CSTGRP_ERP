@@ -41,7 +41,6 @@ export class MovementsService {
         materialie ON materialie.id = materialmovements."movementId"
     WHERE
         materials.id = ${body.id}
-        AND (materialie.location IS NULL OR materialie.location = 'At CST, Qtys verified')
         AND materialmovements.id IN (
             SELECT MAX(id)
             FROM materialmovements
@@ -68,7 +67,7 @@ export class MovementsService {
     const clientId = await getUserName(token, query);
 
     const inventory =
-      await sql`Select id, code, description, location,  measurement, (amount + "leftoverAmount") as amount from materials where "clientId" = ${clientId} order by code`;
+      await sql`Select id, code, description, location,  measurement, clienttotal as amount from materials where "clientId" = ${clientId} order by code`;
 
     return inventory;
   }

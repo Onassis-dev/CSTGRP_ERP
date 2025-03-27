@@ -244,7 +244,7 @@ export class PoImpService {
           await sql`insert into materialmovements ("materialId", "movementId", amount, "realAmount", active, "activeDate") values
          ((select id from materials where code = ${material.code}),(select id from materialie where import = ${body.import}), ${Math.abs(parseFloat(material.amount))},${Math.abs(parseFloat(material.amount))}, true, ${body.due}) returning "materialId"`;
 
-        await updateMaterialAmount(movement.materialId);
+        await updateMaterialAmount(movement.materialId, sql);
       }
     });
   }
