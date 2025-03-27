@@ -123,7 +123,6 @@ export class EmployeesService {
         sql,
       );
       await sql`insert into employeeRecords ("employeeId", date, type, text) values (${employee.id}, now(), 'alta', 'Empleado dado de alta')`;
-      await createRecord({ previous: null, current: employee }, sql);
 
       //Generate assistance for the week
       const [firstDate] = getWeekDays(employee.admissionDate);

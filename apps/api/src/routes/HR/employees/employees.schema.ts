@@ -86,7 +86,7 @@ export const createSchema = z.object({
   nationality: z.string().min(1).optional().nullable(),
   positionId: z.number(),
   route: z.string().min(1).optional().nullable(),
-  contract: z.number().min(0).optional().nullable(),
+  contract: z.number().min(0),
 });
 
 export const editSchema = z.object({
