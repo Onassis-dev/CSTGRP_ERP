@@ -235,7 +235,7 @@ export class MovementsService {
           ((select id from materials where code = ${body.code}),
           (select id from materialie where import = 'Retorno'),
           ${0},
-          ${-Math.abs(parseFloat(body.amount))},
+          ${Math.abs(parseFloat(body.amount))},
           true,
           ${new Date()},
           true)`;
