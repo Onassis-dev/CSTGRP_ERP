@@ -46,12 +46,12 @@ export class MovementsService {
             FROM materialmovements
             WHERE
                 "materialId" = ${body.id}
-                AND "clientId" = ${clientId}
+                AND materials."clientId" = ${clientId}
                 AND active = true
                 AND extra = false
             GROUP BY "movementId"
         )
-        AND "clientId" = ${clientId}
+        AND materials."clientId" = ${clientId}
 
     ORDER BY
         materialmovements."activeDate" DESC,
