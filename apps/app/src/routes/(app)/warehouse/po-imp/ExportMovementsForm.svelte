@@ -78,7 +78,6 @@
 			console.log(result);
 			formData.jobpo = result.jobpo;
 			formData.due = result.dueDate;
-			formData.endDate = result.endDate;
 			formData.part = result.part;
 			formData.amount = result.amount;
 			formData.clientId = result.clientId;
@@ -89,7 +88,6 @@
 			result = (await api.post('/inventoryvarious/exportxlsx', form)).data;
 			formData.jobpo = result.jobpo;
 			formData.due = result.dueDate;
-			formData.endDate = result.endDate;
 			formData.part = result.part;
 			formData.amount = result.amount;
 			formData.clientId = result.clientId;
@@ -172,10 +170,6 @@
 				<div class="space-y-2">
 					<span>Fecha</span>
 					<Input type="date" bind:value={formData.due} />
-				</div>
-				<div class="space-y-2">
-					<span>Fecha de entrega</span>
-					<Input type="date" bind:value={formData.endDate} />
 				</div>
 				<div class="col-span-3 space-y-2">
 					<span>Archivo</span>

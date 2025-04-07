@@ -53,7 +53,6 @@
 					<TableHead class="border-b">Producción</TableHead>
 					<TableHead class="border-b">Serigrafía</TableHead>
 					<TableHead class="border-b">Calidad</TableHead>
-					<TableHead class="border-b">Exportación</TableHead>
 				</TableHeader>
 				<TableBody class="border-t">
 					{#each data.movements as row}
@@ -64,7 +63,6 @@
 							<TableCell class="border-l">{row.produccion}</TableCell>
 							<TableCell class="border-l">{row.serigrafia}</TableCell>
 							<TableCell class="border-l">{row.calidad}</TableCell>
-							<TableCell class="border-l">{row.exportacion}</TableCell>
 						</TableRow>
 					{/each}
 				</TableBody>

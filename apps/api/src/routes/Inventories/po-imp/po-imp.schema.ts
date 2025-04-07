@@ -27,7 +27,6 @@ export const exportSchema = z.object({
   due: z.string(),
   part: z.string(),
   amount: z.coerce.string().regex(/^\d*(?:\.\d{1,2})?$/),
-  endDate: z.string(),
   clientId: z.string(),
   materials: z.array(
     z.object({

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { preventDefault } from 'svelte/legacy';
-
 	import CusTable from '$lib/components/basic/CusTable.svelte';
 	import { Input } from '$lib/components/ui/input';
 	import { TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';

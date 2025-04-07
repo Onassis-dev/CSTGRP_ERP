@@ -278,7 +278,7 @@ export class PoImpService {
           await updateMaterialAmount(movement.materialId, sql);
       }
 
-      await sql`insert into orders (part, amount, "endDate", "jobId") values (${body.part}, ${body.amount}, ${body.endDate}, ${movement.id})`;
+      await sql`insert into orders (part, amount, "jobId") values (${body.part}, ${body.amount}, ${movement.id})`;
     });
 
     return;

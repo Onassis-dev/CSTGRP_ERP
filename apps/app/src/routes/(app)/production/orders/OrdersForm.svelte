@@ -27,7 +27,6 @@
 		{ name: 'Cortes Varios', value: 'cortesVarios' },
 		{ name: 'Corte', value: 'corte' },
 		{ name: 'Producción', value: 'produccion' },
-		{ name: 'Exportación', value: 'exportacion' },
 		{ name: 'Calidad', value: 'calidad' },
 		{ name: 'Serigrafía', value: 'serigrafia' }
 	];

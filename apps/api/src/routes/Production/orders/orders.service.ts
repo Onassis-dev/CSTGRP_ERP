@@ -20,7 +20,7 @@ export class OrdersService {
 
   async getOne(body: z.infer<typeof idSchema>) {
     const [data] = await sql`
-    SELECT orders.*, materialie.jobpo, materialie.programation, materialie."clientId"
+    SELECT orders.*, materialie.jobpo, materialie.programation, materialie."clientId", materialie.due
     FROM orders
     join materialie on materialie.id = orders."jobId"
     where orders.id = ${body.id}`;
@@ -30,7 +30,7 @@ export class OrdersService {
 
     return {
       ...data,
-      endDate: data.endDate.toISOString().split('T')[0],
+      dueDate: data.due.toISOString().split('T')[0],
       movements,
     };
   }
@@ -44,7 +44,6 @@ export class OrdersService {
     checkAmount(order, body, 'produccion');
     checkAmount(order, body, 'serigrafia');
     checkAmount(order, body, 'calidad');
-    checkAmount(order, body, 'exportacion');
 
     await sql.begin(async (sql) => {
       await sql`insert into ordermovements ${sql(body)}`;
@@ -53,8 +52,7 @@ export class OrdersService {
       "cortesVarios" = (select COALESCE(sum("cortesVarios"), 0) from ordermovements where "progressId" = ${body.progressId}),
       "produccion" = (select COALESCE(sum("produccion"), 0) from ordermovements where "progressId" = ${body.progressId}),
       "serigrafia" = (select COALESCE(sum("serigrafia"), 0) from ordermovements where "progressId" = ${body.progressId}),
-      "calidad" = (select COALESCE(sum("calidad"), 0) from ordermovements where "progressId" = ${body.progressId}),
-      "exportacion" = (select COALESCE(sum("exportacion"), 0) from ordermovements where "progressId" = ${body.progressId})
+      "calidad" = (select COALESCE(sum("calidad"), 0) from ordermovements where "progressId" = ${body.progressId})
       
       where id = ${body.progressId}`;
     });

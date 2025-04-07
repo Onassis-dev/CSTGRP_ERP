@@ -63,17 +63,10 @@ export class VariousService {
       const amount = ws.getCell(7, 5).value;
       const client = ws.getCell(4, 7).text;
       const clientId = await getClientId(client);
-      let endDate = ws.getCell(5, 7).value;
       let dueDate = ws.getCell(5, 7).value;
 
       if (dueDate instanceof Date) {
         dueDate = dueDate.toISOString().split('T')[0];
-      } else {
-        throw new HttpException('Fecha incorrecta', 400);
-      }
-
-      if (endDate instanceof Date) {
-        endDate = endDate.toISOString().split('T')[0];
       } else {
         throw new HttpException('Fecha incorrecta', 400);
       }
@@ -95,7 +88,7 @@ export class VariousService {
         })
         .filter((item) => item.code);
 
-      return { jobpo, dueDate, materials, part, clientId, amount, endDate };
+      return { jobpo, dueDate, materials, part, clientId, amount };
     } catch (err) {
       console.log(err);
       throw new HttpException('Excel invalido', 400);

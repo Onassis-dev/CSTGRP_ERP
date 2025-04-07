@@ -121,13 +121,7 @@ export function processJob(text: string) {
       linesArray.findIndex((line: any) => line.includes('Due Date:')) + 1
     ];
 
-  const endDateStr =
-    linesArray[
-      linesArray.findIndex((line: any) => line.includes('Req. By:')) + 1
-    ];
-
   const dueDate = processDate(dateStr);
-  const endDate = processDate(endDateStr);
 
   linesArray = linesArray.slice(index, endIndex);
   const materials: Array<any> = [];
@@ -171,7 +165,7 @@ export function processJob(text: string) {
       material.code[0] === 'P' ? 'CSI-' + material.code : material.code;
   });
 
-  return { materials, jobpo, dueDate, part, amount, endDate, clientId: '3' };
+  return { materials, jobpo, dueDate, part, amount, clientId: '3' };
 }
 
 function processDate(dateStr: string) {

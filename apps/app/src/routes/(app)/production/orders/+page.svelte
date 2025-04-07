@@ -85,7 +85,6 @@
 		<TableHead class="">Produccion</TableHead>
 		<TableHead class="">Serigrafia</TableHead>
 		<TableHead class="">Calidad</TableHead>
-		<TableHead class="">Exportacion</TableHead>
 		<TableHead class="">Cliente</TableHead>
 		<TableHead class="w-full"></TableHead>
 	</TableHeader>
@@ -109,14 +108,13 @@
 				<TableCell>{movement.part || ''}</TableCell>
 				<TableCell>{movement.programation || ''}</TableCell>
 				<TableCell>{movement.jobpo || ''}</TableCell>
-				<TableCell>{formatDate(movement.endDate) || ''}</TableCell>
+				<TableCell>{formatDate(movement.due) || ''}</TableCell>
 				<TableCell>{movement.amount || ''}</TableCell>
 				<TableCell>{movement.corte || ''}</TableCell>
 				<TableCell>{movement.cortesVarios || ''}</TableCell>
 				<TableCell>{movement.produccion || ''}</TableCell>
 				<TableCell>{movement.serigrafia || ''}</TableCell>
 				<TableCell>{movement.calidad || ''}</TableCell>
-				<TableCell>{movement.exportacion || ''}</TableCell>
 				<TableCell>
 					{#if clients[movement.clientId]}
 						<Badge color={clients[movement.clientId].color}

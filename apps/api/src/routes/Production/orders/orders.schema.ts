@@ -16,5 +16,4 @@ export const progressSchema = z.object({
   produccion: z.coerce.number().optional(),
   serigrafia: z.coerce.number().optional(),
   calidad: z.coerce.number().optional(),
-  exportacion: z.coerce.number().optional(),
 });
