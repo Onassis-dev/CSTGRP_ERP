@@ -30,6 +30,7 @@ export class PoImpService {
             ? sql`"jobpo" IS NOT NULL`
             : sql`TRUE`
       }
+      ${body.location && body.type !== 'import' ? sql`AND location = ${body.location}` : sql``}
       ${
         body.code
           ? sql`AND (

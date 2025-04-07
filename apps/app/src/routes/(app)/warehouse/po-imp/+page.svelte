@@ -30,6 +30,7 @@
 
 	let filters = $state({
 		type: 'both',
+		location: '',
 		code: ''
 	});
 
@@ -39,6 +40,12 @@
 		{ value: 'both', name: 'Ambos' },
 		{ value: 'imports', name: 'Importaciones' },
 		{ value: 'exports', name: 'Exportaciones' }
+	];
+
+	let locations = [
+		{ value: 'At M&M, In transit', name: 'En transito' },
+		{ value: 'At CST, In revision', name: 'En revisión' },
+		{ value: 'At CST, Qtys verified', name: 'Listo' }
 	];
 
 	let movements: any[] = $state([]);
@@ -88,7 +95,15 @@
 			class="min-w-36"
 			items={options}
 			bind:value={filters.type}
-			onSelectedChange={getMovements}
+			onValueChange={getMovements}
+		/>
+		<Select
+			menu
+			class="min-w-36"
+			items={locations}
+			allowDeselect
+			bind:value={filters.location}
+			onValueChange={getMovements}
 		/>
 		<Input menu bind:value={filters.code} placeholder="Identificador" />
 	</form>
