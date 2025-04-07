@@ -24,7 +24,7 @@
 	<h3
 		class={cn(
 			'flex items-center gap-1.5 text-sm font-medium',
-			import.meta.env.VITE_TESTING === 'true' ? 'text-red-foreground' : ''
+			import.meta.env.VITE_TESTING !== 'false' ? 'text-red-foreground' : ''
 		)}
 	>
 		<traduction.icon class="size-3.5" strokeWidth={1.7} />

@@ -52,7 +52,7 @@
 		$sidebarOpen ? 'left-0' : ''
 	)}
 >
-	{#if import.meta.env.VITE_TESTING === 'true'}
+	{#if import.meta.env.VITE_TESTING !== 'false'}
 		<a href="/" class="flex h-[49px] w-full items-center gap-3 border-b px-4 pt-0 font-semibold">
 			<AlertTriangle class="text-red-foreground bg-red size-6 rounded-md p-0.5" />
 			Testing
