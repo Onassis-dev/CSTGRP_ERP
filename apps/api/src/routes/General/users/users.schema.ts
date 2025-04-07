@@ -20,6 +20,7 @@ export const editSchema = z.object({
   perm_requisitions: permType.optional(),
   perm_poimp: permType.optional(),
   perm_resources: permType.optional(),
+  perm_production: permType.optional(),
   perm_assistance_areas: z.string().max(300).optional().nullable(),
   maintance: z.boolean().optional(),
 });
@@ -40,6 +41,7 @@ export const registerSchema = z.object({
   perm_petitions: permType,
   perm_poimp: permType,
   perm_resources: permType,
+  perm_production: permType,
   perm_assistance_areas: z.string().max(300).nullable(),
   maintance: z.boolean(),
 });

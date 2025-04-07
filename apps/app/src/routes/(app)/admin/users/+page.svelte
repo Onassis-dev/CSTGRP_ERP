@@ -26,6 +26,7 @@
 		password: '',
 		perm_assistance_areas: '',
 		perm_users: 0,
+		perm_production: 0,
 		perm_materialmovements: 0,
 		perm_assistance: 0,
 		perm_productivity: 0,
@@ -63,6 +64,7 @@
 			password: '',
 			perm_assistance_areas: '',
 			perm_users: 0,
+			perm_production: 0,
 			perm_materialmovements: 0,
 			perm_assistance: 0,
 			perm_productivity: 0,
@@ -93,6 +95,7 @@
 			password: '',
 			perm_assistance_areas: '',
 			perm_users: 0,
+			perm_production: 0,
 			perm_materialmovements: 0,
 			perm_assistance: 0,
 			perm_productivity: 0,
@@ -141,6 +144,7 @@
 		<TableHead colspan={3}>RRHH</TableHead>
 		<TableHead colspan={6}>Almacen</TableHead>
 		<TableHead colspan={1}>-</TableHead>
+		<TableHead colspan={1}>-</TableHead>
 	</TableHeader>
 	<TableHeader>
 		<TableHead class="fixed left-3 z-30 bg-inherit p-1"></TableHead>
@@ -157,6 +161,7 @@
 		<TableHead class="w-[12.5%]">Requisiciones</TableHead>
 		<TableHead class="w-[12.5%]">Peticiones</TableHead>
 		<TableHead class="w-[12.5%]">Po-Imp</TableHead>
+		<TableHead class="w-[12.5%]">Producción</TableHead>
 		<TableHead class="w-[12.5%]">Sistemas</TableHead>
 		<TableHead class="w-[12.5%]">Areas</TableHead>
 		<TableHead class="w-[12.5%]">Block</TableHead>
@@ -281,6 +286,15 @@
 					</Badge></TableCell
 				>
 
+				<TableCell class="p-1.5 text-center"
+					><Badge
+						class="flex h-full w-full items-center justify-center p-1"
+						color={getBadgeColor(user.perm_production)}
+					>
+						{@const SvelteComponent_11 = badgeTexts[user.perm_production]}
+						<SvelteComponent_11 class="size-3.5" />
+					</Badge></TableCell
+				>
 				<TableCell class="p-1.5 text-center"
 					><Badge
 						class="flex h-full w-full items-center justify-center p-1"

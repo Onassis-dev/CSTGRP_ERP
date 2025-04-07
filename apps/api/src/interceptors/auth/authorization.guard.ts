@@ -23,7 +23,8 @@ type permissionType =
   | 'inventorystats'
   | 'petitions'
   | 'inventory'
-  | 'resources';
+  | 'resources'
+  | 'production';
 
 @Injectable()
 export class AuthGuard implements CanActivate {

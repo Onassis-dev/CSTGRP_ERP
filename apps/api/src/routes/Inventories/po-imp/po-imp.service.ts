@@ -260,10 +260,12 @@ export class PoImpService {
         400,
       );
 
+    console.log(body);
     await sql.begin(async (sql) => {
       await sql`Select id from materials where code in (${materials})`;
 
-      await sql`Insert into materialie (jobpo, programation, due) values (${body.jobpo}, ${body.programation}, ${body.due})`;
+      const [movement] =
+        await sql`Insert into materialie (jobpo, programation, due, "clientId") values (${body.jobpo}, ${body.programation}, ${body.due}, ${body.clientId}) returning id`;
 
       await this.req.record(`Registro el job: ${body.jobpo}`, sql);
 
@@ -275,6 +277,8 @@ export class PoImpService {
         if (material.active)
           await updateMaterialAmount(movement.materialId, sql);
       }
+
+      await sql`insert into orders (part, amount, "endDate", "jobId") values (${body.part}, ${body.amount}, ${body.endDate}, ${movement.id})`;
     });
 
     return;

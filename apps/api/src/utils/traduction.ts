@@ -43,6 +43,7 @@ const valueTraduccion = {
   password: 'Contraseña',
   perm_assistance_areas: 'Permisos de Áreas de Asistencia',
   perm_users: 'Permisos de Usuarios',
+  perm_production: 'Permisos de Producción',
   perm_assistance: 'Permisos de Asistencia',
   perm_productivity: 'Permisos de Productividad',
   perm_employees: 'Permisos de Empleados',

@@ -156,6 +156,9 @@
 				<Label name="Perm. Po-Imp">
 					<Select items={permissions} bind:value={formData.perm_poimp} />
 				</Label>
+				<Label name="Perm. Producción">
+					<Select items={permissions} bind:value={formData.perm_production} />
+				</Label>
 				<Label name="Perm. Recursos">
 					<Select items={permissions} bind:value={formData.perm_resources} />
 				</Label>

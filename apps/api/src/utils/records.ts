@@ -1,7 +1,7 @@
 import postgres from 'postgres';
 import sql from './db';
 
-export type module = 'inventory' | 'users' | 'hr';
+export type module = 'inventory' | 'users' | 'hr' | 'production';
 export type action = 'create' | 'delete' | 'update';
 
 export async function createRecord(

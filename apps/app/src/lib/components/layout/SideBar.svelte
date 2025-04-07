@@ -14,7 +14,10 @@
 		UserCircle,
 		Users,
 		ShoppingBag,
-		Folders
+		Folders,
+		Factory,
+		AlertCircle,
+		AlertTriangle
 	} from 'lucide-svelte';
 	import { Dialog, DialogBody, DialogContent } from '$lib/components/ui/dialog';
 	import { Button } from '$lib/components/ui/button';
@@ -49,10 +52,17 @@
 		$sidebarOpen ? 'left-0' : ''
 	)}
 >
-	<a href="/" class="flex h-[49px] w-full items-center gap-3 border-b px-4 pt-0 font-semibold">
-		<img src="/logo.png" alt="logo" class="h-6 w-6" />
-		CST Group
-	</a>
+	{#if import.meta.env.VITE_TESTING === '1'}
+		<a href="/" class="flex h-[49px] w-full items-center gap-3 border-b px-4 pt-0 font-semibold">
+			<AlertTriangle class="text-red-foreground bg-red size-6 rounded-md p-0.5" />
+			Testing
+		</a>
+	{:else}
+		<a href="/" class="flex h-[49px] w-full items-center gap-3 border-b px-4 pt-0 font-semibold">
+			<img src="/logo.png" alt="logo" class="size-6" />
+			CST Group
+		</a>
+	{/if}
 
 	{#if hasAccess('resources')}
 		<div class="-y-1 mt-2 px-2 pb-2">
@@ -91,6 +101,25 @@
 				</Accordion.Content>
 			</Accordion.Item>
 		{/if}
+		{#if hasAccess('production')}
+			<Accordion.Item value="item-11" class="border-none">
+				<Accordion.Trigger
+					class="hover:bg-muted  mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
+				>
+					<Factory class="size-3.5 text-[#5c5e63]" />
+					Producción
+				</Accordion.Trigger>
+				<Accordion.Content>
+					<!-- {#if hasAccess('production')}
+						<Accordion.Option href="/production/dashboard" />
+					{/if} -->
+					{#if hasAccess('production')}
+						<Accordion.Option href="/production/orders" />
+					{/if}
+				</Accordion.Content>
+			</Accordion.Item>
+		{/if}
+
 		{#if hasAccess('employees') || hasAccess('assistance') || hasAccess('productivity')}
 			<Accordion.Item value="2" class="border-none">
 				<Accordion.Trigger

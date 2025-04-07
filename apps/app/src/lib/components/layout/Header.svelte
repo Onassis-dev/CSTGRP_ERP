@@ -5,6 +5,7 @@
 	import { Button } from '../ui/button';
 	import { PanelRight } from 'lucide-svelte';
 	import { getTraduction } from './traduction';
+	import { cn } from '$lib/utils';
 
 	afterNavigate(() => {
 		if (browser) {
@@ -20,7 +21,12 @@
 	<Button class="block xl:hidden" variant="ghost" onclick={() => sidebarOpen.set(true)}>
 		<PanelRight class="size-3.5" />
 	</Button>
-	<h3 class="flex items-center gap-1.5 text-sm font-medium">
+	<h3
+		class={cn(
+			'flex items-center gap-1.5 text-sm font-medium',
+			import.meta.env.VITE_TESTING === '1' ? 'text-red-foreground' : ''
+		)}
+	>
 		<traduction.icon class="size-3.5" strokeWidth={1.7} />
 		{traduction.text}
 	</h3>

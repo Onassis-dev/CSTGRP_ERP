@@ -5,6 +5,7 @@ import { StructureModule } from './routes/Structure/structure.module';
 import { InventoriesModule } from './routes/Inventories/inventories.module';
 import { FastifyMulterModule } from '@nest-lab/fastify-multer';
 import { ITModule } from './routes/IT/it.module';
+import { ProductionModule } from './routes/Production/production.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { ITModule } from './routes/IT/it.module';
     StructureModule,
     InventoriesModule,
     ITModule,
+    ProductionModule,
     FastifyMulterModule,
   ],
 })

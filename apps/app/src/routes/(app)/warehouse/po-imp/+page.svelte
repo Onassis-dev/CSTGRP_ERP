@@ -88,7 +88,7 @@
 			class="min-w-36"
 			items={options}
 			bind:value={filters.type}
-			onSelectedChange={getMovements}
+			onValueChange={getMovements}
 		/>
 		<Input menu bind:value={filters.code} placeholder="Identificador" />
 	</form>

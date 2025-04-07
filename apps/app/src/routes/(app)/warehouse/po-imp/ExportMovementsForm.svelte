@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
 	import {
 		Dialog,
 		DialogBody,
@@ -23,6 +21,8 @@
 	import MaterialInput from '$lib/components/basic/MaterialInput.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Trash } from 'lucide-svelte';
+	import { onMount } from 'svelte';
+	import Select from '$lib/components/basic/Select.svelte';
 
 	interface Props {
 		show: boolean;
@@ -43,6 +43,11 @@
 	let materials: material[] = $state([]);
 	let formData: any = $state({});
 	let files: any = $state();
+	let clients: any[] = $state([]);
+
+	async function getClients() {
+		clients = (await api.get('/inventoryvarious/clients')).data;
+	}
 
 	async function handleSubmit() {
 		if (selectedMovement.id) {
@@ -73,6 +78,10 @@
 			console.log(result);
 			formData.jobpo = result.jobpo;
 			formData.due = result.dueDate;
+			formData.endDate = result.endDate;
+			formData.part = result.part;
+			formData.amount = result.amount;
+			formData.clientId = result.clientId;
 
 			materials = result.materials;
 		}
@@ -80,6 +89,11 @@
 			result = (await api.post('/inventoryvarious/exportxlsx', form)).data;
 			formData.jobpo = result.jobpo;
 			formData.due = result.dueDate;
+			formData.endDate = result.endDate;
+			formData.part = result.part;
+			formData.amount = result.amount;
+			formData.clientId = result.clientId;
+
 			materials = result.materials;
 			console.log(result);
 		}
@@ -108,18 +122,23 @@
 		files = null;
 		inputDisabled = false;
 	}
-	let inputDisabled;
-	run(() => {
+	let inputDisabled = $state(false);
+	$effect(() => {
 		inputDisabled = !!files;
 	});
-	run(() => {
+	$effect(() => {
 		if (files) processPDF();
 	});
-	run(() => {
-		if (!show || show) cleanData();
+	$effect(() => {
+		show;
+		cleanData();
 	});
-	run(() => {
+	$effect(() => {
 		if (selectedMovement.id) getData();
+	});
+
+	onMount(() => {
+		getClients();
 	});
 </script>
 
@@ -136,11 +155,27 @@
 				</div>
 				<div class="space-y-2">
 					<span>Job o PO</span>
-					<Input disabled={inputDisabled} name="text" bind:value={formData.jobpo} />
+					<Input name="text" bind:value={formData.jobpo} />
+				</div>
+				<div class="space-y-2">
+					<span>Parte</span>
+					<Input name="text" bind:value={formData.part} />
+				</div>
+				<div class="space-y-2">
+					<span>Cliente</span>
+					<Select items={clients} bind:value={formData.clientId} />
+				</div>
+				<div class="space-y-2">
+					<span>Cantidad</span>
+					<Input name="text" bind:value={formData.amount} />
 				</div>
 				<div class="space-y-2">
 					<span>Fecha</span>
 					<Input type="date" bind:value={formData.due} />
+				</div>
+				<div class="space-y-2">
+					<span>Fecha de entrega</span>
+					<Input type="date" bind:value={formData.endDate} />
 				</div>
 				<div class="col-span-3 space-y-2">
 					<span>Archivo</span>

@@ -25,7 +25,7 @@
 		selectedMaterial: any;
 	}
 
-	let { show = $bindable(), selectedMaterial }: Props = $props();
+	let { show = $bindable(), selectedMaterial = $bindable({}) }: Props = $props();
 
 	let movements: any[] = $state([]);
 

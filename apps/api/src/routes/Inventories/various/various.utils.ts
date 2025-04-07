@@ -1,6 +1,7 @@
 import { parseNumber } from 'src/utils/parseData';
 import { File } from '@nest-lab/fastify-multer';
 import * as pdfjsLib from 'pdfjs-dist';
+import sql from 'src/utils/db';
 
 export async function processPDF(pdfFile: File) {
   const pdfData = new Uint8Array(pdfFile.buffer);
@@ -84,6 +85,8 @@ export function processImport(text: string) {
 
 export function processJob(text: string) {
   let jobpo = '';
+  let part = '';
+  let amount = 0;
   let linesArray = text.split(/\s{3,}| {2}/);
 
   // Debugging
@@ -99,18 +102,32 @@ export function processJob(text: string) {
   jobpo =
     linesArray[linesArray.findIndex((line: any) => line.includes('Job:')) + 1];
 
+  part = linesArray[linesArray.findIndex((line: any) => line === 'Part:') + 1];
+
+  amount =
+    Number(
+      linesArray[
+        linesArray.findIndex((line: any) => line.includes('For Order')) + 2
+      ],
+    ) +
+    Number(
+      linesArray[
+        linesArray.findIndex((line: any) => line.includes('For Order')) + 4
+      ],
+    );
+
   const dateStr =
     linesArray[
       linesArray.findIndex((line: any) => line.includes('Due Date:')) + 1
     ];
 
-  const [month, day, year] = dateStr.split('/');
-  let dueDate: any = new Date();
+  const endDateStr =
+    linesArray[
+      linesArray.findIndex((line: any) => line.includes('Req. By:')) + 1
+    ];
 
-  dueDate.setFullYear(year);
-  dueDate.setMonth(parseInt(month) - 1);
-  dueDate.setDate(day);
-  dueDate = dueDate.toISOString().split('T')[0];
+  const dueDate = processDate(dateStr);
+  const endDate = processDate(endDateStr);
 
   linesArray = linesArray.slice(index, endIndex);
   const materials: Array<any> = [];
@@ -154,5 +171,24 @@ export function processJob(text: string) {
       material.code[0] === 'P' ? 'CSI-' + material.code : material.code;
   });
 
-  return { materials, jobpo, dueDate };
+  return { materials, jobpo, dueDate, part, amount, endDate, clientId: '3' };
+}
+
+function processDate(dateStr: string) {
+  const [month, day, year] = dateStr.split('/');
+  let date: any = new Date();
+
+  date.setFullYear(year);
+  date.setMonth(parseInt(month) - 1);
+  date.setDate(day);
+  date = date.toISOString().split('T')[0];
+
+  return date;
+}
+
+export async function getClientId(client: string) {
+  client = client.replaceAll(' ', '').toUpperCase();
+  const [clientRow] =
+    await sql`select id from clients where TRANSLATE(UPPER(name), ' ', '') = ${client}`;
+  return clientRow?.id || null;
 }

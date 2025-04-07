@@ -25,6 +25,10 @@ export const exportSchema = z.object({
   programation: z.string(),
   jobpo: z.string(),
   due: z.string(),
+  part: z.string(),
+  amount: z.coerce.string().regex(/^\d*(?:\.\d{1,2})?$/),
+  endDate: z.string(),
+  clientId: z.string(),
   materials: z.array(
     z.object({
       code: z.string(),

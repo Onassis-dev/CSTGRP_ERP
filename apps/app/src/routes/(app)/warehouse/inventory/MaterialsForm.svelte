@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { run, preventDefault } from 'svelte/legacy';
-
+	import { preventDefault } from 'svelte/legacy';
 	import Label from '$lib/components/basic/Label.svelte';
 	import Select from '$lib/components/basic/Select.svelte';
 	import { Button } from '$lib/components/ui/button';
@@ -22,14 +21,14 @@
 		selectedMaterial: any;
 	}
 
-	let { show = $bindable(false), reload, selectedMaterial }: Props = $props();
+	let { show = $bindable(false), reload, selectedMaterial = $bindable({}) }: Props = $props();
 	let formData: any = $state();
 	let files: FileList | undefined = $state();
 
 	function setFormData() {
 		formData = { ...selectedMaterial };
 	}
-	let clients: any[] = $state();
+	let clients: any[] = $state([]);
 
 	const measurements = [
 		{ name: 'YARDAS', value: 'YD' },
@@ -70,8 +69,9 @@
 	onMount(() => {
 		getClients();
 	});
-	run(() => {
-		if (show || true) setFormData();
+	$effect(() => {
+		show;
+		setFormData();
 	});
 </script>
 
