@@ -58,7 +58,7 @@ export class MovementsService {
         materialmovements.id DESC;`;
 
     const result = movements.filter(
-      (movement) => movement.due.toISOString() !== '2024-01-01T00:00:00.000Z',
+      (movement) => movement?.due?.toISOString() !== '2024-01-01T00:00:00.000Z',
     );
     return result;
   }

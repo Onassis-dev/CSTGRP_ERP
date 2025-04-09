@@ -7,7 +7,7 @@ export const idSchema = z.object({
 export const IEFilterSchema = z.object({
   code: z.string().nullable(),
   type: z.string().nullable(),
-  location: z.string().nullable(),
+  location: z.string().nullable().optional(),
 });
 
 export const importSchema = z.object({
