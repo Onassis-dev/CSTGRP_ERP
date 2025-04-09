@@ -88,7 +88,7 @@ export class MovementsService {
 
     await sql.begin(async (sql) => {
       const [result] =
-        await sql`UPDATE materialmovements SET active = NOT active, "activeDate" = ${movement.active ? null : new Date()} WHERE id = ${body.id} returning "materialId", "realAmount"`;
+        await sql`UPDATE materialmovements SET active = ${!movement.active}, "activeDate" = ${movement.active ? null : new Date()} WHERE id = ${body.id} returning "materialId", "realAmount"`;
 
       await updateMaterialAmount(result.materialId, sql);
 
