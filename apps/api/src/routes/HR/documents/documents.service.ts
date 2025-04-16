@@ -1,5 +1,6 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import {
+  contractSchema,
   createDocSchema,
   editDocSchema,
   getDocumentsSchema,
@@ -10,6 +11,17 @@ import sql from 'src/utils/db';
 import { deleteFile, saveFile } from 'src/utils/storage';
 import { File } from '@nest-lab/fastify-multer';
 import { ContextProvider } from 'src/interceptors/context.provider';
+import Docxtemplater from 'docxtemplater';
+import PizZip from 'pizzip';
+import { promises as fsPromises } from 'fs';
+import path from 'path';
+import libre from 'libreoffice-convert';
+import util from 'util';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { createCanvas, registerFont } from 'canvas';
+import { loadImage } from 'canvas';
+const convert = util.promisify(libre.convert);
 
 @Injectable()
 export class DocumentsService {
@@ -79,4 +91,428 @@ export class DocumentsService {
       );
     });
   }
+
+  async getContract(body: z.infer<typeof contractSchema>) {
+    const [employee] = await sql`select * from employees where id = ${body.id}`;
+
+    const contract = await fsPromises.readFile(
+      path.resolve(
+        __dirname,
+        '..',
+        '..',
+        '..',
+        '..',
+        'static',
+        'contracts',
+        body.number === 3
+          ? 'CONTRATO INDETERMINADO.docx'
+          : 'CONTRATO DETERMINADO.docx',
+      ),
+      'binary',
+    );
+
+    const zip = new PizZip(contract);
+    const doc = new Docxtemplater(zip, {
+      paragraphLoop: true,
+      linebreaks: true,
+    });
+
+    const contractDate = new Date(employee.admissionDate);
+    contractDate.setDate(contractDate.getDate() + 30 * body.number);
+
+    function calculateAge() {
+      let edad = contractDate.getFullYear() - employee.bornDate.getFullYear();
+      const mes = contractDate.getMonth() - employee.bornDate.getMonth();
+
+      if (
+        mes < 0 ||
+        (mes === 0 && contractDate.getDate() < employee.bornDate.getDate())
+      ) {
+        edad--;
+      }
+
+      return edad;
+    }
+
+    const numbers = String(employee.nominaSalary).split('.');
+    let textSalary = numberToWords(Number(numbers[0]));
+    if (numbers[1] && numbers[1] !== '00')
+      textSalary += ` con ${numbers[1]}/100 M.N.`;
+    else textSalary += ' M.N.';
+
+    doc.render({
+      ...employee,
+      fullName: `${employee.paternalLastName} ${employee.maternalLastName} ${employee.name}`,
+      genre: employee.genre === 'M' ? 'Masculino' : 'Femenino',
+      date: format(contractDate, `dd 'de' MMMM 'de' yyyy`, {
+        locale: es,
+      }),
+      nominalSalary: employee.nominaSalary,
+      age: calculateAge(),
+      textSalary,
+    });
+
+    const docxBuf = doc.getZip().generate({
+      type: 'nodebuffer',
+    });
+
+    const pdfBuf = await convert(docxBuf, 'pdf', undefined);
+    console.log(pdfBuf);
+    return pdfBuf;
+  }
+
+  async generateImage(body: z.infer<typeof idSchema>) {
+    const [employee] =
+      await sql`select *, concat(name, ' ', "paternalLastName", ' ', "maternalLastName") as name, (select name from positions where id = "positionId") as position from employees where id = ${body.id}`;
+    return await generateImage(employee);
+  }
+}
+
+function numberToWords(num) {
+  const unidades = [
+    '',
+    'Uno',
+    'Dos',
+    'Tres',
+    'Cuatro',
+    'Cinco',
+    'Seis',
+    'Siete',
+    'Ocho',
+    'Nueve',
+  ];
+  const especiales = [
+    'Diez',
+    'Once',
+    'Doce',
+    'Trece',
+    'Catorce',
+    'Quince',
+    'Dieciséis',
+    'Diecisiete',
+    'Dieciocho',
+    'Diecinueve',
+  ];
+  const decenas = [
+    '',
+    'Diez',
+    'Veinte',
+    'Treinta',
+    'Cuarenta',
+    'Cincuenta',
+    'Sesenta',
+    'Setenta',
+    'Ochenta',
+    'Noventa',
+  ];
+  const centenas = [
+    '',
+    'Cien',
+    'Doscientos',
+    'Trescientos',
+    'Cuatrocientos',
+    'Quinientos',
+    'Seiscientos',
+    'Setecientos',
+    'Ochocientos',
+    'Novecientos',
+  ];
+
+  if (typeof num !== 'number' || isNaN(num)) return 'cero';
+
+  if (num === 0) return 'cero';
+
+  const convertirMenor1000 = (n) => {
+    const c = Math.floor(n / 100);
+    const d = Math.floor((n % 100) / 10);
+    const u = n % 10;
+    let texto = '';
+
+    if (c > 0) {
+      if (c === 1 && d === 0 && u === 0) texto += 'cien';
+      else texto += centenas[c] + ' ';
+    }
+
+    if (d === 1) texto += especiales[u];
+    else {
+      if (d > 0) texto += decenas[d];
+      if (d > 0 && u > 0) texto += ' y ';
+      if (u > 0) texto += unidades[u];
+    }
+
+    return texto.trim();
+  };
+
+  const partes = [];
+
+  if (num >= 1000000) {
+    const millones = Math.floor(num / 1000000);
+    partes.push(
+      millones === 1 ? 'un millón' : `${numberToWords(millones)} millones`,
+    );
+    num = num % 1000000;
+  }
+  if (num >= 1000) {
+    const miles = Math.floor(num / 1000);
+    if (miles === 1) partes.push('mil');
+    else partes.push(`${numberToWords(miles)} mil`);
+    num = num % 1000;
+  }
+  if (num > 0) {
+    partes.push(convertirMenor1000(num));
+  }
+
+  return partes.join(' ').trim();
+}
+
+async function generateImage(employee) {
+  registerFont(
+    path.resolve(
+      __dirname,
+      '..',
+      '..',
+      '..',
+      '..',
+      'static',
+      'fonts',
+      'OpenSans-Bold.ttf',
+    ),
+    {
+      family: 'OpenSansBold',
+    },
+  );
+  registerFont(
+    path.resolve(
+      __dirname,
+      '..',
+      '..',
+      '..',
+      '..',
+      'static',
+      'fonts',
+      'OpenSans-Regular.ttf',
+    ),
+    {
+      family: 'OpenSansRegular',
+    },
+  );
+
+  // Define fonts
+  const font1 = '25px "OpenSansBold"';
+  const font2 = '35px "OpenSansBold"';
+  const font3 = '30px "OpenSansRegular"';
+  const font5 = '25px "OpenSansBold"';
+  const font6 = '33px "OpenSansBold"';
+  const font7 = '33px "OpenSansRegular"';
+
+  const black = '#000000';
+  const white = '#FFFFFF';
+
+  // ------------- FRONT SIDE -------------
+
+  // Load base image
+
+  const frontBaseImage = await loadImage(
+    path.resolve(
+      __dirname,
+      '..',
+      '..',
+      '..',
+      '..',
+      'static',
+      'credentials',
+      'frontbase.png',
+    ),
+  );
+
+  // Create canvas with base image dimensions
+  const frontCanvas = createCanvas(frontBaseImage.width, frontBaseImage.height);
+  const frontCtx = frontCanvas.getContext('2d');
+
+  // Draw base image
+  frontCtx.drawImage(frontBaseImage, 0, 0);
+
+  // Load and process photo
+  const photoImage = await loadImage(
+    path.resolve(__dirname, '..', '..', '..', '..', 'storage', employee.photo),
+  );
+
+  // Calculate new dimensions
+  const originalWidth = photoImage.width;
+  const originalHeight = photoImage.height;
+  const newHeight = 330;
+  const newWidth = Math.floor((newHeight * originalWidth) / originalHeight);
+
+  // Calculate center position
+  const centerX = Math.floor((frontCanvas.width - newWidth) / 2);
+
+  // Draw photo on canvas
+  frontCtx.drawImage(photoImage, centerX, 280, newWidth, newHeight);
+
+  // Load front overlay and draw it
+  const frontOverlay = await loadImage(
+    path.resolve(
+      __dirname,
+      '..',
+      '..',
+      '..',
+      '..',
+      'static',
+      'credentials',
+      'front.png',
+    ),
+  );
+  frontCtx.drawImage(frontOverlay, 0, 0);
+
+  // Handle text wrapping for name
+  const lines = wrapText(
+    frontCtx,
+    employee.name,
+    frontCanvas.width - 100,
+    font2,
+  );
+  let yText = lines.length === 1 ? 665 : 645;
+
+  // Draw name text
+  frontCtx.font = font2;
+  frontCtx.fillStyle = black;
+
+  for (const line of lines) {
+    const centerX = (frontCanvas.width - frontCtx.measureText(line).width) / 2;
+    frontCtx.fillText(line, centerX, yText);
+    yText += 35;
+  }
+
+  // Draw job title
+  frontCtx.font = font3;
+  const jobCenterX =
+    (frontCanvas.width - frontCtx.measureText(employee.position).width) / 2;
+  frontCtx.fillText(employee.position, jobCenterX, 730);
+
+  // Draw employee number
+  frontCtx.font = font1;
+  frontCtx.fillStyle = white;
+  const numberCenterX =
+    (frontCanvas.width - frontCtx.measureText(employee.noEmpleado).width) / 2;
+  frontCtx.fillText(employee.noEmpleado, numberCenterX, 820);
+
+  // Draw date
+  const date = format(new Date(employee.admissionDate), 'dd/MM/yyyy');
+  frontCtx.font = font5;
+  const dateCenterX =
+    (frontCanvas.width - frontCtx.measureText(date).width) / 2;
+  2;
+  frontCtx.fillText(date, dateCenterX, 917);
+
+  // Create temporary buffer for front image
+  const frontBuffer = frontCanvas.toBuffer('image/jpeg');
+
+  // ------------- BACK SIDE -------------
+
+  // Load back image
+  const backImage = await loadImage(
+    path.resolve(
+      __dirname,
+      '..',
+      '..',
+      '..',
+      '..',
+      'static',
+      'credentials',
+      'back.png',
+    ),
+  );
+
+  // Create canvas for back side
+  const backCanvas = createCanvas(backImage.width, backImage.height);
+  const backCtx = backCanvas.getContext('2d');
+
+  // Draw back image
+  backCtx.drawImage(backImage, 0, 0);
+
+  // Draw text labels
+  backCtx.font = font6;
+  backCtx.fillStyle = black;
+  backCtx.fillText('CTA:', 70, 180);
+  backCtx.fillText('NSS:', 70, 270);
+  backCtx.fillText('T.SANGRE:', 70, 360);
+  backCtx.fillText('RFC:', 70, 450);
+  backCtx.fillText('CURP:', 70, 540);
+
+  // Draw text values
+  backCtx.font = font7;
+  backCtx.fillText(employee.account, 150, 180);
+  backCtx.fillText(employee.nss, 150, 270);
+  backCtx.fillText(employee.blood, 243, 360);
+  backCtx.fillText(employee.rfc, 148, 450);
+  backCtx.fillText(employee.curp, 173, 540);
+
+  // Draw emergency contact info
+  const emergencyTitle = 'En caso de emergencia llamar a:';
+  backCtx.font = font1;
+  const emergencyCenterX =
+    (backCanvas.width - backCtx.measureText(emergencyTitle).width) / 2;
+  backCtx.fillText(emergencyTitle, emergencyCenterX, 630);
+
+  const emergencyContact = `${employee.emergencyContact} / ${employee.emergencyNumber}`;
+  backCtx.font = font7;
+  const emergencyContactCenterX =
+    (backCanvas.width - backCtx.measureText(emergencyContact).width) / 2;
+  backCtx.fillText(emergencyContact, emergencyContactCenterX, 665);
+
+  // Create temporary buffer for back image
+  const backBuffer = backCanvas.toBuffer('image/jpeg');
+
+  // ------------- COMBINED PAPER -------------
+  // Load paper template
+  const paperImage = await loadImage(
+    path.resolve(
+      __dirname,
+      '..',
+      '..',
+      '..',
+      '..',
+      'static',
+      'credentials',
+      'paper.jpg',
+    ),
+  );
+
+  // Load front and back images from buffers
+  const frontImage = await loadImage(frontBuffer);
+  const backFinalImage = await loadImage(backBuffer);
+
+  // Create canvas for paper
+  const paperCanvas = createCanvas(paperImage.width, paperImage.height);
+  const paperCtx = paperCanvas.getContext('2d');
+
+  // Draw paper template
+  paperCtx.drawImage(paperImage, 0, 0);
+
+  // Draw front and back images
+  paperCtx.drawImage(frontImage, 0, 0);
+  paperCtx.drawImage(backFinalImage, 610, 0);
+
+  // Return the final buffer
+  return paperCanvas.toBuffer('image/jpeg');
+}
+
+function wrapText(ctx, text, maxWidth, font) {
+  ctx.font = font;
+  const words = text.split(' ');
+  const lines = [];
+  let currentLine = words[0];
+
+  for (let i = 1; i < words.length; i++) {
+    const word = words[i];
+    const width = ctx.measureText(currentLine + ' ' + word).width;
+    if (width < maxWidth) {
+      currentLine += ' ' + word;
+    } else {
+      lines.push(currentLine);
+      currentLine = word;
+    }
+  }
+  lines.push(currentLine);
+  return lines;
 }

@@ -62,7 +62,6 @@ export class VariousService {
         '..',
         'static',
         'fonts',
-        'coustard',
         'Coustard-Regular.ttf',
       ),
       { family: 'Coustard' },

@@ -74,6 +74,26 @@
 		);
 	}
 
+	async function downloadContract(number: number) {
+		const contract = await api.get('/employees/documents/contract/' + employee.id + '/' + number, {
+			responseType: 'blob'
+		});
+
+		const url = URL.createObjectURL(new Blob([contract.data], { type: 'application/pdf' }));
+		window.open(url, '_blank');
+		URL.revokeObjectURL(url);
+	}
+
+	async function downloadCredential() {
+		const credential = await api.get('/employees/documents/credential/' + employee.id, {
+			responseType: 'blob'
+		});
+
+		const url = URL.createObjectURL(new Blob([credential.data], { type: 'image/jpeg' }));
+		window.open(url, '_blank');
+		URL.revokeObjectURL(url);
+	}
+
 	async function downloadDoc(url: string, name: string) {
 		await downloadFile(
 			url,
@@ -137,6 +157,8 @@
 		if (url.includes('.xls') || url.includes('.xlsx')) return 'excel.svg';
 		return 'file.svg';
 	}
+
+	const contracts = ['Primer', 'Segundo', 'Tercer', 'Último'];
 </script>
 
 <Table>
@@ -146,6 +168,54 @@
 		<TableHead colspan={3}></TableHead>
 	</TableHeader>
 	<TableBody>
+		<TableRow>
+			<TableCell class={'cursor-pointer border-l'} onclick={downloadCredential}>
+				<div class="flex items-center gap-3">
+					<img src={`/image.svg`} alt={'Contrato'} class="size-4" />
+					Credencial
+				</div>
+			</TableCell>
+			<TableCell class={cn('border-l')}></TableCell>
+
+			<TableCell class="p-0"></TableCell>
+			<TableCell class="p-0">
+				<Button
+					onclick={downloadCredential}
+					class="aspect-square h-full rounded-none"
+					variant="ghost"
+				>
+					<FileDown class="size-3.5" />
+				</Button>
+			</TableCell>
+			<TableCell class="p-0"></TableCell>
+		</TableRow>
+
+		{#each contracts as contract, i}
+			{#if new Date() >= new Date(employee.admissionDate).setDate(new Date(employee.admissionDate).getDate() + 30 * i - 4)}
+				<TableRow>
+					<TableCell class={'cursor-pointer border-l'} onclick={() => downloadContract(i)}>
+						<div class="flex items-center gap-3">
+							<img src={`/pdf.svg`} alt={'Contrato'} class="size-4" />
+							{contract} Contrato
+						</div>
+					</TableCell>
+					<TableCell class={cn('border-l')}></TableCell>
+
+					<TableCell class="p-0"></TableCell>
+					<TableCell class="p-0">
+						<Button
+							onclick={() => downloadContract(i)}
+							class="aspect-square h-full rounded-none"
+							variant="ghost"
+						>
+							<FileDown class="size-3.5" />
+						</Button>
+					</TableCell>
+					<TableCell class="p-0"></TableCell>
+				</TableRow>
+			{/if}
+		{/each}
+
 		{#each docs as row}
 			<TableRow>
 				<TableCell

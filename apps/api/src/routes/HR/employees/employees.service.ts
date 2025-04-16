@@ -95,7 +95,7 @@ export class EmployeesService {
 
   async getActiveEmployees() {
     const employees =
-      await sql`select id, name, "paternalLastName", "maternalLastName", "noEmpleado", "areaId", "positionId", active from employees where active order by "noEmpleado" DESC`;
+      await sql`select id, name, "admissionDate", "paternalLastName", "maternalLastName", "noEmpleado", "areaId", "positionId", active from employees where active order by "noEmpleado" DESC`;
     return employees;
   }
 

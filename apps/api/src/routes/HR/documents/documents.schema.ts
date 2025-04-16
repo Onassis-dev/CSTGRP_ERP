@@ -15,5 +15,10 @@ export const createDocSchema = z.object({
 });
 
 export const idSchema = z.object({
-  id: z.string().min(1),
+  id: z.coerce.string().min(1),
+});
+
+export const contractSchema = z.object({
+  id: z.coerce.string().min(1),
+  number: z.coerce.number().min(0).max(3),
 });

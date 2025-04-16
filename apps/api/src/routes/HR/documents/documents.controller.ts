@@ -15,6 +15,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import {
+  contractSchema,
   createDocSchema,
   editDocSchema,
   getDocumentsSchema,
@@ -55,5 +56,15 @@ export class DocumentsController {
   @Delete(':id')
   deleteDocument(@Param(new ZodPiPe(idSchema)) body) {
     return this.documentsService.deleteDocument(body);
+  }
+
+  @Get('contract/:id/:number')
+  getContract(@Param(new ZodPiPe(contractSchema)) body) {
+    return this.documentsService.getContract(body);
+  }
+
+  @Get('credential/:id')
+  getCredential(@Param(new ZodPiPe(idSchema)) body) {
+    return this.documentsService.generateImage(body);
   }
 }
