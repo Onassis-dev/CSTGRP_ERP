@@ -1,31 +1,32 @@
-FROM node:20-slim AS base
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-WORKDIR /app
+FROM node:20
 
+# Instalar LibreOffice, fontconfig, y dependencias necesarias
 RUN apt-get update && \
-    apt-get install -y curl gnupg && \
-    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | gpg --dearmor -o /usr/share/keyrings/nodesource.gpg && \
-    npm install -g pnpm
-
-COPY package.json ./
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install
-
-COPY . .
-RUN pnpm run build
-
-FROM node:20-slim AS production
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-WORKDIR /app
-
-RUN apt-get update && \
-    apt-get install -y libreoffice libreoffice-writer libreoffice-calc fontconfig fonts-dejavu && \
+    apt-get install -y \
+    libreoffice libreoffice-writer libreoffice-calc \
+    fontconfig fonts-dejavu curl gnupg && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-COPY --from=base /app/node_modules ./node_modules
-COPY --from=base /app/dist ./dist
-COPY --from=base /app/static ./static
+# Instalar pnpm
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN npm install -g pnpm
 
+# Configuración del directorio de trabajo
+WORKDIR /app
+
+# Copiar el package.json y las dependencias para que se instalen primero
+COPY package.json ./
+
+# Instalar dependencias del proyecto
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install
+
+# Copiar el código fuente del proyecto
+COPY . .
+
+# Construir la aplicación
+RUN pnpm run build
+
+# Exponer el puerto y ejecutar la aplicación
 EXPOSE 3000
 CMD ["node", "dist/main.js"]
