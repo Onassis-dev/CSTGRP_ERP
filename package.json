@@ -15,11 +15,11 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
-      "bcrypt",
       "@nestjs/core",
+      "bcrypt",
       "canvas",
       "core-js",
-      "@swc/core"
+      "esbuild"
     ]
   }
 }
