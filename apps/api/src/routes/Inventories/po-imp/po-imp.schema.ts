@@ -17,7 +17,7 @@ export const importSchema = z.object({
   materials: z.array(
     z.object({
       code: z.string(),
-      amount: z.string().regex(/^\d*(?:\.\d{1,2})?$/),
+      amount: z.string().regex(/^-?\d*(?:\.\d{1,2})?$/),
     }),
   ),
 });
@@ -29,8 +29,8 @@ export const exportSchema = z.object({
   materials: z.array(
     z.object({
       code: z.string(),
-      amount: z.string().regex(/^\d*(?:\.\d{1,2})?$/),
-      realAmount: z.string().regex(/^\d*(?:\.\d{1,2})?$/),
+      amount: z.string().regex(/^-?\d*(?:\.\d{1,2})?$/),
+      realAmount: z.string().regex(/^-?\d*(?:\.\d{1,2})?$/),
       active: z.boolean(),
     }),
   ),
@@ -44,7 +44,7 @@ export const updateImportSchema = z.object({
   materials: z.array(
     z.object({
       code: z.string(),
-      amount: z.string().regex(/^\d*(?:\.\d{1,2})?$/),
+      amount: z.string().regex(/^-?\d*(?:\.\d{1,2})?$/),
     }),
   ),
 });
@@ -57,8 +57,8 @@ export const updateExportSchema = z.object({
   materials: z.array(
     z.object({
       code: z.string(),
-      amount: z.string().regex(/^\d*(?:\.\d{1,2})?$/),
-      realAmount: z.string().regex(/^\d*(?:\.\d{1,2})?$/),
+      amount: z.string().regex(/^-?\d*(?:\.\d{1,2})?$/),
+      realAmount: z.string().regex(/^-?\d*(?:\.\d{1,2})?$/),
       active: z.boolean(),
     }),
   ),
