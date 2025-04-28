@@ -90,7 +90,13 @@
 		});
 
 		const url = URL.createObjectURL(new Blob([credential.data], { type: 'image/jpeg' }));
-		window.open(url, '_blank');
+		const a = document.createElement('a');
+		a.href = url;
+
+		a.download = 'cr' + employee.noEmpleado + '.jpg';
+		document.body.appendChild(a);
+		a.click();
+		document.body.removeChild(a);
 		URL.revokeObjectURL(url);
 	}
 
