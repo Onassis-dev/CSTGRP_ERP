@@ -8,7 +8,7 @@ import { z } from 'zod';
 export class StatsService {
   async birthDays(body: z.infer<typeof dateSchema>) {
     const rows =
-      await sql`SELECT "noEmpleado", photo, CONCAT(name, ' ', "paternalLastName", ' ', "maternalLastName") as name, "bornDate" from employees where extract(month from "bornDate") = extract(month from ${body.date}::DATE)`;
+      await sql`SELECT "noEmpleado", photo, CONCAT(name, ' ', "paternalLastName", ' ', "maternalLastName") as name, "bornDate" from employees where active = true and extract(month from "bornDate") = extract(month from ${body.date}::DATE)`;
 
     return rows;
   }
