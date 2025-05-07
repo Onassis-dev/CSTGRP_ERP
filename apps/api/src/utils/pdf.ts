@@ -59,12 +59,12 @@ export const markPage = (page: PDFPage) => {
     page.drawText(`${i}`, {
       x: i,
       y: 0,
-      size: 9, // Font size
+      size: 9,
     });
     page.drawLine({
       start: { x: i, y: 0 },
       end: { x: i, y: 1000 },
-      thickness: 0.1,
+      thickness: 0.01,
     });
   }
 
@@ -72,12 +72,12 @@ export const markPage = (page: PDFPage) => {
     page.drawText(`${i}`, {
       x: 0,
       y: i,
-      size: 8, // Font size
+      size: 8,
     });
     page.drawLine({
       start: { x: 0, y: i },
       end: { x: 1000, y: i },
-      thickness: 0.1,
+      thickness: 0.01,
     });
   }
 };

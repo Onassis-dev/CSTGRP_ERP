@@ -160,7 +160,12 @@
 				class="grid max-h-full grid-cols-[auto_1fr_auto] place-items-start items-center gap-4 overflow-auto px-4"
 			>
 				{#each dailyIncidencesList as row}
-					<img src={getImage(row.photo)} alt="" class="size-10 rounded-full border object-cover" />
+					<img
+						src={getImage(row.photo)}
+						alt=""
+						loading="lazy"
+						class="size-10 rounded-full border object-cover"
+					/>
 					<p class="text-sm font-medium">{row.name}</p>
 					<Badge color="green" class="h-min w-min justify-self-end whitespace-nowrap text-sm"
 						>{row.incidence}</Badge
@@ -195,7 +200,12 @@
 		<CardContent class="max-h-[calc(100%-1.5rem)] px-0" chart>
 			<div class="grid max-h-full grid-cols-[auto_1fr_auto] gap-4 overflow-auto px-4">
 				{#each birthDays as row}
-					<img src={getImage(row.photo)} alt="" class="size-10 rounded-full border object-cover" />
+					<img
+						src={getImage(row.photo)}
+						alt=""
+						loading="lazy"
+						class="size-10 rounded-full border object-cover"
+					/>
 					<div>
 						<p class="text-sm font-medium">{row.name}</p>
 						<p class="text-muted-foreground text-xs">{formatDate(row.bornDate)}</p>
@@ -217,7 +227,12 @@
 		<CardContent class="max-h-[calc(100%-1.5rem)] px-0" chart>
 			<div class="grid max-h-full grid-cols-[auto_1fr_auto] gap-4 overflow-auto px-4">
 				{#each contractExpiration as row}
-					<img src={getImage(row.photo)} alt="" class="size-10 rounded-full border object-cover" />
+					<img
+						src={getImage(row.photo)}
+						alt=""
+						loading="lazy"
+						class="size-10 rounded-full border object-cover"
+					/>
 					<div>
 						<p class="text-sm font-medium">{row.name}</p>
 						<p class="text-muted-foreground text-xs">{formatDate(row.next_renewal_date)}</p>

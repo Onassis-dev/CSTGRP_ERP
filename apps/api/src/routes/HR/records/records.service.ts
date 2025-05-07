@@ -1,8 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { createRecordSchema, getEmployeeHistorySchema } from './records.schema';
+import { promises as fs } from 'fs';
+import {
+  createRecordSchema,
+  getEmployeeHistorySchema,
+  idSchema,
+} from './records.schema';
 import { z } from 'zod';
 import sql from 'src/utils/db';
 import { ContextProvider } from 'src/interceptors/context.provider';
+import path from 'path';
+import { PDFDocument, StandardFonts } from 'pdf-lib';
+import { drawAlta, drawBaja } from './records.utils';
 
 @Injectable()
 export class RecordsService {
@@ -15,6 +23,7 @@ export class RecordsService {
         er.date,
         er.type,
         er.text,
+        er.doc,
         e.name,
         e."paternalLastName",
         e."maternalLastName"
@@ -39,5 +48,41 @@ export class RecordsService {
         sql,
       );
     });
+  }
+
+  async downloadDoc(body: z.infer<typeof idSchema>) {
+    const [record] =
+      await sql`select * from employeeRecords where id = ${body.id}`;
+
+    let data;
+    try {
+      data = JSON.parse(record.doc);
+    } catch (error) {
+      data = record.doc;
+    }
+
+    const templatePath = path.resolve(
+      __dirname,
+      '..',
+      '..',
+      '..',
+      '..',
+      'static',
+      'templates',
+      'Movimientos Internos.pdf',
+    );
+
+    const template = await fs.readFile(templatePath);
+    const pdfDoc = await PDFDocument.load(template);
+    const [page] = pdfDoc.getPages();
+    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    // markPage(page);
+
+    if (data.type === 'alta') drawAlta(page, font, data);
+
+    if (data.type === 'baja') drawBaja(page, font, data);
+
+    const pdfBytes = await pdfDoc.save();
+    return pdfBytes;
   }
 }

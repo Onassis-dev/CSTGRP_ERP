@@ -11,7 +11,7 @@
 	} from '$lib/components/ui/table';
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
-	import { Check, Minus, Pen, Plus } from 'lucide-svelte';
+	import { Check, FileDown, Minus, Pen, Plus } from 'lucide-svelte';
 	import { format } from 'date-fns';
 	import { es } from 'date-fns/locale';
 	import { cn } from '$lib/utils';
@@ -74,6 +74,15 @@
 		if (!result) return { color: 'gray', icon: Minus };
 		return result;
 	}
+
+	async function downloadDoc(id: string) {
+		const response = await api.get('/employees/history/doc/' + id, {
+			responseType: 'arraybuffer'
+		});
+		const blob = new Blob([response.data], { type: 'application/pdf' });
+		const url = window.URL.createObjectURL(blob);
+		window.open(url, '_blank');
+	}
 </script>
 
 <Table>
@@ -83,14 +92,6 @@
 		<TableHead class="w-full border-r">Texto</TableHead>
 	</TableHeader>
 	<TableBody>
-		<!-- {#each docs as row}
-			<TableRow class="border-l">
-				<TableCell>{format(new Date(row.date), 'dd/MM/yyyy', { locale: es })}</TableCell>
-				<TableCell>{row.type}</TableCell>
-				<TableCell class="w-full whitespace-normal">{row.text}</TableCell>
-			</TableRow>
-		{/each} -->
-
 		<TableRow>
 			<TableCell class="border-l px-[1px]"
 				><Input type="date" class="rounded-none border-none" bind:value={newDoc.date} /></TableCell
@@ -121,8 +122,15 @@
 			</div>
 			<p class="text-xs">{format(new Date(row.date), 'dd/MM/yyyy', { locale: es })}</p>
 
-			<div class="col-span-2 ml-[9px] border-l pl-2">
-				<Card class=" rounded-sm px-3  py-1">{row.text}</Card>
+			<div class="col-span-2 ml-[9px] flex border-l pl-2">
+				<Card class=" flex-1 rounded-sm  px-3 py-1">{row.text}</Card>
+				{#if row.doc}
+					<Button
+						onclick={() => downloadDoc(row.id)}
+						variant="outline"
+						class="ml-1 aspect-square h-[2.125rem]"><FileDown class="size-4" /></Button
+					>
+				{/if}
 			</div>
 		{/each}
 		<div class="bg-gray mt-1.5 flex size-5 items-center justify-center rounded-full"></div>

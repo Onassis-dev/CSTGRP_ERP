@@ -113,16 +113,16 @@ export class EmployeesService {
     const image = await saveFile(file, 'employees');
 
     const id: any = await sql.begin(async (sql) => {
-      const employee: any = (
-        await sql`insert into employees ${sql({ ...body, photo: image })} returning *`
-      )[0];
+      const [employee]: any =
+        await sql`insert into employees ${sql({ ...body, photo: image })}
+        returning *, (select name from positions where id = "positionId") as position, (select name from areas where id = "areaId") as area`;
 
       //Create record
       await this.req.record(
         `Registró al empleado ${employee.name} ${employee.paternalLastName} ${employee.maternalLastName} - ${employee.noEmpleado}`,
         sql,
       );
-      await sql`insert into employeeRecords ("employeeId", date, type, text) values (${employee.id}, now(), 'alta', 'Empleado dado de alta')`;
+      await sql`insert into employeeRecords ("employeeId", date, type, text, doc) values (${employee.id}, now(), 'alta', 'Empleado dado de alta', ${JSON.stringify({ ...employee, type: 'alta' })})`;
 
       //Generate assistance for the week
       const [firstDate] = getWeekDays(employee.admissionDate);
@@ -179,16 +179,16 @@ export class EmployeesService {
     };
 
     await sql.begin(async (sql) => {
-      const employee = (
-        await sql`update "employees" SET ${sql(data)} where id = ${data.id} returning id, name, "paternalLastName", "maternalLastName", "noEmpleado", "areaId", "positionId", "admissionDate", (select name from areas where id = "areaId") as "area", (select name from positions where id = "positionId") as "position"`
-      )[0];
+      const [employee] =
+        await sql`update "employees" SET ${sql(data)} where id = ${data.id} 
+        returning *, (select name from areas where id = "areaId") as "area", (select name from positions where id = "positionId") as "position"`;
 
       //Create record
       await this.req.record(
         `Reactivó al empleado ${employee.name} ${employee.paternalLastName} ${employee.maternalLastName} - ${employee.noEmpleado}`,
         sql,
       );
-      await sql`insert into employeeRecords ("employeeId", date, type, text) values (${employee.id}, now(), 'alta', ${'Empleado reactivado en el area ' + employee.area + ', en el puesto ' + employee.position})`;
+      await sql`insert into employeeRecords ("employeeId", date, type, text, doc) values (${employee.id}, now(), 'alta', ${'Empleado reactivado en el area ' + employee.area + ', en el puesto ' + employee.position}, ${JSON.stringify({ ...employee, type: 'alta' })})`;
 
       //Generate assistance for the week
       const [firstDate] = getWeekDays(employee.admissionDate);
@@ -215,8 +215,10 @@ export class EmployeesService {
   async quitEmployee(body: z.infer<typeof quitSchema>) {
     await sql.begin(async (sql) => {
       const [employee] =
-        await sql`update employees set active = false, "quitDate" = ${body.quitDate}, "quitStatus" = ${body.quitStatus}, "quitReason" = ${body.quitReason}, "quitNotes" = ${body.quitNotes}  where id = ${body.id} returning *`;
-      await sql`insert into employeeRecords ("employeeId", date, type, text) values (${body.id}, now(), 'baja', 'Empleado dado de baja')`;
+        await sql`update employees set active = false, "quitDate" = ${body.quitDate}, "quitStatus" = ${body.quitStatus}, "quitReason" = ${body.quitReason}, "quitNotes" = ${body.quitNotes}  where id = ${body.id}
+        returning *, (select name from positions where id = "positionId") as position, (select name from areas where id = "areaId") as area`;
+
+      await sql`insert into employeeRecords ("employeeId", date, type, text, doc) values (${body.id}, now(), 'baja', 'Empleado dado de baja', ${JSON.stringify({ ...employee, type: 'baja' })})`;
       await this.req.record(
         `Dio de baja al empleado ${employee.name} ${employee.paternalLastName} ${employee.maternalLastName} - ${employee.noEmpleado}`,
         sql,
