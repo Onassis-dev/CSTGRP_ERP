@@ -97,6 +97,9 @@
 				<Label name="Area:">
 					<Select items={areas} bind:value={formData.areaId} />
 				</Label>
+				<Label name="Job:" class="col-span-3">
+					<Input bind:value={formData.job} />
+				</Label>
 			</div>
 
 			<Table>

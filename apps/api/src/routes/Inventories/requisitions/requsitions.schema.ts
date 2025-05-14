@@ -23,6 +23,11 @@ export const suppliesSchema = z.object({
   petitioner: z.string(),
   motive: z.string(),
   areaId: z.string(),
+  job: z
+    .string()
+    .optional()
+    .nullable()
+    .refine((val) => !val.includes(','), 'El job no puede contener comas'),
   materials: z.array(
     z.object({
       code: z.string(),

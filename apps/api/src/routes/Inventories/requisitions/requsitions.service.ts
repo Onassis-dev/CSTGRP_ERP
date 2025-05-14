@@ -104,7 +104,7 @@ export class RequisitionsService {
           ${body.motive},
           (select name from areas where id = ${body.areaId}),
           ${material.id},
-          '',
+          ${body.job},
           ${movement.amount},
           ${movement.amount}
         ) returning folio`;
