@@ -27,7 +27,7 @@ export const suppliesSchema = z.object({
     .string()
     .optional()
     .nullable()
-    .refine((val) => !val.includes(','), 'El job no puede contener comas'),
+    .refine((val) => !val?.includes(','), 'El job no puede contener comas'),
   materials: z.array(
     z.object({
       code: z.string(),
