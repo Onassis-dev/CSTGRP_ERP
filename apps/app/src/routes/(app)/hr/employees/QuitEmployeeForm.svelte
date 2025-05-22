@@ -8,6 +8,7 @@
 	import { showSuccess } from '$lib/utils/showToast';
 	import { CircleAlert } from 'lucide-svelte';
 	import { onMount } from 'svelte';
+	import { quitReasons, quitStatus } from './employees.options';
 
 	interface Props {
 		show?: boolean;
@@ -26,18 +27,6 @@
 		resignationDate: '',
 		lastDay: ''
 	});
-
-	let status = [
-		{ value: 'RECONTRATABLE', name: 'Recontratable' },
-		{ value: 'NO RECONTRATABLE', name: 'No recontratable' }
-	];
-
-	let reasons = [
-		{ value: 'terminacion_de_contrato', name: 'Terminacion de contrato' },
-		{ value: 'renuncia_voluntaria', name: 'Renuncia Voluntaria' },
-		{ value: 'liquidacion', name: 'Liquidacion' },
-		{ value: 'baja_por_faltas', name: 'Baja por faltas' }
-	];
 
 	async function handleSubmmit() {
 		await api.delete('/employees', {
@@ -76,7 +65,7 @@
 			<form class="flex flex-col space-y-6" action="#">
 				<b class="space-y-2">
 					<span>Razon</span>
-					<Select class="mt-2" items={reasons} bind:value={formData.quitReason} />
+					<Select class="mt-2" items={quitReasons} bind:value={formData.quitReason} />
 				</b>
 				<b class="space-y-2">
 					<span>Fecha de baja</span>
@@ -92,7 +81,7 @@
 				</b>
 				<b class="space-y-2">
 					<span>Status</span>
-					<Select class="mt-2" items={status} bind:value={formData.quitStatus} />
+					<Select class="mt-2" items={quitStatus} bind:value={formData.quitStatus} />
 				</b>
 				<b class="space-y-2">
 					<span>Notas</span>

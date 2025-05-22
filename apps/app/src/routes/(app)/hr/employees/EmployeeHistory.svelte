@@ -11,17 +11,20 @@
 	} from '$lib/components/ui/table';
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
-	import { Check, FileDown, Minus, Pen, Plus } from 'lucide-svelte';
+	import { Check, FileDown, Minus, Pen, PenIcon, Plus } from 'lucide-svelte';
 	import { format } from 'date-fns';
 	import { es } from 'date-fns/locale';
 	import { cn } from '$lib/utils';
 	import Card from '$lib/components/ui/card/card.svelte';
+	import RecordDocForm from './RecordDocForm.svelte';
 	interface Props {
 		employee: any;
 	}
 
 	let { employee = $bindable() }: Props = $props();
 	let docs: any[] = $state([]);
+	let selectedId = $state('');
+	let open = $state(false);
 
 	let newDoc = $state({
 		text: '',
@@ -76,7 +79,7 @@
 	}
 
 	async function downloadDoc(id: string) {
-		const response = await api.get('/employees/history/doc/' + id, {
+		const response = await api.get('/employees/history/download-doc/' + id, {
 			responseType: 'arraybuffer'
 		});
 		const blob = new Blob([response.data], { type: 'application/pdf' });
@@ -126,6 +129,14 @@
 				<Card class=" flex-1 rounded-sm  px-3 py-1">{row.text}</Card>
 				{#if row.doc}
 					<Button
+						onclick={() => {
+							selectedId = row.id;
+							open = true;
+						}}
+						variant="outline"
+						class="ml-1 aspect-square h-[2.125rem]"><PenIcon class="size-4" /></Button
+					>
+					<Button
 						onclick={() => downloadDoc(row.id)}
 						variant="outline"
 						class="ml-1 aspect-square h-[2.125rem]"><FileDown class="size-4" /></Button
@@ -136,3 +147,5 @@
 		<div class="bg-gray mt-1.5 flex size-5 items-center justify-center rounded-full"></div>
 	</div>
 </div>
+
+<RecordDocForm bind:id={selectedId} bind:open />

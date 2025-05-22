@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { promises as fs } from 'fs';
 import {
   createRecordSchema,
+  editDocSchema,
   getEmployeeHistorySchema,
   idSchema,
 } from './records.schema';
@@ -49,6 +50,29 @@ export class RecordsService {
         sql,
       );
     });
+  }
+
+  async getDocData(body: z.infer<typeof idSchema>) {
+    const [result] =
+      await sql`SELECT id, doc FROM employeeRecords WHERE id = ${body.id}`;
+
+    if (!result || !result.doc)
+      throw new HttpException('No se encontró el documento', 404);
+
+    let data;
+    try {
+      data = JSON.parse(result.doc);
+    } catch (error) {
+      data = result.doc;
+    }
+
+    return data;
+  }
+
+  async updateDocData(body: z.infer<typeof editDocSchema>) {
+    await sql`UPDATE employeeRecords SET doc = ${JSON.stringify(body.doc)} WHERE id = ${body.id}`;
+
+    return;
   }
 
   async downloadDoc(body: z.infer<typeof idSchema>) {

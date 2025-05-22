@@ -16,3 +16,10 @@ export const createRecordSchema = z.object({
 export const idSchema = z.object({
   id: z.string().min(1),
 });
+
+export const editDocSchema = z.object({
+  id: z.coerce.number(),
+  doc: z.any().refine((value) => typeof value === 'object', {
+    message: 'El documento debe ser un objeto',
+  }),
+});

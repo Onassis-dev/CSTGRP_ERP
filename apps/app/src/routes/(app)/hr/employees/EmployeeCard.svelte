@@ -133,9 +133,7 @@
 	function clean() {
 		tab = 'info';
 		files = undefined;
-		formData = {};
 		edit = false;
-		preview = '';
 	}
 
 	async function handleSubmit() {
@@ -175,7 +173,12 @@
 		fetchOptions();
 	});
 	run(() => {
-		if (files?.[0] || formData.photo) getFilePreview();
+		if (files?.[0] || formData.photo) {
+			preview = '/person.svg';
+			getFilePreview();
+		} else {
+			preview = '/person.svg';
+		}
 	});
 	run(() => {
 		if (!show) clean();

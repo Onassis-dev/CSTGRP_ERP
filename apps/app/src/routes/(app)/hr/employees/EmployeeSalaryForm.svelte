@@ -8,6 +8,7 @@
 	import { showSuccess } from '$lib/utils/showToast';
 	import { CircleAlert } from 'lucide-svelte';
 	import { onMount } from 'svelte';
+	import { salaryReasons } from './employees.options';
 
 	interface Props {
 		show?: boolean;
@@ -26,14 +27,6 @@
 		petitioner: '',
 		comments: ''
 	});
-
-	let reasons = [
-		{ value: 'cambio_de_puesto', name: 'Cambio de puesto' },
-		{ value: 'antiguedad', name: 'Antiguedad' },
-		{ value: 'tabulador', name: 'Tabulador' },
-		{ value: 'desempeño', name: 'Desempeño' },
-		{ value: 'otro', name: 'Otro' }
-	];
 
 	async function handleSubmmit() {
 		await api.put('/employees/salary', {
@@ -73,7 +66,7 @@
 			<form class="flex flex-col space-y-6" action="#">
 				<b class="space-y-2">
 					<span>Motivo</span>
-					<Select class="mt-2" items={reasons} bind:value={formData.reason} />
+					<Select class="mt-2" items={salaryReasons} bind:value={formData.reason} />
 				</b>
 				<b class="space-y-2">
 					<span>Comentario (opcional)</span>
