@@ -13,7 +13,10 @@
 
 <thead
 	bind:this={ref}
-	class={cn('sticky top-0 z-20 w-full border-b bg-white text-sm', className)}
+	class={cn(
+		'outline-border sticky top-0 z-20 w-full bg-white text-sm outline outline-1',
+		className
+	)}
 	{...restProps}
 >
 	{@render children?.()}

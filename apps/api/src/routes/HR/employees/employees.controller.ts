@@ -21,6 +21,7 @@ import {
   quitSchema,
   reactivateSchema,
   templateSchema,
+  updateSalarySchema,
 } from './employees.schema';
 import { FileInterceptor } from '@nest-lab/fastify-multer';
 import { File } from '@nest-lab/fastify-multer';
@@ -82,6 +83,11 @@ export class EmployeesController {
   @Delete()
   Quit(@Body(new ZodPiPe(quitSchema)) body) {
     return this.employeesService.quitEmployee(body);
+  }
+
+  @Put('salary')
+  updateSalary(@Body(new ZodPiPe(updateSalarySchema)) body) {
+    return this.employeesService.updateSalary(body);
   }
 
   @Put('template')

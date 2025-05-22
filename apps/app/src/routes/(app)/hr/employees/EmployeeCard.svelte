@@ -52,8 +52,7 @@
 	];
 	const status = [
 		{ value: 'Recontratable', name: 'Recontratable' },
-		{ value: 'No recontratable', name: 'No recontratable' },
-		{ value: 'A considerar', name: 'A considerar' }
+		{ value: 'No recontratable', name: 'No recontratable' }
 	];
 
 	const positionTypes = [
@@ -123,6 +122,8 @@
 			admissionDate: employeeData.admissionDate?.split('T')[0],
 			bornDate: employeeData.bornDate?.split('T')[0],
 			quitDate: employeeData.quitDate?.split('T')[0],
+			resignationDate: employeeData.resignationDate?.split('T')[0],
+			lastDay: employeeData.lastDay?.split('T')[0],
 			bcpet: employeeData.bcpet?.split('T')[0],
 			infonavitFee: employeeData.infonavitFee?.toString(),
 			infonavitDiscount: employeeData.infonavitDiscount?.toString()
@@ -354,6 +355,19 @@
 									<Input type="date" bind:value={formData.quitDate} />
 								</DisplayInput>
 							</div>
+
+							<div>
+								<p class="text-muted-foreground text-xs">Fecha de renuncia:</p>
+								<DisplayInput value={formData.resignationDate} {edit}>
+									<Input type="date" bind:value={formData.resignationDate} />
+								</DisplayInput>
+							</div>
+							<div>
+								<p class="text-muted-foreground text-xs">Ultimo dia:</p>
+								<DisplayInput value={formData.lastDay} {edit}>
+									<Input type="date" bind:value={formData.lastDay} />
+								</DisplayInput>
+							</div>
 						</div>
 					{/if}
 
@@ -463,6 +477,7 @@
 
 					<div class="relative mb-6 grid w-full grid-cols-2 gap-x-4 gap-y-2 rounded-md border p-4">
 						<div class="bg-background absolute -top-5 left-8 my-2 px-2 font-semibold">Empresa</div>
+
 						<div>
 							<p class="text-muted-foreground text-xs">Antiguedad:</p>
 							<DisplayInput value={formatDate(formData.admissionDate)} {edit}>
@@ -502,10 +517,14 @@
 								<Select items={contracts} bind:value={formData.contract} />
 							</DisplayInput>
 						</div>
-						<!-- <div>
-							<p class="text-muted-foreground text-xs">Dias de vacaciones:</p>
-							<DisplayInput bind:value={formData.vacations} {edit} />
-						</div> -->
+						<div>
+							<p class="text-muted-foreground text-xs">Jefe directo:</p>
+							<DisplayInput bind:value={formData.boss} {edit} />
+						</div>
+						<div>
+							<p class="text-muted-foreground text-xs">Departamento:</p>
+							<DisplayInput bind:value={formData.department} {edit} />
+						</div>
 					</div>
 
 					<div class="relative grid w-full grid-cols-2 gap-x-4 gap-y-2 rounded-md border p-4">
@@ -519,6 +538,10 @@
 						<div>
 							<p class="text-muted-foreground text-xs">Número de Emergencia:</p>
 							<DisplayInput bind:value={formData.emergencyNumber} {edit} />
+						</div>
+						<div>
+							<p class="text-muted-foreground text-xs">Parentesco:</p>
+							<DisplayInput bind:value={formData.emergencyRelationship} {edit} />
 						</div>
 					</div>
 				</TabsContent>

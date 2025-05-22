@@ -34,13 +34,6 @@
 		</DropdownMenuTrigger>
 
 		<DropdownMenuContent>
-			{#each extraButtons as button}
-				<DropdownMenuItem onclick={button.fn}>
-					<button.icon class="size-3.5" />
-					{button.name}
-				</DropdownMenuItem>
-			{/each}
-
 			{#if viewFunc}
 				<DropdownMenuItem onclick={viewFunc}>
 					<Eye class="size-3.5" /> Ver
@@ -56,6 +49,12 @@
 					<Trash class="size-3.5" /> Eliminar
 				</DropdownMenuItem>
 			{/if}
+			{#each extraButtons as button}
+				<DropdownMenuItem onclick={button.fn}>
+					<button.icon class="size-3.5" />
+					{button.name}
+				</DropdownMenuItem>
+			{/each}
 			{@render children?.()}
 		</DropdownMenuContent>
 	</DropdownMenu>

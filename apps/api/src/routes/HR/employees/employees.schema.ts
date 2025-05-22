@@ -16,171 +16,74 @@ export const createSchema = z.object({
   noEmpleado: z.string().refine((value) => noEmpleadoRegex.test(value)),
   name: z.string().min(3),
   areaId: z.number(),
-  paternalLastName: z.string().min(3).optional().nullable(),
-  maternalLastName: z.string().min(3).optional().nullable(),
-  nss: z
-    .string()
-    .refine((value) => nssRegex.test(value))
-    .optional()
-    .nullable(),
-  curp: z
-    .string()
-    .refine((value) => curpRegex.test(value))
-    .optional()
-    .nullable(),
-  rfc: z
-    .string()
-    .refine((value) => rfcRegex.test(value))
-    .optional()
-    .nullable(),
+  paternalLastName: z.string().min(3),
+  maternalLastName: z.string().min(3),
+  nss: z.string().refine((value) => nssRegex.test(value)),
+  curp: z.string().refine((value) => curpRegex.test(value)),
+  rfc: z.string().refine((value) => rfcRegex.test(value)),
   blood: z
     .string()
     .refine((value) => bloodRegex.test(value))
     .optional()
     .nullable(),
-  account: z
-    .string()
-    .refine((value) => accountRegex.test(value))
-    .optional()
-    .nullable(),
-  emergencyContact: z.string().min(1).optional().nullable(),
+  account: z.string().refine((value) => accountRegex.test(value)),
+  emergencyContact: z.string().min(1),
+  boss: z.string().min(1),
+  department: z.string().min(1),
+  emergencyRelationship: z.string().min(1),
   emergencyNumber: z
     .string()
     .refine((v) => phoneRegex.test(v.replaceAll(' ', '')))
-    .transform((v) => v.replaceAll(' ', ''))
-    .optional()
-    .nullable(),
+    .transform((v) => v.replaceAll(' ', '')),
   admissionDate: z.string().refine((value) => dateRegex.test(value)),
-  bornLocation: z.string().min(1).optional().nullable(),
-  genre: z.string().min(1).optional().nullable(),
-  sons: z.number().optional().nullable(),
+  bornLocation: z.string().min(1),
+  genre: z.string().min(1),
+  sons: z.number(),
   vacations: z.number().optional().nullable(),
-  clinicNo: z.string().min(1).optional().nullable(),
-  email: z.string().email().optional().nullable(),
+  clinicNo: z.string().min(1),
+  email: z.string().email(),
   number: z
     .string()
     .refine((v) => phoneRegex.test(v.replaceAll(' ', '')))
-    .transform((v) => v.replaceAll(' ', ''))
-    .optional()
-    .nullable(),
-  direction: z.string().min(1).optional().nullable(),
-  bank: z.string().min(1).optional().nullable(),
-  infonavitNo: z
-    .string()
-    .refine((value) => infonavitRegex.test(value))
-    .optional()
-    .nullable(),
+    .transform((v) => v.replaceAll(' ', '')),
+  direction: z.string().min(1),
+  bank: z.string().min(1),
+  infonavitNo: z.string().refine((value) => infonavitRegex.test(value)),
   infonavitFee: z.string().min(1).optional().nullable(),
   infonavitDiscount: z.string().min(1).optional().nullable(),
-  positionType: z.string().min(1).optional().nullable(),
-  shift: z.string().min(1).optional().nullable(),
-  nominaSalary: z.coerce.number().min(0).optional().nullable(),
+  positionType: z.string().min(1),
+  shift: z.string().min(1),
+  nominaSalary: z.coerce.number().min(0),
   immsSalary: z.string().or(z.number()).optional().nullable(),
   studies: z.string().min(1).optional().nullable(),
-  bornDate: z
-    .string()
-    .refine((value) => dateRegex.test(value))
-    .optional()
-    .nullable(),
-  civilStatus: z.string().min(1).optional().nullable(),
-  nationality: z.string().min(1).optional().nullable(),
+  bornDate: z.string().refine((value) => dateRegex.test(value)),
+  civilStatus: z.string().min(1),
+  nationality: z.string().min(1),
   positionId: z.number(),
   route: z.string().min(1).optional().nullable(),
-  contract: z.number().min(0),
-});
-
-export const editSchema = z.object({
-  id: z.number(),
-  noEmpleado: z
-    .string()
-    .refine((value) => noEmpleadoRegex.test(value))
-    .optional()
-    .nullable(),
-  name: z.string().min(3).optional(),
-  paternalLastName: z.string().min(3).optional().nullable(),
-  maternalLastName: z.string().min(3).optional().nullable(),
-  nss: z
-    .string()
-    .refine((value) => nssRegex.test(value))
-    .optional()
-    .nullable(),
-  curp: z
-    .string()
-    .refine((value) => curpRegex.test(value))
-    .optional()
-    .nullable(),
-  rfc: z
-    .string()
-    .refine((value) => rfcRegex.test(value))
-    .optional()
-    .nullable(),
-  blood: z
-    .string()
-    .refine((value) => bloodRegex.test(value))
-    .optional()
-    .nullable(),
-  account: z
-    .string()
-    .refine((value) => accountRegex.test(value))
-    .optional()
-    .nullable(),
-  emergencyContact: z.string().min(1).optional().nullable(),
-  emergencyNumber: z
-    .string()
-    .refine((v) => phoneRegex.test(v.replaceAll(' ', '')))
-    .transform((v) => v.replaceAll(' ', ''))
-    .optional()
-    .nullable(),
-  admissionDate: z
-    .string()
-    .refine((value) => dateRegex.test(value))
-    .optional()
-    .nullable(),
-  bornLocation: z.string().min(1).optional().nullable(),
-  genre: z.string().min(1).optional().nullable(),
-  sons: z.number().optional().nullable(),
-  vacations: z.number().optional().nullable(),
-  clinicNo: z.string().min(1).optional().nullable(),
-  email: z.string().email().optional().nullable(),
-  number: z
-    .string()
-    .refine((v) => phoneRegex.test(v.replaceAll(' ', '')))
-    .transform((v) => v.replaceAll(' ', ''))
-    .optional()
-    .nullable(),
-  direction: z.string().min(1).optional().nullable(),
-  bank: z.string().min(1).optional().nullable(),
-  infonavitNo: z
-    .string()
-    .refine((value) => infonavitRegex.test(value))
-    .optional()
-    .nullable(),
-  infonavitFee: z.string().min(1).optional().nullable(),
-  infonavitDiscount: z.string().min(1).optional().nullable(),
-  positionType: z.string().min(1).optional().nullable(),
-  shift: z.string().min(1).optional().nullable(),
-  nominaSalary: z.coerce.number().min(0).optional().nullable(),
-  immsSalary: z.string().or(z.number()).optional().nullable(),
-  studies: z.string().min(1).optional().nullable(),
-  bornDate: z
-    .string()
-    .refine((value) => dateRegex.test(value))
-    .optional()
-    .nullable(),
-  civilStatus: z.string().min(1).optional().nullable(),
-  nationality: z.string().min(1).optional().nullable(),
-  positionId: z.number().optional().nullable(),
-  areaId: z.number().optional().nullable(),
+  contract: z.number(),
   quitDate: z
     .string()
     .refine((value) => dateRegex.test(value))
     .optional()
     .nullable(),
   quitStatus: z.string().min(1).optional().nullable(),
-  quitNotes: z.string().optional().optional().nullable(),
+  quitNotes: z.string().optional().nullable(),
   quitReason: z.string().min(1).optional().nullable(),
-  route: z.string().min(1).optional().nullable(),
-  contract: z.number().min(0).optional().nullable(),
+  resignationDate: z
+    .string()
+    .refine((value) => dateRegex.test(value))
+    .optional()
+    .nullable(),
+  lastDay: z
+    .string()
+    .refine((value) => dateRegex.test(value))
+    .optional()
+    .nullable(),
+});
+
+export const editSchema = createSchema.omit({ nominaSalary: true }).extend({
+  id: z.coerce.number().min(1),
 });
 
 export const reactivateSchema = z.object({
@@ -196,6 +99,18 @@ export const quitSchema = z.object({
   quitStatus: z.string().min(1),
   quitNotes: z.string().optional().nullable(),
   quitReason: z.string().min(1),
+  resignationDate: z.string().refine((value) => dateRegex.test(value)),
+  lastDay: z.string().refine((value) => dateRegex.test(value)),
+});
+
+export const updateSalarySchema = z.object({
+  newSalary: z.coerce.number().min(0),
+  reason: z.string().min(1),
+  date: z.string().refine((value) => dateRegex.test(value)),
+  reasonComment: z.string().nullable(),
+  petitioner: z.string().min(1),
+  comments: z.string().optional().nullable(),
+  id: z.number().min(1),
 });
 
 export const idSchema = z.object({

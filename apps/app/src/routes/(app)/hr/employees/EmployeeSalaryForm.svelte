@@ -17,43 +17,40 @@
 
 	let { show = $bindable(false), selectedEmployee = $bindable({}), reload }: Props = $props();
 
-	let formData: any = $state({
+	let formData = $state({
 		id: selectedEmployee.id,
-		quitReason: null,
-		quitDate: '',
-		quitNotes: '',
-		quitStatus: '',
-		resignationDate: '',
-		lastDay: ''
+		reason: '',
+		reasonComment: '',
+		newSalary: '',
+		date: '',
+		petitioner: '',
+		comments: ''
 	});
 
-	let status = [
-		{ value: 'RECONTRATABLE', name: 'Recontratable' },
-		{ value: 'NO RECONTRATABLE', name: 'No recontratable' }
-	];
-
 	let reasons = [
-		{ value: 'terminacion_de_contrato', name: 'Terminacion de contrato' },
-		{ value: 'renuncia_voluntaria', name: 'Renuncia Voluntaria' },
-		{ value: 'liquidacion', name: 'Liquidacion' },
-		{ value: 'baja_por_faltas', name: 'Baja por faltas' }
+		{ value: 'cambio_de_puesto', name: 'Cambio de puesto' },
+		{ value: 'antiguedad', name: 'Antiguedad' },
+		{ value: 'tabulador', name: 'Tabulador' },
+		{ value: 'desempeño', name: 'Desempeño' },
+		{ value: 'otro', name: 'Otro' }
 	];
 
 	async function handleSubmmit() {
-		await api.delete('/employees', {
-			data: { ...formData, id: parseInt(selectedEmployee.id || '0') }
+		await api.put('/employees/salary', {
+			...formData,
+			id: Number(selectedEmployee.id || '0')
 		});
 
 		show = false;
-		showSuccess('Empleado dado de baja');
+		showSuccess('Salario actualizado');
 		formData = {
-			id: '',
-			quitReason: null,
-			quitDate: '',
-			quitNotes: '',
-			quitStatus: '',
-			resignationDate: '',
-			lastDay: ''
+			id: selectedEmployee.id,
+			reason: '',
+			reasonComment: '',
+			newSalary: '',
+			date: '',
+			petitioner: '',
+			comments: ''
 		};
 	}
 
@@ -68,38 +65,38 @@
 		<DialogBody>
 			<div class="text-center">
 				<CircleAlert class="mx-auto mb-2 h-16 w-16 text-gray-400 dark:text-gray-200" />
-				<h3 class=" text-lg font-normal text-gray-500 dark:text-gray-400">Dar de baja a:</h3>
+				<h3 class=" text-lg font-normal text-gray-500 dark:text-gray-400">Actualizar salario:</h3>
 				<h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
 					{selectedEmployee.name} - {selectedEmployee.noEmpleado}
 				</h3>
 			</div>
 			<form class="flex flex-col space-y-6" action="#">
 				<b class="space-y-2">
-					<span>Razon</span>
-					<Select class="mt-2" items={reasons} bind:value={formData.quitReason} />
+					<span>Motivo</span>
+					<Select class="mt-2" items={reasons} bind:value={formData.reason} />
 				</b>
 				<b class="space-y-2">
-					<span>Fecha de baja</span>
-					<Input type="date" bind:value={formData.quitDate} />
+					<span>Comentario (opcional)</span>
+					<Input type="text" bind:value={formData.reasonComment} />
 				</b>
 				<b class="space-y-2">
-					<span>Fecha de renuncia</span>
-					<Input type="date" bind:value={formData.resignationDate} />
+					<span>Fecha de modificacion</span>
+					<Input type="date" bind:value={formData.date} />
 				</b>
 				<b class="space-y-2">
-					<span>Ultimo dia</span>
-					<Input type="date" bind:value={formData.lastDay} />
+					<span>Nuevo salario</span>
+					<Input type="number" bind:value={formData.newSalary} />
 				</b>
 				<b class="space-y-2">
-					<span>Status</span>
-					<Select class="mt-2" items={status} bind:value={formData.quitStatus} />
+					<span>Solicitante</span>
+					<Input type="text" bind:value={formData.petitioner} />
 				</b>
 				<b class="space-y-2">
-					<span>Notas</span>
-					<Input bind:value={formData.quitNotes} />
+					<span>Observaciones</span>
+					<Input type="text" bind:value={formData.comments} />
 				</b>
 				<div class="text-center">
-					<Button onclick={handleSubmmit} class="me-2" variant="destructive">Dar de baja</Button>
+					<Button onclick={handleSubmmit} class="me-2" variant="destructive">Actualizar</Button>
 					<Button onclick={() => (show = false)} variant="outline">Cancelar</Button>
 				</div>
 			</form>

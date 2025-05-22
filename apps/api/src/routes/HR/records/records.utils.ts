@@ -1,8 +1,8 @@
-import { format } from 'date-fns';
+import { format, getWeek } from 'date-fns';
 import { PDFFont, PDFPage } from 'pdf-lib';
 import { fillBox } from 'src/utils/pdf';
 
-export function drawAlta(
+function drawBasicInfo(
   page: PDFPage,
   font: PDFFont,
   data: Record<string, any>,
@@ -12,21 +12,10 @@ export function drawAlta(
     font,
     text: data.noEmpleado || '',
     x: 110,
-    y: 698,
+    y: 699,
     size: 9,
     width: 100,
     height: 9,
-  });
-
-  fillBox({
-    page,
-    font,
-    text: 'X',
-    x: 340,
-    y: 698,
-    size: 12,
-    width: 12,
-    height: 12,
   });
 
   fillBox({
@@ -49,6 +38,25 @@ export function drawAlta(
     size: 9,
     width: 250,
     height: 9,
+  });
+}
+
+export function drawAlta(
+  page: PDFPage,
+  font: PDFFont,
+  data: Record<string, any>,
+) {
+  drawBasicInfo(page, font, data);
+
+  fillBox({
+    page,
+    font,
+    text: 'X',
+    x: 340,
+    y: 699,
+    size: 12,
+    width: 12,
+    height: 12,
   });
 
   fillBox({
@@ -155,7 +163,7 @@ export function drawAlta(
     font,
     text: data.email || '',
     x: 340,
-    y: 473,
+    y: 472,
     size: 9,
     width: 200,
     height: 9,
@@ -171,19 +179,13 @@ export function drawAlta(
     width: 100,
     height: 14,
   });
-}
 
-export function drawBaja(
-  page: PDFPage,
-  font: PDFFont,
-  data: Record<string, any>,
-) {
   fillBox({
     page,
     font,
-    text: data.noEmpleado,
-    x: 110,
-    y: 698,
+    text: String(data.nominaSalary) || '',
+    x: 415,
+    y: 565,
     size: 9,
     width: 100,
     height: 9,
@@ -192,9 +194,83 @@ export function drawBaja(
   fillBox({
     page,
     font,
+    text: data.department || '',
+    x: 260,
+    y: 514,
+    size: 9,
+    width: 100,
+    height: 9,
+  });
+
+  fillBox({
+    page,
+    font,
+    text: data.boss || '',
+    x: 475,
+    y: 514,
+    size: 9,
+    width: 100,
+    height: 9,
+  });
+
+  fillBox({
+    page,
+    font,
+    text: data.emergencyNumber || '',
+    x: 200,
+    y: 472,
+    size: 9,
+    width: 100,
+    height: 9,
+  });
+
+  fillBox({
+    page,
+    font,
+    text: data.emergencyContact || '',
+    x: 170,
+    y: 447,
+    size: 9,
+    width: 100,
+    height: 9,
+  });
+
+  fillBox({
+    page,
+    font,
+    text: data.emergencyRelationship || '',
+    x: 430,
+    y: 447,
+    size: 9,
+    width: 100,
+    height: 9,
+  });
+
+  fillBox({
+    page,
+    font,
+    text: String(getWeek(new Date(data.admissionDate))) || '',
+    x: 200,
+    y: 496,
+    size: 9,
+    width: 100,
+    height: 9,
+  });
+}
+
+export function drawBaja(
+  page: PDFPage,
+  font: PDFFont,
+  data: Record<string, any>,
+) {
+  drawBasicInfo(page, font, data);
+
+  fillBox({
+    page,
+    font,
     text: 'X',
     x: 382,
-    y: 698,
+    y: 699,
     size: 12,
     width: 12,
     height: 12,
@@ -216,10 +292,76 @@ export function drawBaja(
     font,
     text: data.position || '',
     x: 73,
-    y: 370,
+    y: 371,
     size: 9,
     width: 105,
     height: 20,
+  });
+
+  fillBox({
+    page,
+    font,
+    text: data.department || '',
+    x: 222,
+    y: 371,
+    size: 9,
+    width: 105,
+    height: 20,
+  });
+
+  fillBox({
+    page,
+    font,
+    text: data.boss || '',
+    x: 368,
+    y: 371,
+    size: 9,
+    width: 105,
+    height: 20,
+  });
+
+  fillBox({
+    page,
+    font,
+    text: String(getWeek(new Date(data.quitDate))) || '',
+    x: 555,
+    y: 371,
+    size: 9,
+    width: 105,
+    height: 20,
+  });
+
+  fillBox({
+    page,
+    font,
+    text: format(data.resignationDate, 'dd/MM/yyyy'),
+    x: 145,
+    y: 412,
+    size: 9,
+    width: 150,
+    height: 9,
+  });
+
+  fillBox({
+    page,
+    font,
+    text: format(data.lastDay, 'dd/MM/yyyy'),
+    x: 160,
+    y: 394,
+    size: 9,
+    width: 150,
+    height: 9,
+  });
+
+  fillBox({
+    page,
+    font,
+    text: data.quitNotes || '',
+    x: 170,
+    y: 341,
+    size: 9,
+    width: 400,
+    height: 9,
   });
 
   fillBox({
@@ -256,4 +398,137 @@ export function drawBaja(
       height: 12,
     });
   }
+
+  const motivePositions = {
+    terminacion_de_contrato: 222,
+    renuncia_voluntaria: 325,
+    liquidacion: 412,
+    baja_por_faltas: 512,
+  };
+
+  fillBox({
+    page,
+    font,
+    text: 'X',
+    x: motivePositions[data.quitReason],
+    y: 360,
+    size: 12,
+    width: 12,
+    height: 12,
+  });
+}
+
+export function drawSalary(
+  page: PDFPage,
+  font: PDFFont,
+  data: Record<string, any>,
+) {
+  drawBasicInfo(page, font, data);
+
+  fillBox({
+    page,
+    font,
+    text: 'X',
+    x: 470,
+    y: 699,
+    size: 12,
+    width: 12,
+    height: 12,
+  });
+
+  fillBox({
+    page,
+    font,
+    text: data.reasonComment || '',
+    x: 383,
+    y: 261,
+    size: 9,
+    width: 180,
+    height: 9,
+  });
+
+  fillBox({
+    page,
+    font,
+    text: String(getWeek(new Date(data.date))) || '',
+    x: 159,
+    y: 231,
+    size: 9,
+    width: 100,
+    height: 9,
+  });
+
+  fillBox({
+    page,
+    font,
+    text: (data.nominaSalary || 0).toFixed(2),
+    x: 110,
+    y: 244,
+    size: 9,
+    width: 100,
+    height: 9,
+  });
+
+  fillBox({
+    page,
+    font,
+    text: (data.newSalary || 0).toFixed(2),
+    x: 285,
+    y: 244,
+    size: 9,
+    width: 100,
+    height: 9,
+  });
+
+  fillBox({
+    page,
+    font,
+    text: format(data.date, 'dd/MM/yyyy') || '',
+    x: 485,
+    y: 244,
+    size: 9,
+    width: 100,
+    height: 9,
+  });
+
+  fillBox({
+    page,
+    font,
+    text: data.petitioner || '',
+    x: 270,
+    y: 229,
+    size: 9,
+    width: 140,
+    height: 9,
+  });
+
+  fillBox({
+    page,
+    font,
+    text: data.comments || '',
+    x: 165,
+    y: 154,
+    size: 9,
+    width: 400,
+    height: 9,
+  });
+
+  const motivePositions = {
+    cambio_de_puesto: 260,
+    antiguedad: 347,
+    tabulador: 419,
+    desempeño: 506,
+    otro: 261,
+  };
+
+  fillBox({
+    page,
+    font,
+    text: 'X',
+    x: motivePositions[data.reason],
+    y: data.reason === 'otro' ? 261 : 277,
+    size: 12,
+    width: 12,
+    height: 12,
+  });
 }

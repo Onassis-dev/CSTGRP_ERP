@@ -10,7 +10,8 @@ import sql from 'src/utils/db';
 import { ContextProvider } from 'src/interceptors/context.provider';
 import path from 'path';
 import { PDFDocument, StandardFonts } from 'pdf-lib';
-import { drawAlta, drawBaja } from './records.utils';
+import { drawAlta, drawBaja, drawSalary } from './records.utils';
+// import { markPage } from 'src/utils/pdf';
 
 @Injectable()
 export class RecordsService {
@@ -81,6 +82,8 @@ export class RecordsService {
     if (data.type === 'alta') drawAlta(page, font, data);
 
     if (data.type === 'baja') drawBaja(page, font, data);
+
+    if (data.type === 'salario') drawSalary(page, font, data);
 
     const pdfBytes = await pdfDoc.save();
     return pdfBytes;

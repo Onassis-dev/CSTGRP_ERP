@@ -14,16 +14,27 @@
 	import ReactivateForm from './ReactivateForm.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import CusTable from '$lib/components/basic/CusTable.svelte';
-	import { RotateCcw, FileDown, PlusCircle, Grid3x3, Grid2X2 } from 'lucide-svelte';
+	import {
+		RotateCcw,
+		FileDown,
+		PlusCircle,
+		Grid3x3,
+		Grid2X2,
+		DollarSignIcon,
+		UserRoundMinus
+	} from 'lucide-svelte';
 	import { TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
 	import { Badge } from '$lib/components/ui/badge';
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
 	import OptionsCell from '$lib/components/basic/OptionsCell.svelte';
 	import Select from '$lib/components/basic/Select.svelte';
+	import EmployeeSalaryForm from './EmployeeSalaryForm.svelte';
 
 	let show1: boolean = $state(false);
 	let show2: boolean = $state(false);
 	let show3: boolean = $state(false);
+	let show4: boolean = $state(false);
+
 	let selectedEmployee: any = $state({});
 	let employees: any[] = $state([]);
 	let searchParams = $state({
@@ -71,6 +82,10 @@
 	function deleteEmployee(i: number) {
 		selectedEmployee = filteredEmployees[i];
 		show2 = true;
+	}
+	function viewSalary(i: number) {
+		selectedEmployee = filteredEmployees[i];
+		show4 = true;
 	}
 	function reactivateEmployee(i: number) {
 		selectedEmployee = filteredEmployees[i];
@@ -193,14 +208,27 @@
 			<TableRow>
 				<OptionsCell
 					viewFunc={() => previewEmployee(i)}
-					deleteFunc={employee.active ? () => deleteEmployee(i) : undefined}
-				>
-					{#if !employee.active}
-						<DropdownMenuItem onclick={() => reactivateEmployee(i)}>
-							<RotateCcw class="size-3.5" /> Recontratar
-						</DropdownMenuItem>
-					{/if}
-				</OptionsCell>
+					extraButtons={employee.active
+						? [
+								{
+									fn: () => deleteEmployee(i),
+									name: 'Baja',
+									icon: UserRoundMinus
+								},
+								{
+									fn: () => viewSalary(i),
+									name: 'Salario',
+									icon: DollarSignIcon
+								}
+							]
+						: [
+								{
+									fn: () => reactivateEmployee(i),
+									name: 'Recontratar',
+									icon: RotateCcw
+								}
+							]}
+				></OptionsCell>
 				<TableCell>{employee.noEmpleado || ''}</TableCell>
 				<TableCell class="cursor-pointer whitespace-nowrap" onclick={() => previewEmployee(i)}
 					>{employee.name || ''}</TableCell
@@ -224,4 +252,5 @@
 
 <EmployeeCard bind:show={show1} bind:employee={selectedEmployee} reload={getEmployees} />
 <QuitEmployeeForm bind:show={show2} bind:selectedEmployee reload={getEmployees} />
+<EmployeeSalaryForm bind:show={show4} bind:selectedEmployee reload={getEmployees} />
 <ReactivateForm bind:show={show3} bind:selectedEmployee reload={getEmployees} />

@@ -7,6 +7,7 @@ import {
   quitSchema,
   reactivateSchema,
   templateSchema,
+  updateSalarySchema,
 } from './employees.schema';
 import { z } from 'zod';
 import sql from 'src/utils/db';
@@ -215,7 +216,7 @@ export class EmployeesService {
   async quitEmployee(body: z.infer<typeof quitSchema>) {
     await sql.begin(async (sql) => {
       const [employee] =
-        await sql`update employees set active = false, "quitDate" = ${body.quitDate}, "quitStatus" = ${body.quitStatus}, "quitReason" = ${body.quitReason}, "quitNotes" = ${body.quitNotes}  where id = ${body.id}
+        await sql`update employees set active = false, "quitDate" = ${body.quitDate}, "quitStatus" = ${body.quitStatus}, "quitReason" = ${body.quitReason}, "quitNotes" = ${body.quitNotes}, "resignationDate" = ${body.resignationDate}, "lastDay" = ${body.lastDay}  where id = ${body.id}
         returning *, (select name from positions where id = "positionId") as position, (select name from areas where id = "areaId") as area`;
 
       await sql`insert into employeeRecords ("employeeId", date, type, text, doc) values (${body.id}, now(), 'baja', 'Empleado dado de baja', ${JSON.stringify({ ...employee, type: 'baja' })})`;
@@ -225,6 +226,23 @@ export class EmployeesService {
       );
     });
     return;
+  }
+
+  async updateSalary(body: z.infer<typeof updateSalarySchema>) {
+    await sql.begin(async (sql) => {
+      const [employee] =
+        await sql`select name, "paternalLastName", "maternalLastName", "noEmpleado", "nominaSalary", "admissionDate" from employees where id = ${body.id}`;
+      await sql`update employees set "nominaSalary" = ${body.newSalary} where id = ${body.id}`;
+
+      await sql`insert into employeeRecords ("employeeId", date, type, text, doc) values (${body.id}, now(), 'cambio', ${'Salario modificado a ' + body.newSalary},
+       ${JSON.stringify({ ...employee, ...body, type: 'salario' })}
+       )`;
+
+      await this.req.record(
+        `Modificó el salario del empleado ${employee.name} ${employee.paternalLastName} ${employee.maternalLastName} - ${employee.noEmpleado} a ${body.newSalary}`,
+        sql,
+      );
+    });
   }
 
   async updateTemplate(body: z.infer<typeof templateSchema>) {
