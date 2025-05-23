@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { QueryClientProvider } from '@tanstack/svelte-query';
 	import Header from '$lib/components/layout/Header.svelte';
 	import SideBar from '$lib/components/layout/SideBar.svelte';
 	import { Toaster } from '$lib/components/ui/sonner';
@@ -9,6 +10,8 @@
 	import { goto } from '$app/navigation';
 	import api from '$lib/utils/server';
 	import Cookies from 'js-cookie';
+	import { queryClient, setupQuerySync } from '$lib/utils/query';
+
 	interface Props {
 		children?: import('svelte').Snippet;
 	}
@@ -31,6 +34,8 @@
 			);
 			if (changed) window.location.reload();
 		});
+
+		setupQuerySync(queryClient);
 	});
 
 	onDestroy(() => {
@@ -38,12 +43,14 @@
 	});
 </script>
 
-<div class="app flex">
-	<SideBar></SideBar>
-	<main class="flex h-[100lvh] w-full flex-col bg-white xl:ml-60 xl:w-[calc(100%-240px)]">
-		<Header></Header>
-		{@render children?.()}
-	</main>
-</div>
+<QueryClientProvider client={queryClient}>
+	<div class="app flex">
+		<SideBar></SideBar>
+		<main class="flex h-[100lvh] w-full flex-col bg-white xl:ml-60 xl:w-[calc(100%-240px)]">
+			<Header></Header>
+			{@render children?.()}
+		</main>
+	</div>
+</QueryClientProvider>
 
 <Toaster />

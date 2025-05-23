@@ -16,6 +16,7 @@
 	import MaterialComparisonCard from './MaterialComparisonCard.svelte';
 	import { format } from 'date-fns';
 	import { es } from 'date-fns/locale';
+	import { createQuery } from '@tanstack/svelte-query';
 
 	let show = $state(false);
 	let show1 = $state(false);
@@ -31,7 +32,6 @@
 		id: '',
 		leftoverAmount: ''
 	});
-	let inventory: any[] = $state([]);
 	let clients: any = $state({});
 
 	let filters = $state({
@@ -39,8 +39,13 @@
 		clients: ['']
 	});
 
+	const inventoryQuery = createQuery({
+		queryKey: ['inventory', filters],
+		queryFn: async () => (await api.get('/inventory')).data
+	});
+
 	let filteredInventory = $derived(
-		inventory.filter((material) => {
+		$inventoryQuery?.data?.filter((material: any) => {
 			if (filters.code) {
 				if (filters.code) return material.code?.toUpperCase()?.includes(filters.code.toUpperCase());
 			}
@@ -49,8 +54,6 @@
 	);
 
 	async function getInventory() {
-		const result = await api.get('/inventory');
-		inventory = result.data;
 		const clientList = (await api.get('/inventoryvarious/clients')).data;
 		clientList.forEach((client: any) => {
 			clients[client.value] = client;

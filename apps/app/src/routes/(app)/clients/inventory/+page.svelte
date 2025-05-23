@@ -64,7 +64,7 @@
 <MenuBar>
 	<Input menu bind:value={filters.code} placeholder="Lookup part number" />
 	{#if hasAccess('inventory')}
-		<Select items={clientList} bind:value={filters.clientId} menu onSelectedChange={getInventory} />
+		<Select items={clientList} bind:value={filters.clientId} menu onValueChange={getInventory} />
 	{/if}
 </MenuBar>
 

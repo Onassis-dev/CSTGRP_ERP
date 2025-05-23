@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
 	import { Badge } from '$lib/components/ui/badge';
 	import {
 		Dialog,
@@ -26,17 +25,15 @@
 		selectedMaterial: any;
 	}
 
-	let { show = $bindable(), selectedMaterial }: Props = $props();
+	let { show = $bindable(), selectedMaterial = $bindable() }: Props = $props();
 
 	let movements: any[] = $state([]);
 
 	async function fetchData() {
 		movements = (await api.get('/inventory/history/' + selectedMaterial.id)).data;
 	}
-	run(() => {
-		if (selectedMaterial.id) {
-			fetchData();
-		}
+	$effect(() => {
+		if (selectedMaterial.id) fetchData();
 	});
 
 	async function downloadMovements() {

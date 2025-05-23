@@ -45,6 +45,8 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@tanstack/query-broadcast-client-experimental": "5.76.2",
+		"@tanstack/svelte-query": "^5.76.2",
 		"@types/chart.js": "^2.9.41",
 		"@types/js-cookie": "^3.0.6",
 		"axios": "^1.8.4",
