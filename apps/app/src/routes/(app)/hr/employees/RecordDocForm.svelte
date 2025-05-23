@@ -47,7 +47,7 @@
 		nominaSalary: { label: 'Salario nómina', type: 'number' },
 		immsSalary: { label: 'Salario IMSS', type: 'number' },
 		newSalary: { label: 'Nuevo salario', type: 'number' },
-		reason: { label: 'Motivo', type: 'select', options: salaryReasons },
+		salaryReason: { label: 'Motivo', type: 'select', options: salaryReasons },
 		reasonComment: { label: 'Comentario del motivo', type: 'textarea' },
 		petitioner: { label: 'Solicitante', type: 'text' },
 		comments: { label: 'Comentarios', type: 'textarea' },
@@ -73,7 +73,8 @@
 		area: { label: 'Área', type: 'text' },
 		position: { label: 'Puesto', type: 'text' },
 		type: { label: 'Tipo de cambio', type: 'text' },
-		date: { label: 'Fecha', type: 'date' }
+		changeDate: { label: 'Fecha', type: 'date' },
+		oldSalary: { label: 'Salario anterior', type: 'number' }
 	};
 
 	let selectedProperty = $state('');
@@ -117,12 +118,12 @@
 		if (data.type === 'salario')
 			setAvailableProperties([
 				...defaultProperties,
-				'reason',
+				'salaryReason',
 				'reasonComment',
 				'petitioner',
-				'nominaSalary',
+				'oldSalary',
 				'newSalary',
-				'date',
+				'changeDate',
 				'comments'
 			]);
 		if (data.type === 'baja')

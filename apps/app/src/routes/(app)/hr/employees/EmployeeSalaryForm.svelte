@@ -20,10 +20,10 @@
 
 	let formData = $state({
 		id: selectedEmployee.id,
-		reason: '',
+		salaryReason: '',
 		reasonComment: '',
 		newSalary: '',
-		date: '',
+		changeDate: '',
 		petitioner: '',
 		comments: ''
 	});
@@ -38,10 +38,10 @@
 		showSuccess('Salario actualizado');
 		formData = {
 			id: selectedEmployee.id,
-			reason: '',
+			salaryReason: '',
 			reasonComment: '',
 			newSalary: '',
-			date: '',
+			changeDate: '',
 			petitioner: '',
 			comments: ''
 		};
@@ -66,7 +66,7 @@
 			<form class="flex flex-col space-y-6" action="#">
 				<b class="space-y-2">
 					<span>Motivo</span>
-					<Select class="mt-2" items={salaryReasons} bind:value={formData.reason} />
+					<Select class="mt-2" items={salaryReasons} bind:value={formData.salaryReason} />
 				</b>
 				<b class="space-y-2">
 					<span>Comentario (opcional)</span>
@@ -74,7 +74,7 @@
 				</b>
 				<b class="space-y-2">
 					<span>Fecha de modificacion</span>
-					<Input type="date" bind:value={formData.date} />
+					<Input type="date" bind:value={formData.changeDate} />
 				</b>
 				<b class="space-y-2">
 					<span>Nuevo salario</span>

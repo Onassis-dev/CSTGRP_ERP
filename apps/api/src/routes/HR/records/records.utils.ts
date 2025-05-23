@@ -450,7 +450,7 @@ export function drawSalary(
   fillBox({
     page,
     font,
-    text: String(getWeek(new Date(data.date))) || '',
+    text: String(getWeek(new Date(data.changeDate))) || '',
     x: 159,
     y: 231,
     size: 9,
@@ -461,7 +461,7 @@ export function drawSalary(
   fillBox({
     page,
     font,
-    text: (data.nominaSalary || 0).toFixed(2),
+    text: (data.oldSalary || 0).toFixed(2),
     x: 110,
     y: 244,
     size: 9,
@@ -483,7 +483,7 @@ export function drawSalary(
   fillBox({
     page,
     font,
-    text: format(data.date, 'dd/MM/yyyy') || '',
+    text: format(data.changeDate, 'dd/MM/yyyy') || '',
     x: 485,
     y: 244,
     size: 9,
@@ -525,8 +525,8 @@ export function drawSalary(
     page,
     font,
     text: 'X',
-    x: motivePositions[data.reason],
-    y: data.reason === 'otro' ? 261 : 277,
+    x: motivePositions[data.salaryReason],
+    y: data.salaryReason === 'otro' ? 261 : 277,
     size: 12,
     width: 12,
     height: 12,

@@ -231,7 +231,7 @@ export class EmployeesService {
   async updateSalary(body: z.infer<typeof updateSalarySchema>) {
     await sql.begin(async (sql) => {
       const [employee] =
-        await sql`select name, "paternalLastName", "maternalLastName", "noEmpleado", "nominaSalary", "admissionDate" from employees where id = ${body.id}`;
+        await sql`select name, "paternalLastName", "maternalLastName", "noEmpleado", "nominaSalary" as "oldSalary", "admissionDate" from employees where id = ${body.id}`;
       await sql`update employees set "nominaSalary" = ${body.newSalary} where id = ${body.id}`;
 
       await sql`insert into employeeRecords ("employeeId", date, type, text, doc) values (${body.id}, now(), 'cambio', ${'Salario modificado a ' + body.newSalary},

@@ -105,8 +105,8 @@ export const quitSchema = z.object({
 
 export const updateSalarySchema = z.object({
   newSalary: z.coerce.number().min(0),
-  reason: z.string().min(1),
-  date: z.string().refine((value) => dateRegex.test(value)),
+  salaryReason: z.string().min(1),
+  changeDate: z.string().refine((value) => dateRegex.test(value)),
   reasonComment: z.string().nullable(),
   petitioner: z.string().min(1),
   comments: z.string().optional().nullable(),
