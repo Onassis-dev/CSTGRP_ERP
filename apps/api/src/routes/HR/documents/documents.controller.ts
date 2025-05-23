@@ -67,4 +67,9 @@ export class DocumentsController {
   getCredential(@Param(new ZodPiPe(idSchema)) body) {
     return this.documentsService.generateImage(body);
   }
+
+  @Get('application/:id')
+  downloadApplication(@Param(new ZodPiPe(idSchema)) body) {
+    return this.documentsService.downloadApplication(body);
+  }
 }

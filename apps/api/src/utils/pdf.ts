@@ -1,4 +1,11 @@
-import { layoutMultilineText, PDFFont, PDFPage, TextAlignment } from 'pdf-lib';
+import {
+  layoutMultilineText,
+  PDFFont,
+  PDFPage,
+  RGB,
+  rgb,
+  TextAlignment,
+} from 'pdf-lib';
 
 interface FillBoxProps {
   page: PDFPage;
@@ -11,6 +18,7 @@ interface FillBoxProps {
   height: number;
   align?: 'left' | 'center';
   maxLines?: number;
+  color?: RGB;
 }
 
 export const fillBox = ({
@@ -24,6 +32,7 @@ export const fillBox = ({
   height,
   align = 'left',
   maxLines,
+  color = rgb(0.2, 0.2, 0.2),
 }: FillBoxProps) => {
   let alignment;
   if (align === 'left') alignment = TextAlignment.Left;
@@ -41,6 +50,7 @@ export const fillBox = ({
       x: lines[0].x,
       y: y + (height - size) / 2,
       size,
+      color,
     });
   } else {
     lines.forEach((line, i) => {
@@ -49,6 +59,7 @@ export const fillBox = ({
         x: line.x,
         y: line.y,
         size,
+        color,
       });
     });
   }

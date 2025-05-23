@@ -84,6 +84,16 @@
 		URL.revokeObjectURL(url);
 	}
 
+	async function downloadApplication() {
+		const contract = await api.get('/employees/documents/application/' + employee.id, {
+			responseType: 'blob'
+		});
+
+		const url = URL.createObjectURL(new Blob([contract.data], { type: 'application/pdf' }));
+		window.open(url, '_blank');
+		URL.revokeObjectURL(url);
+	}
+
 	async function downloadCredential() {
 		const credential = await api.get('/employees/documents/credential/' + employee.id, {
 			responseType: 'blob'
@@ -187,6 +197,28 @@
 			<TableCell class="p-0">
 				<Button
 					onclick={downloadCredential}
+					class="aspect-square h-full rounded-none"
+					variant="ghost"
+				>
+					<FileDown class="size-3.5" />
+				</Button>
+			</TableCell>
+			<TableCell class="p-0"></TableCell>
+		</TableRow>
+
+		<TableRow>
+			<TableCell class={'cursor-pointer border-l'} onclick={downloadApplication}>
+				<div class="flex items-center gap-3">
+					<img src={`/pdf.svg`} alt={'Contrato'} class="size-4" />
+					Solicitud de empleo
+				</div>
+			</TableCell>
+			<TableCell class={cn('border-l')}></TableCell>
+
+			<TableCell class="p-0"></TableCell>
+			<TableCell class="p-0">
+				<Button
+					onclick={downloadApplication}
 					class="aspect-square h-full rounded-none"
 					variant="ghost"
 				>

@@ -1,3 +1,4 @@
+import { promises as fs } from 'fs';
 import { HttpException, Injectable } from '@nestjs/common';
 import {
   contractSchema,
@@ -21,6 +22,10 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { createCanvas, registerFont } from 'canvas';
 import { loadImage } from 'canvas';
+import { numberToWords } from './documents.utils';
+import { generateApplication } from './documents.generate';
+import { PDFDocument, StandardFonts } from 'pdf-lib';
+import { markPage } from 'src/utils/pdf';
 const convert = util.promisify(libre.convert);
 
 @Injectable()
@@ -90,6 +95,32 @@ export class DocumentsService {
         sql,
       );
     });
+  }
+
+  async downloadApplication(body: z.infer<typeof idSchema>) {
+    const [employee] = await sql`select * from employees where id = ${body.id}`;
+
+    const templatePath = path.resolve(
+      __dirname,
+      '..',
+      '..',
+      '..',
+      '..',
+      'static',
+      'templates',
+      'solicitud_empleo.pdf',
+    );
+
+    const template = await fs.readFile(templatePath);
+    const pdfDoc = await PDFDocument.load(template);
+    const [page, page2] = pdfDoc.getPages();
+    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    // markPage(page2);
+
+    generateApplication(page, page2, font, employee);
+
+    const pdfBytes = await pdfDoc.save();
+    return pdfBytes;
   }
 
   async getContract(body: z.infer<typeof contractSchema>) {
@@ -166,103 +197,6 @@ export class DocumentsService {
       await sql`select *, concat(name, ' ', "paternalLastName", ' ', "maternalLastName") as name, (select name from positions where id = "positionId") as position from employees where id = ${body.id}`;
     return await generateImage(employee);
   }
-}
-
-function numberToWords(num) {
-  const unidades = [
-    '',
-    'Uno',
-    'Dos',
-    'Tres',
-    'Cuatro',
-    'Cinco',
-    'Seis',
-    'Siete',
-    'Ocho',
-    'Nueve',
-  ];
-  const especiales = [
-    'Diez',
-    'Once',
-    'Doce',
-    'Trece',
-    'Catorce',
-    'Quince',
-    'Dieciséis',
-    'Diecisiete',
-    'Dieciocho',
-    'Diecinueve',
-  ];
-  const decenas = [
-    '',
-    'Diez',
-    'Veinte',
-    'Treinta',
-    'Cuarenta',
-    'Cincuenta',
-    'Sesenta',
-    'Setenta',
-    'Ochenta',
-    'Noventa',
-  ];
-  const centenas = [
-    '',
-    'Cien',
-    'Doscientos',
-    'Trescientos',
-    'Cuatrocientos',
-    'Quinientos',
-    'Seiscientos',
-    'Setecientos',
-    'Ochocientos',
-    'Novecientos',
-  ];
-
-  if (typeof num !== 'number' || isNaN(num)) return 'cero';
-
-  if (num === 0) return 'cero';
-
-  const convertirMenor1000 = (n) => {
-    const c = Math.floor(n / 100);
-    const d = Math.floor((n % 100) / 10);
-    const u = n % 10;
-    let texto = '';
-
-    if (c > 0) {
-      if (c === 1 && d === 0 && u === 0) texto += 'cien';
-      else texto += centenas[c] + ' ';
-    }
-
-    if (d === 1) texto += especiales[u];
-    else {
-      if (d > 0) texto += decenas[d];
-      if (d > 0 && u > 0) texto += ' y ';
-      if (u > 0) texto += unidades[u];
-    }
-
-    return texto.trim();
-  };
-
-  const partes = [];
-
-  if (num >= 1000000) {
-    const millones = Math.floor(num / 1000000);
-    partes.push(
-      millones === 1 ? 'un millón' : `${numberToWords(millones)} millones`,
-    );
-    num = num % 1000000;
-  }
-  if (num >= 1000) {
-    const miles = Math.floor(num / 1000);
-    if (miles === 1) partes.push('mil');
-    else partes.push(`${numberToWords(miles)} mil`);
-    num = num % 1000;
-  }
-  if (num > 0) {
-    partes.push(convertirMenor1000(num));
-  }
-
-  return partes.join(' ').trim();
 }
 
 async function generateImage(employee) {
