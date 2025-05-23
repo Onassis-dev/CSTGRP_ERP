@@ -1,4 +1,5 @@
-import { format } from 'date-fns';
+import { differenceInYears, format } from 'date-fns';
+import { es } from 'date-fns/locale';
 import { PDFPage, rgb } from 'pdf-lib';
 import { PDFFont } from 'pdf-lib';
 import { fillBox } from 'src/utils/pdf';
@@ -17,6 +18,36 @@ export function generateApplication(
     color: rgb(0.2, 0.2, 0.2),
     width: 100,
   };
+
+  fillBox({
+    ...baseProps,
+    text: format(data.bcpet, 'dd') || '',
+    x: 395,
+    y: 755,
+    size: 9,
+    height: 9,
+    color: rgb(0, 0, 0),
+  });
+
+  fillBox({
+    ...baseProps,
+    text: format(data.bcpet, 'MMMM', { locale: es }) || '',
+    x: 424,
+    y: 755,
+    size: 9,
+    height: 9,
+    color: rgb(0, 0, 0),
+  });
+
+  fillBox({
+    ...baseProps,
+    text: format(data.bcpet, 'yy', { locale: es }) || '',
+    x: 510,
+    y: 755,
+    size: 9,
+    height: 9,
+    color: rgb(0, 0, 0),
+  });
 
   fillBox({
     ...baseProps,
@@ -50,6 +81,13 @@ export function generateApplication(
     ...baseProps,
     text: format(data.bornDate, 'dd/MM/yyyy') || '',
     x: 148,
+    y: 552,
+  });
+
+  fillBox({
+    ...baseProps,
+    text: String(differenceInYears(data.bcpet, data.bornDate)) || '',
+    x: 243,
     y: 552,
   });
 

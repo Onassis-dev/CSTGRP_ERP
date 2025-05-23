@@ -112,6 +112,8 @@ export class EmployeesService {
 
   async registerEmployee(body: z.infer<typeof createSchema>, file: File) {
     const image = await saveFile(file, 'employees');
+    const formatDate = body.formatDate;
+    delete body.formatDate;
 
     const id: any = await sql.begin(async (sql) => {
       const [employee]: any =
@@ -123,7 +125,7 @@ export class EmployeesService {
         `Registró al empleado ${employee.name} ${employee.paternalLastName} ${employee.maternalLastName} - ${employee.noEmpleado}`,
         sql,
       );
-      await sql`insert into employeeRecords ("employeeId", date, type, text, doc) values (${employee.id}, now(), 'alta', 'Empleado dado de alta', ${JSON.stringify({ ...employee, type: 'alta' })})`;
+      await sql`insert into employeeRecords ("employeeId", date, type, text, doc) values (${employee.id}, now(), 'alta', 'Empleado dado de alta', ${JSON.stringify({ ...employee, type: 'alta', formatDate })})`;
 
       //Generate assistance for the week
       const [firstDate] = getWeekDays(employee.admissionDate);
@@ -170,6 +172,8 @@ export class EmployeesService {
   }
 
   async reactivateEmployee(body: z.infer<typeof reactivateSchema>) {
+    const formatDate = body.formatDate;
+    delete body.formatDate;
     const data = {
       ...body,
       active: true,
@@ -189,7 +193,7 @@ export class EmployeesService {
         `Reactivó al empleado ${employee.name} ${employee.paternalLastName} ${employee.maternalLastName} - ${employee.noEmpleado}`,
         sql,
       );
-      await sql`insert into employeeRecords ("employeeId", date, type, text, doc) values (${employee.id}, now(), 'alta', ${'Empleado reactivado en el area ' + employee.area + ', en el puesto ' + employee.position}, ${JSON.stringify({ ...employee, type: 'alta' })})`;
+      await sql`insert into employeeRecords ("employeeId", date, type, text, doc) values (${employee.id}, now(), 'alta', ${'Empleado reactivado en el area ' + employee.area + ', en el puesto ' + employee.position}, ${JSON.stringify({ ...employee, type: 'alta', formatDate })})`;
 
       //Generate assistance for the week
       const [firstDate] = getWeekDays(employee.admissionDate);
@@ -219,7 +223,7 @@ export class EmployeesService {
         await sql`update employees set active = false, "quitDate" = ${body.quitDate}, "quitStatus" = ${body.quitStatus}, "quitReason" = ${body.quitReason}, "quitNotes" = ${body.quitNotes}, "resignationDate" = ${body.resignationDate}, "lastDay" = ${body.lastDay}  where id = ${body.id}
         returning *, (select name from positions where id = "positionId") as position, (select name from areas where id = "areaId") as area`;
 
-      await sql`insert into employeeRecords ("employeeId", date, type, text, doc) values (${body.id}, now(), 'baja', 'Empleado dado de baja', ${JSON.stringify({ ...employee, type: 'baja' })})`;
+      await sql`insert into employeeRecords ("employeeId", date, type, text, doc) values (${body.id}, now(), 'baja', 'Empleado dado de baja', ${JSON.stringify({ ...employee, type: 'baja', formatDate: body.formatDate })})`;
       await this.req.record(
         `Dio de baja al empleado ${employee.name} ${employee.paternalLastName} ${employee.maternalLastName} - ${employee.noEmpleado}`,
         sql,
@@ -229,13 +233,16 @@ export class EmployeesService {
   }
 
   async updateSalary(body: z.infer<typeof updateSalarySchema>) {
+    const formatDate = body.formatDate;
+    delete body.formatDate;
+
     await sql.begin(async (sql) => {
       const [employee] =
         await sql`select name, "paternalLastName", "maternalLastName", "noEmpleado", "nominaSalary" as "oldSalary", "admissionDate" from employees where id = ${body.id}`;
       await sql`update employees set "nominaSalary" = ${body.newSalary} where id = ${body.id}`;
 
       await sql`insert into employeeRecords ("employeeId", date, type, text, doc) values (${body.id}, now(), 'cambio', ${'Salario modificado a ' + body.newSalary},
-       ${JSON.stringify({ ...employee, ...body, type: 'salario' })}
+       ${JSON.stringify({ ...employee, ...body, type: 'salario', formatDate })}
        )`;
 
       await this.req.record(
@@ -290,6 +297,7 @@ export class EmployeesService {
       { header: 'Estudios', key: 'studies', width: 25 },
       { header: 'NSS', key: 'nss', width: 25 },
       { header: 'CURP', key: 'curp', width: 25 },
+      { header: 'Fonacot', key: 'fonacotNo', width: 25 },
       { header: 'RFC', key: 'rfc', width: 25 },
       { header: 'Tipo de Sangre', key: 'blood', width: 25 },
       { header: 'Cuenta Bancaria', key: 'account', width: 25 },

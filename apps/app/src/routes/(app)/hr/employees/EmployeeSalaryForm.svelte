@@ -25,7 +25,8 @@
 		newSalary: '',
 		changeDate: '',
 		petitioner: '',
-		comments: ''
+		comments: '',
+		formatDate: ''
 	});
 
 	async function handleSubmmit() {
@@ -43,7 +44,8 @@
 			newSalary: '',
 			changeDate: '',
 			petitioner: '',
-			comments: ''
+			comments: '',
+			formatDate: ''
 		};
 	}
 
@@ -64,6 +66,10 @@
 				</h3>
 			</div>
 			<form class="flex flex-col space-y-6" action="#">
+				<b class="space-y-2">
+					<span>Fecha del formato</span>
+					<Input type="date" bind:value={formData.formatDate} />
+				</b>
 				<b class="space-y-2">
 					<span>Motivo</span>
 					<Select class="mt-2" items={salaryReasons} bind:value={formData.salaryReason} />

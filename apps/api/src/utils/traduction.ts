@@ -19,6 +19,7 @@ const valueTraduccion = {
   bornLocation: 'Lugar de Nacimiento',
   genre: 'Género',
   sons: 'Hijos',
+  fonacotNo: 'Número de Fonacot',
   clinicNo: 'Número de Clínica',
   email: 'Correo Electrónico',
   number: 'Número',

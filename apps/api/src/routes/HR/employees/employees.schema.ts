@@ -26,50 +26,57 @@ export const createSchema = z.object({
     .refine((value) => bloodRegex.test(value))
     .optional()
     .nullable(),
-  account: z.string().refine((value) => accountRegex.test(value)),
-  emergencyContact: z.string().min(1),
-  boss: z.string().min(1),
-  department: z.string().min(1),
-  emergencyRelationship: z.string().min(1),
+  account: z
+    .string()
+    .refine((value) => accountRegex.test(value))
+    .nullish(),
+  emergencyContact: z.string(),
+  boss: z.string().nullish(),
+  department: z.string().nullish(),
+  emergencyRelationship: z.string(),
   emergencyNumber: z
     .string()
     .refine((v) => phoneRegex.test(v.replaceAll(' ', '')))
     .transform((v) => v.replaceAll(' ', '')),
   admissionDate: z.string().refine((value) => dateRegex.test(value)),
-  bornLocation: z.string().min(1),
-  genre: z.string().min(1),
+  bornLocation: z.string(),
+  genre: z.string().length(1),
   sons: z.number(),
-  vacations: z.number().optional().nullable(),
-  clinicNo: z.string().min(1),
+  vacations: z.number().nullish(),
+  clinicNo: z.string(),
   email: z.string().email(),
   number: z
     .string()
     .refine((v) => phoneRegex.test(v.replaceAll(' ', '')))
     .transform((v) => v.replaceAll(' ', '')),
-  direction: z.string().min(1),
-  bank: z.string().min(1),
-  infonavitNo: z.string().refine((value) => infonavitRegex.test(value)),
-  infonavitFee: z.string().min(1).optional().nullable(),
-  infonavitDiscount: z.string().min(1).optional().nullable(),
-  positionType: z.string().min(1),
-  shift: z.string().min(1),
+  direction: z.string(),
+  bank: z.string(),
+  infonavitNo: z
+    .string()
+    .refine((value) => infonavitRegex.test(value))
+    .nullish(),
+  infonavitFee: z.string().nullish(),
+  infonavitDiscount: z.string().nullish(),
+  fonacotNo: z.string().nullish(),
+  positionType: z.string(),
+  shift: z.string(),
   nominaSalary: z.coerce.number().min(0),
-  immsSalary: z.string().or(z.number()).optional().nullable(),
-  studies: z.string().min(1).optional().nullable(),
+  immsSalary: z.string().or(z.number()).nullish(),
+  studies: z.string().nullish(),
   bornDate: z.string().refine((value) => dateRegex.test(value)),
-  civilStatus: z.string().min(1),
-  nationality: z.string().min(1),
+  civilStatus: z.string(),
+  nationality: z.string(),
   positionId: z.number(),
-  route: z.string().min(1).optional().nullable(),
+  route: z.string().nullish(),
   contract: z.number(),
   quitDate: z
     .string()
     .refine((value) => dateRegex.test(value))
     .optional()
     .nullable(),
-  quitStatus: z.string().min(1).optional().nullable(),
-  quitNotes: z.string().optional().nullable(),
-  quitReason: z.string().min(1).optional().nullable(),
+  quitStatus: z.string().nullish(),
+  quitNotes: z.string().nullish(),
+  quitReason: z.string().nullish(),
   resignationDate: z
     .string()
     .refine((value) => dateRegex.test(value))
@@ -80,43 +87,49 @@ export const createSchema = z.object({
     .refine((value) => dateRegex.test(value))
     .optional()
     .nullable(),
+  formatDate: z.string().refine((value) => dateRegex.test(value)),
 });
 
-export const editSchema = createSchema.omit({ nominaSalary: true }).extend({
-  id: z.coerce.number().min(1),
-});
+export const editSchema = createSchema
+  .omit({ nominaSalary: true, formatDate: true })
+  .extend({
+    id: z.coerce.number(),
+  });
 
 export const reactivateSchema = z.object({
-  id: z.number().min(1),
+  id: z.number(),
   admissionDate: z.string().refine((value) => dateRegex.test(value)),
   areaId: z.number(),
   positionId: z.number(),
+  formatDate: z.string().refine((value) => dateRegex.test(value)),
 });
 
 export const quitSchema = z.object({
-  id: z.number().min(1),
+  id: z.number(),
   quitDate: z.string().refine((value) => dateRegex.test(value)),
-  quitStatus: z.string().min(1),
-  quitNotes: z.string().optional().nullable(),
-  quitReason: z.string().min(1),
+  quitStatus: z.string(),
+  quitNotes: z.string().nullish(),
+  quitReason: z.string(),
   resignationDate: z.string().refine((value) => dateRegex.test(value)),
   lastDay: z.string().refine((value) => dateRegex.test(value)),
+  formatDate: z.string().refine((value) => dateRegex.test(value)),
 });
 
 export const updateSalarySchema = z.object({
   newSalary: z.coerce.number().min(0),
-  salaryReason: z.string().min(1),
+  salaryReason: z.string(),
   changeDate: z.string().refine((value) => dateRegex.test(value)),
   reasonComment: z.string().nullable(),
-  petitioner: z.string().min(1),
-  comments: z.string().optional().nullable(),
-  id: z.number().min(1),
+  petitioner: z.string(),
+  comments: z.string().nullish(),
+  id: z.number(),
+  formatDate: z.string().refine((value) => dateRegex.test(value)),
 });
 
 export const idSchema = z.object({
-  id: z.string().min(1),
+  id: z.string(),
 });
 
 export const templateSchema = z.object({
-  template: z.number().min(1),
+  template: z.number(),
 });

@@ -1,6 +1,11 @@
-import { format, getWeek } from 'date-fns';
+import { format as formatDateFns, getISOWeek } from 'date-fns';
 import { PDFFont, PDFPage } from 'pdf-lib';
 import { fillBox } from 'src/utils/pdf';
+
+function format(date: string, format: string = 'dd/MM/yyyy') {
+  if (!date) return '';
+  return formatDateFns(new Date(date), format);
+}
 
 function drawBasicInfo(
   page: PDFPage,
@@ -32,12 +37,23 @@ function drawBasicInfo(
   fillBox({
     page,
     font,
-    text: format(data.admissionDate, 'dd/MM/yyyy'),
+    text: format(data.admissionDate),
     x: 430,
     y: 665,
     size: 9,
     width: 250,
     height: 9,
+  });
+
+  fillBox({
+    page,
+    font,
+    text: format(data.formatDate),
+    x: 510,
+    y: 730,
+    size: 12,
+    width: 100,
+    height: 12,
   });
 }
 
@@ -128,7 +144,7 @@ export function drawAlta(
   fillBox({
     page,
     font,
-    text: format(data.bornDate, 'dd/MM/yyyy'),
+    text: format(data.bornDate),
     x: 250,
     y: 585,
     size: 9,
@@ -249,12 +265,81 @@ export function drawAlta(
   fillBox({
     page,
     font,
-    text: String(getWeek(new Date(data.admissionDate))) || '',
+    text: String(getISOWeek(new Date(data.admissionDate))) || '',
     x: 200,
     y: 496,
     size: 9,
     width: 100,
     height: 9,
+  });
+
+  if (data.infonavitNo) {
+    fillBox({
+      page,
+      font,
+      text: data.infonavitNo,
+      x: 258,
+      y: 567,
+      size: 9,
+      width: 100,
+      height: 9,
+    });
+  }
+  fillBox({
+    page,
+    font,
+    text: 'X',
+    x: data.infonavitNo ? 150 : 194,
+    y: 567,
+    size: 12,
+    width: 12,
+    height: 12,
+  });
+
+  if (data.account) {
+    fillBox({
+      page,
+      font,
+      text: data.account,
+      x: 258,
+      y: 549,
+      size: 9,
+      width: 100,
+      height: 9,
+    });
+  }
+  fillBox({
+    page,
+    font,
+    text: 'X',
+    x: data.account ? 150 : 194,
+    y: 549,
+    size: 12,
+    width: 12,
+    height: 12,
+  });
+
+  if (data.fonacotNo) {
+    fillBox({
+      page,
+      font,
+      text: data.fonacotNo,
+      x: 258,
+      y: 531,
+      size: 9,
+      width: 100,
+      height: 9,
+    });
+  }
+  fillBox({
+    page,
+    font,
+    text: 'X',
+    x: data.fonacotNo ? 150 : 194,
+    y: 531,
+    size: 12,
+    width: 12,
+    height: 12,
   });
 }
 
@@ -323,7 +408,7 @@ export function drawBaja(
   fillBox({
     page,
     font,
-    text: String(getWeek(new Date(data.quitDate))) || '',
+    text: String(getISOWeek(new Date(data.quitDate))) || '',
     x: 555,
     y: 371,
     size: 9,
@@ -334,7 +419,7 @@ export function drawBaja(
   fillBox({
     page,
     font,
-    text: format(data.resignationDate, 'dd/MM/yyyy'),
+    text: format(data.resignationDate),
     x: 145,
     y: 412,
     size: 9,
@@ -345,7 +430,7 @@ export function drawBaja(
   fillBox({
     page,
     font,
-    text: format(data.lastDay, 'dd/MM/yyyy'),
+    text: format(data.lastDay),
     x: 160,
     y: 394,
     size: 9,
@@ -367,7 +452,7 @@ export function drawBaja(
   fillBox({
     page,
     font,
-    text: format(data.quitDate, 'dd/MM/yyyy'),
+    text: format(data.quitDate),
     x: 325,
     y: 412,
     size: 9,
@@ -450,7 +535,7 @@ export function drawSalary(
   fillBox({
     page,
     font,
-    text: String(getWeek(new Date(data.changeDate))) || '',
+    text: String(getISOWeek(new Date(data.changeDate))) || '',
     x: 159,
     y: 231,
     size: 9,
@@ -483,7 +568,7 @@ export function drawSalary(
   fillBox({
     page,
     font,
-    text: format(data.changeDate, 'dd/MM/yyyy') || '',
+    text: format(data.changeDate) || '',
     x: 485,
     y: 244,
     size: 9,

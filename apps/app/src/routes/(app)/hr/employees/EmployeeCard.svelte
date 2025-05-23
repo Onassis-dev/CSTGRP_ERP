@@ -116,7 +116,7 @@
 	}
 
 	async function setFormData() {
-		const [employeeData] = (await api.get(`/employees/${employee.id}`)).data;
+		let [employeeData] = (await api.get(`/employees/${employee.id}`)).data;
 		formData = {
 			...employeeData,
 			admissionDate: employeeData.admissionDate?.split('T')[0],
@@ -187,7 +187,11 @@
 		edit = !employee.id;
 	});
 	run(() => {
-		if (employee.id) setFormData();
+		if (employee.id) {
+			setFormData();
+		} else {
+			formData = {};
+		}
 	});
 </script>
 
@@ -333,6 +337,22 @@
 					</div>
 				</div>
 				<TabsContent value="info">
+					{#if !employee.id}
+						<div
+							class="relative mb-6 grid w-full grid-cols-2 gap-x-4 gap-y-2 rounded-md border p-4"
+						>
+							<div class="bg-background absolute -top-5 left-8 my-2 px-2 font-semibold">
+								Formato
+							</div>
+							<div>
+								<p class="text-muted-foreground text-xs">Fecha del formato:</p>
+								<DisplayInput value={formData.formatDate} {edit}>
+									<Input type="date" bind:value={formData.formatDate} />
+								</DisplayInput>
+							</div>
+						</div>
+					{/if}
+
 					{#if !formData.active && employee.id}
 						<div
 							class="relative mb-6 grid w-full grid-cols-2 gap-x-4 gap-y-2 rounded-md border p-4"
@@ -475,6 +495,10 @@
 						<div>
 							<p class="text-muted-foreground text-xs">Salario de IMSS:</p>
 							<DisplayInput bind:value={formData.immsSalary} {edit} />
+						</div>
+						<div>
+							<p class="text-muted-foreground text-xs">Número de Fonacot:</p>
+							<DisplayInput bind:value={formData.fonacotNo} {edit} />
 						</div>
 					</div>
 

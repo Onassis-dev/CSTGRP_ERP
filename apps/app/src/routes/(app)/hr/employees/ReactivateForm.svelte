@@ -27,7 +27,8 @@
 
 	let formData: any = $state({
 		id: selectedEmployee.id,
-		admissionDate: new Date().toISOString().split('T')[0]
+		admissionDate: new Date().toISOString().split('T')[0],
+		formatDate: new Date().toISOString().split('T')[0]
 	});
 
 	async function handleSubmmit() {
@@ -43,6 +44,7 @@
 		formData = {
 			id: '',
 			admissionDate: '',
+			formatDate: '',
 			positionId: '',
 			areaId: ''
 		};
@@ -66,6 +68,10 @@
 				</h3>
 			</div>
 			<form class="flex flex-col space-y-6" action="#">
+				<b class="space-y-2">
+					<span>Fecha del formato</span>
+					<Input type="date" bind:value={formData.formatDate} />
+				</b>
 				<b class="space-y-2">
 					<span>Fecha de Alta</span>
 					<Input type="date" bind:value={formData.admissionDate} />

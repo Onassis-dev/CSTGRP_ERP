@@ -74,7 +74,9 @@
 		position: { label: 'Puesto', type: 'text' },
 		type: { label: 'Tipo de cambio', type: 'text' },
 		changeDate: { label: 'Fecha', type: 'date' },
-		oldSalary: { label: 'Salario anterior', type: 'number' }
+		oldSalary: { label: 'Salario anterior', type: 'number' },
+		fonacotNo: { label: 'Número FONACOT', type: 'text' },
+		formatDate: { label: 'Fecha del formato', type: 'date' }
 	};
 
 	let selectedProperty = $state('');
@@ -92,11 +94,14 @@
 	}
 
 	async function saveData() {
+		let value = formData[selectedProperty];
+		if (value === '') value = null;
+
 		await api.put(`/employees/history/doc`, {
 			id,
 			doc: {
 				...data,
-				[selectedProperty]: formData[selectedProperty]
+				[selectedProperty]: value
 			}
 		});
 		open = false;
@@ -107,6 +112,7 @@
 	});
 
 	const defaultProperties: (keyof typeof properties)[] = [
+		'formatDate',
 		'name',
 		'paternalLastName',
 		'maternalLastName',
@@ -161,7 +167,10 @@
 				'emergencyNumber',
 				'emergencyContact',
 				'emergencyRelationship',
-				'nominaSalary'
+				'nominaSalary',
+				'infonavitNo',
+				'account',
+				'fonacotNo'
 			]);
 	});
 
