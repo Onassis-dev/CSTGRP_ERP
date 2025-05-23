@@ -45,6 +45,7 @@ export const createSchema = z.object({
   vacations: z.number().nullish(),
   clinicNo: z.string(),
   email: z.string().email(),
+  bcpet: z.string().refine((value) => dateRegex.test(value)),
   number: z
     .string()
     .refine((v) => phoneRegex.test(v.replaceAll(' ', '')))
