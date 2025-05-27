@@ -111,7 +111,10 @@ export const quitSchema = z.object({
   quitStatus: z.string(),
   quitNotes: z.string().nullish(),
   quitReason: z.string(),
-  resignationDate: z.string().refine((value) => dateRegex.test(value)),
+  resignationDate: z
+    .string()
+    .refine((value) => dateRegex.test(value))
+    .nullish(),
   lastDay: z.string().refine((value) => dateRegex.test(value)),
   formatDate: z.string().refine((value) => dateRegex.test(value)),
 });
