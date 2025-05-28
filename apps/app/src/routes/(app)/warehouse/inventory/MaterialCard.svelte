@@ -99,7 +99,7 @@
 									>{row.realAmount}</Badge
 								></TableCell
 							>
-							<TableCell>{formatDate(row.due)}</TableCell>
+							<TableCell>{formatDate(row.activeDate)}</TableCell>
 							<TableCell
 								><Badge color={parseFloat(row.balance) > 0 ? 'green' : 'red'}>{row.balance}</Badge
 								></TableCell
