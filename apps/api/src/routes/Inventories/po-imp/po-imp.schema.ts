@@ -1,3 +1,4 @@
+import { numberSchema } from 'src/utils/schemas';
 import { z } from 'zod';
 
 export const idSchema = z.object({
@@ -17,7 +18,7 @@ export const importSchema = z.object({
   materials: z.array(
     z.object({
       code: z.string(),
-      amount: z.string().regex(/^-?\d*(?:\.\d{1,2})?$/),
+      amount: numberSchema,
     }),
   ),
 });
@@ -29,8 +30,8 @@ export const exportSchema = z.object({
   materials: z.array(
     z.object({
       code: z.string(),
-      amount: z.string().regex(/^-?\d*(?:\.\d{1,2})?$/),
-      realAmount: z.string().regex(/^-?\d*(?:\.\d{1,2})?$/),
+      amount: numberSchema,
+      realAmount: numberSchema,
       active: z.boolean(),
     }),
   ),
@@ -44,7 +45,7 @@ export const updateImportSchema = z.object({
   materials: z.array(
     z.object({
       code: z.string(),
-      amount: z.string().regex(/^-?\d*(?:\.\d{1,2})?$/),
+      amount: numberSchema,
     }),
   ),
 });
@@ -57,8 +58,8 @@ export const updateExportSchema = z.object({
   materials: z.array(
     z.object({
       code: z.string(),
-      amount: z.string().regex(/^-?\d*(?:\.\d{1,2})?$/),
-      realAmount: z.string().regex(/^-?\d*(?:\.\d{1,2})?$/),
+      amount: numberSchema,
+      realAmount: numberSchema,
       active: z.boolean(),
     }),
   ),

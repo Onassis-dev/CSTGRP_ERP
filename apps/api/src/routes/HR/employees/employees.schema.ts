@@ -1,3 +1,4 @@
+import { numberSchema } from 'src/utils/schemas';
 import { z } from 'zod';
 
 const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
@@ -61,8 +62,8 @@ export const createSchema = z.object({
   fonacotNo: z.string().nullish(),
   positionType: z.string(),
   shift: z.string(),
-  nominaSalary: z.coerce.number().min(0),
-  immsSalary: z.string().or(z.number()).nullish(),
+  nominaSalary: numberSchema,
+  immsSalary: numberSchema.nullish(),
   studies: z.string().nullish(),
   bornDate: z.string().refine((value) => dateRegex.test(value)),
   civilStatus: z.string(),
@@ -124,7 +125,7 @@ export const quitSchema = z.object({
 });
 
 export const updateSalarySchema = z.object({
-  newSalary: z.coerce.number().min(0),
+  newSalary: numberSchema,
   salaryReason: z.string(),
   changeDate: z.string().refine((value) => dateRegex.test(value)),
   reasonComment: z.string().nullable(),

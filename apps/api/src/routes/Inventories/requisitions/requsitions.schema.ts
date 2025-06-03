@@ -1,3 +1,4 @@
+import { numberSchema } from 'src/utils/schemas';
 import { z } from 'zod';
 
 export const movementsFilterSchema = z.object({
@@ -15,7 +16,7 @@ export const requisitionSchema = z.object({
   motive: z.string(),
   areaId: z.string(),
   code: z.string(),
-  requested: z.string().regex(/^\d*(?:\.\d{1,2})?$/),
+  requested: numberSchema,
   jobIds: z.array(z.string()).transform((v) => v.map((vv) => Number(vv))),
 });
 
@@ -31,7 +32,7 @@ export const suppliesSchema = z.object({
   materials: z.array(
     z.object({
       code: z.string(),
-      amount: z.string().regex(/^\d*(?:\.\d{1,2})?$/),
+      amount: numberSchema,
     }),
   ),
 });
