@@ -39,7 +39,7 @@
 		{ value: 'false', name: 'No surtido' }
 	];
 
-	const movementsQuery = createQuery({
+	const movements = createQuery({
 		queryKey: ['material-movements', { ...filters }],
 		queryFn: async () => (await api.get('/materialmovements', { params: filters })).data
 	});
@@ -49,12 +49,6 @@
 		queryFn: getClients
 	});
 
-	let movements = $derived(
-		$movementsQuery?.data?.map((e: any) => {
-			return { ...e, realAmount: e.realAmount?.toString() };
-		})
-	);
-
 	function viewCheckModal(i: number) {
 		show2 = true;
 		movementI = i;
@@ -62,8 +56,9 @@
 
 	async function checkMovement() {
 		try {
-			const result = await api.put('/materialmovements/activate', { id: movements[movementI].id });
-			console.log(result.data);
+			const result = await api.put('/materialmovements/activate', {
+				id: $movements.data[movementI].id
+			});
 			showSuccess(result.data ? 'Check eliminado' : 'Material surtido');
 			show2 = false;
 			refetch(['material-movements']);
@@ -73,7 +68,6 @@
 	}
 
 	async function changeAmount(id: string, amount: string) {
-		console.log(amount);
 		await api.put('/materialmovements/realamount', { id: id, newAmount: amount });
 		showSuccess('Cantidad actualizada');
 		refetch(['material-movements']);
@@ -125,7 +119,7 @@
 		<TableHead>Surtido</TableHead>
 	</TableHeader>
 	<TableBody>
-		{#each movements as movement, i}
+		{#each $movements.data as movement, i}
 			<TableRow>
 				<TableCell>{movement.import || ''}</TableCell>
 				<TableCell>{movement.programation || ''}</TableCell>
@@ -176,6 +170,6 @@
 <WarningPopUp
 	bind:show={show2}
 	action={checkMovement}
-	text={`Seguro que quieres surtir ${movements[movementI]?.realAmount} ${movements[movementI]?.measurement} del material ${movements[movementI]?.code} ?`}
+	text={`Seguro que quieres surtir ${$movements.data[movementI]?.realAmount} ${$movements.data[movementI]?.measurement} del material ${$movements.data[movementI]?.code} ?`}
 />
 <MovementsMenu bind:show={show3} />

@@ -8,7 +8,6 @@
 		DropdownMenuTrigger
 	} from '$lib/components/ui/dropdown-menu';
 	import api from '$lib/utils/server';
-	import { onMount } from 'svelte';
 	import EmployeeCard from './EmployeeCard.svelte';
 	import QuitEmployeeForm from './QuitEmployeeForm.svelte';
 	import ReactivateForm from './ReactivateForm.svelte';
@@ -32,6 +31,7 @@
 	import { createQuery } from '@tanstack/svelte-query';
 	import { refetch } from '$lib/utils/query';
 	import { downloadFile } from '$lib/utils/files';
+	import { getAreas, getOptions, getPositions } from '$lib/utils/queries';
 
 	let show1: boolean = $state(false);
 	let show2: boolean = $state(false);
@@ -46,23 +46,16 @@
 		positionId: ''
 	});
 
-	let areas: any = $state({});
-	let positions: any = $state({});
-	let areasOptions: any = $state([]);
-	let positionsOptions: any = $state([]);
 	let searchActive: boolean = $state(true);
 
-	async function fetchOptions() {
-		areasOptions = (await api.get('/hrvarious/areas')).data;
-		areasOptions.forEach((area: any) => {
-			areas[area.value] = { name: area.name, color: area.color };
-		});
-		positionsOptions = (await api.get('/hrvarious/positions')).data;
-		positionsOptions.forEach((position: any) => {
-			positions[position.value] = { name: position.name, color: position.color };
-		});
-	}
-
+	const areas = createQuery({
+		queryKey: ['areas'],
+		queryFn: getAreas
+	});
+	const positions = createQuery({
+		queryKey: ['positions'],
+		queryFn: getPositions
+	});
 	const employees = createQuery({
 		queryKey: ['employees'],
 		queryFn: async () => (await api.get('/employees', { params: { active: searchActive } })).data
@@ -97,10 +90,6 @@
 		});
 	}
 
-	onMount(async () => {
-		await fetchOptions();
-	});
-
 	let filteredEmployees = $derived(
 		$employees?.data?.filter((e: any) => {
 			const noMatch = searchParams.noEmpleado
@@ -129,7 +118,7 @@
 			menu
 			allowDeselect
 			bind:value={searchParams.areaId}
-			items={areasOptions}
+			items={getOptions($areas.data)}
 			placeholder="Área"
 			class="min-w-48"
 		></Select>
@@ -137,7 +126,7 @@
 			menu
 			allowDeselect
 			bind:value={searchParams.positionId}
-			items={positionsOptions}
+			items={getOptions($positions.data)}
 			placeholder="Posición"
 			class="min-w-72"
 		></Select>
@@ -219,13 +208,13 @@
 				<TableCell>{employee.paternalLastName || ''}</TableCell>
 				<TableCell>{employee.maternalLastName || ''}</TableCell>
 				<TableCell
-					><Badge color={areas[employee.areaId || '']?.color}
-						>{areas[employee.areaId || '']?.name}</Badge
+					><Badge color={$areas.data?.[employee.areaId || '']?.color}
+						>{$areas.data?.[employee.areaId || '']?.name}</Badge
 					></TableCell
 				>
 				<TableCell
-					><Badge color={positions[employee.positionId || '']?.color}
-						>{positions[employee.positionId || '']?.name || ''}</Badge
+					><Badge color={$positions.data?.[employee.positionId || '']?.color}
+						>{$positions.data?.[employee.positionId || '']?.name || ''}</Badge
 					>
 				</TableCell>
 			</TableRow>
