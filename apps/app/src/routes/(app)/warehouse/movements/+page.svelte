@@ -8,7 +8,7 @@
 	import { Input } from '$lib/components/ui/input';
 	import { TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
 	import api from '$lib/utils/server';
-	import { showSuccess } from '$lib/utils/showToast';
+	import { showError, showSuccess } from '$lib/utils/showToast';
 	import { FileDown, Pen, Search } from 'lucide-svelte';
 	import WarningPopUp from './WarningPopUp.svelte';
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
@@ -23,6 +23,7 @@
 	let show2 = $state(false);
 	let show3 = $state(false);
 	let movementI = $state(0);
+	let previousAmount = $state('');
 
 	let filters = $state({
 		programation: '',
@@ -116,7 +117,7 @@
 		<TableHead>Cantidad Real</TableHead>
 		<TableHead>Medida</TableHead>
 		<TableHead>Cliente</TableHead>
-		<TableHead>Surtido</TableHead>
+		<TableHead></TableHead>
 	</TableHeader>
 	<TableBody>
 		{#each $movements.data as movement, i}
@@ -143,7 +144,15 @@
 						class="w-24"
 						type="text"
 						bind:value={movement.realAmount}
-						onblur={() => changeAmount(movement.id, movement.realAmount)}
+						onfocus={(e) => (previousAmount = (e.target as HTMLInputElement).value)}
+						onblur={async (e) => {
+							try {
+								await changeAmount(movement.id, movement.realAmount);
+							} catch {
+								(e.target as HTMLInputElement).value = previousAmount;
+								showError(null, 'No se pudo actualizar la cantidad');
+							}
+						}}
 					/></TableCell
 				>
 				<TableCell>{movement.measurement}</TableCell>
@@ -154,9 +163,10 @@
 						</Badge>
 					{/if}</TableCell
 				>
-				<TableCell
+				<TableCell class="px-2"
 					><Checkbox
-						onCheckedChange={() => {
+						onclick={(e) => {
+							e.preventDefault();
 							viewCheckModal(i);
 						}}
 						checked={movement.active}
@@ -170,6 +180,6 @@
 <WarningPopUp
 	bind:show={show2}
 	action={checkMovement}
-	text={`Seguro que quieres surtir ${$movements.data[movementI]?.realAmount} ${$movements.data[movementI]?.measurement} del material ${$movements.data[movementI]?.code} ?`}
+	text={`Surtir ${$movements.data[movementI]?.realAmount}${$movements.data[movementI]?.measurement} del material ${$movements.data[movementI]?.code}?`}
 />
 <MovementsMenu bind:show={show3} />

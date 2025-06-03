@@ -13,10 +13,7 @@
 
 <td
 	bind:this={ref}
-	class={cn(
-		'h-[35px] whitespace-nowrap border-r px-3 py-0 align-middle [&:has([role=checkbox])]:pr-0',
-		className
-	)}
+	class={cn('h-[35px] whitespace-nowrap border-r px-3 py-0 align-middle', className)}
 	{...restProps}
 >
 	{@render children?.()}
