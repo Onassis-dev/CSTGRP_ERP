@@ -27,14 +27,14 @@
 	import EmployeeHistory from './EmployeeHistory.svelte';
 	import EmployeeStats from './EmployeeStats.svelte';
 	import EmployeeEvaluations from './EmployeeEvaluations.svelte';
+	import { refetch } from '$lib/utils/query';
 
 	interface Props {
 		show?: boolean;
 		employee: any;
-		reload: any;
 	}
 
-	let { show = $bindable(false), employee = $bindable(), reload }: Props = $props();
+	let { show = $bindable(false), employee = $bindable() }: Props = $props();
 	let edit = $state(false);
 	let formData: any = $state({});
 	let files: FileList | undefined = $state();
@@ -164,7 +164,7 @@
 			showSuccess('Empleado registrado');
 		}
 
-		reload();
+		refetch(['employees']);
 		setFormData();
 		edit = false;
 	}

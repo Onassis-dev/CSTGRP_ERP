@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
 	import MaterialInput from '$lib/components/basic/MaterialInput.svelte';
 	import Select from '$lib/components/basic/Select.svelte';
 	import { Button } from '$lib/components/ui/button';
@@ -23,14 +21,14 @@
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
 	import { Trash } from 'lucide-svelte';
+	import { refetch } from '$lib/utils/query';
 
 	interface Props {
 		show: boolean;
-		reload: any;
 		selectedMovement?: any;
 	}
 
-	let { show = $bindable(), reload, selectedMovement = {} }: Props = $props();
+	let { show = $bindable(), selectedMovement = {} }: Props = $props();
 	interface material {
 		code: string;
 		amount: string;
@@ -54,7 +52,7 @@
 			});
 		}
 
-		reload();
+		refetch(['po-imp']);
 
 		show = false;
 		showSuccess(selectedMovement.id ? 'Importacion actualizada' : `Importacion Registrada`);
@@ -100,17 +98,18 @@
 		{ value: 'At CST, In revision', name: 'En revisión' },
 		{ value: 'At CST, Qtys verified', name: 'Listo' }
 	];
-	let inputDisabled;
-	run(() => {
+	let inputDisabled = $state(false);
+
+	$effect(() => {
 		inputDisabled = !!files;
 	});
-	run(() => {
+	$effect(() => {
 		if (files) processPDF();
 	});
-	run(() => {
+	$effect(() => {
 		if (!show || show) cleanData();
 	});
-	run(() => {
+	$effect(() => {
 		if (selectedMovement.id) getData();
 	});
 </script>

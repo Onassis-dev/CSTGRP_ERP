@@ -29,6 +29,9 @@
 	import OptionsCell from '$lib/components/basic/OptionsCell.svelte';
 	import Select from '$lib/components/basic/Select.svelte';
 	import EmployeeSalaryForm from './EmployeeSalaryForm.svelte';
+	import { createQuery } from '@tanstack/svelte-query';
+	import { refetch } from '$lib/utils/query';
+	import { downloadFile } from '$lib/utils/files';
 
 	let show1: boolean = $state(false);
 	let show2: boolean = $state(false);
@@ -36,7 +39,6 @@
 	let show4: boolean = $state(false);
 
 	let selectedEmployee: any = $state({});
-	let employees: any[] = $state([]);
 	let searchParams = $state({
 		noEmpleado: '',
 		name: '',
@@ -48,7 +50,7 @@
 	let positions: any = $state({});
 	let areasOptions: any = $state([]);
 	let positionsOptions: any = $state([]);
-	let searchActive: string = $state('active');
+	let searchActive: boolean = $state(true);
 
 	async function fetchOptions() {
 		areasOptions = (await api.get('/hrvarious/areas')).data;
@@ -61,15 +63,10 @@
 		});
 	}
 
-	async function getEmployees() {
-		if (searchActive === 'active') {
-			const result = await api.get('/employees');
-			employees = result.data;
-		} else {
-			const result = await api.get('/employees/inactive');
-			employees = result.data;
-		}
-	}
+	const employees = createQuery({
+		queryKey: ['employees'],
+		queryFn: async () => (await api.get('/employees', { params: { active: searchActive } })).data
+	});
 
 	function createEmployee() {
 		selectedEmployee = {};
@@ -94,36 +91,18 @@
 
 	async function exportList(mode?: 'full') {
 		const url = mode === 'full' ? '/employees/export' : '/employees/export-basic';
-		const response = await api.get(url, {
-			responseType: 'arraybuffer'
+		downloadFile({
+			url,
+			name: 'Empleados.xlsx'
 		});
-
-		const blob = new Blob([response.data], {
-			type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-		});
-
-		const link = document.createElement('a');
-		link.href = URL.createObjectURL(blob);
-		link.download = 'Empleados.xlsx';
-
-		document.body.appendChild(link);
-
-		link.click();
-
-		document.body.removeChild(link);
 	}
 
 	onMount(async () => {
 		await fetchOptions();
-		getEmployees();
-	});
-
-	$effect(() => {
-		if (searchActive) getEmployees();
 	});
 
 	let filteredEmployees = $derived(
-		employees.filter((e) => {
+		$employees?.data?.filter((e: any) => {
 			const noMatch = searchParams.noEmpleado
 				? e.noEmpleado.toString().includes(searchParams.noEmpleado)
 				: true;
@@ -166,10 +145,14 @@
 		<Select
 			class="min-w-28"
 			menu
-			bind:value={searchActive}
+			value={searchActive.toString()}
+			onValueChange={() => {
+				searchActive = !searchActive;
+				refetch(['employees']);
+			}}
 			items={[
-				{ name: 'Activos', value: 'active' },
-				{ name: 'Inactivos', value: 'inactive' }
+				{ name: 'Activos', value: 'true' },
+				{ name: 'Inactivos', value: 'false' }
 			]}
 		></Select>
 	{/snippet}
@@ -250,7 +233,7 @@
 	</TableBody>
 </CusTable>
 
-<EmployeeCard bind:show={show1} bind:employee={selectedEmployee} reload={getEmployees} />
-<QuitEmployeeForm bind:show={show2} bind:selectedEmployee reload={getEmployees} />
-<EmployeeSalaryForm bind:show={show4} bind:selectedEmployee reload={getEmployees} />
-<ReactivateForm bind:show={show3} bind:selectedEmployee reload={getEmployees} />
+<EmployeeCard bind:show={show1} bind:employee={selectedEmployee} />
+<QuitEmployeeForm bind:show={show2} bind:selectedEmployee />
+<EmployeeSalaryForm bind:show={show4} bind:selectedEmployee />
+<ReactivateForm bind:show={show3} bind:selectedEmployee />

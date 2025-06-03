@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { preventDefault } from 'svelte/legacy';
-
 	import { format } from 'date-fns';
 	import CusTable from '$lib/components/basic/CusTable.svelte';
 	import { Badge } from '$lib/components/ui/badge';
@@ -9,13 +8,15 @@
 	import { TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
 	import api from '$lib/utils/server';
 	import { FileDown, FilePlus2, Search } from 'lucide-svelte';
-	import { onMount } from 'svelte';
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
 	import OptionsCell from '$lib/components/basic/OptionsCell.svelte';
 	import RequisitionForm from './RequisitionForm.svelte';
 	import { es } from 'date-fns/locale';
 	import SuppliesForm from './SuppliesForm.svelte';
-	let clients: any = $state({});
+	import { createQuery } from '@tanstack/svelte-query';
+	import { refetch } from '$lib/utils/query';
+	import { getClients } from '$lib/utils/queries';
+
 	let show = $state(false);
 	let show2 = $state(false);
 
@@ -27,26 +28,21 @@
 		checked: ''
 	});
 
-	let movements: any[] = $state([]);
 	let selectedMovement: any = $state();
 
-	async function getMovements() {
-		const result = (await api.get(`/requisitions/movements`, { params: filters })).data;
+	const movementsQuery = createQuery({
+		queryKey: ['requisitions', { ...filters }],
+		queryFn: async () => (await api.get('/requisitions/movements', { params: filters })).data
+	});
 
-		movements = result.map((e: any) => {
-			return { ...e, realAmount: e.realAmount?.toString() };
-		});
-	}
-	async function fetchClients() {
-		const clientList = (await api.get('/inventoryvarious/clients')).data;
-		clientList.forEach((client: any) => {
-			clients[client.value] = client;
-		});
-		clients = clients;
-	}
+	const clients = createQuery({
+		queryKey: ['clients'],
+		queryFn: getClients
+	});
+
 	function createRequisition(i: number) {
 		show = true;
-		selectedMovement = movements[i];
+		selectedMovement = $movementsQuery?.data[i];
 	}
 
 	async function exportUncheckedMovements() {
@@ -68,15 +64,13 @@
 
 		document.body.removeChild(link);
 	}
-
-	onMount(() => {
-		getMovements();
-		fetchClients();
-	});
 </script>
 
 <MenuBar>
-	<form class="flex flex-col gap-1.5 lg:flex-row" onsubmit={preventDefault(getMovements)}>
+	<form
+		class="flex flex-col gap-1.5 lg:flex-row"
+		onsubmit={preventDefault(() => refetch(['requisitions']))}
+	>
 		<Input menu bind:value={filters.programation} placeholder="Programacion" />
 		<Input menu bind:value={filters.jobpo} placeholder="Job" />
 		<Input menu bind:value={filters.code} placeholder="Material" />
@@ -105,7 +99,7 @@
 		<TableHead>Cliente</TableHead>
 	</TableHeader>
 	<TableBody>
-		{#each movements as movement, i}
+		{#each $movementsQuery?.data as movement, i}
 			<TableRow>
 				<OptionsCell
 					extraButtons={[
@@ -127,9 +121,9 @@
 				<TableCell><Badge color={'red'}>{movement.amount}</Badge></TableCell>
 				<TableCell>{movement.measurement}</TableCell>
 				<TableCell
-					>{#if clients[movement.clientId]}
-						<Badge color={clients[movement.clientId].color}
-							>{clients[movement.clientId].name}
+					>{#if $clients?.data?.[movement.clientId]}
+						<Badge color={$clients?.data?.[movement.clientId]?.color}
+							>{$clients?.data?.[movement.clientId]?.name}
 						</Badge>
 					{/if}</TableCell
 				>

@@ -4,34 +4,26 @@
 	import { TableBody, TableCell, TableHeader, TableRow } from '$lib/components/ui/table';
 	import TableHead from '$lib/components/ui/table/table-head.svelte';
 	import api from '$lib/utils/server';
-	import { EllipsisVertical, Pen, PlusCircle, Trash } from 'lucide-svelte';
+	import { PlusCircle } from 'lucide-svelte';
 	import DevicesForm from './DevicesForm.svelte';
 	import DeletePopUp from '$lib/components/complex/DeletePopUp.svelte';
-	import { onMount } from 'svelte';
-	import {
-		DropdownMenu,
-		DropdownMenuContent,
-		DropdownMenuItem,
-		DropdownMenuTrigger
-	} from '$lib/components/ui/dropdown-menu';
 	import { showSuccess } from '$lib/utils/showToast';
 	import PwCell from '$lib/components/ui/table/pw-cell.svelte';
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
 	import OptionsCell from '$lib/components/basic/OptionsCell.svelte';
+	import { createQuery } from '@tanstack/svelte-query';
 
 	let show: boolean = $state(false);
 	let show1: boolean = $state(false);
 	let selectedDevice: any = $state({});
 
-	let devices: any[] = $state([]);
-
-	async function getDevices() {
-		const result = await api.get('/devices');
-		devices = result.data;
-	}
+	const devices = createQuery({
+		queryKey: ['devices'],
+		queryFn: async () => (await api.get('/devices')).data
+	});
 
 	function editDevice(i: number) {
-		selectedDevice = devices[i];
+		selectedDevice = $devices?.data?.[i];
 		show = true;
 	}
 	function createDevice() {
@@ -39,13 +31,9 @@
 		show = true;
 	}
 	function deleteDevice(i: number) {
-		selectedDevice = devices[i];
+		selectedDevice = $devices?.data?.[i];
 		show1 = true;
 	}
-
-	onMount(() => {
-		getDevices();
-	});
 </script>
 
 <MenuBar>
@@ -64,7 +52,7 @@
 		<TableHead class="w-[20%]">Wifi</TableHead>
 	</TableHeader>
 	<TableBody>
-		{#each devices as device, i}
+		{#each $devices?.data as device, i}
 			<TableRow>
 				<OptionsCell editFunc={() => editDevice(i)} deleteFunc={() => deleteDevice(i)} />
 				<TableCell>{device.name || ''}</TableCell>
@@ -77,7 +65,7 @@
 	</TableBody>
 </CusTable>
 
-<DevicesForm bind:show bind:selectedDevice reload={getDevices} />
+<DevicesForm bind:show bind:selectedDevice />
 <DeletePopUp
 	bind:show={show1}
 	text="Borrar Dispositivo"

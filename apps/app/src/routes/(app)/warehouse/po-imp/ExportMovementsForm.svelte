@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
 	import {
 		Dialog,
 		DialogBody,
@@ -23,14 +21,14 @@
 	import MaterialInput from '$lib/components/basic/MaterialInput.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Trash } from 'lucide-svelte';
+	import { refetch } from '$lib/utils/query';
 
 	interface Props {
 		show: boolean;
-		reload: any;
 		selectedMovement?: any;
 	}
 
-	let { show = $bindable(), reload, selectedMovement = {} }: Props = $props();
+	let { show = $bindable(), selectedMovement = {} }: Props = $props();
 
 	interface material {
 		code: string;
@@ -57,7 +55,7 @@
 			});
 		}
 
-		reload();
+		refetch(['po-imp']);
 		show = false;
 		showSuccess(selectedMovement.id ? 'Salida actualizada' : `Salida Registrada`);
 	}
@@ -108,17 +106,18 @@
 		files = null;
 		inputDisabled = false;
 	}
-	let inputDisabled;
-	run(() => {
+	let inputDisabled = $state(false);
+	$effect(() => {
 		inputDisabled = !!files;
 	});
-	run(() => {
+	$effect(() => {
 		if (files) processPDF();
 	});
-	run(() => {
-		if (!show || show) cleanData();
+	$effect(() => {
+		show;
+		cleanData();
 	});
-	run(() => {
+	$effect(() => {
 		if (selectedMovement.id) getData();
 	});
 </script>

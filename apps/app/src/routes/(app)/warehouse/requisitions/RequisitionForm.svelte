@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
 	import Label from '$lib/components/basic/Label.svelte';
 	import Select from '$lib/components/basic/Select.svelte';
 	import { Button } from '$lib/components/ui/button';
@@ -24,45 +22,41 @@
 	import { formatDate } from '$lib/utils/functions';
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
-	import { onMount } from 'svelte';
 	import Cookies from 'js-cookie';
+	import { refetch } from '$lib/utils/query';
+	import { createQuery } from '@tanstack/svelte-query';
 
 	interface Props {
 		show?: boolean;
 		selectedMovement: any;
 	}
 
-	let { show = $bindable(false), selectedMovement }: Props = $props();
-	let areas: any[] = $state([]);
+	let { show = $bindable(false), selectedMovement = $bindable() }: Props = $props();
 	let formData: any = $state({});
-	let jobs: any[] = $state([]);
 
 	function setFormData() {
 		formData = { ...selectedMovement };
 		formData.petitioner = Cookies.get('username');
 	}
 
-	async function getJobs() {
-		jobs = [];
-		jobs = (
-			await api.get('requisitions/jobs', {
-				params: {
-					code: selectedMovement.code
-				}
-			})
-		).data;
-	}
+	const jobsQuery = createQuery({
+		queryKey: ['requisitions-jobs', selectedMovement],
+		queryFn: async () => (await api.get('requisitions/jobs', { params: selectedMovement })).data
+	});
 
-	async function fetchOptions() {
-		areas = (await api.get('/hrvarious/areas')).data;
-	}
+	let jobs = $derived($jobsQuery?.data);
+
+	const areasQuery = createQuery({
+		queryKey: ['requisitions-areas'],
+		queryFn: async () => (await api.get('/hrvarious/areas')).data
+	});
 
 	async function handleSubmit() {
 		await api.post(
 			'requisitions',
 			{
 				...formData,
-				jobIds: jobs.filter((v) => v.selected).map((v) => v.id)
+				jobIds: jobs.filter((v: any) => v.selected).map((v: any) => v.id)
 			},
 			{ responseType: 'arraybuffer' }
 		);
@@ -79,17 +73,17 @@
 		{ name: 'Cortes varios', value: 'Cortes varios' }
 	];
 
-	onMount(() => {
-		fetchOptions();
+	$effect(() => {
+		if (show) setFormData();
 	});
-	run(() => {
-		if (show || true) setFormData();
+	$effect(() => {
+		if (selectedMovement?.code) refetch(['requisitions-jobs']);
 	});
-	run(() => {
-		if (selectedMovement?.code) getJobs();
-	});
-	run(() => {
-		formData.necessary = jobs.reduce((prev, v) => (v.selected ? prev + Number(v.amount) : prev), 0);
+	$effect(() => {
+		formData.necessary = jobs?.reduce(
+			(prev: number, v: any) => (v.selected ? prev + Number(v.amount) : prev),
+			0
+		);
 	});
 </script>
 
@@ -107,7 +101,7 @@
 					<Select items={motives} bind:value={formData.motive} />
 				</Label>
 				<Label name="Area:">
-					<Select items={areas} bind:value={formData.areaId} />
+					<Select items={$areasQuery?.data} bind:value={formData.areaId} />
 				</Label>
 				<Label name="Material necesario total:">
 					<Input

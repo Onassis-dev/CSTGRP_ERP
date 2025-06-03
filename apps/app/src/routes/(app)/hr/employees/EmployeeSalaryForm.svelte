@@ -6,6 +6,7 @@
 	import Input from '$lib/components/ui/input/input.svelte';
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
+	import { refetch } from '$lib/utils/query';
 	import { CircleAlert } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import { salaryReasons } from './employees.options';
@@ -13,10 +14,9 @@
 	interface Props {
 		show?: boolean;
 		selectedEmployee: any;
-		reload: any;
 	}
 
-	let { show = $bindable(false), selectedEmployee = $bindable({}), reload }: Props = $props();
+	let { show = $bindable(false), selectedEmployee = $bindable({}) }: Props = $props();
 
 	let formData = $state({
 		id: selectedEmployee.id,
@@ -51,7 +51,7 @@
 
 	onMount(() => {
 		show = false;
-		reload();
+		refetch(['employees']);
 	});
 </script>
 

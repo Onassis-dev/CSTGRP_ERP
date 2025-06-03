@@ -5,12 +5,14 @@
 	import { Input } from '$lib/components/ui/input';
 	import { TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
 	import api from '$lib/utils/server';
-	import { onMount } from 'svelte';
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
 	import OptionsCell from '$lib/components/basic/OptionsCell.svelte';
 	import { formatDate } from '$lib/utils/functions';
 	import JobComparisonCard from './JobComparisonCard.svelte';
 	import { Ruler } from 'lucide-svelte';
+	import { createQuery } from '@tanstack/svelte-query';
+	import { refetch } from '$lib/utils/query';
+
 	let show = $state(false);
 
 	let filters = $state({
@@ -20,34 +22,19 @@
 
 	let selectedMovement: any = $state({});
 
-	let options = [
-		{ value: 'both', name: 'Ambos' },
-		{ value: 'imports', name: 'Importaciones' },
-		{ value: 'exports', name: 'Exportaciones' }
-	];
-
-	let movements: any[] = $state([]);
-
-	async function getMovements() {
-		const result = (await api.get(`/clients/jobs`, { params: filters })).data;
-
-		movements = result.map((e: any) => {
-			return { ...e, realAmount: e.realAmount?.toString() };
-		});
-	}
+	const jobs = createQuery({
+		queryKey: ['jobs'],
+		queryFn: async () => (await api.get('/clients/jobs', { params: filters })).data
+	});
 
 	function compareJob(i: number) {
-		selectedMovement = movements[i];
+		selectedMovement = $jobs?.data?.[i];
 		show = true;
 	}
-
-	onMount(() => {
-		getMovements();
-	});
 </script>
 
 <MenuBar>
-	<form class="flex flex-col gap-2 lg:flex-row" onsubmit={preventDefault(getMovements)}>
+	<form class="flex flex-col gap-2 lg:flex-row" onsubmit={preventDefault(() => refetch(['jobs']))}>
 		<Input menu bind:value={filters.code} placeholder="Job" />
 	</form>
 </MenuBar>
@@ -60,7 +47,7 @@
 		<TableHead class="w-full">REGISTERED</TableHead>
 	</TableHeader>
 	<TableBody>
-		{#each movements as movement, i}
+		{#each $jobs?.data as movement, i}
 			<TableRow>
 				<OptionsCell
 					extraButtons={movement.jobpo

@@ -3,6 +3,7 @@ import { File } from '@nest-lab/fastify-multer';
 import {
   createSchema,
   editSchema,
+  getEmployeesSchema,
   idSchema,
   quitSchema,
   reactivateSchema,
@@ -94,20 +95,15 @@ export class EmployeesService {
     return result;
   }
 
-  async getActiveEmployees() {
+  async getEmployees(query: z.infer<typeof getEmployeesSchema>) {
     const employees =
-      await sql`select id, name, "admissionDate", "paternalLastName", "maternalLastName", "noEmpleado", "areaId", "positionId", active from employees where active order by "noEmpleado" DESC`;
+      await sql`select id, name, "admissionDate", "paternalLastName", "maternalLastName", "noEmpleado", "areaId", "positionId", active from employees where active = ${query.active === 'true'} order by "noEmpleado" DESC`;
+
     return employees;
   }
 
   async getEmployee(body: z.infer<typeof idSchema>) {
     return await sql`select * from employees where id = ${body.id}`;
-  }
-
-  async getInactiveEmployees() {
-    const employees =
-      await sql`select * from employees where active = false order by "noEmpleado" DESC`;
-    return employees;
   }
 
   async registerEmployee(body: z.infer<typeof createSchema>, file: File) {

@@ -9,6 +9,7 @@ import {
   Param,
   UseInterceptors,
   UploadedFile,
+  Query,
 } from '@nestjs/common';
 import { EmployeesService } from './employees.service';
 import { ApiTags } from '@nestjs/swagger';
@@ -17,6 +18,7 @@ import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import {
   createSchema,
   editSchema,
+  getEmployeesSchema,
   idSchema,
   quitSchema,
   reactivateSchema,
@@ -33,8 +35,8 @@ export class EmployeesController {
   constructor(private readonly employeesService: EmployeesService) {}
 
   @Get()
-  getActive() {
-    return this.employeesService.getActiveEmployees();
+  getEmployees(@Query(new ZodPiPe(getEmployeesSchema)) query) {
+    return this.employeesService.getEmployees(query);
   }
 
   @Get(':id')
@@ -50,11 +52,6 @@ export class EmployeesController {
   @Get('productivity/:id')
   getProductivity(@Param(new ZodPiPe(idSchema)) params) {
     return this.employeesService.getProductivity(params);
-  }
-
-  @Get('inactive')
-  getInactive() {
-    return this.employeesService.getInactiveEmployees();
   }
 
   @Post()

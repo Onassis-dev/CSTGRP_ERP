@@ -8,24 +8,23 @@
 	import AreaForms from './AreaForms.svelte';
 	import { showSuccess } from '$lib/utils/showToast';
 	import { Check, PlusCircle } from 'lucide-svelte';
-	import { onMount } from 'svelte';
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
 	import OptionsCell from '$lib/components/basic/OptionsCell.svelte';
 	import { Badge } from '$lib/components/ui/badge';
+	import { createQuery } from '@tanstack/svelte-query';
+	import { refetch } from '$lib/utils/query';
 
 	let show: boolean = $state(false);
 	let show1: boolean = $state(false);
 	let selectedArea: any = $state({});
 
-	let areas: any[] = $state([]);
-
-	async function getAreas() {
-		const result = await api.get('/areas');
-		areas = result.data;
-	}
+	const areas = createQuery({
+		queryKey: ['structure-areas'],
+		queryFn: async () => (await api.get('/areas')).data
+	});
 
 	function editArea(i: number) {
-		selectedArea = areas[i];
+		selectedArea = $areas?.data?.[i];
 		show = true;
 	}
 	function createArea() {
@@ -33,13 +32,9 @@
 		show = true;
 	}
 	function deleteArea(i: number) {
-		selectedArea = areas[i];
+		selectedArea = $areas?.data?.[i];
 		show1 = true;
 	}
-
-	onMount(() => {
-		getAreas();
-	});
 </script>
 
 <MenuBar>
@@ -56,7 +51,7 @@
 		<TableHead>Color</TableHead>
 	</TableHeader>
 	<TableBody>
-		{#each areas as area, i}
+		{#each $areas?.data as area, i}
 			<TableRow>
 				<OptionsCell editFunc={() => editArea(i)} deleteFunc={() => deleteArea(i)} />
 				<TableCell>{area.name}</TableCell>
@@ -71,13 +66,14 @@
 	</TableBody>
 </CusTable>
 
-<AreaForms bind:show bind:selectedArea reload={getAreas} />
+<AreaForms bind:show bind:selectedArea />
 <DeletePopUp
 	bind:show={show1}
 	text="Borrar area"
 	deleteFunc={async () => {
 		await api.delete('areas', { data: { id: parseInt(selectedArea.id || '') } });
 		showSuccess('Area eliminada');
+		refetch(['structure-areas']);
 		show1 = false;
 	}}
 />

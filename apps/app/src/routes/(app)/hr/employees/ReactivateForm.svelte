@@ -6,16 +6,16 @@
 	import { Input } from '$lib/components/ui/input';
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
+	import { refetch } from '$lib/utils/query';
 	import { UserPlus } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 
 	interface Props {
 		show?: boolean;
 		selectedEmployee: any;
-		reload: any;
 	}
 
-	let { show = $bindable(false), selectedEmployee = $bindable({}), reload }: Props = $props();
+	let { show = $bindable(false), selectedEmployee = $bindable({}) }: Props = $props();
 
 	let areas: any = $state();
 	let positions: any = $state();
@@ -52,7 +52,7 @@
 
 	onMount(() => {
 		show = false;
-		reload();
+		refetch(['employees']);
 		fetchOptions();
 	});
 </script>

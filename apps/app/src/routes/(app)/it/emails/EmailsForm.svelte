@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { run, preventDefault } from 'svelte/legacy';
-
+	import { preventDefault } from 'svelte/legacy';
 	import Label from '$lib/components/basic/Label.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import {
@@ -13,22 +12,22 @@
 	import { Input } from '$lib/components/ui/input';
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
+	import { refetch } from '$lib/utils/query';
 
 	interface Props {
 		show?: boolean;
-		reload: any;
-		selectedDevice: any;
+		selectedEmail: any;
 	}
 
-	let { show = $bindable(false), reload, selectedDevice = $bindable({}) }: Props = $props();
+	let { show = $bindable(false), selectedEmail = $bindable({}) }: Props = $props();
 	let formData: any = $state();
 
 	function setFormData() {
-		formData = { ...selectedDevice };
+		formData = { ...selectedEmail };
 	}
 
 	async function handleSubmit() {
-		if (selectedDevice.id) {
+		if (selectedEmail.id) {
 			await api.put('/emails', {
 				...formData,
 				id: parseInt(formData.id || '')
@@ -38,11 +37,12 @@
 			await api.post('/emails', formData);
 			showSuccess('Correo registrada');
 		}
-		await reload();
+		refetch(['emails']);
 		show = false;
 	}
-	run(() => {
-		if (show || true) setFormData();
+	$effect(() => {
+		show;
+		setFormData();
 	});
 </script>
 
@@ -50,7 +50,7 @@
 	<DialogContent>
 		<DialogHeader>
 			<DialogTitle>
-				{selectedDevice.id ? `Editar ${selectedDevice.email}` : 'Registrar correo'}
+				{selectedEmail.id ? `Editar ${selectedEmail.email}` : 'Registrar correo'}
 			</DialogTitle>
 		</DialogHeader>
 

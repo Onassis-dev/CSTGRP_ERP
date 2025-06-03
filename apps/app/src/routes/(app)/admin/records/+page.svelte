@@ -9,8 +9,8 @@
 	import { es } from 'date-fns/locale';
 	import Select from '$lib/components/basic/Select.svelte';
 	import { Input } from '$lib/components/ui/input';
-
-	let records: any[] = $state([]);
+	import { createQuery } from '@tanstack/svelte-query';
+	import { refetch } from '$lib/utils/query';
 
 	let filters = $state({
 		module: 'users',
@@ -18,16 +18,9 @@
 		user: ''
 	});
 
-	async function getRecords() {
-		records = (
-			await api.get('/records', {
-				params: filters
-			})
-		).data;
-	}
-
-	onMount(() => {
-		getRecords();
+	const records = createQuery({
+		queryKey: ['records'],
+		queryFn: async () => (await api.get('/records', { params: filters })).data
 	});
 
 	const actionColors: Record<string, string> = {
@@ -45,20 +38,23 @@
 
 	$effect(() => {
 		if (filters.module) {
-			getRecords();
+			refetch(['records']);
 		}
 	});
 </script>
 
 <MenuBar>
-	<form class="flex flex-col gap-2 lg:flex-row" onsubmit={preventDefault(getRecords)}>
+	<form
+		class="flex flex-col gap-2 lg:flex-row"
+		onsubmit={preventDefault(() => refetch(['records']))}
+	>
 		<Select class="min-w-36" menu items={options} bind:value={filters.module} />
 		<Input
 			menu
 			bind:value={filters.text}
 			placeholder="Texto..."
 			onkeydown={(e) => {
-				if (e.key === 'Enter') getRecords();
+				if (e.key === 'Enter') refetch(['records']);
 			}}
 		/>
 		<Input
@@ -66,7 +62,7 @@
 			bind:value={filters.user}
 			placeholder="Usuario..."
 			onkeydown={(e) => {
-				if (e.key === 'Enter') getRecords();
+				if (e.key === 'Enter') refetch(['records']);
 			}}
 		/>
 	</form>
@@ -79,7 +75,7 @@
 		<TableHead class="w-full">Mensaje</TableHead>
 	</TableHeader>
 	<TableBody>
-		{#each records as record}
+		{#each $records?.data as record}
 			<TableRow>
 				<TableCell class={actionColors[record.action]}
 					>{format(new Date(record.created_at), 'dd/MM/yyyy HH:mm', { locale: es })}</TableCell

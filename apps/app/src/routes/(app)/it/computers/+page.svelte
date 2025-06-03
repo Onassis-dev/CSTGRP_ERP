@@ -6,8 +6,6 @@
 	import api from '$lib/utils/server';
 	import { PlusCircle } from 'lucide-svelte';
 	import DeletePopUp from '$lib/components/complex/DeletePopUp.svelte';
-	import { onMount } from 'svelte';
-
 	import { showSuccess } from '$lib/utils/showToast';
 	import ComputersForm from './ComputersForm.svelte';
 	import { formatDate } from '$lib/utils/functions';
@@ -15,20 +13,20 @@
 	import PwCell from '$lib/components/ui/table/pw-cell.svelte';
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
 	import OptionsCell from '$lib/components/basic/OptionsCell.svelte';
+	import { createQuery } from '@tanstack/svelte-query';
+	import { refetch } from '$lib/utils/query';
 
 	let show: boolean = $state(false);
 	let show1: boolean = $state(false);
 	let selectedDevice: any = $state({});
 
-	let devices: any[] = $state([]);
-
-	async function getComputers() {
-		const result = await api.get('/computers');
-		devices = result.data;
-	}
+	const computers = createQuery({
+		queryKey: ['computers'],
+		queryFn: async () => (await api.get('/computers')).data
+	});
 
 	function editDevice(i: number) {
-		selectedDevice = devices[i];
+		selectedDevice = $computers?.data?.[i];
 		show = true;
 	}
 	function createDevice() {
@@ -36,13 +34,9 @@
 		show = true;
 	}
 	function deleteDevice(i: number) {
-		selectedDevice = devices[i];
+		selectedDevice = $computers?.data?.[i];
 		show1 = true;
 	}
-
-	onMount(() => {
-		getComputers();
-	});
 </script>
 
 <MenuBar>
@@ -64,7 +58,7 @@
 		<TableHead class="w-[12.5%]">Proximo mantenimiento</TableHead>
 	</TableHeader>
 	<TableBody>
-		{#each devices as device, i}
+		{#each $computers?.data as device, i}
 			<TableRow>
 				<OptionsCell editFunc={() => editDevice(i)} deleteFunc={() => deleteDevice(i)} />
 				<TableCell>{device.name || ''}</TableCell>
@@ -94,14 +88,14 @@
 	</TableBody>
 </CusTable>
 
-<ComputersForm bind:show bind:selectedDevice reload={getComputers} />
+<ComputersForm bind:show bind:selectedDevice />
 <DeletePopUp
 	bind:show={show1}
 	text="Borrar computadora"
 	deleteFunc={async () => {
 		await api.delete('/computers', { data: { id: parseInt(selectedDevice.id || '') } });
 		showSuccess('Computadora eliminada');
-		await getComputers();
+		refetch(['computers']);
 		show1 = false;
 	}}
 />

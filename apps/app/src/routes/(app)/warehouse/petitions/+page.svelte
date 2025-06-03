@@ -1,7 +1,5 @@
 <script lang="ts">
 	import { preventDefault } from 'svelte/legacy';
-
-	import { format } from 'date-fns';
 	import CusTable from '$lib/components/basic/CusTable.svelte';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
@@ -9,34 +7,35 @@
 	import { TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
 	import api from '$lib/utils/server';
 	import { FileDown, Search } from 'lucide-svelte';
-	import { onMount } from 'svelte';
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
 	import OptionsCell from '$lib/components/basic/OptionsCell.svelte';
 	import DeletePopUp from '$lib/components/complex/DeletePopUp.svelte';
 	import { showSuccess } from '$lib/utils/showToast';
+	import { createQuery } from '@tanstack/svelte-query';
+	import { refetch } from '$lib/utils/query';
 
 	let filters = $state({
 		folio: ''
 	});
 
-	let rows: any[] = $state([]);
 	let show = $state(false);
 	let selectedMovement: any = $state();
 
-	async function getPetitions() {
-		rows = (await api.get(`/petitions`, { params: filters })).data;
-	}
+	const petitionsQuery = createQuery({
+		queryKey: ['petitions', { ...filters }],
+		queryFn: async () => (await api.get(`/petitions`, { params: filters })).data
+	});
 
 	async function handleDelete() {
 		await api.delete('/petitions/' + selectedMovement.id);
 		selectedMovement = {};
 		showSuccess('Requisicion eliminada');
-		await getPetitions();
+		refetch(['petitions']);
 		show = false;
 	}
 
 	async function download(i: number) {
-		const response = await api.get('/petitions/download/' + rows[i].id, {
+		const response = await api.get('/petitions/download/' + $petitionsQuery?.data[i]?.id, {
 			responseType: 'arraybuffer'
 		});
 
@@ -52,14 +51,13 @@
 		link.click();
 		document.body.removeChild(link);
 	}
-
-	onMount(() => {
-		getPetitions();
-	});
 </script>
 
 <MenuBar>
-	<form class="flex flex-col gap-1 lg:flex-row" onsubmit={preventDefault(getPetitions)} action={''}>
+	<form
+		class="flex flex-col gap-1 lg:flex-row"
+		onsubmit={preventDefault(() => refetch(['petitions']))}
+	>
 		<Input menu bind:value={filters.folio} placeholder="Folio" />
 		<Button type="submit" variant="outline" size="icon"><Search class="size-3.5" /></Button>
 	</form>
@@ -75,7 +73,7 @@
 		<TableHead>Necesario</TableHead>
 	</TableHeader>
 	<TableBody>
-		{#each rows as movement, i}
+		{#each $petitionsQuery?.data as movement, i}
 			<TableRow>
 				<OptionsCell
 					deleteFunc={() => {

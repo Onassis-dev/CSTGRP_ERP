@@ -9,13 +9,13 @@
 	import { Input } from '$lib/components/ui/input';
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
+	import { refetch } from '$lib/utils/query';
 
 	interface Props {
 		show: boolean;
-		reload: any;
 	}
 
-	let { show = $bindable(), reload }: Props = $props();
+	let { show = $bindable() }: Props = $props();
 
 	let selected = $state('');
 	let formData: any = $state({});
@@ -26,7 +26,7 @@
 
 	async function submit() {
 		await api.post(`/materialmovements/${selected}`, formData);
-		reload();
+		refetch(['material-movements']);
 		show = false;
 		showSuccess(`Salida Registrada`);
 	}

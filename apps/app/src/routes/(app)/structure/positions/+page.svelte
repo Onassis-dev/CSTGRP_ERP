@@ -7,24 +7,23 @@
 	import DeletePopUp from '$lib/components/complex/DeletePopUp.svelte';
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
-	import { onMount } from 'svelte';
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
 	import OptionsCell from '$lib/components/basic/OptionsCell.svelte';
 	import Badge from '$lib/components/ui/badge/badge.svelte';
+	import { createQuery } from '@tanstack/svelte-query';
+	import { refetch } from '$lib/utils/query';
 
 	let show: boolean = $state(false);
 	let show1: boolean = $state(false);
 	let selectedPosition: any = $state({});
 
-	let positions: any[] = $state([]);
-
-	async function getPositions() {
-		const result = await api.get('/positions');
-		positions = result.data;
-	}
+	const positions = createQuery({
+		queryKey: ['structure-positions'],
+		queryFn: async () => (await api.get('/positions')).data
+	});
 
 	function editPosition(i: number) {
-		selectedPosition = positions[i];
+		selectedPosition = $positions?.data?.[i];
 		show = true;
 	}
 	function createPosition() {
@@ -32,13 +31,9 @@
 		show = true;
 	}
 	function deletePosition(i: number) {
-		selectedPosition = positions[i];
+		selectedPosition = $positions?.data?.[i];
 		show1 = true;
 	}
-
-	onMount(() => {
-		getPositions();
-	});
 </script>
 
 <MenuBar>
@@ -54,7 +49,7 @@
 		<TableHead>Color</TableHead>
 	</TableHeader>
 	<TableBody>
-		{#each positions as position, i}
+		{#each $positions?.data as position, i}
 			<TableRow>
 				<OptionsCell editFunc={() => editPosition(i)} deleteFunc={() => deletePosition(i)} />
 				<TableCell>{position.name}</TableCell>
@@ -64,13 +59,14 @@
 	</TableBody>
 </CusTable>
 
-<PositionsForm bind:show bind:selectedPosition reload={getPositions} />
+<PositionsForm bind:show bind:selectedPosition />
 <DeletePopUp
 	bind:show={show1}
 	text="Borrar posicion"
 	deleteFunc={async () => {
 		await api.delete('positions', { data: { id: parseInt(selectedPosition.id || '') } });
 		showSuccess('Posicion eliminada');
+		refetch(['structure-positions']);
 		show1 = false;
 	}}
 />

@@ -5,12 +5,10 @@
 	import { TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
 	import api from '$lib/utils/server';
 	import { Ruler } from 'lucide-svelte';
-	import { onMount } from 'svelte';
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
 	import OptionsCell from '$lib/components/basic/OptionsCell.svelte';
 	import MaterialComparisonCard from './MaterialComparisonCard.svelte';
-	import Select from '$lib/components/basic/Select.svelte';
-	import { hasAccess } from '$lib/utils/functions';
+	import { createQuery } from '@tanstack/svelte-query';
 
 	let show = $state(false);
 
@@ -24,48 +22,31 @@
 		leftoverAmount: ''
 	});
 
-	let inventory: any[] = $state([]);
-	let clients: any = {};
-	let clientList: any[] = $state([]);
-
 	let filters = $state({
 		code: '',
 		clientId: ''
 	});
 
+	const inventory = createQuery({
+		queryKey: ['inventory'],
+		queryFn: async () => (await api.get('/clients')).data
+	});
+
 	let filteredInventory = $derived(
-		inventory.filter((material) => {
+		$inventory?.data?.filter((material: any) => {
 			if (filters.code) return material.code?.toUpperCase()?.includes(filters.code.toUpperCase());
 			return true;
 		})
 	);
 
-	async function getInventory() {
-		clientList = (await api.get('/clients/clients')).data;
-
-		clientList.forEach((client: any) => {
-			clients[client.value] = client;
-		});
-
-		const result = await api.get('/clients', { params: { clientId: filters.clientId } });
-		inventory = result.data;
-	}
-
 	function viewComparison(i: number) {
 		selectedMaterial = filteredInventory[i];
 		show = true;
 	}
-
-	onMount(() => {
-		getInventory();
-	});
 </script>
 
 <MenuBar>
 	<Input menu bind:value={filters.code} placeholder="Lookup part number" />
-	{#if hasAccess('inventory')}
-		<Select items={clientList} bind:value={filters.clientId} menu onValueChange={getInventory} />
-	{/if}
 </MenuBar>
 
 <CusTable>

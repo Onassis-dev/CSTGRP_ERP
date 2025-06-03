@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
 	import Label from '$lib/components/basic/Label.svelte';
 	import Select from '$lib/components/basic/Select.svelte';
 	import { Button } from '$lib/components/ui/button';
@@ -22,14 +21,14 @@
 	import { showSuccess } from '$lib/utils/showToast';
 	import { ChevronDown } from 'lucide-svelte';
 	import { onMount } from 'svelte';
+	import { refetch } from '$lib/utils/query';
 
 	interface Props {
 		show?: boolean;
-		reload: any;
 		selectedUser: any;
 	}
 
-	let { show = $bindable(false), reload, selectedUser = $bindable({}) }: Props = $props();
+	let { show = $bindable(false), selectedUser = $bindable({}) }: Props = $props();
 	let formData: any = $state();
 
 	function setFormData() {
@@ -73,7 +72,7 @@
 			});
 			showSuccess('Usuario registrado');
 		}
-		await reload();
+		refetch(['users']);
 		show = false;
 	}
 
@@ -97,8 +96,9 @@
 	onMount(() => {
 		getAreas();
 	});
-	run(() => {
-		if (show || true) setFormData();
+	$effect(() => {
+		show;
+		setFormData();
 	});
 </script>
 

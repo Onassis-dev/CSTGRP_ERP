@@ -22,6 +22,8 @@
 	import { Button } from '$lib/components/ui/button';
 	import ImportMovementsForm from './ImportMovementsForm.svelte';
 	import { preventDefault } from 'svelte/legacy';
+	import { createQuery } from '@tanstack/svelte-query';
+	import { refetch } from '$lib/utils/query';
 
 	let show2 = $state(false);
 	let show3 = $state(false);
@@ -48,15 +50,16 @@
 		{ value: 'At CST, Qtys verified', name: 'Listo' }
 	];
 
-	let movements: any[] = $state([]);
+	const movementsQuery = createQuery({
+		queryKey: ['po-imp', { ...filters }],
+		queryFn: async () => (await api.get('/po-imp', { params: filters })).data
+	});
 
-	async function getMovements() {
-		const result = (await api.get(`/po-imp`, { params: filters })).data;
-
-		movements = result.map((e: any) => {
+	let movements = $derived(
+		$movementsQuery?.data?.map((e: any) => {
 			return { ...e, realAmount: e.realAmount?.toString() };
-		});
-	}
+		})
+	);
 
 	function editImport(i: number) {
 		selectedMovement = movements[i];
@@ -79,23 +82,23 @@
 		await api.delete('/po-imp/' + selectedMovement.id);
 		selectedMovement = {};
 		showSuccess('Movimiento eliminado');
-		await getMovements();
+		refetch(['po-imp']);
 		show3 = false;
 	}
-
-	onMount(() => {
-		getMovements();
-	});
 </script>
 
 <MenuBar>
-	<form class="flex flex-col gap-2 lg:flex-row" onsubmit={preventDefault(getMovements)} action={''}>
+	<form
+		class="flex flex-col gap-2 lg:flex-row"
+		onsubmit={preventDefault(() => refetch(['po-imp']))}
+		action={''}
+	>
 		<Select
 			menu
 			class="min-w-36"
 			items={options}
 			bind:value={filters.type}
-			onValueChange={getMovements}
+			onValueChange={() => refetch(['po-imp'])}
 		/>
 		<Select
 			menu
@@ -103,7 +106,7 @@
 			items={locations}
 			allowDeselect
 			bind:value={filters.location}
-			onValueChange={getMovements}
+			onValueChange={() => refetch(['po-imp'])}
 		/>
 		<Input menu bind:value={filters.code} placeholder="Identificador" />
 	</form>
@@ -165,5 +168,5 @@
 	text="¿Estás seguro de que quieres eliminar este movimiento?"
 	deleteFunc={handleDelete}
 />
-<ImportMovementsForm bind:show={show4} reload={getMovements} {selectedMovement} />
-<ExportMovementsForm bind:show={show5} reload={getMovements} {selectedMovement} />
+<ImportMovementsForm bind:show={show4} {selectedMovement} />
+<ExportMovementsForm bind:show={show5} {selectedMovement} />

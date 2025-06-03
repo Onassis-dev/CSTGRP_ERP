@@ -91,6 +91,10 @@ export const createSchema = z.object({
   formatDate: z.string().refine((value) => dateRegex.test(value)),
 });
 
+export const getEmployeesSchema = z.object({
+  active: z.string().optional(),
+});
+
 export const editSchema = createSchema
   .omit({ nominaSalary: true, formatDate: true })
   .extend({

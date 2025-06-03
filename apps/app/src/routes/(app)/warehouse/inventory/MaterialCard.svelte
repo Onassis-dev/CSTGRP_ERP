@@ -19,6 +19,7 @@
 	import api from '$lib/utils/server';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { Download } from 'lucide-svelte';
+	import { downloadFile } from '$lib/utils/files';
 
 	interface Props {
 		show: boolean;
@@ -32,29 +33,10 @@
 	async function fetchData() {
 		movements = (await api.get('/inventory/history/' + selectedMaterial.id)).data;
 	}
+
 	$effect(() => {
 		if (selectedMaterial.id) fetchData();
 	});
-
-	async function downloadMovements() {
-		const response = await api.get('/inventory/history/download/' + selectedMaterial.id, {
-			responseType: 'arraybuffer'
-		});
-
-		const blob = new Blob([response.data], {
-			type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-		});
-
-		const link = document.createElement('a');
-		link.href = URL.createObjectURL(blob);
-		link.download = `${selectedMaterial.code}.xlsx`;
-
-		document.body.appendChild(link);
-
-		link.click();
-
-		document.body.removeChild(link);
-	}
 </script>
 
 <Dialog bind:open={show}>
@@ -66,7 +48,15 @@
 		</DialogHeader>
 		<DialogBody class="h-full max-w-full">
 			<div class="mb-4 flex items-center gap-2">
-				<Button variant="outline" size="icon" onclick={downloadMovements}>
+				<Button
+					variant="outline"
+					size="icon"
+					onclick={() =>
+						downloadFile({
+							url: '/inventory/history/download/' + selectedMaterial.id,
+							name: `${selectedMaterial.code}.xlsx`
+						})}
+				>
 					<Download />
 				</Button>
 				<div>Ubicacion: {selectedMaterial.location}</div>

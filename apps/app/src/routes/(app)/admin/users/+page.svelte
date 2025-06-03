@@ -17,6 +17,9 @@
 	import { onMount } from 'svelte';
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
 	import OptionsCell from '$lib/components/basic/OptionsCell.svelte';
+	import { getAreas } from '$lib/utils/queries';
+	import { createQuery } from '@tanstack/svelte-query';
+	import { refetch } from '$lib/utils/query';
 
 	let show: boolean = $state(false);
 	let show1: boolean = $state(false);
@@ -40,20 +43,19 @@
 		perm_requisitions: 0,
 		maintance: false
 	});
-	let users: (typeof selectedUser)[] = $state([]);
-	let areas: any = $state({});
 
-	async function getUsers() {
-		const result = await api.get('/users');
-		users = result.data;
-		const areasList = (await api.get('/hrvarious/areas')).data;
-		areasList.forEach((area: any) => {
-			areas[area.value] = area.name;
-		});
-	}
+	const users = createQuery({
+		queryKey: ['users'],
+		queryFn: async () => (await api.get('/users')).data
+	});
+
+	const areas = createQuery({
+		queryKey: ['areasList'],
+		queryFn: getAreas
+	});
 
 	function editUser(i: number) {
-		selectedUser = users[i];
+		selectedUser = $users?.data?.[i];
 		show = true;
 	}
 	function createUser() {
@@ -81,7 +83,7 @@
 	}
 
 	function deleteUser(i: number) {
-		selectedUser = users[i];
+		selectedUser = $users?.data?.[i];
 		show1 = true;
 	}
 
@@ -108,7 +110,7 @@
 			perm_petitions: 0
 		};
 		showSuccess('Usuario eliminado');
-		await getUsers();
+		refetch(['users']);
 		show1 = false;
 	}
 
@@ -121,10 +123,6 @@
 	}
 
 	const badgeTexts = [null, Eye, Pen, Minus];
-
-	onMount(() => {
-		getUsers();
-	});
 </script>
 
 <MenuBar>
@@ -162,7 +160,7 @@
 		<TableHead class="w-[12.5%]">Block</TableHead>
 	</TableHeader>
 	<TableBody>
-		{#each users as user, i}
+		{#each $users?.data as user, i}
 			<TableRow>
 				<OptionsCell editFunc={() => editUser(i)} deleteFunc={() => deleteUser(i)} />
 
@@ -300,7 +298,7 @@
 						<DropdownMenuContent>
 							{#each user.perm_assistance_areas?.split(',') || [] as area}
 								<DropdownMenuItem class="px-3 py-1"
-									>{area === 'Todas' ? area : areas[area]}</DropdownMenuItem
+									>{area === 'Todas' ? area : $areas?.data?.[area]}</DropdownMenuItem
 								>
 							{/each}
 						</DropdownMenuContent>
@@ -320,5 +318,5 @@
 	</TableBody>
 </CusTable>
 
-<UsersForm bind:show bind:selectedUser reload={getUsers} />
+<UsersForm bind:show bind:selectedUser />
 <DeletePopUp bind:show={show1} text="Eliminar usuario" deleteFunc={handleDelete} />

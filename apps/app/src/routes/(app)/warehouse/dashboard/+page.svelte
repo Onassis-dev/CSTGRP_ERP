@@ -12,13 +12,10 @@
 		TableRow
 	} from '$lib/components/ui/table';
 	import { Badge } from '$lib/components/ui/badge';
-	import { onMount } from 'svelte';
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
-	import DashboardHeader from '$lib/components/basic/DashboardHeader.svelte';
 	import DashboardBody from '$lib/components/basic/DashboardBody.svelte';
+	import { createQuery } from '@tanstack/svelte-query';
 
-	let warnings: any[] = $state([]);
-	let outOfStock: any[] = $state([]);
 	let selectedDate = $state(new Date().toISOString().split('T')[0]);
 
 	let textDate = $derived(
@@ -42,13 +39,14 @@
 			][parseInt(selectedDate.split('-')[1]) - 1]
 	);
 
-	async function fetchConstData() {
-		warnings = (await api.get('/inventorystats/stockwarnings')).data;
-		outOfStock = (await api.get('/inventorystats/outofstock')).data;
-	}
+	const stockWarningsQuery = createQuery({
+		queryKey: ['stockwarnings'],
+		queryFn: async () => (await api.get('/inventorystats/stockwarnings')).data
+	});
 
-	onMount(() => {
-		fetchConstData();
+	const outOfStockQuery = createQuery({
+		queryKey: ['outofstock'],
+		queryFn: async () => (await api.get('/inventorystats/outofstock')).data
 	});
 </script>
 
@@ -78,7 +76,7 @@
 					<TableHead class="border-r-0">Medida</TableHead>
 				</TableHeader>
 				<TableBody>
-					{#each outOfStock as row}
+					{#each $outOfStockQuery?.data as row}
 						<TableRow>
 							<TableCell>{row.code || ''}</TableCell>
 							<TableCell class="whitespace-hidden max-w-64 overflow-hidden text-ellipsis"
@@ -108,7 +106,7 @@
 					<TableHead>Medida</TableHead>
 				</TableHeader>
 				<TableBody>
-					{#each warnings as row}
+					{#each $stockWarningsQuery?.data as row}
 						<TableRow>
 							<TableCell class="border-l">{row.code}</TableCell>
 							<TableCell

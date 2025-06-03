@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { run, preventDefault } from 'svelte/legacy';
-
+	import { preventDefault } from 'svelte/legacy';
 	import Label from '$lib/components/basic/Label.svelte';
 	import Select from '$lib/components/basic/Select.svelte';
 	import { Button } from '$lib/components/ui/button';
@@ -14,14 +13,14 @@
 	import { Input } from '$lib/components/ui/input';
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
+	import { refetch } from '$lib/utils/query';
 
 	interface Props {
 		show?: boolean;
-		reload: any;
 		selectedDevice: any;
 	}
 
-	let { show = $bindable(false), reload, selectedDevice = $bindable({}) }: Props = $props();
+	let { show = $bindable(false), selectedDevice = $bindable({}) }: Props = $props();
 	let formData: any = $state();
 
 	function setFormData() {
@@ -44,11 +43,12 @@
 			await api.post('/computers', formData);
 			showSuccess('Computadora registrada');
 		}
-		await reload();
+		refetch(['computers']);
 		show = false;
 	}
-	run(() => {
-		if (show || true) setFormData();
+	$effect(() => {
+		show;
+		setFormData();
 	});
 </script>
 

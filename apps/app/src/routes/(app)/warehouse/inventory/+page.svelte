@@ -6,7 +6,6 @@
 	import { TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
 	import api from '$lib/utils/server';
 	import { FileDown, PlusCircle, Ruler } from 'lucide-svelte';
-	import { onMount } from 'svelte';
 	import MaterialCard from './MaterialCard.svelte';
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
 	import OptionsCell from '$lib/components/basic/OptionsCell.svelte';
@@ -17,6 +16,8 @@
 	import { format } from 'date-fns';
 	import { es } from 'date-fns/locale';
 	import { createQuery } from '@tanstack/svelte-query';
+	import { getClients } from '$lib/utils/queries';
+	import { downloadFile } from '$lib/utils/files';
 
 	let show = $state(false);
 	let show1 = $state(false);
@@ -32,7 +33,6 @@
 		id: '',
 		leftoverAmount: ''
 	});
-	let clients: any = $state({});
 
 	let filters = $state({
 		code: '',
@@ -53,32 +53,10 @@
 		})
 	);
 
-	async function getInventory() {
-		const clientList = (await api.get('/inventoryvarious/clients')).data;
-		clientList.forEach((client: any) => {
-			clients[client.value] = client;
-		});
-	}
-
-	async function exportInventory() {
-		const response = await api.get('/inventory/export', {
-			responseType: 'arraybuffer'
-		});
-
-		const blob = new Blob([response.data], {
-			type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-		});
-
-		const link = document.createElement('a');
-		link.href = URL.createObjectURL(blob);
-		link.download = `Inventario ${format(new Date(), 'dd/MM/yyyy HH:mm', { locale: es })}.xlsx`;
-
-		document.body.appendChild(link);
-
-		link.click();
-
-		document.body.removeChild(link);
-	}
+	const clients = createQuery({
+		queryKey: ['clients'],
+		queryFn: getClients
+	});
 
 	function viewMaterial(i: number) {
 		selectedMaterial = filteredInventory[i];
@@ -122,13 +100,8 @@
 			id: ''
 		};
 		showSuccess('Material eliminado');
-		await getInventory();
 		show2 = false;
 	}
-
-	onMount(() => {
-		getInventory();
-	});
 </script>
 
 <MenuBar>
@@ -136,8 +109,14 @@
 		<Input menu bind:value={filters.code} placeholder="Codigo" />
 	{/snippet}
 	{#snippet right()}
-		<Button onclick={exportInventory} variant="outline" size="icon"
-			><FileDown class="size-3.5" /></Button
+		<Button
+			onclick={() =>
+				downloadFile({
+					url: '/inventory/export',
+					name: `Inventario ${format(new Date(), 'dd/MM/yyyy HH:mm', { locale: es })}.xlsx`
+				})}
+			variant="outline"
+			size="icon"><FileDown class="size-3.5" /></Button
 		>
 		<Button onclick={createMaterial}><PlusCircle class=" size-3.5" />Añadir Material</Button>
 	{/snippet}
@@ -156,7 +135,7 @@
 		<TableHead>Cliente</TableHead>
 	</TableHeader>
 	<TableBody>
-		{#each filteredInventory as material, i}
+		{#each filteredInventory || [] as material, i}
 			<TableRow>
 				<OptionsCell
 					viewFunc={() => viewMaterial(i)}
@@ -185,9 +164,9 @@
 				<TableCell><Badge color="gray">{material.minAmount}</Badge></TableCell>
 				<TableCell>{material.measurement}</TableCell>
 				<TableCell>
-					{#if clients[material.clientId]}
-						<Badge color={clients[material.clientId].color}
-							>{clients[material.clientId].name}
+					{#if $clients?.data?.[material.clientId]}
+						<Badge color={$clients?.data?.[material.clientId]?.color}
+							>{$clients?.data?.[material.clientId]?.name}
 						</Badge>
 					{/if}
 				</TableCell>
@@ -198,5 +177,5 @@
 
 <MaterialCard bind:show bind:selectedMaterial />
 <MaterialComparisonCard bind:show={show3} bind:selectedMaterial />
-<MaterialsForm bind:show={show1} bind:selectedMaterial reload={getInventory} />
+<MaterialsForm bind:show={show1} bind:selectedMaterial />
 <DeletePopUp bind:show={show2} text="Eliminar material" deleteFunc={handleDelete} />

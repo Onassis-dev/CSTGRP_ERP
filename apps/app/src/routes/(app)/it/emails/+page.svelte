@@ -6,45 +6,40 @@
 	import api from '$lib/utils/server';
 	import { PlusCircle } from 'lucide-svelte';
 	import DeletePopUp from '$lib/components/complex/DeletePopUp.svelte';
-	import { onMount } from 'svelte';
 	import { showSuccess } from '$lib/utils/showToast';
 	import EmailsForm from './EmailsForm.svelte';
 	import PwCell from '$lib/components/ui/table/pw-cell.svelte';
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
 	import OptionsCell from '$lib/components/basic/OptionsCell.svelte';
+	import { createQuery } from '@tanstack/svelte-query';
+	import { refetch } from '$lib/utils/query';
 
 	let show: boolean = $state(false);
 	let show1: boolean = $state(false);
-	let selectedDevice: any = $state({});
+	let selectedEmail: any = $state({});
 
-	let devices: any[] = $state([]);
+	const emails = createQuery({
+		queryKey: ['emails'],
+		queryFn: async () => (await api.get('/emails')).data
+	});
 
-	async function getEmails() {
-		const result = await api.get('/emails');
-		devices = result.data;
-	}
-
-	function editDevice(i: number) {
-		selectedDevice = devices[i];
+	function editEmail(i: number) {
+		selectedEmail = $emails?.data?.[i];
 		show = true;
 	}
-	function createDevice() {
-		selectedDevice = {};
+	function createEmail() {
+		selectedEmail = {};
 		show = true;
 	}
-	function deleteDevice(i: number) {
-		selectedDevice = devices[i];
+	function deleteEmail(i: number) {
+		selectedEmail = $emails?.data?.[i];
 		show1 = true;
 	}
-
-	onMount(() => {
-		getEmails();
-	});
 </script>
 
 <MenuBar>
 	{#snippet right()}
-		<Button onclick={createDevice}><PlusCircle class=" size-3.5" />Añadir correo</Button>
+		<Button onclick={createEmail}><PlusCircle class=" size-3.5" />Añadir correo</Button>
 	{/snippet}
 </MenuBar>
 
@@ -55,24 +50,24 @@
 		<TableHead class="w-[30%]">Contraseña</TableHead>
 	</TableHeader>
 	<TableBody>
-		{#each devices as device, i}
+		{#each $emails?.data as email, i}
 			<TableRow>
-				<OptionsCell editFunc={() => editDevice(i)} deleteFunc={() => deleteDevice(i)} />
-				<TableCell class="w-full">{device.email || ''}</TableCell>
-				<PwCell password={device.password || ''}></PwCell>
+				<OptionsCell editFunc={() => editEmail(i)} deleteFunc={() => deleteEmail(i)} />
+				<TableCell class="w-full">{email.email || ''}</TableCell>
+				<PwCell password={email.password || ''}></PwCell>
 			</TableRow>
 		{/each}
 	</TableBody>
 </CusTable>
 
-<EmailsForm bind:show bind:selectedDevice reload={getEmails} />
+<EmailsForm bind:show bind:selectedEmail />
 <DeletePopUp
 	bind:show={show1}
 	text="Borrar correo"
 	deleteFunc={async () => {
-		await api.delete('/emails', { data: { id: parseInt(selectedDevice.id || '') } });
+		await api.delete('/emails', { data: { id: parseInt(selectedEmail.id || '') } });
 		showSuccess('Correo eliminada');
-		await getEmails();
+		refetch(['emails']);
 		show1 = false;
 	}}
 />

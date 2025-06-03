@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { preventDefault } from 'svelte/legacy';
-
 	import Label from '$lib/components/basic/Label.svelte';
 	import Select from '$lib/components/basic/Select.svelte';
 	import { Button } from '$lib/components/ui/button';
@@ -15,15 +14,15 @@
 	import { Input } from '$lib/components/ui/input';
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
+	import { refetch } from '$lib/utils/query';
 	import { untrack } from 'svelte';
 
 	interface Props {
 		show?: boolean;
-		reload: any;
 		selectedArea: any;
 	}
 
-	let { show = $bindable(false), reload, selectedArea = $bindable({}) }: Props = $props();
+	let { show = $bindable(false), selectedArea = $bindable({}) }: Props = $props();
 	let formData: any = $state({
 		name: '',
 		captured: false,
@@ -41,7 +40,7 @@
 			await api.post('/areas', formData);
 			showSuccess('Area registrada');
 		}
-		await reload();
+		refetch(['structure-areas']);
 		show = false;
 	}
 

@@ -11,6 +11,7 @@
 	import { Badge } from '$lib/components/ui/badge';
 	import { onMount } from 'svelte';
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
+	import { downloadFile } from '$lib/utils/files';
 
 	let assistances: any[] = $state([]);
 	let areas: any = {};
@@ -74,27 +75,13 @@
 	}
 
 	async function exportList() {
-		const response = await api.get('/assistance/export', {
-			responseType: 'arraybuffer',
+		downloadFile({
+			url: '/assistance/export',
+			name: 'Lista de asistencia.pdf',
 			params: {
 				date: dateSelected
 			}
 		});
-
-		const blob = new Blob([response.data], {
-			type: 'application/pdf'
-		});
-
-		const link = document.createElement('a');
-		link.href = URL.createObjectURL(blob);
-		link.target = '_blank';
-		// link.download = 'Lista de asistencia.pdf';
-
-		document.body.appendChild(link);
-
-		link.click();
-
-		document.body.removeChild(link);
 	}
 
 	onMount(() => {

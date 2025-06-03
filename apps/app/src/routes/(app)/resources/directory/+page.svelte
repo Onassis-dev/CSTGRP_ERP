@@ -7,24 +7,24 @@
 	import api from '$lib/utils/server';
 	import { PlusCircle } from 'lucide-svelte';
 	import DeletePopUp from '$lib/components/complex/DeletePopUp.svelte';
-	import { onMount } from 'svelte';
 	import { showSuccess } from '$lib/utils/showToast';
 	import DirectoryForm from './DirectoryForm.svelte';
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
 	import OptionsCell from '$lib/components/basic/OptionsCell.svelte';
+	import { createQuery } from '@tanstack/svelte-query';
+	import { refetch } from '$lib/utils/query';
 
 	let show = $state(false);
 	let show1 = $state(false);
 	let selectedDevice = $state({});
 
-	let devices: any[] = $state([]);
-
-	async function getDevices() {
-		devices = (await api.get('/resources/directory')).data;
-	}
+	const directory = createQuery({
+		queryKey: ['directory'],
+		queryFn: async () => (await api.get('/resources/directory')).data
+	});
 
 	function editDevice(i: number) {
-		selectedDevice = devices[i];
+		selectedDevice = $directory?.data?.[i];
 		show = true;
 	}
 	function createDevice() {
@@ -32,13 +32,9 @@
 		show = true;
 	}
 	function deleteDevice(i: number) {
-		selectedDevice = devices[i];
+		selectedDevice = $directory?.data?.[i];
 		show1 = true;
 	}
-
-	onMount(() => {
-		getDevices();
-	});
 </script>
 
 {#if parseInt(Cookies.get('perm_it') || '0') == 2}
@@ -60,7 +56,7 @@
 		<TableHead class="w-[25%]">Extension</TableHead>
 	</TableHeader>
 	<TableBody>
-		{#each devices as device, i}
+		{#each $directory?.data as device, i}
 			<TableRow>
 				{#if parseInt(Cookies.get('perm_it') || '0') == 2}
 					<OptionsCell editFunc={() => editDevice(i)} deleteFunc={() => deleteDevice(i)} />
@@ -75,14 +71,14 @@
 </CusTable>
 
 {#if parseInt(Cookies.get('perm_it') || '0') == 2}
-	<DirectoryForm bind:show bind:selectedDevice reload={getDevices} />
+	<DirectoryForm bind:show bind:selectedDevice />
 	<DeletePopUp
 		bind:show={show1}
 		text="Borrar fila"
 		deleteFunc={async () => {
 			await api.delete('/directory', { data: { id: parseInt((selectedDevice as any).id || '') } });
 			showSuccess('Fila eliminada');
-			await getDevices();
+			refetch(['directory']);
 			show1 = false;
 		}}
 	/>

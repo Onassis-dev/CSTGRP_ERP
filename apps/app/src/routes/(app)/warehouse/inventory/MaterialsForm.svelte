@@ -13,23 +13,32 @@
 	import { FileInput, Input } from '$lib/components/ui/input';
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
-	import { onMount } from 'svelte';
-	import { queryClient, refetch } from '$lib/utils/query';
+	import { refetch } from '$lib/utils/query';
+	import { createQuery } from '@tanstack/svelte-query';
+
+	const clientsQuery = createQuery({
+		queryKey: ['inventory-clients'],
+		queryFn: async () => (await api.get('/inventoryvarious/clients')).data
+	});
+
+	let clients = $derived(
+		$clientsQuery?.data?.map((e: any) => {
+			return { ...e, realAmount: e.realAmount?.toString() };
+		})
+	);
 
 	interface Props {
 		show?: boolean;
-		reload: any;
 		selectedMaterial: any;
 	}
 
-	let { show = $bindable(false), reload, selectedMaterial = $bindable() }: Props = $props();
+	let { show = $bindable(false), selectedMaterial = $bindable() }: Props = $props();
 	let formData: any = $state();
 	let files: FileList | undefined = $state();
 
 	function setFormData() {
 		formData = { ...selectedMaterial };
 	}
-	let clients: any[] = $state();
 
 	const measurements = [
 		{ name: 'YARDAS', value: 'YD' },
@@ -38,10 +47,6 @@
 		{ name: 'PIES', value: 'FT' },
 		{ name: 'GALONES', value: 'GAL' }
 	];
-
-	async function getClients() {
-		clients = (await api.get('/inventoryvarious/clients')).data;
-	}
 
 	async function handleSubmit() {
 		const form = new FormData();
@@ -67,9 +72,6 @@
 		show = false;
 	}
 
-	onMount(() => {
-		getClients();
-	});
 	$effect(() => {
 		if (show || true) setFormData();
 	});
@@ -93,7 +95,7 @@
 						<Input name="text" bind:value={formData.code} />
 					</Label>
 					<Label name="Cliente">
-						<Select items={clients} bind:value={formData.clientId} />
+						<Select items={$clientsQuery?.data} bind:value={formData.clientId} />
 					</Label>
 					<Label name="Descripcion" class="col-span-2">
 						<Input name="text" bind:value={formData.description} />
