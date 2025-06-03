@@ -20,8 +20,9 @@
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
 	import { ChevronDown } from 'lucide-svelte';
-	import { onMount } from 'svelte';
 	import { refetch } from '$lib/utils/query';
+	import { getOptions } from '$lib/utils/queries';
+	import { createQuery } from '@tanstack/svelte-query';
 
 	interface Props {
 		show?: boolean;
@@ -43,11 +44,11 @@
 	];
 	let selectedAreas: any[] = $state([]);
 
-	let areas: any[] = $state();
-
-	async function getAreas() {
-		areas = (await api.get('/hrvarious/areas')).data;
-	}
+	const areasQuery = createQuery({
+		queryKey: ['areas'],
+		queryFn: async () => (await api.get('/hrvarious/areas')).data
+	});
+	let areas = $derived(getOptions($areasQuery.data));
 
 	async function handleSubmit() {
 		Object.keys(formData).forEach((key) => {
@@ -93,9 +94,6 @@
 		}
 	}
 
-	onMount(() => {
-		getAreas();
-	});
 	$effect(() => {
 		show;
 		setFormData();
@@ -112,90 +110,112 @@
 			>
 		</DialogHeader>
 
-		<DialogBody>
-			<div class="grid w-full grid-cols-2 gap-4">
-				<Label name="Nombre">
-					<Input name="text" bind:value={formData.username} />
-				</Label>
-				<Label name="Contraseña">
-					<Input name="text" bind:value={formData.password} />
-				</Label>
-				<Label name="Perm. Usuarios">
-					<Select items={permissions} bind:value={formData.perm_users} />
-				</Label>
-				<Label name="Perm. Asistencia">
-					<Select items={permissions} bind:value={formData.perm_assistance} />
-				</Label>
-				<Label name="Perm. Empleados">
-					<Select items={permissions} bind:value={formData.perm_employees} />
-				</Label>
-				<Label name="Perm. Productividad">
-					<Select items={permissions} bind:value={formData.perm_productivity} />
-				</Label>
-				<Label name="Perm. Inventario">
-					<Select items={permissions} bind:value={formData.perm_inventory} />
-				</Label>
-				<Label name="Perm. Estructura">
-					<Select items={permissions} bind:value={formData.perm_structure} />
-				</Label>
-				<Label name="Perm. Sistemas">
-					<Select items={permissions} bind:value={formData.perm_it} />
-				</Label>
-				<Label name="Perm. Movimientos">
-					<Select items={permissions} bind:value={formData.perm_materialmovements} />
-				</Label>
-				<Label name="Perm. Dashboard">
-					<Select items={permissions} bind:value={formData.perm_inventorystats} />
-				</Label>
-				<Label name="Perm. Requisiciones">
-					<Select items={permissions} bind:value={formData.perm_requisitions} />
-				</Label>
-				<Label name="Perm. Peticiones">
-					<Select items={permissions} bind:value={formData.perm_petitions} />
-				</Label>
-				<Label name="Perm. Po-Imp">
-					<Select items={permissions} bind:value={formData.perm_poimp} />
-				</Label>
-				<Label name="Perm. Recursos">
-					<Select items={permissions} bind:value={formData.perm_resources} />
-				</Label>
-				<Label name="Areas">
-					<DropdownMenu>
-						<DropdownMenuTrigger>
-							<Button variant="outline" class="w-full"
-								>Seleccionar<ChevronDown class="text-primary ms-2 size-3.5" /></Button
-							>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent>
-							{#each areas as area, i}
+		<DialogBody class="max-w-2xl">
+			<div class="grid w-full gap-4">
+				<div class="grid grid-cols-2 gap-4">
+					<Label name="Nombre">
+						<Input name="text" bind:value={formData.username} />
+					</Label>
+					<Label name="Contraseña">
+						<Input name="text" bind:value={formData.password} />
+					</Label>
+				</div>
+
+				<div class="grid grid-cols-3 gap-4 rounded-md border p-2">
+					<h3 class="col-span-3 w-full pl-0.5 font-semibold">General</h3>
+					<Label name="Perm. Usuarios">
+						<Select items={permissions} bind:value={formData.perm_users} />
+					</Label>
+					<Label name="Perm. Estructura">
+						<Select items={permissions} bind:value={formData.perm_structure} />
+					</Label>
+					<Label name="Perm. Recursos">
+						<Select items={permissions} bind:value={formData.perm_resources} />
+					</Label>
+				</div>
+
+				<div class="grid grid-cols-3 gap-4 rounded-md border p-2">
+					<h3 class="col-span-3 w-full pl-0.5 font-semibold">RRHH</h3>
+					<Label name="Perm. Empleados">
+						<Select items={permissions} bind:value={formData.perm_employees} />
+					</Label>
+					<Label name="Perm. Asistencia">
+						<Select items={permissions} bind:value={formData.perm_assistance} />
+					</Label>
+					<Label name="Perm. Productividad">
+						<Select items={permissions} bind:value={formData.perm_productivity} />
+					</Label>
+				</div>
+
+				<div class="grid grid-cols-3 gap-4 rounded-md border p-2">
+					<h3 class="col-span-3 w-full pl-0.5 font-semibold">Almacen</h3>
+					<Label name="Perm. Inventario">
+						<Select items={permissions} bind:value={formData.perm_inventory} />
+					</Label>
+					<Label name="Perm. Movimientos">
+						<Select items={permissions} bind:value={formData.perm_materialmovements} />
+					</Label>
+					<Label name="Perm. Dashboard">
+						<Select items={permissions} bind:value={formData.perm_inventorystats} />
+					</Label>
+					<Label name="Perm. Requisiciones">
+						<Select items={permissions} bind:value={formData.perm_requisitions} />
+					</Label>
+					<Label name="Perm. Peticiones">
+						<Select items={permissions} bind:value={formData.perm_petitions} />
+					</Label>
+					<Label name="Perm. Po-Imp">
+						<Select items={permissions} bind:value={formData.perm_poimp} />
+					</Label>
+				</div>
+
+				<div class="grid grid-cols-3 gap-4 rounded-md border p-2">
+					<h3 class="col-span-3 w-full pl-0.5 font-semibold">Sistemas</h3>
+					<Label name="Perm. Sistemas">
+						<Select items={permissions} bind:value={formData.perm_it} />
+					</Label>
+				</div>
+
+				<div class="grid grid-cols-2 gap-4 rounded-md border p-2">
+					<h3 class="col-span-2 w-full pl-0.5 font-semibold">Extras</h3>
+					<Label name="Areas">
+						<DropdownMenu>
+							<DropdownMenuTrigger>
+								<Button variant="outline" class="w-full"
+									>Seleccionar<ChevronDown class="text-primary ms-2 size-3.5" /></Button
+								>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent>
+								{#each areas as area, i}
+									<li class="list-none">
+										<Checkbox
+											id={'c-' + area.name}
+											checked={selectedAreas.includes(area.value) || selectedAreas[0] === 'Todas'}
+											onCheckedChange={(v) => {
+												handleCheck(v, i);
+											}}
+										/>
+										<LabelBase for={'c-' + area.name}>{area.name}</LabelBase>
+									</li>
+								{/each}
 								<li class="list-none">
 									<Checkbox
-										id={'c-' + area.name}
-										checked={selectedAreas.includes(area.value) || selectedAreas[0] === 'Todas'}
+										id="c-todas"
+										checked={selectedAreas[0] === 'Todas'}
 										onCheckedChange={(v) => {
-											handleCheck(v, i);
+											console.log(v);
+											checkAll(v);
 										}}
 									/>
-									<LabelBase for={'c-' + area.name}>{area.name}</LabelBase>
+									<LabelBase for="c-todas" class="font-semibold">Todas</LabelBase>
 								</li>
-							{/each}
-							<li class="list-none">
-								<Checkbox
-									id="c-todas"
-									checked={selectedAreas[0] === 'Todas'}
-									onCheckedChange={(v) => {
-										console.log(v);
-										checkAll(v);
-									}}
-								/>
-								<LabelBase for="c-todas" class="font-semibold">Todas</LabelBase>
-							</li>
-						</DropdownMenuContent>
-					</DropdownMenu>
-				</Label>
-				<Label name="Mantenimiento">
-					<Checkbox bind:checked={formData.maintance} />
-				</Label>
+							</DropdownMenuContent>
+						</DropdownMenu>
+					</Label>
+					<Label name="Mantenimiento">
+						<Checkbox bind:checked={formData.maintance} />
+					</Label>
+				</div>
 			</div>
 
 			<Button type="submit" class="mt-4 w-full" onclick={handleSubmit}>Guardar cambios</Button>
