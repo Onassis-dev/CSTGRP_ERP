@@ -24,7 +24,9 @@
 	import { showSuccess } from '$lib/utils/showToast';
 	import Cookies from 'js-cookie';
 	import { refetch } from '$lib/utils/query';
+	import { getAreas, getOptions } from '$lib/utils/queries';
 	import { createQuery } from '@tanstack/svelte-query';
+	import { untrack } from 'svelte';
 
 	interface Props {
 		show?: boolean;
@@ -33,22 +35,28 @@
 
 	let { show = $bindable(false), selectedMovement = $bindable() }: Props = $props();
 	let formData: any = $state({});
+	let jobs: any[] = $state([]);
 
-	function setFormData() {
+	async function setFormData() {
 		formData = { ...selectedMovement };
 		formData.petitioner = Cookies.get('username');
+		await getJobs();
 	}
 
-	const jobsQuery = createQuery({
-		queryKey: ['requisitions-jobs', selectedMovement],
-		queryFn: async () => (await api.get('requisitions/jobs', { params: selectedMovement })).data
-	});
-
-	let jobs = $derived($jobsQuery?.data);
+	async function getJobs() {
+		jobs = [];
+		jobs = (
+			await api.get('requisitions/jobs', {
+				params: {
+					code: selectedMovement.code
+				}
+			})
+		).data;
+	}
 
 	const areasQuery = createQuery({
 		queryKey: ['requisitions-areas'],
-		queryFn: async () => (await api.get('/hrvarious/areas')).data
+		queryFn: getAreas
 	});
 
 	async function handleSubmit() {
@@ -56,13 +64,13 @@
 			'requisitions',
 			{
 				...formData,
-				jobIds: jobs.filter((v: any) => v.selected).map((v: any) => v.id)
+				jobIds: jobs.filter((v) => v.selected).map((v) => v.id)
 			},
 			{ responseType: 'arraybuffer' }
 		);
 
+		refetch(['requisitions']);
 		showSuccess('Requisicion registrada');
-
 		show = false;
 	}
 
@@ -74,16 +82,11 @@
 	];
 
 	$effect(() => {
-		if (show) setFormData();
+		if (show) untrack(() => setFormData());
 	});
+
 	$effect(() => {
-		if (selectedMovement?.code) refetch(['requisitions-jobs']);
-	});
-	$effect(() => {
-		formData.necessary = jobs?.reduce(
-			(prev: number, v: any) => (v.selected ? prev + Number(v.amount) : prev),
-			0
-		);
+		formData.necessary = jobs.reduce((prev, v) => (v.selected ? prev + Number(v.amount) : prev), 0);
 	});
 </script>
 
@@ -101,7 +104,7 @@
 					<Select items={motives} bind:value={formData.motive} />
 				</Label>
 				<Label name="Area:">
-					<Select items={$areasQuery?.data} bind:value={formData.areaId} />
+					<Select items={getOptions($areasQuery.data)} bind:value={formData.areaId} />
 				</Label>
 				<Label name="Material necesario total:">
 					<Input
