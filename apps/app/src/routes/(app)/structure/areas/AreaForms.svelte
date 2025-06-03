@@ -45,17 +45,16 @@
 	}
 
 	let colors = [
-		{ value: 'gray', name: 'Gris' },
-		{ value: 'red', name: 'Rojo' },
-		{ value: 'brown', name: 'Marrón' },
-		{ value: 'orange', name: 'Naranja' },
-		{ value: 'lime', name: 'Lima' },
-		{ value: 'green', name: 'Verde' },
-		{ value: 'cyan', name: 'Cian' },
-		{ value: 'blue', name: 'Azul' },
-		{ value: 'purple', name: 'Morado' },
-		{ value: 'yellow', name: 'Amarillo' },
-		{ value: 'pink', name: 'Rosa' }
+		{ value: 'gray', name: 'Gris', color: 'gray' },
+		{ value: 'red', name: 'Rojo', color: 'red' },
+		{ value: 'orange', name: 'Naranja', color: 'orange' },
+		{ value: 'lime', name: 'Lima', color: 'lime' },
+		{ value: 'green', name: 'Verde', color: 'green' },
+		{ value: 'cyan', name: 'Cian', color: 'cyan' },
+		{ value: 'blue', name: 'Azul', color: 'blue' },
+		{ value: 'purple', name: 'Morado', color: 'purple' },
+		{ value: 'yellow', name: 'Amarillo', color: 'yellow' },
+		{ value: 'pink', name: 'Rosa', color: 'pink' }
 	];
 	$effect(() => {
 		if (show || true) formData = untrack(() => ({ ...formData, ...selectedArea }));

@@ -1,6 +1,6 @@
 export const quitStatus = [
-	{ value: 'RECONTRATABLE', name: 'Recontratable' },
-	{ value: 'NO RECONTRATABLE', name: 'No recontratable' }
+	{ value: 'RECONTRATABLE', name: 'Recontratable', color: 'green' },
+	{ value: 'NO RECONTRATABLE', name: 'No recontratable', color: 'red' }
 ];
 
 export const salaryReasons = [

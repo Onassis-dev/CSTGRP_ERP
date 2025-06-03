@@ -9,7 +9,6 @@
 				secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80 ',
 				gray: 'bg-gray text-gray-foreground outline-gray-foreground/20 ',
 				red: 'bg-red text-red-foreground outline-red-foreground/20 ',
-				brown: 'bg-brown text-brown-foreground outline-brown-foreground/20 ',
 				orange: 'bg-orange text-orange-foreground outline-orange-foreground/20 ',
 				lime: 'bg-lime text-lime-foreground outline-lime-foreground/20 ',
 				green: 'bg-green text-green-foreground outline-green-foreground/20 ',

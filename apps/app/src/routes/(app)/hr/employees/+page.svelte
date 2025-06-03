@@ -140,8 +140,8 @@
 				refetch(['employees']);
 			}}
 			items={[
-				{ name: 'Activos', value: 'true' },
-				{ name: 'Inactivos', value: 'false' }
+				{ name: 'Activos', value: 'true', color: 'green' },
+				{ name: 'Inactivos', value: 'false', color: 'red' }
 			]}
 		></Select>
 	{/snippet}

@@ -37,7 +37,8 @@ export function getOptions(object: Record<string, any> | undefined) {
 	Object.keys(object).forEach((key) => {
 		result.push({
 			name: object[key].name,
-			value: object[key].value
+			value: object[key].value,
+			color: object[key].color
 		});
 	});
 

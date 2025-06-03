@@ -9,29 +9,39 @@
 		value,
 		label,
 		children: childrenProp,
+		color,
+		variants = {},
 		...restProps
-	}: WithoutChild<SelectPrimitive.ItemProps> = $props();
+	}: WithoutChild<SelectPrimitive.ItemProps> & { variants?: Record<string, string> } = $props();
 </script>
 
 <SelectPrimitive.Item
 	bind:ref
 	{value}
 	class={cn(
-		'data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground relative flex w-full cursor-default select-none items-center rounded-sm py-1 pl-8 pr-2 text-sm outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+		'data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground hover:bg-accent/50 relative flex w-full cursor-pointer select-none items-center rounded-sm py-1 pl-2 pr-8 text-sm outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+		color ? 'pl-6' : 'pl-2',
 		className
 	)}
 	{...restProps}
 >
 	{#snippet children({ selected, highlighted })}
-		<span class="absolute left-2 flex size-3.5 items-center justify-center">
-			{#if selected}
-				<Check class="size-3.5" />
-			{/if}
-		</span>
 		{#if childrenProp}
 			{@render childrenProp({ selected, highlighted })}
 		{:else}
 			{label || value}
 		{/if}
+
+		{#if color}
+			<span class="absolute left-2 flex items-center justify-center">
+				<div class={cn('size-2 rounded-full', variants[color])}></div>
+			</span>
+		{/if}
+
+		<span class="absolute right-2 flex size-3.5 items-center justify-center">
+			{#if selected}
+				<Check class="size-3.5" />
+			{/if}
+		</span>
 	{/snippet}
 </SelectPrimitive.Item>

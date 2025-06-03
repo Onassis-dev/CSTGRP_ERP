@@ -5,6 +5,7 @@
 	interface Item {
 		value: string | number;
 		name: string;
+		color?: string;
 	}
 
 	interface Props {
@@ -35,7 +36,24 @@
 		onValueChange
 	}: Props = $props();
 
-	const triggerContent = $derived(items?.find((f) => f.value === value)?.name ?? placeholder);
+	const variants: Record<string, string> = {
+		default: 'bg-primary-400',
+		secondary: 'bg-secondary-400',
+		gray: 'bg-gray-400',
+		red: 'bg-red-400',
+		orange: 'bg-orange-400',
+		lime: 'bg-lime-400',
+		green: 'bg-green-400',
+		cyan: 'bg-cyan-400',
+		blue: 'bg-blue-400',
+		purple: 'bg-purple-400',
+		yellow: 'bg-yellow-400',
+		pink: 'bg-pink-400'
+	};
+
+	const triggerContent: Omit<Item, 'value'> = $derived(
+		items?.find((f) => f.value === value) ?? { name: placeholder }
+	);
 </script>
 
 <Select.Root type="single" bind:value {allowDeselect} {onValueChange}>
@@ -44,14 +62,21 @@
 		{disabled}
 		class={cn(className, cell ? 'h-full w-full border-none' : '', menu ? 'h-[28px]' : '')}
 	>
-		{#if children}{@render children()}{:else}
-			{triggerContent}
-		{/if}
+		<div class="flex w-full items-center gap-2">
+			{#if children}{@render children()}{:else}
+				<div class="flex items-center gap-2">
+					{#if triggerContent.color}
+						<div class={cn('size-2 rounded-full', variants[triggerContent.color])}></div>
+					{/if}
+					{triggerContent.name}
+				</div>
+			{/if}
+		</div>
 	</Select.Trigger>
 	<Select.Content>
 		<Select.Group>
 			{#each items as item}
-				<Select.Item value={item.value as string} label={item.name}>
+				<Select.Item value={item.value as string} label={item.name} color={item.color} {variants}>
 					{item.name}
 				</Select.Item>
 			{/each}

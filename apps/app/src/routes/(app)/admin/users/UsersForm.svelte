@@ -37,9 +37,9 @@
 	}
 
 	const permissions = [
-		{ value: 0, name: 'Ninguno' },
-		{ value: 1, name: 'Leer' },
-		{ value: 2, name: 'Modificar' }
+		{ value: 0, name: 'Ninguno', color: 'gray' },
+		{ value: 1, name: 'Leer', color: 'green' },
+		{ value: 2, name: 'Modificar', color: 'blue' }
 	];
 	let selectedAreas: any[] = $state([]);
 

@@ -71,11 +71,6 @@ const config: Config = {
 					DEFAULT: 'hsl(var(--red-foreground) / <alpha-value>)'
 				},
 
-				brown: {
-					foreground: 'hsl(var(--brown) / <alpha-value>)',
-					DEFAULT: 'hsl(var(--brown-foreground) / <alpha-value>)'
-				},
-
 				orange: {
 					foreground: 'hsl(var(--orange) / <alpha-value>)',
 					DEFAULT: 'hsl(var(--orange-foreground) / <alpha-value>)'
