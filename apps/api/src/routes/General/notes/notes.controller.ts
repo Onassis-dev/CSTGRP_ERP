@@ -17,7 +17,7 @@ import { z } from 'zod';
 
 @ApiTags('Notes')
 @Controller('notes')
-@UseGuards(new AuthGuard('resources'))
+@UseGuards(new AuthGuard('directory'))
 export class NotesController {
   constructor(private readonly notesService: NotesService) {}
 

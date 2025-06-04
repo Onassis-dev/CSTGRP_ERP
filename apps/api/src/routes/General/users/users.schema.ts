@@ -3,27 +3,6 @@ import { z } from 'zod';
 
 const permType = z.number().min(0).max(2);
 
-export const editSchema = z.object({
-  id: z.number().optional(),
-  username: z.string().optional(),
-  password: z.string().min(3).optional(),
-  perm_users: permType.optional(),
-  perm_assistance: permType.optional(),
-  perm_employees: permType.optional(),
-  perm_productivity: permType.optional(),
-  perm_inventory: permType.optional(),
-  perm_structure: permType.optional(),
-  perm_it: permType.optional(),
-  perm_materialmovements: permType.optional(),
-  perm_inventorystats: permType.optional(),
-  perm_petitions: permType.optional(),
-  perm_requisitions: permType.optional(),
-  perm_poimp: permType.optional(),
-  perm_resources: permType.optional(),
-  perm_assistance_areas: z.string().max(300).optional().nullable(),
-  maintance: z.boolean().optional(),
-});
-
 export const registerSchema = z.object({
   username: z.string(),
   password: z.string().min(3),
@@ -39,9 +18,15 @@ export const registerSchema = z.object({
   perm_requisitions: permType,
   perm_petitions: permType,
   perm_poimp: permType,
-  perm_resources: permType,
+  perm_formats: permType,
+  perm_directory: permType,
   perm_assistance_areas: z.string().max(300).nullable(),
   maintance: z.boolean(),
+});
+
+export const editSchema = registerSchema.extend({
+  id: z.number(),
+  password: z.string().min(3).optional(),
 });
 
 export class RegisterDTO extends createZodDto(registerSchema) {}

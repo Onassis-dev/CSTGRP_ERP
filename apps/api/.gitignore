@@ -60,3 +60,5 @@ storage/employees/*
 storage/inventory/*
 !storage/inventory/.gitkeep
 !storage/templates/*
+storage/formats/*
+!storage/formats/.gitkeep

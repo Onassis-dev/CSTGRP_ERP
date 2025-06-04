@@ -21,12 +21,6 @@
 		queryFn: async () => (await api.get('/inventoryvarious/clients')).data
 	});
 
-	let clients = $derived(
-		$clientsQuery?.data?.map((e: any) => {
-			return { ...e, realAmount: e.realAmount?.toString() };
-		})
-	);
-
 	interface Props {
 		show?: boolean;
 		selectedMaterial: any;

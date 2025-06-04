@@ -54,7 +54,7 @@
 		CST Group
 	</a>
 
-	{#if hasAccess('resources')}
+	{#if hasAccess('directory')}
 		<div class="-y-1 mt-2 px-2 pb-2">
 			<Notes />
 		</div>
@@ -147,7 +147,7 @@
 				</Accordion.Content>
 			</Accordion.Item>
 		{/if}
-		{#if !hasAccess('inventory') && !hasAccess('users') && !hasAccess('structure') && !hasAccess('it') && !hasAccess('assistance') && !hasAccess('productivity') && !hasAccess('employees') && !hasAccess('materialmovements') && !hasAccess('poimp') && !hasAccess('resources')}
+		{#if !hasAccess('inventory') && !hasAccess('users') && !hasAccess('structure') && !hasAccess('it') && !hasAccess('assistance') && !hasAccess('productivity') && !hasAccess('employees') && !hasAccess('materialmovements') && !hasAccess('poimp') && !hasAccess('formats') && !hasAccess('directory')}
 			<Accordion.Item value="9" class="border-none">
 				<Accordion.Trigger
 					class="hover:bg-muted mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
@@ -177,7 +177,7 @@
 				</Accordion.Content>
 			</Accordion.Item>
 		{/if}
-		{#if hasAccess('resources')}
+		{#if hasAccess('formats') || hasAccess('directory')}
 			<Accordion.Item value="8" class="border-none">
 				<Accordion.Trigger
 					class="hover:bg-muted mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
@@ -187,7 +187,12 @@
 				</Accordion.Trigger>
 
 				<Accordion.Content>
-					<Accordion.Option href="/resources/directory" />
+					{#if hasAccess('directory')}
+						<Accordion.Option href="/resources/directory" />
+					{/if}
+					{#if hasAccess('formats')}
+						<Accordion.Option href="/resources/formats" />
+					{/if}
 				</Accordion.Content>
 			</Accordion.Item>
 		{/if}

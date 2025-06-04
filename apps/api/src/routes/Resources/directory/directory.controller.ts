@@ -15,7 +15,7 @@ import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 
 @ApiTags('Directory')
 @Controller('directory')
-@UseGuards(new AuthGuard('it'))
+@UseGuards(new AuthGuard('directory'))
 export class DirectoryController {
   constructor(private readonly directoryService: DirectoryService) {}
 

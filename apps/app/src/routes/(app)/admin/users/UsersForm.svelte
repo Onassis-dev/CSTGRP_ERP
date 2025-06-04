@@ -129,8 +129,11 @@
 					<Label name="Perm. Estructura">
 						<Select items={permissions} bind:value={formData.perm_structure} />
 					</Label>
-					<Label name="Perm. Recursos">
-						<Select items={permissions} bind:value={formData.perm_resources} />
+					<Label name="Perm. Formatos">
+						<Select items={permissions} bind:value={formData.perm_formats} />
+					</Label>
+					<Label name="Perm. Directorio">
+						<Select items={permissions} bind:value={formData.perm_directory} />
 					</Label>
 				</div>
 

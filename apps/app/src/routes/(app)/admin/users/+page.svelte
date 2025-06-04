@@ -39,8 +39,9 @@
 		perm_inventorystats: 0,
 		perm_petitions: 0,
 		perm_poimp: 0,
-		perm_resources: 0,
+		perm_formats: 0,
 		perm_requisitions: 0,
+		perm_directory: 0,
 		maintance: false
 	});
 
@@ -75,7 +76,8 @@
 			perm_petitions: 0,
 			perm_requisitions: 0,
 			perm_poimp: 0,
-			perm_resources: 0,
+			perm_formats: 0,
+			perm_directory: 0,
 			maintance: false,
 			perm_it: 0
 		};
@@ -103,7 +105,8 @@
 			perm_structure: 0,
 			perm_requisitions: 0,
 			perm_poimp: 0,
-			perm_resources: 0,
+			perm_formats: 0,
+			perm_directory: 0,
 			maintance: false,
 			perm_it: 0,
 			perm_inventorystats: 0,
@@ -135,7 +138,7 @@
 	<TableHeader>
 		<TableHead class="fixed left-3 z-30 bg-inherit p-1"></TableHead>
 		<TableHead colspan={1}></TableHead>
-		<TableHead colspan={3}>General</TableHead>
+		<TableHead colspan={4}>General</TableHead>
 		<TableHead colspan={3}>RRHH</TableHead>
 		<TableHead colspan={6}>Almacen</TableHead>
 		<TableHead colspan={1}>-</TableHead>
@@ -145,7 +148,8 @@
 		<TableHead class="w-[12.5%]">Usuario</TableHead>
 		<TableHead class="w-[12.5%]">Usuarios</TableHead>
 		<TableHead class="w-[12.5%]">Estructura</TableHead>
-		<TableHead class="w-[12.5%]">Recursos</TableHead>
+		<TableHead class="w-[12.5%]">Formatos</TableHead>
+		<TableHead class="w-[12.5%]">Directorio</TableHead>
 		<TableHead class="w-[12.5%]">Asistencia</TableHead>
 		<TableHead class="w-[12.5%]">Empleados</TableHead>
 		<TableHead class="w-[12.5%]">Productividad</TableHead>
@@ -188,9 +192,19 @@
 				<TableCell class="p-1.5 text-center"
 					><Badge
 						class="flex h-full w-full items-center justify-center p-1"
-						color={getBadgeColor(user.perm_resources)}
+						color={getBadgeColor(user.perm_formats)}
 					>
-						{@const SvelteComponent_1 = badgeTexts[user.perm_resources]}
+						{@const SvelteComponent_1 = badgeTexts[user.perm_formats]}
+						<SvelteComponent_1 class="size-3.5" />
+					</Badge></TableCell
+				>
+
+				<TableCell class="p-1.5 text-center"
+					><Badge
+						class="flex h-full w-full items-center justify-center p-1"
+						color={getBadgeColor(user.perm_directory)}
+					>
+						{@const SvelteComponent_1 = badgeTexts[user.perm_directory]}
 						<SvelteComponent_1 class="size-3.5" />
 					</Badge></TableCell
 				>

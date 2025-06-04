@@ -13,28 +13,29 @@
 	import OptionsCell from '$lib/components/basic/OptionsCell.svelte';
 	import { createQuery } from '@tanstack/svelte-query';
 	import { refetch } from '$lib/utils/query';
+	import { goto } from '$app/navigation';
 
 	let show = $state(false);
 	let show1 = $state(false);
-	let selectedDevice = $state({});
+	let selectedFolder = $state('');
 
-	const canEdit = parseInt(Cookies.get('perm_directory') || '0') == 2;
+	const canEdit = parseInt(Cookies.get('perm_formats') || '0') == 2;
 
-	const directory = createQuery({
-		queryKey: ['directory'],
-		queryFn: async () => (await api.get('/resources/directory')).data
+	const folders = createQuery({
+		queryKey: ['formats-folders'],
+		queryFn: async () => (await api.get('/resources/formats/folders')).data
 	});
 
-	function editDevice(i: number) {
-		selectedDevice = $directory?.data?.[i];
+	function createDevice() {
+		selectedFolder = '';
 		show = true;
 	}
-	function createDevice() {
-		selectedDevice = {};
+	function editDevice(i: number) {
+		selectedFolder = $folders?.data?.[i];
 		show = true;
 	}
 	function deleteDevice(i: number) {
-		selectedDevice = $directory?.data?.[i];
+		selectedFolder = $folders?.data?.[i];
 		show1 = true;
 	}
 </script>
@@ -42,7 +43,7 @@
 {#if canEdit}
 	<MenuBar>
 		{#snippet right()}
-			<Button onclick={createDevice}><PlusCircle class=" size-3.5" />Añadir fila</Button>
+			<Button onclick={createDevice}><PlusCircle class=" size-3.5" />Añadir carpeta</Button>
 		{/snippet}
 	</MenuBar>
 {/if}
@@ -52,35 +53,38 @@
 		{#if canEdit}
 			<TableHead class="fixed left-0 z-30 bg-inherit p-1"></TableHead>
 		{/if}
-		<TableHead class="w-[50%]">Nombre</TableHead>
-		<TableHead class="w-[25%]">Posicion</TableHead>
-		<TableHead class="w-[25%]">Correo</TableHead>
-		<TableHead class="w-[25%]">Extension</TableHead>
+		<TableHead class="w-full">Nombre</TableHead>
+		<TableHead class="w-[1px] p-0"></TableHead>
 	</TableHeader>
 	<TableBody>
-		{#each $directory?.data as device, i}
+		{#each $folders?.data as folder, i}
 			<TableRow>
 				{#if canEdit}
 					<OptionsCell editFunc={() => editDevice(i)} deleteFunc={() => deleteDevice(i)} />
 				{/if}
-				<TableCell>{device.name || ''}</TableCell>
-				<TableCell>{device.position || ''}</TableCell>
-				<TableCell><a href="mailto:{device.email || ''}">{device.email || ''}</a></TableCell>
-				<TableCell>{device.extension || ''}</TableCell>
+				<TableCell
+					class="cursor-pointer"
+					onclick={() => goto(`/resources/formats/folder?name=${folder}`)}
+				>
+					<div class="flex w-full items-center gap-2">
+						<img src="/folder.svg" alt="folder" class="size-4" />
+						{folder}
+					</div>
+				</TableCell>
 			</TableRow>
 		{/each}
 	</TableBody>
 </CusTable>
 
 {#if canEdit}
-	<DirectoryForm bind:show bind:selectedDevice />
+	<DirectoryForm bind:show bind:selectedFolder />
 	<DeletePopUp
 		bind:show={show1}
-		text="Borrar fila"
+		text="Borrar carpeta"
 		deleteFunc={async () => {
-			await api.delete('/directory', { data: { id: parseInt((selectedDevice as any).id || '') } });
-			showSuccess('Fila eliminada');
-			refetch(['directory']);
+			await api.delete('/resources/formats/folder', { data: { name: selectedFolder } });
+			showSuccess('Carpeta eliminada');
+			refetch(['formats-folders']);
 			show1 = false;
 		}}
 	/>
