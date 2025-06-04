@@ -6,7 +6,8 @@ import sql from 'src/utils/db';
 @Injectable()
 export class DirectoryService {
   async findAllDirectory() {
-    const directory = await sql`Select * from directory`;
+    const directory =
+      await sql`Select *, (select email from emails where id = directory."emailId") from directory order by name`;
     return directory;
   }
 

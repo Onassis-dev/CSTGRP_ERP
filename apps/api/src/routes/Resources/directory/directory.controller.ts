@@ -14,7 +14,7 @@ import { deleteSchema, editSchema, createSchema } from './directory.schema';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 
 @ApiTags('Directory')
-@Controller('directory')
+@Controller('resources/directory')
 @UseGuards(new AuthGuard('directory'))
 export class DirectoryController {
   constructor(private readonly directoryService: DirectoryService) {}

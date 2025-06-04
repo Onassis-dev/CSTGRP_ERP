@@ -18,33 +18,31 @@
 
 	interface Props {
 		show?: boolean;
-		selectedDevice: any;
+		selectedRow: any;
 	}
 
-	let { show = $bindable(false), selectedDevice = $bindable({}) }: Props = $props();
+	let { show = $bindable(false), selectedRow = $bindable({}) }: Props = $props();
 	let formData: any = $state();
 
 	function setFormData() {
-		formData = { ...selectedDevice };
+		formData = { ...selectedRow };
 	}
 
 	let employees = $state([{ value: 0, name: '' }]);
 	let emails = $state([{ value: 0, name: '' }]);
 
 	async function handleSubmit() {
-		if (selectedDevice.id) {
-			await api.put('/directory', {
+		if (selectedRow.id) {
+			await api.put('/resources/directory', {
 				...formData,
 				id: parseInt(formData.id || ''),
-				emailId: parseInt(formData.emailId || ''),
-				employeeId: parseInt(formData.employeeId || '')
+				emailId: parseInt(formData.emailId || '')
 			});
 			showSuccess('Fila editada');
 		} else {
-			await api.post('/directory', {
+			await api.post('/resources/directory', {
 				...formData,
-				emailId: parseInt(formData.emailId || ''),
-				employeeId: parseInt(formData.employeeId || '')
+				emailId: parseInt(formData.emailId || '')
 			});
 			showSuccess('Fila registrada');
 		}
@@ -53,7 +51,7 @@
 	}
 
 	onMount(async () => {
-		const result = (await api.get('/directory/options')).data;
+		const result = (await api.get('/resources/directory/options')).data;
 		emails = result.emails;
 		employees = result.employees;
 	});
@@ -67,7 +65,7 @@
 	<DialogContent>
 		<DialogHeader>
 			<DialogTitle>
-				{selectedDevice.id ? `Editar ${selectedDevice.name}` : 'Registrar fila'}
+				{selectedRow.id ? `Editar ${selectedRow.name}` : 'Registrar fila'}
 			</DialogTitle>
 		</DialogHeader>
 
@@ -75,7 +73,10 @@
 			<form onsubmit={preventDefault(handleSubmit)}>
 				<div class="grid w-full grid-cols-2 gap-4">
 					<Label name="Empleado">
-						<Select items={employees} bind:value={formData.employeeId} />
+						<Input name="text" bind:value={formData.name} />
+					</Label>
+					<Label name="Posicion">
+						<Input name="text" bind:value={formData.position} />
 					</Label>
 					<Label name="Correo">
 						<Select items={emails} bind:value={formData.emailId} />

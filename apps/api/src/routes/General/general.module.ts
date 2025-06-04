@@ -4,7 +4,6 @@ import { FunctionsModule } from './functions/functions.module';
 import { RecordsModule } from './records/records.module';
 import { FilesModule } from './files/files.module';
 import { AuthModule } from './auth/auth.module';
-import { ResourcesModule } from './resources/resources.module';
 import { NotesModule } from './notes/notes.module';
 @Module({
   imports: [
@@ -13,7 +12,6 @@ import { NotesModule } from './notes/notes.module';
     RecordsModule,
     FilesModule,
     AuthModule,
-    ResourcesModule,
     NotesModule,
   ],
 })
