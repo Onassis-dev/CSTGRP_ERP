@@ -1,32 +1,37 @@
 FROM node:20
 
-# Instalar LibreOffice, fontconfig, y dependencias necesarias
+# Install LibreOffice, fontconfig, and necessary dependencies
 RUN apt-get update && \
     apt-get install -y \
     libreoffice libreoffice-writer libreoffice-calc \
     fontconfig fonts-dejavu curl gnupg && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Instalar pnpm
+# Install pnpm
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN npm install -g pnpm
 
-# Configuración del directorio de trabajo
+# Set up working directory
 WORKDIR /app
 
-# Copiar el package.json y las dependencias para que se instalen primero
+# Copy package.json and dependencies to install first
 COPY package.json ./
 
-# Instalar dependencias del proyecto
+# Install project dependencies
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install
 
-# Copiar el código fuente del proyecto
+# Copy project source code
 COPY . .
 
-# Construir la aplicación
+# Build the application
 RUN pnpm run build
 
-# Exponer el puerto y ejecutar la aplicación
+# Create storage directory
+RUN mkdir -p /app/storage/formats && \
+    mkdir -p /app/storage/employees && \
+    mkdir -p /app/storage/directory
+
+# Expose port and run the application
 EXPOSE 3000
 CMD ["node", "dist/main.js"]
