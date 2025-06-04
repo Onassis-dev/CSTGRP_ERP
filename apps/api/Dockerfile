@@ -27,11 +27,6 @@ COPY . .
 # Build the application
 RUN pnpm run build
 
-# Create storage directory
-RUN mkdir -p /app/storage/formats && \
-    mkdir -p /app/storage/employees && \
-    mkdir -p /app/storage/directory
-
 # Expose port and run the application
 EXPOSE 3000
 CMD ["node", "dist/main.js"]
