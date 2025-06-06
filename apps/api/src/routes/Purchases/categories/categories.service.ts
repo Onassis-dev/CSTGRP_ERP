@@ -102,8 +102,8 @@ export class CategoriesService {
     const orders = [];
     for (const order of body.ordenes) {
       const vendors = {
-        '61': 'Aracely Varguez',
-        '62': 'Efrain Lopez',
+        '62': 'Aracely Varguez',
+        '61': 'Efrain Lopez',
       };
 
       const productsJson = JSON.parse(order.productos).map((product: any) => {

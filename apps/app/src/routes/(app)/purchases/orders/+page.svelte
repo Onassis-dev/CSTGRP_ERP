@@ -62,7 +62,6 @@
 		<TableHead class="fixed left-0 z-30 bg-inherit p-1"></TableHead>
 		<TableHead class="w-[50%]">Folio</TableHead>
 		<TableHead class="w-[50%]">Proveedor</TableHead>
-		<TableHead class="">Emisor</TableHead>
 		<TableHead class="">Neto</TableHead>
 		<TableHead class="">Impuesto</TableHead>
 		<TableHead class="">Total</TableHead>
@@ -89,7 +88,6 @@
 				/>
 				<TableCell>{device.folio || ''}</TableCell>
 				<TableCell>{device.supplier || ''}</TableCell>
-				<TableCell>{device.issuer || ''}</TableCell>
 				<TableCell>{device.net || ''}</TableCell>
 				<TableCell>{device.tax || ''}</TableCell>
 				<TableCell>{device.total || ''}</TableCell>
