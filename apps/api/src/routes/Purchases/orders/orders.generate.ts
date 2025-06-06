@@ -318,7 +318,7 @@ export function generateOrder(
     size: 10,
     width: 360,
     height: 10,
-    text: `${numberToWords(Number(numbers[0]))} ${currencies[data.currency]} ${numbers[1]}/100 ${data.currency}`,
+    text: `${numberToWords(Number(numbers[0]))} ${currencies[data.currency]} ${numbers[1]}/100 ${data.currency}`.toUpperCase(),
     font,
     page,
   });
