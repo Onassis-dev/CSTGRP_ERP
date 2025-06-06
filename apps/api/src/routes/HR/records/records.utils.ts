@@ -1,10 +1,11 @@
 import { format as formatDateFns, getISOWeek } from 'date-fns';
+import { es } from 'date-fns/locale';
 import { PDFFont, PDFPage } from 'pdf-lib';
 import { fillBox } from 'src/utils/pdf';
 
-function format(date: string, format: string = 'dd/MM/yyyy') {
+function format(date: string, format: string = `dd/MMMM/yyyy`) {
   if (!date) return '';
-  return formatDateFns(new Date(date), format);
+  return formatDateFns(new Date(date), format, { locale: es });
 }
 
 function drawBasicInfo(
@@ -48,7 +49,7 @@ function drawBasicInfo(
   fillBox({
     page,
     font,
-    text: format(data.formatDate),
+    text: format(data.formatDate, 'dd/MM/yyyy'),
     x: 510,
     y: 730,
     size: 12,
@@ -145,7 +146,7 @@ export function drawAlta(
     page,
     font,
     text: format(data.bornDate),
-    x: 250,
+    x: 237,
     y: 585,
     size: 9,
     width: 100,
@@ -431,8 +432,8 @@ export function drawBaja(
     page,
     font,
     text: format(data.lastDay),
-    x: 160,
-    y: 394,
+    x: 143,
+    y: 396,
     size: 9,
     width: 150,
     height: 9,
@@ -557,7 +558,7 @@ export function drawSalary(
   fillBox({
     page,
     font,
-    text: (data.newSalary || 0).toFixed(2),
+    text: (Number(data.newSalary) || 0).toFixed(2),
     x: 285,
     y: 244,
     size: 9,
@@ -569,8 +570,8 @@ export function drawSalary(
     page,
     font,
     text: format(data.changeDate) || '',
-    x: 485,
-    y: 244,
+    x: 481,
+    y: 246,
     size: 9,
     width: 100,
     height: 9,
