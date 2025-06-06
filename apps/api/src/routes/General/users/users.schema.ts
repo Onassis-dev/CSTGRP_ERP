@@ -20,6 +20,7 @@ export const registerSchema = z.object({
   perm_poimp: permType,
   perm_formats: permType,
   perm_directory: permType,
+  perm_purchases: permType,
   perm_assistance_areas: z.string().max(300).nullable(),
   maintance: z.boolean(),
 });

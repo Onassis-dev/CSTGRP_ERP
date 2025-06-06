@@ -179,6 +179,13 @@
 					</Label>
 				</div>
 
+				<div class="grid grid-cols-3 gap-4 rounded-md border p-2">
+					<h3 class="col-span-3 w-full pl-0.5 font-semibold">Compras</h3>
+					<Label name="Perm. Compras">
+						<Select items={permissions} bind:value={formData.perm_purchases} />
+					</Label>
+				</div>
+
 				<div class="grid grid-cols-2 gap-4 rounded-md border p-2">
 					<h3 class="col-span-2 w-full pl-0.5 font-semibold">Extras</h3>
 					<Label name="Areas">

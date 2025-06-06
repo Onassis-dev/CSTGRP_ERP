@@ -6,16 +6,18 @@ import { InventoriesModule } from './routes/Inventories/inventories.module';
 import { FastifyMulterModule } from '@nest-lab/fastify-multer';
 import { ITModule } from './routes/IT/it.module';
 import { ResourcesModule } from './routes/Resources/resources.module';
+import { PurchasesModule } from './routes/Purchases/purchases.module';
 
 @Module({
   imports: [
+    FastifyMulterModule,
     GeneralModule,
     HRModule,
     StructureModule,
     InventoriesModule,
     ITModule,
     ResourcesModule,
-    FastifyMulterModule,
+    PurchasesModule,
   ],
 })
 export class AppModule {}

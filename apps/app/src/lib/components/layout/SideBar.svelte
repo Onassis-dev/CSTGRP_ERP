@@ -14,7 +14,8 @@
 		UserCircle,
 		Users,
 		ShoppingBag,
-		Folders
+		Folders,
+		ShoppingCart
 	} from 'lucide-svelte';
 	import { Dialog, DialogBody, DialogContent } from '$lib/components/ui/dialog';
 	import { Button } from '$lib/components/ui/button';
@@ -62,7 +63,7 @@
 
 	<Accordion.Root class="px-2 pt-2" type="single">
 		{#if hasAccess('inventory') || hasAccess('materialmovements') || hasAccess('requisitions') || hasAccess('poimp')}
-			<Accordion.Item value="item-1" class="border-none">
+			<Accordion.Item value="warehouse" class="border-none">
 				<Accordion.Trigger
 					class="hover:bg-muted  mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
 				>
@@ -91,8 +92,24 @@
 				</Accordion.Content>
 			</Accordion.Item>
 		{/if}
+		{#if hasAccess('purchases')}
+			<Accordion.Item value="purchases" class="border-none">
+				<Accordion.Trigger
+					class="hover:bg-muted  mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
+				>
+					<ShoppingCart class="size-3.5 text-[#5c5e63]" />
+					Compras
+				</Accordion.Trigger>
+				<Accordion.Content>
+					<Accordion.Option href="/purchases/categories" />
+					<Accordion.Option href="/purchases/products" />
+					<Accordion.Option href="/purchases/suppliers" />
+					<Accordion.Option href="/purchases/orders" />
+				</Accordion.Content>
+			</Accordion.Item>
+		{/if}
 		{#if hasAccess('employees') || hasAccess('assistance') || hasAccess('productivity')}
-			<Accordion.Item value="2" class="border-none">
+			<Accordion.Item value="hr" class="border-none">
 				<Accordion.Trigger
 					class="hover:bg-muted mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
 				>
@@ -116,7 +133,7 @@
 			</Accordion.Item>
 		{/if}
 		{#if hasAccess('it')}
-			<Accordion.Item value="3" class="border-none">
+			<Accordion.Item value="it" class="border-none">
 				<Accordion.Trigger
 					class="hover:bg-muted mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
 				>
@@ -133,7 +150,7 @@
 			</Accordion.Item>
 		{/if}
 		{#if hasAccess('structure')}
-			<Accordion.Item value="7" class="border-none">
+			<Accordion.Item value="structure" class="border-none">
 				<Accordion.Trigger
 					class="hover:bg-muted mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
 				>
@@ -148,7 +165,7 @@
 			</Accordion.Item>
 		{/if}
 		{#if !hasAccess('inventory') && !hasAccess('users') && !hasAccess('structure') && !hasAccess('it') && !hasAccess('assistance') && !hasAccess('productivity') && !hasAccess('employees') && !hasAccess('materialmovements') && !hasAccess('poimp') && !hasAccess('formats') && !hasAccess('directory')}
-			<Accordion.Item value="9" class="border-none">
+			<Accordion.Item value="clients" class="border-none">
 				<Accordion.Trigger
 					class="hover:bg-muted mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
 				>
@@ -163,7 +180,7 @@
 			</Accordion.Item>
 		{/if}
 		{#if hasAccess('users')}
-			<Accordion.Item value="6" class="border-none">
+			<Accordion.Item value="admin" class="border-none">
 				<Accordion.Trigger
 					class="hover:bg-muted mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
 				>
@@ -178,7 +195,7 @@
 			</Accordion.Item>
 		{/if}
 		{#if hasAccess('formats') || hasAccess('directory')}
-			<Accordion.Item value="8" class="border-none">
+			<Accordion.Item value="resources" class="border-none">
 				<Accordion.Trigger
 					class="hover:bg-muted mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
 				>

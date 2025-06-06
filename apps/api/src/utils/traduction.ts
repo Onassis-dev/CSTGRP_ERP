@@ -159,6 +159,11 @@ const valueTraduccion = {
   issue: 'Problema',
   resolution: 'Resolución',
   timeSpent: 'Tiempo Empleado',
+  purchases: 'Compras',
+  categories: 'Categorías',
+  products: 'Productos',
+  providers: 'Proveedores',
+  orders: 'Órdenes',
 };
 
 export const getTraducction = (value: string | number) => {

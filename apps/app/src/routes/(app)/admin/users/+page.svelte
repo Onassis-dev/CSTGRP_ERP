@@ -42,6 +42,7 @@
 		perm_formats: 0,
 		perm_requisitions: 0,
 		perm_directory: 0,
+		perm_purchases: 0,
 		maintance: false
 	});
 
@@ -78,6 +79,7 @@
 			perm_poimp: 0,
 			perm_formats: 0,
 			perm_directory: 0,
+			perm_purchases: 0,
 			maintance: false,
 			perm_it: 0
 		};
@@ -107,6 +109,7 @@
 			perm_poimp: 0,
 			perm_formats: 0,
 			perm_directory: 0,
+			perm_purchases: 0,
 			maintance: false,
 			perm_it: 0,
 			perm_inventorystats: 0,
@@ -141,7 +144,7 @@
 		<TableHead colspan={4}>General</TableHead>
 		<TableHead colspan={3}>RRHH</TableHead>
 		<TableHead colspan={6}>Almacen</TableHead>
-		<TableHead colspan={1}>-</TableHead>
+		<TableHead colspan={2}>-</TableHead>
 	</TableHeader>
 	<TableHeader>
 		<TableHead class="fixed left-3 z-30 bg-inherit p-1"></TableHead>
@@ -160,6 +163,7 @@
 		<TableHead class="w-[12.5%]">Peticiones</TableHead>
 		<TableHead class="w-[12.5%]">Po-Imp</TableHead>
 		<TableHead class="w-[12.5%]">Sistemas</TableHead>
+		<TableHead class="w-[12.5%]">Compras</TableHead>
 		<TableHead class="w-[12.5%]">Areas</TableHead>
 		<TableHead class="w-[12.5%]">Block</TableHead>
 	</TableHeader>
@@ -299,6 +303,15 @@
 						color={getBadgeColor(user.perm_it)}
 					>
 						{@const SvelteComponent_11 = badgeTexts[user.perm_it]}
+						<SvelteComponent_11 class="size-3.5" />
+					</Badge></TableCell
+				>
+				<TableCell class="p-1.5 text-center"
+					><Badge
+						class="flex h-full w-full items-center justify-center p-1"
+						color={getBadgeColor(user.perm_purchases)}
+					>
+						{@const SvelteComponent_11 = badgeTexts[user.perm_purchases]}
 						<SvelteComponent_11 class="size-3.5" />
 					</Badge></TableCell
 				>

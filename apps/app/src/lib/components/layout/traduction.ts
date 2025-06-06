@@ -22,7 +22,8 @@ import {
 	LaptopMinimal,
 	Server,
 	GitFork,
-	BookUser
+	BookUser,
+	ShoppingCart
 } from 'lucide-svelte';
 
 export interface Traduction {
@@ -59,7 +60,12 @@ export const traductions: Record<string, Traduction> = {
 	imports: { text: 'Importaciones', icon: Truck },
 	petitions: { text: 'Peticiones', icon: FileDown },
 	clients: { text: 'Clients', icon: Users },
-	docs: { text: 'Documentación', icon: FileText }
+	docs: { text: 'Documentación', icon: FileText },
+	purchases: { text: 'Compras', icon: ShoppingCart },
+	categories: { text: 'Categorías', icon: Package },
+	products: { text: 'Productos', icon: Package },
+	suppliers: { text: 'Proveedores', icon: Users },
+	orders: { text: 'Órdenes', icon: FileText }
 };
 
 export function capitalize(string: string) {
