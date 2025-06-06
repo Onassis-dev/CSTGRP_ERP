@@ -15,6 +15,7 @@
 	import { refetch } from '$lib/utils/query';
 	import Select from '$lib/components/basic/Select.svelte';
 	import { createQuery } from '@tanstack/svelte-query';
+	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
 
 	interface Props {
 		show?: boolean;
@@ -74,8 +75,8 @@
 					<Label name="Codigo">
 						<Input name="text" bind:value={formData.code} />
 					</Label>
-					<Label name="Descripción">
-						<Input name="text" bind:value={formData.description} />
+					<Label name="Descripción" class="col-span-2">
+						<Textarea name="text" bind:value={formData.description} />
 					</Label>
 					<Label name="Medida">
 						<Input name="text" bind:value={formData.measurement} />

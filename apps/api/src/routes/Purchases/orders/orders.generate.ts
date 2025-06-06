@@ -105,7 +105,7 @@ export function generateOrder(
 
   fillBox({
     ...rightProps,
-    text: 'RFC: SALO120101',
+    text: 'RFC: BPT130606JY0',
     y: 619 - 5 * 12,
   });
 
@@ -306,13 +306,19 @@ export function generateOrder(
     page,
   });
 
+  const numbers = String(Number(data.total).toFixed(2)).split('.');
+  const currencies = {
+    USD: 'Dolares',
+    MXN: 'Pesos',
+  };
+
   fillBox({
     x: leftMargin,
     y: y - 60,
     size: 10,
     width: 360,
     height: 10,
-    text: numberToWords(Number(String(data.total).split('.')[0])),
+    text: `${numberToWords(Number(numbers[0]))} ${currencies[data.currency]} ${numbers[1]}/100 ${data.currency}`,
     font,
     page,
   });

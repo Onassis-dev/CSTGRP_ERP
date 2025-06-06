@@ -24,7 +24,7 @@
 	import Select from '$lib/components/basic/Select.svelte';
 	import { createQuery } from '@tanstack/svelte-query';
 	import { Textarea } from '$lib/components/ui/textarea';
-	import { X } from 'lucide-svelte';
+	import { PlusIcon, X } from 'lucide-svelte';
 	import { untrack } from 'svelte';
 
 	interface Props {
@@ -38,6 +38,10 @@
 
 	const basicData = createQuery({
 		refetchOnWindowFocus: false,
+		refetchOnMount: false,
+		refetchOnReconnect: false,
+		refetchInterval: false,
+		refetchIntervalInBackground: false,
 		queryKey: ['po-basic-data'],
 		queryFn: async () => {
 			const data = (await api.get('/purchases/orders/basic-data')).data;
@@ -63,7 +67,11 @@
 			...selectedDevice,
 			iva: Number(selectedDevice.iva).toFixed(0)
 		};
-		products = JSON.parse(formData.products || '[]');
+		try {
+			products = JSON.parse(selectedDevice.products);
+		} catch (error) {
+			products = selectedDevice.products;
+		}
 	}
 
 	async function handleSubmit() {
@@ -102,7 +110,7 @@
 	];
 
 	const total: number = $derived(
-		products.reduce((acc, curr) => acc + Number(curr.total), 0) *
+		products?.reduce((acc, curr) => acc + Number(curr.total), 0) *
 			(1 + Number(formData.iva || 0) / 100)
 	);
 </script>
@@ -142,13 +150,14 @@
 							<TableBody>
 								{#each products as row, i}
 									<TableRow>
-										<TableCell>
+										<TableCell class="p-0.5">
 											<Button
 												onclick={() => {
 													products = products.filter((_, index) => index !== i);
 												}}
+												variant="ghost"
 											>
-												<X class="size-3.5" />
+												<X class="size-3.5 text-red-500" />
 											</Button>
 										</TableCell>
 										<TableCell class="whitespace-hidden max-w-64 overflow-hidden text-ellipsis"
@@ -204,7 +213,8 @@
 					<Table class="w-full border-b">
 						<TableHeader class="sticky top-0">
 							<TableHead>Codigo</TableHead>
-							<TableHead>Descripcion</TableHead>
+							<TableHead class="w-full">Descripcion</TableHead>
+							<TableHead>Precio</TableHead>
 							<TableHead></TableHead>
 						</TableHeader>
 						<TableBody>
@@ -214,7 +224,9 @@
 									<TableCell class="whitespace-hidden max-w-64 overflow-hidden text-ellipsis"
 										>{row.description || ''}</TableCell
 									>
-									<TableCell>
+									<TableCell>{row.price || ''}</TableCell>
+
+									<TableCell class="p-0.5">
 										<Button
 											onclick={() => {
 												if (products.find((material) => material.id === row.id)) return;
@@ -231,8 +243,9 @@
 													}
 												];
 											}}
+											variant="ghost"
 										>
-											Agregar
+											<PlusIcon class="size-3.5 text-green-500" />
 										</Button>
 									</TableCell>
 								</TableRow>

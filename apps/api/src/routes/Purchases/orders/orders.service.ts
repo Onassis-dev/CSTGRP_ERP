@@ -111,7 +111,7 @@ export class OrdersService {
     FROM purchaseproducts
      ${body.code ? sql`WHERE code ILIKE ${'%' + body.code + '%'}` : sql``}
      ${body.code ? sql`OR description ILIKE ${'%' + body.code + '%'}` : sql``}
-    LIMIT 50;
+    order by id desc LIMIT 50;
   `;
     return products;
   }

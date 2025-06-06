@@ -36,8 +36,8 @@ export class CategoriesService {
     const currencies = {
       Pesos: 'MXN',
       pesos: 'MXN',
-      Dolares: 'USD',
-      dolares: 'USD',
+      Dolar: 'USD',
+      dolar: 'USD',
     };
 
     // categories
@@ -70,10 +70,11 @@ export class CategoriesService {
         lastPurchase: client.ultima_compra
           ? new Date(client.ultima_compra)
           : null,
-        currency: currencies[client.tipo_moneda] || 'MXN',
+        currency: currencies[client.tipo_moneda],
         atention: client.atencion,
       });
     }
+
     await sql`insert into purchasesuppliers ${sql(clients)}`;
 
     // products
