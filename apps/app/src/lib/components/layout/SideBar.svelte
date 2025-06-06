@@ -15,7 +15,8 @@
 		Users,
 		ShoppingBag,
 		Folders,
-		ShoppingCart
+		ShoppingCart,
+		AlertTriangle
 	} from 'lucide-svelte';
 	import { Dialog, DialogBody, DialogContent } from '$lib/components/ui/dialog';
 	import { Button } from '$lib/components/ui/button';
@@ -51,8 +52,13 @@
 	)}
 >
 	<a href="/" class="flex h-[49px] w-full items-center gap-3 border-b px-4 pt-0 font-semibold">
-		<img src="/logo.png" alt="logo" class="h-6 w-6" />
-		CST Group
+		{#if import.meta.env.VITE_TESTING === 'true'}
+			<AlertTriangle class="size-6 text-yellow-500" />
+			TEST
+		{:else}
+			<img src="/logo.png" alt="logo" class="h-6 w-6" />
+			CST Group
+		{/if}
 	</a>
 
 	{#if hasAccess('directory')}
