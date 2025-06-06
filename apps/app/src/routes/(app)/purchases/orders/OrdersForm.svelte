@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
+	import { Card, CardContent, CardHeader } from '$lib/components/ui/card';
 	import {
 		Table,
 		TableBody,
@@ -67,6 +67,8 @@
 			...selectedDevice,
 			iva: Number(selectedDevice.iva).toFixed(0)
 		};
+		if (!selectedDevice.id) return (products = []);
+
 		try {
 			products = JSON.parse(selectedDevice.products);
 		} catch (error) {
@@ -218,7 +220,7 @@
 							<TableHead></TableHead>
 						</TableHeader>
 						<TableBody>
-							{#each $productsQuery?.data as row}
+							{#each $productsQuery?.data || [] as row}
 								<TableRow>
 									<TableCell>{row.code || ''}</TableCell>
 									<TableCell class="whitespace-hidden max-w-64 overflow-hidden text-ellipsis"
@@ -229,7 +231,7 @@
 									<TableCell class="p-0.5">
 										<Button
 											onclick={() => {
-												if (products.find((material) => material.id === row.id)) return;
+												if (products?.find((material) => material.id === row.id)) return;
 												products = [
 													...products,
 													{
