@@ -1,6 +1,10 @@
 import { z } from 'zod';
 const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 
+export const searchSchema = z.object({
+  name: z.string().nullish(),
+});
+
 export const createSchema = z.object({
   name: z.string(),
   document: z.string(),

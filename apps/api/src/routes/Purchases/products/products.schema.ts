@@ -2,6 +2,10 @@ import { z } from 'zod';
 
 const numberRegex = /^-?(?:\d+|\d*\.\d{1,4})$/;
 
+export const searchSchema = z.object({
+  name: z.string().nullish(),
+});
+
 export const createSchema = z.object({
   categoryId: z.coerce.number(),
   code: z.string(),

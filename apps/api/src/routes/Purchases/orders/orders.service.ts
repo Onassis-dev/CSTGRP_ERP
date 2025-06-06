@@ -5,6 +5,7 @@ import {
   editSchema,
   createSchema,
   getProductsSchema,
+  searchSchema,
 } from './orders.schema';
 import { z } from 'zod';
 import sql from 'src/utils/db';
@@ -18,9 +19,12 @@ import { markPage } from 'src/utils/pdf';
 export class OrdersService {
   constructor(private readonly req: ContextProvider) {}
 
-  async findAllOrders() {
+  async findAllOrders(body: z.infer<typeof searchSchema>) {
     const orders =
-      await sql`Select *, (select name from purchasesuppliers where id = purchaseorders."supplierId") as supplier from purchaseorders order by folio desc`;
+      await sql`Select *, (select name from purchasesuppliers where id = purchaseorders."supplierId") as supplier from purchaseorders
+      ${body.name ? sql`WHERE folio::text ILIKE ${'%' + body.name + '%'}` : sql``}
+      ${body.name ? sql`OR (select name from purchasesuppliers where id = purchaseorders."supplierId") ILIKE ${'%' + body.name + '%'}` : sql``}
+      order by folio desc limit 150`;
     return orders;
   }
 

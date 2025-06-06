@@ -1,5 +1,9 @@
 import { z } from 'zod';
 
+export const searchSchema = z.object({
+  name: z.string().nullish(),
+});
+
 export const createSchema = z.object({
   issuer: z.string(),
   supplierId: z.coerce.number(),

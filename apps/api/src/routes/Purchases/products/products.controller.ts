@@ -6,11 +6,17 @@ import {
   UseGuards,
   Put,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { ApiTags } from '@nestjs/swagger';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
-import { deleteSchema, editSchema, createSchema } from './products.schema';
+import {
+  deleteSchema,
+  editSchema,
+  createSchema,
+  searchSchema,
+} from './products.schema';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 
 @ApiTags('Products')
@@ -20,8 +26,8 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Get()
-  get() {
-    return this.productsService.findAllProducts();
+  get(@Query(new ZodPiPe(searchSchema)) body) {
+    return this.productsService.findAllProducts(body);
   }
 
   @Post()

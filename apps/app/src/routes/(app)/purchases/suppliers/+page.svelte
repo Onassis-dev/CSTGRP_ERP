@@ -13,6 +13,11 @@
 	import { createQuery } from '@tanstack/svelte-query';
 	import { refetch } from '$lib/utils/query';
 	import { formatDate } from '$lib/utils/functions';
+	import { Input } from '$lib/components/ui/input';
+
+	let searchParams: any = $state({
+		name: ''
+	});
 
 	let show: boolean = $state(false);
 	let show1: boolean = $state(false);
@@ -20,7 +25,7 @@
 
 	const computers = createQuery({
 		queryKey: ['purchases-suppliers'],
-		queryFn: async () => (await api.get('/purchases/suppliers')).data
+		queryFn: async () => (await api.get('/purchases/suppliers', { params: searchParams })).data
 	});
 
 	function editDevice(i: number) {
@@ -38,8 +43,16 @@
 </script>
 
 <MenuBar>
+	{#snippet left()}
+		<Input
+			menu
+			bind:value={searchParams.name}
+			placeholder="Buscar"
+			oninput={() => refetch(['purchases-suppliers'])}
+		/>
+	{/snippet}
 	{#snippet right()}
-		<Button onclick={createDevice}><PlusCircle class=" size-3.5" />Añadir categoria</Button>
+		<Button onclick={createDevice}><PlusCircle class=" size-3.5" />Añadir proveedor</Button>
 	{/snippet}
 </MenuBar>
 
@@ -64,7 +77,7 @@
 				<OptionsCell editFunc={() => editDevice(i)} deleteFunc={() => deleteDevice(i)} />
 				<TableCell>{device.name || ''}</TableCell>
 				<TableCell>{device.atention || ''}</TableCell>
-				<TableCell>{device.rfc || ''}</TableCell>
+				<TableCell>{device.document || ''}</TableCell>
 				<TableCell>{device.email || ''}</TableCell>
 				<TableCell>{device.phone || ''}</TableCell>
 				<TableCell>{device.direction || ''}</TableCell>

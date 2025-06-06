@@ -1,13 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { deleteSchema, editSchema, createSchema } from './suppliers.schema';
+import {
+  deleteSchema,
+  editSchema,
+  createSchema,
+  searchSchema,
+} from './suppliers.schema';
 import { z } from 'zod';
 import sql from 'src/utils/db';
 
 @Injectable()
 export class SuppliersService {
-  async findAllSuppliers() {
-    const suppliers =
-      await sql`Select * from purchasesuppliers order by name asc`;
+  async findAllSuppliers(body: z.infer<typeof searchSchema>) {
+    const suppliers = await sql`Select * from purchasesuppliers
+      ${body.name ? sql`WHERE name ILIKE ${'%' + body.name + '%'}` : sql``}
+      ${body.name ? sql`OR atention ILIKE ${'%' + body.name + '%'}` : sql``}
+      order by name asc limit 150`;
     return suppliers;
   }
 

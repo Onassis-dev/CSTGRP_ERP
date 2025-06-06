@@ -14,6 +14,11 @@
 	import { refetch } from '$lib/utils/query';
 	import { formatDate } from '$lib/utils/functions';
 	import { downloadFile } from '$lib/utils/files';
+	import { Input } from '$lib/components/ui/input';
+
+	let searchParams: any = $state({
+		name: ''
+	});
 
 	let show: boolean = $state(false);
 	let show1: boolean = $state(false);
@@ -21,7 +26,7 @@
 
 	const computers = createQuery({
 		queryKey: ['purchases-orders'],
-		queryFn: async () => (await api.get('/purchases/orders')).data
+		queryFn: async () => (await api.get('/purchases/orders', { params: searchParams })).data
 	});
 
 	function editDevice(i: number) {
@@ -39,6 +44,14 @@
 </script>
 
 <MenuBar>
+	{#snippet left()}
+		<Input
+			menu
+			bind:value={searchParams.name}
+			placeholder="Buscar"
+			oninput={() => refetch(['purchases-orders'])}
+		/>
+	{/snippet}
 	{#snippet right()}
 		<Button onclick={createDevice}><PlusCircle class=" size-3.5" />Crear orden</Button>
 	{/snippet}

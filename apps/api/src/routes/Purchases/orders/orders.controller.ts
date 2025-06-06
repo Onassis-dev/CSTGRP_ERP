@@ -17,6 +17,7 @@ import {
   editSchema,
   createSchema,
   getProductsSchema,
+  searchSchema,
 } from './orders.schema';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 
@@ -27,8 +28,8 @@ export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Get()
-  get() {
-    return this.ordersService.findAllOrders();
+  get(@Query(new ZodPiPe(searchSchema)) body) {
+    return this.ordersService.findAllOrders(body);
   }
 
   @Post()

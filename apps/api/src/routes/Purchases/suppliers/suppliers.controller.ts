@@ -6,11 +6,17 @@ import {
   UseGuards,
   Put,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { SuppliersService } from './suppliers.service';
 import { ApiTags } from '@nestjs/swagger';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
-import { deleteSchema, editSchema, createSchema } from './suppliers.schema';
+import {
+  deleteSchema,
+  editSchema,
+  createSchema,
+  searchSchema,
+} from './suppliers.schema';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 
 @ApiTags('Suppliers')
@@ -20,8 +26,8 @@ export class SuppliersController {
   constructor(private readonly suppliersService: SuppliersService) {}
 
   @Get()
-  get() {
-    return this.suppliersService.findAllSuppliers();
+  get(@Query(new ZodPiPe(searchSchema)) body) {
+    return this.suppliersService.findAllSuppliers(body);
   }
 
   @Post()

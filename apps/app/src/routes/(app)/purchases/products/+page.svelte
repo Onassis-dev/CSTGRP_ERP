@@ -13,14 +13,19 @@
 	import { createQuery } from '@tanstack/svelte-query';
 	import { refetch } from '$lib/utils/query';
 	import { formatDate } from '$lib/utils/functions';
+	import { Input } from '$lib/components/ui/input';
 
 	let show: boolean = $state(false);
 	let show1: boolean = $state(false);
 	let selectedDevice: any = $state({});
 
+	let searchParams: any = $state({
+		name: ''
+	});
+
 	const computers = createQuery({
 		queryKey: ['purchases-products'],
-		queryFn: async () => (await api.get('/purchases/products')).data
+		queryFn: async () => (await api.get('/purchases/products', { params: searchParams })).data
 	});
 
 	function editDevice(i: number) {
@@ -38,6 +43,14 @@
 </script>
 
 <MenuBar>
+	{#snippet left()}
+		<Input
+			menu
+			bind:value={searchParams.name}
+			placeholder="Buscar"
+			oninput={() => refetch(['purchases-products'])}
+		/>
+	{/snippet}
 	{#snippet right()}
 		<Button onclick={createDevice}><PlusCircle class=" size-3.5" />Añadir producto</Button>
 	{/snippet}
@@ -57,10 +70,10 @@
 		{#each $computers?.data as device, i}
 			<TableRow>
 				<OptionsCell editFunc={() => editDevice(i)} deleteFunc={() => deleteDevice(i)} />
-				<TableCell>{device.code || ''}</TableCell>
-				<TableCell>{device.description || ''}</TableCell>
+				<TableCell class="max-w-32 truncate">{device.code || ''}</TableCell>
+				<TableCell class="max-w-64 truncate">{device.description || ''}</TableCell>
 				<TableCell>{device.measurement || ''}</TableCell>
-				<TableCell>{device.categoryId || ''}</TableCell>
+				<TableCell>{device.category || ''}</TableCell>
 				<TableCell>{device.price || ''}</TableCell>
 				<TableCell>{formatDate(device.created_at) || ''}</TableCell>
 			</TableRow>

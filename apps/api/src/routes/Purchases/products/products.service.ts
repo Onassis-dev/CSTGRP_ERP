@@ -1,12 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { deleteSchema, editSchema, createSchema } from './products.schema';
+import {
+  deleteSchema,
+  editSchema,
+  createSchema,
+  searchSchema,
+} from './products.schema';
 import { z } from 'zod';
 import sql from 'src/utils/db';
 
 @Injectable()
 export class ProductsService {
-  async findAllProducts() {
-    const products = await sql`Select * from purchaseproducts`;
+  async findAllProducts(body: z.infer<typeof searchSchema>) {
+    console.log(body);
+    const products =
+      await sql`Select *, (select name from purchasecategories where id = purchaseproducts."categoryId") as category from purchaseproducts
+     ${body.name ? sql`WHERE code ILIKE ${'%' + body.name + '%'}` : sql``}
+     ${body.name ? sql`OR description ILIKE ${'%' + body.name + '%'}` : sql``}        order by id desc limit 150`;
     return products;
   }
 
