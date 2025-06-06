@@ -16,7 +16,7 @@ interface FillBoxProps {
   y: number;
   width: number;
   height: number;
-  align?: 'left' | 'center';
+  align?: 'left' | 'center' | 'right';
   maxLines?: number;
   color?: RGB;
 }
@@ -37,6 +37,7 @@ export const fillBox = ({
   let alignment;
   if (align === 'left') alignment = TextAlignment.Left;
   if (align === 'center') alignment = TextAlignment.Center;
+  if (align === 'right') alignment = TextAlignment.Right;
 
   const { lines } = layoutMultilineText(text, {
     font,
@@ -63,14 +64,17 @@ export const fillBox = ({
       });
     });
   }
+
+  return lines.length;
 };
 
 export const markPage = (page: PDFPage) => {
   for (let i = 0; i <= 1000; i += 20) {
     page.drawText(`${i}`, {
       x: i,
-      y: 0,
+      y: 10,
       size: 9,
+      color: rgb(0.2, 0.2, 0.2),
     });
     page.drawLine({
       start: { x: i, y: 0 },
@@ -79,11 +83,12 @@ export const markPage = (page: PDFPage) => {
     });
   }
 
-  for (let i = 0; i <= 1000; i += 20) {
+  for (let i = 10; i <= 1000; i += 20) {
     page.drawText(`${i}`, {
       x: 0,
       y: i,
       size: 8,
+      color: rgb(0.2, 0.2, 0.2),
     });
     page.drawLine({
       start: { x: 0, y: i },

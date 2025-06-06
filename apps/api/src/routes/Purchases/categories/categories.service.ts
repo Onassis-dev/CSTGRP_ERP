@@ -26,4 +26,118 @@ export class CategoriesService {
 
     return;
   }
+
+  async importCategories(body: any) {
+    await sql`delete from purchaseorders`;
+    await sql`delete from purchaseproducts`;
+    await sql`delete from purchasesuppliers`;
+    await sql`delete from purchasecategories`;
+
+    const currencies = {
+      Pesos: 'MXN',
+      pesos: 'MXN',
+      Dolares: 'USD',
+      dolares: 'USD',
+    };
+
+    // categories
+    const categories = [];
+    for (const category of body.categorias) {
+      categories.push({
+        id: category.id,
+        name: category.categoria,
+        created_at: category.fecha,
+      });
+    }
+    await sql`insert into purchasecategories ${sql(categories)}`;
+
+    // suppliers
+    const clients = [];
+    for (const client of body.clientes) {
+      if (isNaN(new Date(client.ultima_compra).getTime())) {
+        client.ultima_compra = null;
+      }
+
+      clients.push({
+        id: client.id,
+        name: client.nombre,
+        document: client.documento,
+        email: client.email,
+        phone: client.telefono,
+        direction: client.direccion,
+        bornDate: client.fecha ? new Date(client.fecha) : null,
+        purchases: client.compras,
+        lastPurchase: client.ultima_compra
+          ? new Date(client.ultima_compra)
+          : null,
+        currency: currencies[client.tipo_moneda] || 'MXN',
+        atention: client.atencion,
+      });
+    }
+    await sql`insert into purchasesuppliers ${sql(clients)}`;
+
+    // products
+    const products = [];
+    for (const product of body.productos) {
+      if (product.id_categoria === '0') {
+        product.id_categoria = 8;
+      }
+
+      products.push({
+        id: product.id,
+        code: product.codigo,
+        categoryId: product.id_categoria,
+        description: product.descripcion,
+        stock: product.stock,
+        price: product.precio_compra,
+        purchases: product.ventas,
+        measurement: product.tipo_unidad,
+        created_at: product.fecha,
+      });
+    }
+    await sql`insert into purchaseproducts ${sql(products)}`;
+
+    // orders
+    const orders = [];
+    for (const order of body.ordenes) {
+      const vendors = {
+        '61': 'Aracely Varguez',
+        '62': 'Efrain Lopez',
+      };
+
+      const productsJson = JSON.parse(order.productos).map((product: any) => {
+        return {
+          id: product.id,
+          code: product.codigo,
+          description: product.descripcion,
+          quantity: product.cantidad,
+          price: product.precio,
+          total: product.total,
+          measurement:
+            products.find((p: any) => String(p.id) === String(product.id))
+              ?.measurement || '',
+        };
+      });
+
+      if (order.id_cliente === '38') order.id_cliente = 6;
+
+      const [supplier] =
+        await sql`select * from purchasesuppliers where id = ${order.id_cliente}`;
+
+      orders.push({
+        id: order.id,
+        created_at: order.fecha,
+        folio: order.codigo,
+        supplierId: order.id_cliente,
+        issuer: vendors[order.id_vendedor],
+        net: order.neto,
+        iva: order.iva,
+        currency: currencies[order.tipo_moneda] || 'MXN',
+        comments: order.comentario,
+        products: productsJson,
+        supplier: supplier,
+      });
+    }
+    await sql`insert into purchaseorders ${sql(orders)}`;
+  }
 }

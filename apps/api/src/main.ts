@@ -20,6 +20,7 @@ async function bootstrap() {
     AppModule,
     new FastifyAdapter({
       trustProxy: true,
+      bodyLimit: 1024 * 1024 * 100, // 100MB
     }),
   );
 

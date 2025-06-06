@@ -13,6 +13,8 @@ export const createSchema = z.object({
       description: z.string(),
       quantity: z.coerce.number(),
       price: z.coerce.number(),
+      measurement: z.string(),
+      total: z.coerce.number(),
     }),
   ),
 });
@@ -22,7 +24,7 @@ export const editSchema = createSchema.extend({
 });
 
 export const deleteSchema = z.object({
-  id: z.number(),
+  id: z.coerce.number(),
 });
 
 export const getProductsSchema = z.object({

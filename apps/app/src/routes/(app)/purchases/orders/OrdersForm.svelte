@@ -25,6 +25,7 @@
 	import { createQuery } from '@tanstack/svelte-query';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { X } from 'lucide-svelte';
+	import { untrack } from 'svelte';
 
 	interface Props {
 		show?: boolean;
@@ -32,7 +33,7 @@
 	}
 
 	let { show = $bindable(false), selectedDevice = $bindable({}) }: Props = $props();
-	let formData: any = $state();
+	let formData: any = $state({});
 	let search = $state('');
 
 	const basicData = createQuery({
@@ -60,13 +61,13 @@
 	function setFormData() {
 		formData = {
 			...selectedDevice,
-			bornDate: selectedDevice.bornDate?.split('T')[0]
+			iva: Number(selectedDevice.iva).toFixed(0)
 		};
+		products = JSON.parse(formData.products || '[]');
 	}
 
 	async function handleSubmit() {
 		const result = { ...formData, products, total, comments: formData.comments || null };
-		console.log(result);
 		if (selectedDevice.id) {
 			result.id = parseInt(formData.id || '');
 			await api.put('/purchases/orders', result);
@@ -87,7 +88,7 @@
 			refetch(['po-basic-data']);
 			refetch(['po-products']);
 		}
-		setFormData();
+		untrack(() => setFormData());
 	});
 
 	const currencies = [
@@ -222,6 +223,7 @@
 													{
 														id: row.id,
 														code: row.code,
+														measurement: row.measurement,
 														description: row.description,
 														price: row.price,
 														quantity: 1,

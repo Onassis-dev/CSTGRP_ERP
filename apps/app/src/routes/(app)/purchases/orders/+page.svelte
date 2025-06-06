@@ -4,7 +4,7 @@
 	import { TableBody, TableCell, TableHeader, TableRow } from '$lib/components/ui/table';
 	import TableHead from '$lib/components/ui/table/table-head.svelte';
 	import api from '$lib/utils/server';
-	import { PlusCircle } from 'lucide-svelte';
+	import { FileDown, PlusCircle } from 'lucide-svelte';
 	import DeletePopUp from '$lib/components/complex/DeletePopUp.svelte';
 	import { showSuccess } from '$lib/utils/showToast';
 	import ComputersForm from './OrdersForm.svelte';
@@ -13,6 +13,7 @@
 	import { createQuery } from '@tanstack/svelte-query';
 	import { refetch } from '$lib/utils/query';
 	import { formatDate } from '$lib/utils/functions';
+	import { downloadFile } from '$lib/utils/files';
 
 	let show: boolean = $state(false);
 	let show1: boolean = $state(false);
@@ -57,7 +58,22 @@
 	<TableBody>
 		{#each $computers?.data as device, i}
 			<TableRow>
-				<OptionsCell editFunc={() => editDevice(i)} deleteFunc={() => deleteDevice(i)} />
+				<OptionsCell
+					editFunc={() => editDevice(i)}
+					deleteFunc={() => deleteDevice(i)}
+					extraButtons={[
+						{
+							fn: () => {
+								downloadFile({
+									url: '/purchases/orders/download/' + device.id,
+									name: 'oc-' + device.folio + '.pdf'
+								});
+							},
+							name: 'Descargar',
+							icon: FileDown
+						}
+					]}
+				/>
 				<TableCell>{device.folio || ''}</TableCell>
 				<TableCell>{device.supplier || ''}</TableCell>
 				<TableCell>{device.issuer || ''}</TableCell>

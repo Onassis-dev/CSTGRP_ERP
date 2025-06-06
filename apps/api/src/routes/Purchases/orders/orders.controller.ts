@@ -7,6 +7,7 @@ import {
   Put,
   Delete,
   Query,
+  Param,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { ApiTags } from '@nestjs/swagger';
@@ -53,5 +54,10 @@ export class OrdersController {
   @Get('products')
   getProducts(@Query(new ZodPiPe(getProductsSchema)) body) {
     return this.ordersService.getProducts(body);
+  }
+
+  @Get('download/:id')
+  download(@Param(new ZodPiPe(deleteSchema)) body) {
+    return this.ordersService.download(body);
   }
 }

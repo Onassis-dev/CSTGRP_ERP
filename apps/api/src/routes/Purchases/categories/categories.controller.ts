@@ -38,4 +38,9 @@ export class CategoriesController {
   delete(@Body(new ZodPiPe(deleteSchema)) body) {
     return this.categoriesService.deleteCategory(body);
   }
+
+  @Post('import')
+  import(@Body() body: any) {
+    return this.categoriesService.importCategories(body);
+  }
 }

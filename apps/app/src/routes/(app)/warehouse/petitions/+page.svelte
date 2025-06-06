@@ -13,6 +13,7 @@
 	import { showSuccess } from '$lib/utils/showToast';
 	import { createQuery } from '@tanstack/svelte-query';
 	import { refetch } from '$lib/utils/query';
+	import { downloadFile } from '$lib/utils/files';
 
 	let filters = $state({
 		folio: ''
@@ -35,21 +36,10 @@
 	}
 
 	async function download(i: number) {
-		const response = await api.get('/petitions/download/' + $petitionsQuery?.data[i]?.id, {
-			responseType: 'arraybuffer'
+		downloadFile({
+			url: '/petitions/download/' + $petitionsQuery?.data[i]?.id,
+			name: 'requisicion-' + $petitionsQuery?.data[i]?.folio + '.pdf'
 		});
-
-		const blob = new Blob([response.data], {
-			type: 'application/pdf'
-		});
-
-		const link = document.createElement('a');
-		link.href = URL.createObjectURL(blob);
-		link.target = '_blank';
-
-		document.body.appendChild(link);
-		link.click();
-		document.body.removeChild(link);
 	}
 </script>
 
