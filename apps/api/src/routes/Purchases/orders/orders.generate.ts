@@ -12,7 +12,7 @@ const business = {
     email: 'compras@bcpet.mx',
   },
   2: {
-    name: 'MPM BAJA',
+    name: 'MPM BAJA S DE RL DE CV',
     address: 'Calle Dos Oriente #134 CD Industrial Tijuana B.C, C.P 22444',
     rfc: 'MBA231027MP6',
     email: 'compras@mpmtj.com.mx',
