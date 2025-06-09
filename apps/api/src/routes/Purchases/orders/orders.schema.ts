@@ -18,7 +18,7 @@ export const createSchema = z.object({
       description: z.string(),
       quantity: z.coerce.number(),
       price: z.coerce.number(),
-      measurement: z.string(),
+      measurement: z.string().nullish(),
       total: z.coerce.number(),
     }),
   ),
