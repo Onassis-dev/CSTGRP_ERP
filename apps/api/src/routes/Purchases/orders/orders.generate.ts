@@ -4,6 +4,19 @@ import { PDFFont } from 'pdf-lib';
 import { numberToWords } from 'src/routes/HR/documents/documents.utils';
 import { fillBox } from 'src/utils/pdf';
 
+const business = {
+  1: {
+    name: 'BC PET TREATS S DE RL DE CV',
+    address: 'Calle 6 Oriente #134 CD Industrial Tijuana B.C, C.P 22444',
+    rfc: 'BPT130606JY0',
+  },
+  2: {
+    name: 'MPM BAJA',
+    address: 'Calle Dos Oriente #134 CD Industrial Tijuana B.C, C.P 22444',
+    rfc: 'MBA231027MP6',
+  },
+};
+
 export function generateOrder(
   page: PDFPage,
   font: PDFFont,
@@ -17,9 +30,9 @@ export function generateOrder(
 
   page.drawImage(logo, {
     x: leftMargin,
-    y: topMargin - (logo.height * 110) / logo.width,
-    width: 110,
-    height: (logo.height * 110) / logo.width,
+    y: topMargin - 85,
+    width: 85 * (logo.width / logo.height),
+    height: 85,
   });
 
   const rightProps = {
@@ -81,13 +94,13 @@ export function generateOrder(
 
   fillBox({
     ...rightProps,
-    text: 'BC PET TREATS S DE RL DE CV',
+    text: business[data.business].name,
     y: 630 - 1 * 12,
   });
 
   fillBox({
     ...rightProps,
-    text: 'Calle 6 Oriente #134 CD Industrial Tijuana B.C, C.P 22444',
+    text: business[data.business].address,
     y: 630 - 2 * 12,
   });
 
@@ -105,7 +118,7 @@ export function generateOrder(
 
   fillBox({
     ...rightProps,
-    text: 'RFC: BPT130606JY0',
+    text: `RFC: ${business[data.business].rfc}`,
     y: 619 - 5 * 12,
   });
 

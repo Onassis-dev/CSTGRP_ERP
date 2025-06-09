@@ -60,8 +60,8 @@
 <CusTable>
 	<TableHeader>
 		<TableHead class="fixed left-0 z-30 bg-inherit p-1"></TableHead>
-		<TableHead class="w-[50%]">Folio</TableHead>
-		<TableHead class="w-[50%]">Proveedor</TableHead>
+		<TableHead class="">Folio</TableHead>
+		<TableHead class="w-full">Proveedor</TableHead>
 		<TableHead class="">Neto</TableHead>
 		<TableHead class="">Impuesto</TableHead>
 		<TableHead class="">Total</TableHead>

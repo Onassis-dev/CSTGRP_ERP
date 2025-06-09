@@ -56,6 +56,11 @@
 		}
 	});
 
+	const businesses = [
+		{ value: 1, name: 'BC PET TREATS', color: 'green' },
+		{ value: 2, name: 'MPM BAJA', color: 'red' }
+	];
+
 	const productsQuery = createQuery({
 		queryKey: ['po-products'],
 		queryFn: async () =>
@@ -128,14 +133,17 @@
 
 		<DialogBody class="grid grid-cols-2 gap-4">
 			<div class="flex flex-col gap-4">
-				<div class="grid grid-cols-2 gap-4">
+				<div class="grid grid-cols-3 gap-4">
 					<Label name="Comprador">
 						<Input name="text" bind:value={formData.issuer} readonly />
 					</Label>
 					<Label name="Folio">
 						<Input name="text" bind:value={formData.folio} readonly />
 					</Label>
-					<Label name="Proveedor" class="col-span-2">
+					<Label name="Empresa">
+						<Select items={businesses} bind:value={formData.business} />
+					</Label>
+					<Label name="Proveedor" class="col-span-3">
 						<Select items={$basicData?.data?.suppliers} bind:value={formData.supplierId} />
 					</Label>
 				</div>
@@ -162,11 +170,12 @@
 												<X class="size-3.5 text-red-500" />
 											</Button>
 										</TableCell>
-										<TableCell class="whitespace-hidden max-w-64 overflow-hidden text-ellipsis"
+										<TableCell
+											class="whitespace-hidden w-full max-w-80 overflow-hidden text-ellipsis"
 											>{row.description || ''}</TableCell
 										>
 										<TableCell>{row.code || ''}</TableCell>
-										<TableCell>
+										<TableCell class="p-[1px]">
 											<Input
 												bind:value={row.quantity}
 												oninput={() => {
@@ -174,6 +183,7 @@
 												}}
 												type="number"
 												min={0}
+												class="w-24 rounded-none border-none"
 											/>
 										</TableCell>
 										<TableCell>{Number(row.total).toFixed(2)}</TableCell>

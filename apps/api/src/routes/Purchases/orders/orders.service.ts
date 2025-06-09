@@ -83,7 +83,9 @@ export class OrdersService {
       iva: body.iva,
       net,
       products: JSON.stringify(products),
-    })}`;
+      business: body.business,
+    })}
+    where id = ${body.id}`;
   }
 
   async deleteOrder(body: z.infer<typeof deleteSchema>) {
@@ -144,6 +146,8 @@ export class OrdersService {
     const pdfDoc = await PDFDocument.load(template);
     const [page] = pdfDoc.getPages();
 
+    const imagePathName = order.business === 1 ? 'bcpet.png' : 'mpm.png';
+
     const imageBytes = await fs.readFile(
       path.resolve(
         __dirname,
@@ -153,7 +157,7 @@ export class OrdersService {
         '..',
         'static',
         'templates',
-        'logo.png',
+        imagePathName,
       ),
     );
 

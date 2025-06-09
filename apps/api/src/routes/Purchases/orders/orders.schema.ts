@@ -10,6 +10,7 @@ export const createSchema = z.object({
   currency: z.string(),
   iva: z.coerce.number(),
   comments: z.string().nullable(),
+  business: z.coerce.number(),
   products: z.array(
     z.object({
       id: z.coerce.number(),
