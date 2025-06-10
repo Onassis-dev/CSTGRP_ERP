@@ -53,4 +53,4 @@
 	</div>
 </QueryClientProvider>
 
-<Toaster />
+<Toaster richColors />
