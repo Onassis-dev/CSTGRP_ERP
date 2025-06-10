@@ -13,7 +13,6 @@ import { ContextProvider } from 'src/interceptors/context.provider';
 import path from 'path';
 import { PDFDocument, StandardFonts } from 'pdf-lib';
 import { generateOrder } from './orders.generate';
-import { markPage } from 'src/utils/pdf';
 
 @Injectable()
 export class OrdersService {
@@ -94,7 +93,7 @@ export class OrdersService {
 
   async getBasicData() {
     const suppliers =
-      await sql`select id as value, name from purchasesuppliers`;
+      await sql`select id as value, name from purchasesuppliers order by name`;
     const [issuer] =
       await sql`select username as value from users where id = ${this.req.userId}`;
     const [folio] =
@@ -111,8 +110,10 @@ export class OrdersService {
     const products = await sql`
     SELECT id, code, description, price, image, measurement
     FROM purchaseproducts
-     ${body.code ? sql`WHERE code ILIKE ${'%' + body.code + '%'}` : sql``}
-     ${body.code ? sql`OR description ILIKE ${'%' + body.code + '%'}` : sql``}
+    WHERE
+     ${body.code ? sql`code ILIKE ${'%' + body.code + '%'}` : sql`TRUE`} AND
+     ${body.code ? sql`OR description ILIKE ${'%' + body.code + '%'}` : sql`TRUE`} AND
+     ${body.supplierId ? sql`EXISTS (SELECT 1 FROM products_suppliers WHERE "productId" = purchaseproducts.id AND "supplierId" = ${body.supplierId})` : sql`TRUE`}
     order by id desc LIMIT 50;
   `;
     return products;

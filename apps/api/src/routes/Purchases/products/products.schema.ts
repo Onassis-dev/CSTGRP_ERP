@@ -12,6 +12,7 @@ export const createSchema = z.object({
   description: z.string(),
   price: z.string().regex(numberRegex),
   measurement: z.string(),
+  suppliers: z.array(z.number()),
 });
 
 export const editSchema = createSchema.extend({
@@ -19,5 +20,5 @@ export const editSchema = createSchema.extend({
 });
 
 export const deleteSchema = z.object({
-  id: z.number(),
+  id: z.coerce.number(),
 });

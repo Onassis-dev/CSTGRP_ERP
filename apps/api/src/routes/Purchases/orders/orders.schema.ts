@@ -34,4 +34,5 @@ export const deleteSchema = z.object({
 
 export const getProductsSchema = z.object({
   code: z.string().nullish(),
+  supplierId: z.coerce.number().nullish(),
 });

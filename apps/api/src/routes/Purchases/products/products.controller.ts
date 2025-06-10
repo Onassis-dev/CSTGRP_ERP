@@ -7,6 +7,7 @@ import {
   Put,
   Delete,
   Query,
+  Param,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { ApiTags } from '@nestjs/swagger';
@@ -48,5 +49,15 @@ export class ProductsController {
   @Get('categories')
   getCategories() {
     return this.productsService.getCategories();
+  }
+
+  @Get('suppliers')
+  getSuppliers() {
+    return this.productsService.getSuppliers();
+  }
+
+  @Get('suppliers/:id')
+  getSuppliersById(@Param(new ZodPiPe(deleteSchema)) body) {
+    return this.productsService.findAllProductsSuppliers(body);
   }
 }

@@ -24,8 +24,9 @@
 	import Select from '$lib/components/basic/Select.svelte';
 	import { createQuery } from '@tanstack/svelte-query';
 	import { Textarea } from '$lib/components/ui/textarea';
-	import { PlusIcon, X } from 'lucide-svelte';
+	import { Filter, PlusIcon, X } from 'lucide-svelte';
 	import { untrack } from 'svelte';
+	import { cn } from '$lib/utils';
 
 	interface Props {
 		show?: boolean;
@@ -64,7 +65,11 @@
 	const productsQuery = createQuery({
 		queryKey: ['po-products'],
 		queryFn: async () =>
-			(await api.get('/purchases/orders/products', { params: { code: search } })).data
+			(
+				await api.get('/purchases/orders/products', {
+					params: { code: search, supplierId: filter ? formData.supplierId : null }
+				})
+			).data
 	});
 
 	function setFormData() {
@@ -88,7 +93,6 @@
 			await api.put('/purchases/orders', result);
 			showSuccess('Orden editada');
 		} else {
-			console.log(result);
 			delete result.id;
 			await api.post('/purchases/orders', result);
 			showSuccess('Orden registrada');
@@ -99,13 +103,18 @@
 	}
 
 	let products: any[] = $state([]);
+	let filter = $state(false);
 
 	$effect(() => {
 		if (show) {
 			refetch(['po-basic-data']);
+		}
+		if (!show) {
+			selectedDevice = {};
+			filter = false;
+			search = '';
 			refetch(['po-products']);
 		}
-		if (!show) selectedDevice = {};
 		untrack(() => setFormData());
 	});
 
@@ -147,7 +156,13 @@
 						<Select items={businesses} bind:value={formData.business} />
 					</Label>
 					<Label name="Proveedor" class="col-span-3">
-						<Select items={$basicData?.data?.suppliers} bind:value={formData.supplierId} />
+						<Select
+							items={$basicData?.data?.suppliers}
+							bind:value={formData.supplierId}
+							onValueChange={() => {
+								refetch(['po-products']);
+							}}
+						/>
 					</Label>
 				</div>
 				<Card class="flex w-full max-w-full flex-col overflow-hidden shadow-none">
@@ -214,7 +229,7 @@
 				</div>
 			</div>
 			<Card class="flex w-full max-w-full flex-col overflow-hidden shadow-none">
-				<CardHeader>
+				<CardHeader class="flex flex-row gap-2 space-y-0 border-b p-2">
 					<Input
 						bind:value={search}
 						placeholder="Buscar..."
@@ -222,6 +237,19 @@
 							refetch(['po-products']);
 						}}
 					/>
+
+					<Button
+						variant="outline"
+						class={cn('h-8', filter && 'bg-muted')}
+						onclick={() => {
+							filter = !filter;
+							if (!formData.supplierId) filter = false;
+							refetch(['po-products']);
+						}}
+					>
+						<Filter class="size-3.5" />
+						Filtrar
+					</Button>
 				</CardHeader>
 
 				<CardContent class="overflow-y-auto px-0 pb-0 " card>
