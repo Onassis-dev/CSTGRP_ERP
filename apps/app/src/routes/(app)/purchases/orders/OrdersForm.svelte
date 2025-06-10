@@ -111,7 +111,6 @@
 	$effect(() => {
 		show;
 		untrack(() => {
-			setFormData();
 			if (show) {
 				refetch(['po-basic-data']);
 			}
@@ -119,8 +118,9 @@
 				selectedDevice = {};
 				filter = true;
 				search = '';
-				refetch(['po-products']);
 			}
+			setFormData();
+			refetch(['po-products']);
 		});
 	});
 
