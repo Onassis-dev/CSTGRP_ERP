@@ -47,7 +47,7 @@
 			const data = (await api.get('/purchases/orders/basic-data')).data;
 			if (!selectedDevice.id) {
 				formData = {
-					...data,
+					...formData,
 					folio: data.folio,
 					issuer: data.issuer
 				};
@@ -72,7 +72,7 @@
 			...selectedDevice,
 			iva: Number(selectedDevice.iva).toFixed(0)
 		};
-		if (!selectedDevice.id) return (products = []);
+		if (!selectedDevice.products) return (products = []);
 
 		try {
 			products = JSON.parse(selectedDevice.products);
@@ -88,6 +88,8 @@
 			await api.put('/purchases/orders', result);
 			showSuccess('Orden editada');
 		} else {
+			console.log(result);
+			delete result.id;
 			await api.post('/purchases/orders', result);
 			showSuccess('Orden registrada');
 		}
@@ -103,6 +105,7 @@
 			refetch(['po-basic-data']);
 			refetch(['po-products']);
 		}
+		if (!show) selectedDevice = {};
 		untrack(() => setFormData());
 	});
 

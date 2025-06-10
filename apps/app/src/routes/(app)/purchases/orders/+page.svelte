@@ -4,7 +4,7 @@
 	import { TableBody, TableCell, TableHeader, TableRow } from '$lib/components/ui/table';
 	import TableHead from '$lib/components/ui/table/table-head.svelte';
 	import api from '$lib/utils/server';
-	import { FileDown, PlusCircle } from 'lucide-svelte';
+	import { Copy, FileDown, PlusCircle } from 'lucide-svelte';
 	import DeletePopUp from '$lib/components/complex/DeletePopUp.svelte';
 	import { showSuccess } from '$lib/utils/showToast';
 	import ComputersForm from './OrdersForm.svelte';
@@ -33,6 +33,12 @@
 		selectedDevice = $computers?.data?.[i];
 		show = true;
 	}
+
+	function duplicateDevice(i: number) {
+		selectedDevice = { ...$computers?.data?.[i], folio: '', id: null };
+		show = true;
+	}
+
 	function createDevice() {
 		selectedDevice = {};
 		show = true;
@@ -83,6 +89,13 @@
 							},
 							name: 'Descargar',
 							icon: FileDown
+						},
+						{
+							fn: () => {
+								duplicateDevice(i);
+							},
+							name: 'Duplicar',
+							icon: Copy
 						}
 					]}
 				/>
