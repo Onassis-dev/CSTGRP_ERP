@@ -31,6 +31,7 @@
 
 	let options = [
 		{ value: 'inventory', name: 'Inventario' },
+		{ value: 'purchases', name: 'Compras' },
 		{ value: 'hr', name: 'RRHH' },
 		{ value: 'users', name: 'Usuarios' },
 		{ value: 'auth', name: 'Sesión' }

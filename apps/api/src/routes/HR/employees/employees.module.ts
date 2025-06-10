@@ -7,9 +7,7 @@ import { ContextProvider } from 'src/interceptors/context.provider';
   controllers: [EmployeesController],
   providers: [
     EmployeesService,
-
     ContextProvider,
-
     {
       provide: 'MODULE',
       useValue: 'hr',

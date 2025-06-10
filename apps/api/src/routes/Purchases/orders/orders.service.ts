@@ -41,17 +41,20 @@ export class OrdersService {
     const [supplier] =
       await sql`select * from purchasesuppliers where id = ${body.supplierId}`;
 
-    await sql`insert into purchaseorders ${sql({
-      folio: lastOrder.folio + 1,
-      issuer: body.issuer,
-      supplierId: body.supplierId,
-      currency: body.currency,
-      comments: body.comments,
-      iva: body.iva,
-      net,
-      products: JSON.stringify(products),
-      supplier: JSON.stringify(supplier),
-    })}`;
+    await sql.begin(async (sql) => {
+      await sql`insert into purchaseorders ${sql({
+        folio: lastOrder.folio + 1,
+        issuer: body.issuer,
+        supplierId: body.supplierId,
+        currency: body.currency,
+        comments: body.comments,
+        iva: body.iva,
+        net,
+        products: JSON.stringify(products),
+        supplier: JSON.stringify(supplier),
+      })}`;
+      await this.req.record(`Creo la orden ${lastOrder.folio + 1}`, sql);
+    });
   }
 
   async editOrder(body: z.infer<typeof editSchema>) {
@@ -73,22 +76,29 @@ export class OrdersService {
       extra.supplier = JSON.stringify(supplier);
     }
 
-    await sql`update purchaseorders set ${sql({
-      ...extra,
-      issuer: body.issuer,
-      supplierId: body.supplierId,
-      currency: body.currency,
-      comments: body.comments,
-      iva: body.iva,
-      net,
-      products: JSON.stringify(products),
-      business: body.business,
-    })}
-    where id = ${body.id}`;
+    await sql.begin(async (sql) => {
+      await sql`update purchaseorders set ${sql({
+        ...extra,
+        issuer: body.issuer,
+        supplierId: body.supplierId,
+        currency: body.currency,
+        comments: body.comments,
+        iva: body.iva,
+        net,
+        products: JSON.stringify(products),
+        business: body.business,
+      })}
+      where id = ${body.id}`;
+      await this.req.record(`Edito la orden ${body.id}`, sql);
+    });
   }
 
   async deleteOrder(body: z.infer<typeof deleteSchema>) {
-    await sql`delete from purchaseorders where id = ${body.id}`;
+    await sql.begin(async (sql) => {
+      const [row] =
+        await sql`delete from purchaseorders where id = ${body.id} returning *`;
+      await this.req.record(`Borro la orden ${row.folio}`, sql);
+    });
   }
 
   async getBasicData() {
