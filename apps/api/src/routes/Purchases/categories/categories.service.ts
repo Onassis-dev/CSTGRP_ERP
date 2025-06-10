@@ -155,4 +155,36 @@ export class CategoriesService {
     }
     await sql`insert into purchaseorders ${sql(orders)}`;
   }
+
+  async importRelations() {
+    await sql`delete from products_suppliers`;
+
+    const orders = await sql`select * from purchaseorders`;
+
+    const inserted = {};
+    for (const order of orders) {
+      let products = [];
+      try {
+        products = JSON.parse(order.products);
+      } catch (e) {
+        products = order.products;
+      }
+
+      for (const product of products) {
+        if (inserted[product.id + '_' + order.supplierId]) continue;
+        console.log(product.id, order.supplierId);
+
+        try {
+          await sql`insert into products_suppliers ${sql({
+            productId: product.id,
+            supplierId: order.supplierId,
+          })}`;
+        } catch (e) {
+          console.log(e);
+        }
+
+        inserted[product.id + '_' + order.supplierId] = true;
+      }
+    }
+  }
 }

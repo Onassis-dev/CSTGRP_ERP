@@ -67,7 +67,10 @@
 		queryFn: async () =>
 			(
 				await api.get('/purchases/orders/products', {
-					params: { code: search, supplierId: filter ? formData.supplierId : null }
+					params: {
+						code: search,
+						supplierId: filter && formData.supplierId ? formData.supplierId : null
+					}
 				})
 			).data
 	});
@@ -103,19 +106,22 @@
 	}
 
 	let products: any[] = $state([]);
-	let filter = $state(false);
+	let filter = $state(true);
 
 	$effect(() => {
-		if (show) {
-			refetch(['po-basic-data']);
-		}
-		if (!show) {
-			selectedDevice = {};
-			filter = false;
-			search = '';
-			refetch(['po-products']);
-		}
-		untrack(() => setFormData());
+		show;
+		untrack(() => {
+			setFormData();
+			if (show) {
+				refetch(['po-basic-data']);
+			}
+			if (!show) {
+				selectedDevice = {};
+				filter = true;
+				search = '';
+				refetch(['po-products']);
+			}
+		});
 	});
 
 	const currencies = [
@@ -240,10 +246,12 @@
 
 					<Button
 						variant="outline"
-						class={cn('h-8', filter && 'bg-muted')}
+						class={cn(
+							'h-8',
+							filter && 'bg-foreground text-background hover:bg-foreground hover:text-background'
+						)}
 						onclick={() => {
 							filter = !filter;
-							if (!formData.supplierId) filter = false;
 							refetch(['po-products']);
 						}}
 					>

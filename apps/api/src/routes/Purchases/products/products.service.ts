@@ -17,7 +17,7 @@ export class ProductsService {
     const products =
       await sql`Select *, (select name from purchasecategories where id = purchaseproducts."categoryId") as category from purchaseproducts
      ${body.name ? sql`WHERE code ILIKE ${'%' + body.name + '%'}` : sql``}
-     ${body.name ? sql`OR description ILIKE ${'%' + body.name + '%'}` : sql``}        order by id desc limit 150`;
+     ${body.name ? sql`OR description ILIKE ${'%' + body.name + '%'}` : sql``} order by id desc limit 150`;
     return products;
   }
 

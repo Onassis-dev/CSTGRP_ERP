@@ -121,10 +121,10 @@ export class OrdersService {
     SELECT id, code, description, price, image, measurement
     FROM purchaseproducts
     WHERE
-     ${body.code ? sql`code ILIKE ${'%' + body.code + '%'}` : sql`TRUE`} AND
-     ${body.code ? sql`OR description ILIKE ${'%' + body.code + '%'}` : sql`TRUE`} AND
-     ${body.supplierId ? sql`EXISTS (SELECT 1 FROM products_suppliers WHERE "productId" = purchaseproducts.id AND "supplierId" = ${body.supplierId})` : sql`TRUE`}
-    order by id desc LIMIT 50;
+     ${body.code ? sql`code ILIKE ${'%' + body.code + '%'}` : sql`TRUE`}
+     ${body.code ? sql`OR description ILIKE ${'%' + body.code + '%'}` : sql`AND TRUE`}
+     ${body.supplierId ? sql`AND EXISTS (SELECT 1 FROM products_suppliers WHERE "productId" = purchaseproducts.id AND "supplierId" = ${body.supplierId})` : sql`AND TRUE`}
+    order by id desc LIMIT 80;
   `;
     return products;
   }

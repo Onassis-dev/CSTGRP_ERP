@@ -43,4 +43,9 @@ export class CategoriesController {
   import(@Body() body: any) {
     return this.categoriesService.importCategories(body);
   }
+
+  @Post('import-relations')
+  importRelations() {
+    return this.categoriesService.importRelations();
+  }
 }
