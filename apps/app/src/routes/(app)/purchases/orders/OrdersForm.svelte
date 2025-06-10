@@ -138,6 +138,10 @@
 		products?.reduce((acc, curr) => acc + Number(curr.total), 0) *
 			(1 + Number(formData.iva || 0) / 100)
 	);
+
+	const subtotal: number = $derived(
+		products?.reduce((acc, curr) => acc + Number(curr.total), 0) * 1
+	);
 </script>
 
 <Dialog bind:open={show}>
@@ -210,6 +214,7 @@
 												class="w-24 rounded-none border-none"
 											/>
 										</TableCell>
+
 										<TableCell>{Number(row.total).toFixed(2)}</TableCell>
 									</TableRow>
 								{/each}
@@ -217,12 +222,15 @@
 						</Table>
 					</CardContent>
 				</Card>
-				<div class="grid grid-cols-3 gap-4">
+				<div class="grid grid-cols-4 gap-4">
 					<Label name="Moneda">
 						<Select items={currencies} bind:value={formData.currency} placeholder="Moneda" />
 					</Label>
 					<Label name="Iva">
 						<Select items={iva} bind:value={formData.iva} placeholder="Iva" />
+					</Label>
+					<Label name="SubTotal">
+						<Input value={Number(subtotal).toFixed(2)} type="text" readonly />
 					</Label>
 					<Label name="Total">
 						<Input value={Number(total).toFixed(2)} type="text" readonly />
