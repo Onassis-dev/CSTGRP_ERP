@@ -36,7 +36,7 @@
 				...formData,
 				id: parseInt(formData.id || '')
 			});
-			showSuccess('Categoria editada');
+			showSuccess('Proveedor editado');
 		} else {
 			await api.post('/purchases/suppliers', formData);
 			showSuccess('Proveedor registrado');

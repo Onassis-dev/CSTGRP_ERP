@@ -57,7 +57,7 @@
 				suppliers: selectedSuppliers,
 				id: parseInt(formData.id || '')
 			});
-			showSuccess('Categoria editada');
+			showSuccess('Producto editado');
 		} else {
 			await api.post('/purchases/products', {
 				...formData,

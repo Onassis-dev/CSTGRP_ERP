@@ -30,4 +30,4 @@
 	</main>
 </div>
 
-<Toaster />
+<Toaster richColors={true} />
