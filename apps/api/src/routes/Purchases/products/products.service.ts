@@ -31,10 +31,12 @@ export class ProductsService {
     const suppliers = body.suppliers;
     delete body.suppliers;
 
+    console.log(body);
     await sql.begin(async (sql) => {
       const [row] =
         await sql`insert into purchaseproducts ${sql(body)} returning id`;
-      await sql`insert into products_suppliers ${sql(suppliers.map((supplier) => ({ productId: row.id, supplierId: supplier })))}`;
+      if (suppliers?.length > 0)
+        await sql`insert into products_suppliers ${sql(suppliers.map((supplier) => ({ productId: row.id, supplierId: supplier })))}`;
       await this.req.record(`Creo el producto ${body.code}`, sql);
     });
   }
