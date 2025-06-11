@@ -79,6 +79,7 @@ export class OrdersService {
     await sql.begin(async (sql) => {
       await sql`update purchaseorders set ${sql({
         ...extra,
+        created_at: new Date(),
         issuer: body.issuer,
         supplierId: body.supplierId,
         currency: body.currency,

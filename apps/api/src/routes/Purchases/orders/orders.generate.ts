@@ -1,3 +1,4 @@
+import { toZonedTime } from 'date-fns-tz';
 import { format } from 'date-fns';
 import { PDFImage, PDFPage, rgb } from 'pdf-lib';
 import { PDFFont } from 'pdf-lib';
@@ -75,7 +76,9 @@ export function generateOrder(
 
   fillBox({
     ...rightProps,
-    text: 'Fecha: ' + format(data.created_at, 'dd/MM/yyyy'),
+    text:
+      'Fecha: ' +
+      format(toZonedTime(data.created_at, 'America/Tijuana'), 'dd/MM/yyyy'),
     y: 730 - 2 * 12,
   });
 
