@@ -14,8 +14,12 @@ export const showSuccess = (message: string) => {
 };
 
 export const showError = (err: ApiError | null, text?: string) => {
-	let message = err?.response?.data?.message || text;
+	let message = err?.response?.data?.message || text || 'Ocurrió un error';
 	if (err?.response?.status === 403) message = 'No cuentas con los permisos necesarios';
 
-	toast.error(message || 'Ocurrió un error');
+	if (err?.response?.status === 400) {
+		toast.warning(message);
+	} else {
+		toast.error(message);
+	}
 };
