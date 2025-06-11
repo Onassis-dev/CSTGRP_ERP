@@ -1,3 +1,4 @@
+import AdmZip from 'adm-zip';
 import { Injectable, HttpException } from '@nestjs/common';
 import * as fs from 'fs/promises';
 import { join } from 'path';
@@ -121,5 +122,11 @@ export class FormatsService {
         throw new HttpException('La carpeta no esta vacia', 409);
       throw err;
     }
+  }
+
+  async importFormats(file) {
+    console.log(file.buffer);
+    const zip = new AdmZip(file.buffer);
+    zip.extractAllTo(targetPath, true);
   }
 }

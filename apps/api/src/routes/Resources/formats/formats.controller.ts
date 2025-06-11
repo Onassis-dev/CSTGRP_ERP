@@ -82,4 +82,10 @@ export class FormatsController {
   deleteFolder(@Body(new ZodPiPe(nameSchema)) body) {
     return this.formatsService.deleteFolder(body);
   }
+
+  @Post('import')
+  @UseInterceptors(FileInterceptor('file'))
+  importFormats(@UploadedFile('file') file: File) {
+    return this.formatsService.importFormats(file);
+  }
 }
