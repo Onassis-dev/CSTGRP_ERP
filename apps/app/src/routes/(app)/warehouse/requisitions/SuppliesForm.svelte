@@ -22,8 +22,10 @@
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
 	import { Trash } from 'lucide-svelte';
-	import { onMount, untrack } from 'svelte';
 	import Cookies from 'js-cookie';
+	import { createQuery } from '@tanstack/svelte-query';
+	import { getOptions, getProdAreas } from '$lib/utils/queries';
+
 	interface Props {
 		show: boolean;
 	}
@@ -32,7 +34,7 @@
 	let formData: any = $state({
 		petitioner: Cookies.get('username')
 	});
-	let areas: any[] = $state();
+
 	interface material {
 		code: string;
 		amount: string;
@@ -51,9 +53,10 @@
 		showSuccess(`Requisicion Registrada`);
 	}
 
-	async function fetchOptions() {
-		areas = (await api.get('/hrvarious/areas')).data;
-	}
+	const areasQuery = createQuery({
+		queryKey: ['requisitions-areas'],
+		queryFn: getProdAreas
+	});
 
 	const motives = [
 		{ name: 'Producción', value: 'Producción' },
@@ -70,10 +73,6 @@
 		materials.splice(i, 1);
 		materials = materials;
 	}
-
-	onMount(() => {
-		fetchOptions();
-	});
 
 	$effect(() => {
 		show;
@@ -95,7 +94,7 @@
 					<Select items={motives} bind:value={formData.motive} />
 				</Label>
 				<Label name="Area:">
-					<Select items={areas} bind:value={formData.areaId} />
+					<Select items={getOptions($areasQuery.data)} bind:value={formData.areaId} />
 				</Label>
 				<Label name="Job:" class="col-span-3">
 					<Input bind:value={formData.job} />
