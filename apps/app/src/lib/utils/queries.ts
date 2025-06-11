@@ -20,6 +20,16 @@ export const getAreas = async () => {
 	return result;
 };
 
+export const getProdAreas = async () => {
+	const areasList = (await api.get('/hrvarious/areas')).data;
+	const result: Record<string, any> = {};
+	areasList.forEach((area: any) => {
+		if (area.type === 'prod') result[area.value] = area;
+	});
+
+	return result;
+};
+
 export const getPositions = async () => {
 	const positionsList = (await api.get('/hrvarious/positions')).data;
 	const result: Record<string, any> = {};

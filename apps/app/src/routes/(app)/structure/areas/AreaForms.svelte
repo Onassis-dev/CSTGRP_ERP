@@ -26,7 +26,8 @@
 	let formData: any = $state({
 		name: '',
 		captured: false,
-		color: ''
+		color: '',
+		type: 'prod'
 	});
 
 	async function handleSubmit() {
@@ -59,6 +60,11 @@
 	$effect(() => {
 		if (show || true) formData = untrack(() => ({ ...formData, ...selectedArea }));
 	});
+
+	const types = [
+		{ value: 'prod', name: 'Produccion' },
+		{ value: 'admin', name: 'Administracion' }
+	];
 </script>
 
 <Dialog bind:open={show}>
@@ -79,6 +85,9 @@
 					</Label>
 					<Label name="Color">
 						<Select class="mt-2" items={colors} bind:value={formData.color} />
+					</Label>
+					<Label name="Tipo">
+						<Select class="mt-2" items={types} bind:value={formData.type} />
 					</Label>
 				</div>
 

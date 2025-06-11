@@ -24,7 +24,7 @@
 	import { showSuccess } from '$lib/utils/showToast';
 	import Cookies from 'js-cookie';
 	import { refetch } from '$lib/utils/query';
-	import { getAreas, getOptions } from '$lib/utils/queries';
+	import { getOptions, getProdAreas } from '$lib/utils/queries';
 	import { createQuery } from '@tanstack/svelte-query';
 	import { untrack } from 'svelte';
 
@@ -56,7 +56,7 @@
 
 	const areasQuery = createQuery({
 		queryKey: ['requisitions-areas'],
-		queryFn: getAreas
+		queryFn: getProdAreas
 	});
 
 	async function handleSubmit() {

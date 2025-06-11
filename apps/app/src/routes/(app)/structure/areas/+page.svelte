@@ -35,6 +35,11 @@
 		selectedArea = $areas?.data?.[i];
 		show1 = true;
 	}
+
+	let types = {
+		prod: 'Produccion',
+		admin: 'Administracion'
+	};
 </script>
 
 <MenuBar>
@@ -48,6 +53,7 @@
 		<TableHead></TableHead>
 		<TableHead class="w-full">Nombre</TableHead>
 		<TableHead>Captura</TableHead>
+		<TableHead>Tipo</TableHead>
 		<TableHead>Color</TableHead>
 	</TableHeader>
 	<TableBody>
@@ -59,6 +65,9 @@
 					{#if area.captured}
 						<Check />
 					{/if}
+				</TableCell>
+				<TableCell>
+					<Badge color="gray">{types[area.type as keyof typeof types] || ''}</Badge>
 				</TableCell>
 				<TableCell><Badge color={area.color}>{area.color}</Badge></TableCell>
 			</TableRow>
