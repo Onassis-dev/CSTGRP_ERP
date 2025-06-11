@@ -166,19 +166,14 @@ export class MovementsService {
   async postReposition(body: z.infer<typeof repositionSchema>) {
     try {
       const [material] =
-        await sql`select id, "leftoverAmount" from materials where code = ${body.code}`;
-
-      let materialFromInventory =
-        -Math.abs(parseFloat(body.amount)) +
-        parseFloat(material.leftoverAmount);
-      if (materialFromInventory > 0) materialFromInventory = 0;
+        await sql`select id from materials where code = ${body.code}`;
 
       await sql.begin(async (sql) => {
         await sql`insert into materialmovements ("materialId", "movementId", amount, "realAmount", active, "activeDate", extra) values
           ((select id from materials where code = ${body.code}),
           (select id from materialie where jobpo = ${body.job}),
           ${-Math.abs(parseFloat(body.amount))},
-          ${materialFromInventory},
+          ${-Math.abs(parseFloat(body.amount))},
           true,
           ${new Date()},
           true) returning *`;
