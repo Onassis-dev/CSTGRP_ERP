@@ -31,7 +31,6 @@ export class ProductsService {
     const suppliers = body.suppliers;
     delete body.suppliers;
 
-    console.log(body);
     await sql.begin(async (sql) => {
       const [row] =
         await sql`insert into purchaseproducts ${sql(body)} returning id`;

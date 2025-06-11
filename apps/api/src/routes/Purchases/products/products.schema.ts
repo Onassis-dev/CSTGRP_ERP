@@ -11,7 +11,10 @@ export const createSchema = z.object({
   code: z.string(),
   description: z.string(),
   price: z.string().regex(numberRegex),
-  measurement: z.string(),
+  measurement: z
+    .string()
+    .nullish()
+    .transform((val) => val || ''),
   suppliers: z.array(z.number()),
 });
 
