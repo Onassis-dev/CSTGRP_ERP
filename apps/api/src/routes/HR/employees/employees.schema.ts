@@ -44,7 +44,7 @@ export const createSchema = z.object({
   genre: z.string().length(1),
   sons: z.number(),
   vacations: z.number().nullish(),
-  clinicNo: z.string(),
+  clinicNo: z.string().nullish(),
   email: z.string().email(),
   bcpet: z.string().refine((value) => dateRegex.test(value)),
   number: z
