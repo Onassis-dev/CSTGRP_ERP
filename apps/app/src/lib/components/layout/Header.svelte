@@ -5,6 +5,7 @@
 	import { Button } from '../ui/button';
 	import { PanelRight } from 'lucide-svelte';
 	import { getTraduction } from './traduction';
+	import Docs from './Docs.svelte';
 
 	afterNavigate(() => {
 		if (browser) {
@@ -20,8 +21,10 @@
 	<Button class="block xl:hidden" variant="ghost" onclick={() => sidebarOpen.set(true)}>
 		<PanelRight class="size-3.5" />
 	</Button>
-	<h3 class="flex items-center gap-1.5 text-sm font-medium">
+	<h3 class="flex items-center gap-2 text-sm font-medium">
 		<traduction.icon class="size-3.5" strokeWidth={1.7} />
 		{traduction.text}
 	</h3>
+
+	<Docs />
 </header>

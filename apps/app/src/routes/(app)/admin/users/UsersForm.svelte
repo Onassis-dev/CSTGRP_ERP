@@ -135,6 +135,9 @@
 					<Label name="Perm. Directorio">
 						<Select items={permissions} bind:value={formData.perm_directory} />
 					</Label>
+					<Label name="Perm. Documentos">
+						<Select items={permissions} bind:value={formData.perm_docs} />
+					</Label>
 				</div>
 
 				<div class="grid grid-cols-3 gap-4 rounded-md border p-2">
