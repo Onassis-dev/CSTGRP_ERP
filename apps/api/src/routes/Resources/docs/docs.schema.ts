@@ -5,7 +5,7 @@ export const getDocSchema = z.object({
 });
 
 const baseCreateSchema = z.object({
-  doc: z.string(),
+  doc: z.string().url(),
   page: z.string(),
 });
 

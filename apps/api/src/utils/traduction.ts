@@ -164,6 +164,8 @@ const valueTraduccion = {
   products: 'Productos',
   providers: 'Proveedores',
   orders: 'Órdenes',
+  doc: 'Documento',
+  page: 'Página',
 };
 
 export const getTraducction = (value: string | number) => {
