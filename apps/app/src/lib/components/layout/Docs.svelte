@@ -24,7 +24,7 @@
 			<HelpCircle class="size-3.5" />
 		</Button>
 	</Dialog.Trigger>
-	<Dialog.Content class="h-[90dvh] max-h-[90dvh] w-[90dvw] max-w-[90dvw] overflow-hidden">
+	<Dialog.Content class="h-[92dvh] max-h-[92dvh] w-[92dvw] max-w-[92dvw] overflow-hidden">
 		<iframe src={docsPath} class="h-full w-full" title="Docs"></iframe>
 	</Dialog.Content>
 </Dialog.Root>

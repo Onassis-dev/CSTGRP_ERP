@@ -134,40 +134,45 @@
 						>{positions[assistance.positionId || ''].name || ''}</Badge
 					></TableCell
 				>
-				<TableCell class="px-1">
+				<TableCell class="p-[1px] py-[2px]">
 					<Select
+						class="rounded-none text-xs"
 						cell={true}
 						items={incidencesList}
 						bind:value={filteredAssistances[i].incidenceId0}
 						onValueChange={() => editAssistance(i)}
 					/>
 				</TableCell>
-				<TableCell class="px-1">
+				<TableCell class="p-[1px] py-[2px]">
 					<Select
+						class="rounded-none text-xs"
 						cell={true}
 						items={incidencesList}
 						bind:value={filteredAssistances[i].incidenceId1}
 						onValueChange={() => editAssistance(i)}
 					/>
 				</TableCell>
-				<TableCell class="px-1">
+				<TableCell class="p-[1px] py-[2px]">
 					<Select
+						class="rounded-none text-xs"
 						cell={true}
 						items={incidencesList}
 						bind:value={filteredAssistances[i].incidenceId2}
 						onValueChange={() => editAssistance(i)}
 					/>
 				</TableCell>
-				<TableCell class="px-1">
+				<TableCell class="p-[1px] py-[2px]">
 					<Select
+						class="rounded-none text-xs"
 						cell={true}
 						items={incidencesList}
 						bind:value={filteredAssistances[i].incidenceId3}
 						onValueChange={() => editAssistance(i)}
 					/>
 				</TableCell>
-				<TableCell class="px-1">
+				<TableCell class="p-[1px] py-[2px]">
 					<Select
+						class="rounded-none text-xs"
 						cell={true}
 						items={incidencesList}
 						bind:value={filteredAssistances[i].incidenceId4}
