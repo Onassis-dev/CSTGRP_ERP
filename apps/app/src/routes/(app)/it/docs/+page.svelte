@@ -6,14 +6,14 @@
 
 <MenuBar>
 	{#snippet right()}
-		<Button
-			href="https://app.gitbook.com/o/c1F7mmoWJQHCzfOVAWjT/s/kXdm8ZrQNS1S4LlC3bHn/"
-			target="_blank"
-		>
+		<Button href="https://onassis.getoutline.com/doc/sistemas-4DKyqJXUj1" target="_blank">
 			<PlusCircle class=" size-3.5" />Modificar
 		</Button>
 	{/snippet}
 </MenuBar>
 
-<iframe class="h-full w-full" title="Docs" src="https://onassiss-organization.gitbook.io/cst-group"
+<iframe
+	class="h-full w-full"
+	title="Docs"
+	src="https://onassis.getoutline.com/s/c7f4fa03-65d8-4d72-a80f-da7ec1aa20c7"
 ></iframe>
