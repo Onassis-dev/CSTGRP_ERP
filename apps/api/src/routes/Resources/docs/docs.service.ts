@@ -27,6 +27,52 @@ export class DocsService {
   }
 
   async getDoc(body: z.infer<typeof getDocSchema>) {
-    return (await sql`Select doc from docs where page = ${body.page}`)[0]?.doc;
+    const docUrl = (
+      await sql`Select doc from docs where page = ${body.page}`
+    )[0]?.doc;
+
+    const docId = docUrl.split('/').pop();
+
+    const response = await fetch(
+      'https://app.getoutline.com/api/documents.export',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${process.env.OUTLINE_API_KEY}`,
+        },
+        body: JSON.stringify({
+          id: docId,
+        }),
+      },
+    );
+    let { data }: { data: string } = await response.json();
+    console.log(data);
+
+    const regex = /!\[\]\(/g;
+    const indexes = [...data.matchAll(regex)].map((match) => match.index);
+    const images = [];
+
+    for (const index of indexes) {
+      const imageUrl = data.slice(index + 4, index + 69);
+      const attachmentUrl = `https://app.getoutline.com` + imageUrl;
+      try {
+        const attachmentResponse = await fetch(attachmentUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${process.env.OUTLINE_API_KEY}`,
+          },
+        });
+        images.push({
+          newUrl: attachmentResponse.url,
+          oldUrl: imageUrl,
+        });
+      } catch {}
+    }
+
+    for (const image of images) data = data.replace(image.oldUrl, image.newUrl);
+
+    return data;
   }
 }
