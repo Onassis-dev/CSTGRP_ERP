@@ -84,7 +84,7 @@
 				<TableCell>{formatDate(device.bornDate) || ''}</TableCell>
 				<TableCell>{device.currency || ''}</TableCell>
 				<TableCell>{device.purchases || ''}</TableCell>
-				<TableCell>{device.lastPurchase || ''}</TableCell>
+				<TableCell>{formatDate(device.lastPurchase) || ''}</TableCell>
 				<TableCell>{formatDate(device.created_at) || ''}</TableCell>
 			</TableRow>
 		{/each}

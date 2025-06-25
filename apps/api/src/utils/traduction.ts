@@ -172,6 +172,8 @@ const valueTraduccion = {
   orderId: 'Orden',
   suppliers: 'Proveedores',
   minAmount: 'Cantidad mínima',
+  realAmount: 'Cantidad real',
+  newAmount: 'Nueva cantidad',
 };
 
 export const getTraducction = (value: string | number) => {

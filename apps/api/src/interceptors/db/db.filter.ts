@@ -16,18 +16,14 @@ export class DBFilter<T extends PostgresError> {
     if (exception.code === '23505')
       message =
         getTraducction(
-          exception.constraint_name.split('_')[
-            exception.constraint_name.split('_').length - 1
-          ],
-        ) + ' Ya fue registrado';
+          exception.detail.slice(
+            exception.detail.indexOf('(') + 1,
+            exception.detail.indexOf(')'),
+          ),
+        ) + ': Duplicado';
     if (exception.code === '22001') message = 'Valor muy largo';
 
     console.log(exception);
-    console.log(exception.message);
-    console.log(exception.code);
-    console.log(exception.detail);
-    console.log(exception.column_name);
-    console.log(exception.constraint_name);
 
     response.status(HttpStatus.BAD_REQUEST).send({
       errors: exception,

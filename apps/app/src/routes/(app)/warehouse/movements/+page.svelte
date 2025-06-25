@@ -148,9 +148,9 @@
 						onblur={async (e) => {
 							try {
 								await changeAmount(movement.id, movement.realAmount);
-							} catch {
+							} catch (err: any) {
 								(e.target as HTMLInputElement).value = previousAmount;
-								showError(null, 'No se pudo actualizar la cantidad');
+								throw err;
 							}
 						}}
 					/></TableCell

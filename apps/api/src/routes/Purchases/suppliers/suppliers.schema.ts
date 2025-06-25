@@ -6,7 +6,7 @@ export const searchSchema = z.object({
 });
 
 export const createSchema = z.object({
-  name: z.string(),
+  name: z.string().toUpperCase(),
   document: z.string(),
   email: z.email(),
   phone: z.string(),

@@ -7,7 +7,7 @@ export const searchSchema = z.object({
 
 export const createSchema = z.object({
   categoryId: idSchema,
-  code: z.string(),
+  code: z.string().toUpperCase(),
   description: z.string(),
   price: priceSchema,
   measurement: z

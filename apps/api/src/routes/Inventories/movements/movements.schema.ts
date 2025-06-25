@@ -1,4 +1,4 @@
-import { idSchema, numberSchema } from 'src/utils/schemas';
+import { idSchema, numberSchema, signedNumberSchema } from 'src/utils/schemas';
 import { z } from 'zod/v4';
 
 export const movementsFilterSchema = z.object({
@@ -12,7 +12,7 @@ export const movementsFilterSchema = z.object({
 
 export const updateAmountSchema = z.object({
   id: idSchema,
-  newAmount: numberSchema,
+  newAmount: signedNumberSchema,
 });
 
 export const scrapSchema = z.object({
@@ -34,5 +34,5 @@ export const repositionSchema = z.object({
 export const returnSchema = z.object({
   code: z.string(),
   amount: numberSchema,
-  job: z.string().optional().nullable(),
+  job: z.string().nullish(),
 });
