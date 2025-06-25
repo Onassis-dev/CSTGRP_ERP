@@ -1,6 +1,6 @@
 import { Injectable, HttpException } from '@nestjs/common';
 import { getDataSchema } from './kiosk.schema';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import sql from 'src/utils/db';
 
 @Injectable()

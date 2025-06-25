@@ -1,13 +1,14 @@
 import { promises as fs } from 'fs';
 import { format, toZonedTime } from 'date-fns-tz';
 import { Injectable } from '@nestjs/common';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import sql from 'src/utils/db';
-import { filterSchema, idSchema } from './petitions.schema';
+import { filterSchema } from './petitions.schema';
 import { ContextProvider } from 'src/interceptors/context.provider';
 import path from 'path';
 import { PDFDocument, StandardFonts } from 'pdf-lib';
 import { fillBox } from 'src/utils/pdf';
+import { idObjectSchema } from 'src/utils/schemas';
 
 @Injectable()
 export class PetitionsService {
@@ -21,7 +22,7 @@ export class PetitionsService {
     return movements;
   }
 
-  async download(body: z.infer<typeof idSchema>) {
+  async download(body: z.infer<typeof idObjectSchema>) {
     const [requisition] =
       await sql`select requisitions.*, materials.code, materials.description, materials.measurement from requisitions
       join materials on requisitions."materialId" = materials.id
@@ -190,7 +191,7 @@ export class PetitionsService {
     return pdfBytes;
   }
 
-  async deleteRequisition(body: z.infer<typeof idSchema>) {
+  async deleteRequisition(body: z.infer<typeof idObjectSchema>) {
     let deletedObj;
     await sql.begin(async (sql) => {
       [deletedObj] =

@@ -1,11 +1,12 @@
-import { z } from 'zod';
+import { idSchema } from 'src/utils/schemas';
+import { z } from 'zod/v4';
 
 export const getDocSchema = z.object({
   page: z.string(),
 });
 
 const baseCreateSchema = z.object({
-  doc: z.string().url(),
+  doc: z.url(),
   page: z.string(),
 });
 
@@ -18,7 +19,7 @@ export const createSchema = baseCreateSchema.transform((data) => ({
 
 export const editSchema = baseCreateSchema
   .extend({
-    id: z.number(),
+    id: idSchema,
   })
   .transform((data) => ({
     ...data,
@@ -28,5 +29,5 @@ export const editSchema = baseCreateSchema
   }));
 
 export const deleteSchema = z.object({
-  id: z.number(),
+  id: idSchema,
 });

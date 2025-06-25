@@ -1,12 +1,11 @@
-import { z } from 'zod';
+import { dateSchema, idSchema } from 'src/utils/schemas';
+import { z } from 'zod/v4';
 
-const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-
-export const dateSchema = z.object({
-  date: z.string().refine((value) => dateRegex.test(value)),
+export const dateObjectSchema = z.object({
+  date: dateSchema,
 });
 
 export const areaAssistanceInfoSchema = z.object({
-  date: z.string().refine((value) => dateRegex.test(value)),
-  areaId: z.string().nullable(),
+  date: dateSchema,
+  areaId: idSchema.nullable(),
 });

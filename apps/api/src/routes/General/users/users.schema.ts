@@ -1,7 +1,7 @@
-import { createZodDto } from 'nestjs-zod';
-import { z } from 'zod';
+import { idSchema, intSchema } from 'src/utils/schemas';
+import { z } from 'zod/v4';
 
-const permType = z.number().min(0).max(2);
+const permType = intSchema.min(0).max(2);
 
 export const registerSchema = z.object({
   username: z.string(),
@@ -27,12 +27,10 @@ export const registerSchema = z.object({
 });
 
 export const editSchema = registerSchema.extend({
-  id: z.number(),
-  password: z.string().min(3).optional(),
+  id: idSchema,
+  password: z.string().min(6).optional(),
 });
 
-export class RegisterDTO extends createZodDto(registerSchema) {}
-
 export const deleteSchema = z.object({
-  id: z.number(),
+  id: idSchema,
 });

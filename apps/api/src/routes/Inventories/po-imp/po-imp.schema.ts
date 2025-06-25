@@ -1,66 +1,46 @@
-import { numberSchema } from 'src/utils/schemas';
-import { z } from 'zod';
-
-export const idSchema = z.object({
-  id: z.string(),
-});
+import { idSchema, intSchema, signedNumberSchema } from 'src/utils/schemas';
+import { z } from 'zod/v4';
 
 export const IEFilterSchema = z.object({
   code: z.string().nullable(),
   type: z.string().nullable(),
-  location: z.string().nullable().optional(),
+  location: z.string().nullish(),
 });
 
 export const importSchema = z.object({
   import: z.string(),
   due: z.string(),
   location: z.string(),
-  materials: z.array(
-    z.object({
-      code: z.string(),
-      amount: numberSchema,
-    }),
-  ),
+  materials: z
+    .array(
+      z.object({
+        code: z.string(),
+        amount: signedNumberSchema,
+      }),
+    )
+    .nonempty(),
+});
+
+export const updateImportSchema = importSchema.extend({
+  id: idSchema,
 });
 
 export const exportSchema = z.object({
-  programation: z.string(),
+  programation: intSchema,
   jobpo: z.string(),
   due: z.string(),
-  materials: z.array(
-    z.object({
-      code: z.string(),
-      amount: numberSchema,
-      realAmount: numberSchema,
-      active: z.boolean(),
-    }),
-  ),
+  materials: z
+    .array(
+      z.object({
+        code: z.string(),
+        amount: signedNumberSchema,
+        realAmount: signedNumberSchema,
+        active: z.boolean(),
+      }),
+    )
+    .nonempty(),
 });
 
-export const updateImportSchema = z.object({
-  id: z.string(),
-  due: z.string(),
-  import: z.string(),
-  location: z.string(),
-  materials: z.array(
-    z.object({
-      code: z.string(),
-      amount: numberSchema,
-    }),
-  ),
-});
-
-export const updateExportSchema = z.object({
-  id: z.string(),
-  due: z.string(),
-  jobpo: z.string(),
-  programation: z.string(),
-  materials: z.array(
-    z.object({
-      code: z.string(),
-      amount: numberSchema,
-      realAmount: numberSchema,
-      active: z.boolean(),
-    }),
-  ),
+export const updateExportSchema = exportSchema.extend({
+  id: idSchema,
 });

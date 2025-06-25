@@ -1,46 +1,44 @@
 import { Catch, ArgumentsHost, HttpStatus } from '@nestjs/common';
 import { FastifyReply } from 'fastify';
 import { getTraducction } from 'src/utils/traduction';
-import { ZodError } from 'zod';
+import { $ZodError } from 'zod/v4/core';
+import z from 'zod/v4';
 
-@Catch(ZodError)
-export class ValidationFilter<T extends ZodError> {
+@Catch($ZodError)
+export class ValidationFilter<T extends $ZodError> {
   catch(exception: T, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<FastifyReply>();
-    let message = '';
 
-    const getError = (err) => {
-      if (err.code === 'too_big')
-        return `Es muy grande, (maximo: ${err.maximum})`;
-
-      if (err.code === 'too_small')
-        return `Es muy corto, (minimo: ${err.minimum})`;
-
-      if (err.code === 'required') return 'Faltante';
-
-      if (
-        err.code === 'invalid_type' &&
-        (err.received === 'null' || err.received === 'undefinded')
-      )
-        return 'Faltante';
-
-      if (err.code === 'invalid_type')
-        `Dato incorrecto, se espera ${err.expected}`;
-
-      if (err.code === 'invalid_string') return `incorrecto`;
-
-      if (err.code === 'custom') return `No cumple con el formato adecuado`;
-    };
-
-    const bodyExists = !!exception.errors[0].path[0];
-    console.log(exception.errors[0]);
-    message = `Dato (${getTraducction(exception.errors[0].path[0])}) ${getError(exception.errors[0])}`;
+    const bodyExists = !!exception.issues[0].path[0];
+    const message = `${getTraducction(exception.issues[0].path[0] as string)}: ${exception.issues[0].message}`;
 
     response.status(HttpStatus.BAD_REQUEST).send({
-      errors: bodyExists ? exception.errors : 'No se ah mandado ningun dato',
+      errors: bodyExists ? exception.issues : 'No se ah mandado ningun dato',
       message: bodyExists ? message : 'No se ah mandado ningun dato',
       statusCode: HttpStatus.BAD_REQUEST,
     });
   }
 }
+
+z.config({
+  customError: ({ code, input, expected, minimum, maximum }) => {
+    if (code === 'invalid_type') {
+      if (!input) return 'Faltante';
+      if (expected === 'number') return 'Numero invalido';
+      if (expected === 'string') return 'Texto invalido';
+    }
+
+    if (code === 'invalid_format') {
+      return 'Formato invalido';
+    }
+
+    if (code === 'too_small') {
+      return `Es muy corto, (minimo: ${minimum})`;
+    }
+
+    if (code === 'too_big') {
+      return `Es muy grande, (maximo: ${maximum})`;
+    }
+  },
+});

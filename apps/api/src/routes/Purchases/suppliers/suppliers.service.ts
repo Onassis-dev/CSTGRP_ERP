@@ -5,7 +5,7 @@ import {
   createSchema,
   searchSchema,
 } from './suppliers.schema';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import sql from 'src/utils/db';
 import { ContextProvider } from 'src/interceptors/context.provider';
 

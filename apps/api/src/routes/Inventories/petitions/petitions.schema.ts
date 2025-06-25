@@ -1,9 +1,5 @@
-import { z } from 'zod';
-
-export const idSchema = z.object({
-  id: z.string(),
-});
+import { z } from 'zod/v4';
 
 export const filterSchema = z.object({
-  folio: z.string().nullable().optional(),
+  folio: z.string().nullish(),
 });

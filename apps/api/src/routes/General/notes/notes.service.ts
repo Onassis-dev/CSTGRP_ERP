@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import sql from 'src/utils/db';
 import { ContextProvider } from 'src/interceptors/context.provider';
-import { createNoteSchema, editNoteSchema, idSchema } from './notes.schema';
+import { createNoteSchema, editNoteSchema } from './notes.schema';
+import { idObjectSchema } from 'src/utils/schemas';
 
 @Injectable()
 export class NotesService {
@@ -24,7 +25,7 @@ export class NotesService {
     return this.getNotes();
   }
 
-  async deleteNote(body: z.infer<typeof idSchema>) {
+  async deleteNote(body: z.infer<typeof idObjectSchema>) {
     await sql`delete from notes where id = ${body.id} and "userId" = ${this.req.userId}`;
     return this.getNotes();
   }

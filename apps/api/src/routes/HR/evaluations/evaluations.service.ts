@@ -4,10 +4,11 @@ import {
   createEvaluationSchema,
   getEvaluationsSchema,
 } from './evaluations.schema';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import sql from 'src/utils/db';
 import { saveFile, deleteFile } from 'src/utils/storage';
 import { ContextProvider } from 'src/interceptors/context.provider';
+import { idObjectSchema } from 'src/utils/schemas';
 
 @Injectable()
 export class EvaluationsService {
@@ -36,7 +37,7 @@ export class EvaluationsService {
     return;
   }
 
-  async deleteEvaluation(body: { id: string }) {
+  async deleteEvaluation(body: z.infer<typeof idObjectSchema>) {
     const [evaluation] =
       await sql`select url, "employeeId", created_at from evaluations where id = ${body.id}`;
     if (!evaluation) throw new HttpException('Evaluación no encontrada', 404);

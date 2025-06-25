@@ -10,7 +10,8 @@ import { PetitionsService } from './petitions.service';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
-import { idSchema, filterSchema } from './petitions.schema';
+import { filterSchema } from './petitions.schema';
+import { idObjectSchema } from 'src/utils/schemas';
 
 @ApiTags('Material Petitions')
 @Controller('petitions')
@@ -24,12 +25,12 @@ export class PetitionsController {
   }
 
   @Get('/download/:id')
-  download(@Param(new ZodPiPe(idSchema)) params) {
+  download(@Param(new ZodPiPe(idObjectSchema)) params) {
     return this.petitionsService.download(params);
   }
 
   @Delete(':id')
-  delete(@Param(new ZodPiPe(idSchema)) body) {
+  delete(@Param(new ZodPiPe(idObjectSchema)) body) {
     return this.petitionsService.deleteRequisition(body);
   }
 }

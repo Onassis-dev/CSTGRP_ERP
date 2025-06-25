@@ -1,4 +1,10 @@
-import { z } from 'zod';
+import {
+  idSchema,
+  intSchema,
+  numberSchema,
+  priceSchema,
+} from 'src/utils/schemas';
+import { z } from 'zod/v4';
 
 export const searchSchema = z.object({
   name: z.string().nullish(),
@@ -6,33 +12,33 @@ export const searchSchema = z.object({
 
 export const createSchema = z.object({
   issuer: z.string(),
-  supplierId: z.coerce.number(),
+  supplierId: idSchema,
   currency: z.string(),
-  iva: z.coerce.number(),
+  iva: intSchema,
   comments: z.string().nullable(),
-  business: z.coerce.number(),
+  business: intSchema,
   products: z.array(
     z.object({
-      id: z.coerce.number(),
+      id: idSchema,
       code: z.string(),
       description: z.string(),
-      quantity: z.coerce.number(),
-      price: z.coerce.number(),
+      quantity: numberSchema,
+      price: priceSchema,
       measurement: z.string().nullish(),
-      total: z.coerce.number(),
+      total: priceSchema,
     }),
   ),
 });
 
 export const editSchema = createSchema.extend({
-  id: z.number(),
+  id: idSchema,
 });
 
 export const deleteSchema = z.object({
-  id: z.coerce.number(),
+  id: idSchema,
 });
 
 export const getProductsSchema = z.object({
   code: z.string().nullish(),
-  supplierId: z.coerce.number().nullish(),
+  supplierId: idSchema.nullish(),
 });

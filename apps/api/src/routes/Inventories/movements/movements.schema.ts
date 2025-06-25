@@ -1,9 +1,5 @@
-import { numberSchema } from 'src/utils/schemas';
-import { z } from 'zod';
-
-export const idSchema = z.object({
-  id: z.string(),
-});
+import { idSchema, numberSchema } from 'src/utils/schemas';
+import { z } from 'zod/v4';
 
 export const movementsFilterSchema = z.object({
   code: z.string().nullable(),
@@ -15,7 +11,7 @@ export const movementsFilterSchema = z.object({
 });
 
 export const updateAmountSchema = z.object({
-  id: z.string(),
+  id: idSchema,
   newAmount: numberSchema,
 });
 

@@ -16,10 +16,10 @@ import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import {
   createEvaluationSchema,
   getEvaluationsSchema,
-  idSchema,
 } from './evaluations.schema';
 import { FileInterceptor } from '@nest-lab/fastify-multer';
 import { File } from '@nest-lab/fastify-multer';
+import { idObjectSchema } from 'src/utils/schemas';
 
 @ApiTags('Employees Evaluations')
 @Controller('employees/evaluations')
@@ -42,7 +42,7 @@ export class EvaluationsController {
   }
 
   @Delete(':id')
-  deleteEvaluation(@Param(new ZodPiPe(idSchema)) body) {
+  deleteEvaluation(@Param(new ZodPiPe(idObjectSchema)) body) {
     return this.evaluationsService.deleteEvaluation(body);
   }
 }

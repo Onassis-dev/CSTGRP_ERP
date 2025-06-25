@@ -3,14 +3,14 @@ import { File } from '@nest-lab/fastify-multer';
 import {
   createSchema,
   editSchema,
+  getEmployeeSchema,
   getEmployeesSchema,
-  idSchema,
   quitSchema,
   reactivateSchema,
   templateSchema,
   updateSalarySchema,
 } from './employees.schema';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import sql from 'src/utils/db';
 import { getWeekDays } from 'src/utils/functions';
 import exceljs from 'exceljs';
@@ -97,12 +97,12 @@ export class EmployeesService {
 
   async getEmployees(query: z.infer<typeof getEmployeesSchema>) {
     const employees =
-      await sql`select id, name, "admissionDate", "paternalLastName", "maternalLastName", "noEmpleado", "areaId", "positionId", active from employees where active = ${query.active === 'true'} order by "noEmpleado" DESC`;
+      await sql`select id, name, "admissionDate", "paternalLastName", "maternalLastName", "noEmpleado", "areaId", "positionId", active from employees where active = ${query.active} order by "noEmpleado" DESC`;
 
     return employees;
   }
 
-  async getEmployee(body: z.infer<typeof idSchema>) {
+  async getEmployee(body: z.infer<typeof getEmployeeSchema>) {
     return await sql`select * from employees where id = ${body.id}`;
   }
 

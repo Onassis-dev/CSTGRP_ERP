@@ -1,6 +1,6 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import jwt from 'jsonwebtoken';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import sql from 'src/utils/db';
 import {
   exportSchema,

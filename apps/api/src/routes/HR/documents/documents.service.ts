@@ -5,9 +5,8 @@ import {
   createDocSchema,
   editDocSchema,
   getDocumentsSchema,
-  idSchema,
 } from './documents.schema';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import sql from 'src/utils/db';
 import { deleteFile, saveFile } from 'src/utils/storage';
 import { File } from '@nest-lab/fastify-multer';
@@ -25,7 +24,7 @@ import { loadImage } from 'canvas';
 import { numberToWords } from './documents.utils';
 import { generateApplication } from './documents.generate';
 import { PDFDocument, StandardFonts } from 'pdf-lib';
-import { markPage } from 'src/utils/pdf';
+import { idObjectSchema } from 'src/utils/schemas';
 const convert = util.promisify(libre.convert);
 
 @Injectable()
@@ -80,7 +79,7 @@ export class DocumentsService {
     });
   }
 
-  async deleteDocument(body: z.infer<typeof idSchema>) {
+  async deleteDocument(body: z.infer<typeof idObjectSchema>) {
     const [document] = await sql`select * from documents where id = ${body.id}`;
     await deleteFile(document.url);
 
@@ -97,7 +96,7 @@ export class DocumentsService {
     });
   }
 
-  async downloadApplication(body: z.infer<typeof idSchema>) {
+  async downloadApplication(body: z.infer<typeof idObjectSchema>) {
     const [employee] = await sql`select * from employees where id = ${body.id}`;
 
     const templatePath = path.resolve(
@@ -192,7 +191,7 @@ export class DocumentsService {
     return pdfBuf;
   }
 
-  async generateImage(body: z.infer<typeof idSchema>) {
+  async generateImage(body: z.infer<typeof idObjectSchema>) {
     const [employee] =
       await sql`select *, concat(name, ' ', "paternalLastName", ' ', "maternalLastName") as name, (select name from positions where id = "positionId") as position from employees where id = ${body.id}`;
     return await generateImage(employee);

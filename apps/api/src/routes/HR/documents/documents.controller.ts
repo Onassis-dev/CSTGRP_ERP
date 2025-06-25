@@ -19,10 +19,10 @@ import {
   createDocSchema,
   editDocSchema,
   getDocumentsSchema,
-  idSchema,
 } from './documents.schema';
 import { FileInterceptor } from '@nest-lab/fastify-multer';
 import { File } from '@nest-lab/fastify-multer';
+import { idObjectSchema } from 'src/utils/schemas';
 
 @ApiTags('Employees Documents')
 @Controller('employees/documents')
@@ -54,7 +54,7 @@ export class DocumentsController {
   }
 
   @Delete(':id')
-  deleteDocument(@Param(new ZodPiPe(idSchema)) body) {
+  deleteDocument(@Param(new ZodPiPe(idObjectSchema)) body) {
     return this.documentsService.deleteDocument(body);
   }
 
@@ -64,12 +64,12 @@ export class DocumentsController {
   }
 
   @Get('credential/:id')
-  getCredential(@Param(new ZodPiPe(idSchema)) body) {
+  getCredential(@Param(new ZodPiPe(idObjectSchema)) body) {
     return this.documentsService.generateImage(body);
   }
 
   @Get('application/:id')
-  downloadApplication(@Param(new ZodPiPe(idSchema)) body) {
+  downloadApplication(@Param(new ZodPiPe(idObjectSchema)) body) {
     return this.documentsService.downloadApplication(body);
   }
 }

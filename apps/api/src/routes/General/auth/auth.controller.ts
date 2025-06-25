@@ -2,7 +2,7 @@ import { FastifyRequest } from 'fastify';
 import { Controller, Get, Post, Body, Res, Req } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
-import { LoginDTO, loginSchema } from './auth.schema';
+import { loginSchema } from './auth.schema';
 import { AuthService } from './auth.service';
 
 @ApiTags('Auth')
@@ -12,7 +12,7 @@ export class AuthController {
 
   @Post('login')
   login(
-    @Body(new ZodPiPe(loginSchema)) body: LoginDTO,
+    @Body(new ZodPiPe(loginSchema)) body,
     @Res() res,
     @Req() req: FastifyRequest,
   ) {

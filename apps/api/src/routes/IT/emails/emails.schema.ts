@@ -1,16 +1,15 @@
-import { z } from 'zod';
-
-export const editSchema = z.object({
-  id: z.number().optional(),
-  email: z.string().email().optional(),
-  password: z.string().optional(),
-});
+import { idSchema } from 'src/utils/schemas';
+import { z } from 'zod/v4';
 
 export const createSchema = z.object({
-  email: z.string().email(),
-  password: z.string().optional(),
+  email: z.email(),
+  password: z.string().nullish(),
+});
+
+export const editSchema = createSchema.extend({
+  id: idSchema,
 });
 
 export const deleteSchema = z.object({
-  id: z.number(),
+  id: idSchema,
 });

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import sql from 'src/utils/db';
 import { getWeekDays } from 'src/utils/functions';
 import { weekSchema, editSchema } from './productivity.schema';

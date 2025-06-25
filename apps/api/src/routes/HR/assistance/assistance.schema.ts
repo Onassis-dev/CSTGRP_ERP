@@ -1,20 +1,19 @@
-import { z } from 'zod';
-
-const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+import { dateSchema, idSchema, intSchema } from 'src/utils/schemas';
+import { z } from 'zod/v4';
 
 export const weekSchema = z.object({
-  date: z.string().refine((value) => dateRegex.test(value)),
+  date: dateSchema,
 });
 
 export const getSingleSchema = z.object({
-  id: z.number(),
+  id: idSchema,
 });
 
 export const editSchema = z.object({
-  id: z.number(),
-  incidenceId0: z.number().optional(),
-  incidenceId1: z.number().optional(),
-  incidenceId2: z.number().optional(),
-  incidenceId3: z.number().optional(),
-  incidenceId4: z.number().optional(),
+  id: idSchema,
+  incidenceId0: intSchema,
+  incidenceId1: intSchema,
+  incidenceId2: intSchema,
+  incidenceId3: intSchema,
+  incidenceId4: intSchema,
 });

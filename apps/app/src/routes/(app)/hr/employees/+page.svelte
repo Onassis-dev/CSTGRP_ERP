@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
 	import { Input } from '$lib/components/ui/input';
 	import {
 		DropdownMenu,

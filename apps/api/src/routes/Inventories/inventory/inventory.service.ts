@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import sql from 'src/utils/db';
 import exceljs from 'exceljs';
-import { idSchema } from './inventory.schema';
-import { z } from 'zod';
+import { idObjectSchema } from 'src/utils/schemas';
+import { z } from 'zod/v4';
 
 @Injectable()
 export class InventoryService {
@@ -12,7 +12,7 @@ export class InventoryService {
     return inventory;
   }
 
-  async getMaterialMovements(body: z.infer<typeof idSchema>) {
+  async getMaterialMovements(body: z.infer<typeof idObjectSchema>) {
     const movements = await sql`SELECT
         materialmovements."activeDate",
         materialie.programation,
@@ -41,7 +41,7 @@ export class InventoryService {
     return movements;
   }
 
-  async exportMaterialmMovements(body: z.infer<typeof idSchema>) {
+  async exportMaterialmMovements(body: z.infer<typeof idObjectSchema>) {
     const workbook = new exceljs.Workbook();
     const worksheet = workbook.addWorksheet('Movimientos');
 
@@ -71,7 +71,7 @@ export class InventoryService {
     return workbook.xlsx.writeBuffer();
   }
 
-  async getMaterialComparison(body: z.infer<typeof idSchema>) {
+  async getMaterialComparison(body: z.infer<typeof idObjectSchema>) {
     const movements = await sql`SELECT
     materialmovements."activeDate" as due,
     materialie.programation,

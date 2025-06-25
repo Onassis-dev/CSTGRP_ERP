@@ -1,4 +1,5 @@
-import { z } from 'zod';
+import { idSchema } from 'src/utils/schemas';
+import { z } from 'zod/v4';
 
 export const createNoteSchema = z.object({
   title: z.string(),
@@ -6,9 +7,5 @@ export const createNoteSchema = z.object({
 });
 
 export const editNoteSchema = createNoteSchema.extend({
-  id: z.number(),
-});
-
-export const idSchema = z.object({
-  id: z.string(),
+  id: idSchema,
 });

@@ -1,11 +1,8 @@
-import { z } from 'zod';
+import { idSchema } from 'src/utils/schemas';
+import { z } from 'zod/v4';
 
 export const editSchema = z.object({
-  id: z.number(),
+  id: idSchema,
   name: z.string().optional(),
   captured: z.boolean().optional(),
-});
-
-export const idSchema = z.object({
-  id: z.string(),
 });

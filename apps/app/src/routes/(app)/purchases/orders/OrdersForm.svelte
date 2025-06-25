@@ -235,11 +235,11 @@
 					<Label name="Total">
 						<Input value={Number(total).toFixed(2)} type="text" readonly />
 					</Label>
-					<Label name="Comentarios" class="col-span-3 resize-none">
+					<Label name="Comentarios" class="col-span-4 resize-none">
 						<Textarea bind:value={formData.comments} />
 					</Label>
 
-					<Button onclick={handleSubmit}>Guardar</Button>
+					<Button onclick={handleSubmit} class="col-span-2">Guardar</Button>
 				</div>
 			</div>
 			<Card class="flex w-full max-w-full flex-col overflow-hidden shadow-none">

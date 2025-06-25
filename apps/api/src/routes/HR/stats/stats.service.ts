@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import sql from 'src/utils/db';
 import { getDayNumber, getWeekDays } from 'src/utils/functions';
-import { areaAssistanceInfoSchema, dateSchema } from './stats.schema';
-import { z } from 'zod';
+import { areaAssistanceInfoSchema, dateObjectSchema } from './stats.schema';
+import { z } from 'zod/v4';
 
 @Injectable()
 export class StatsService {
-  async birthDays(body: z.infer<typeof dateSchema>) {
+  async birthDays(body: z.infer<typeof dateObjectSchema>) {
     const rows =
       await sql`SELECT "noEmpleado", photo, CONCAT(name, ' ', "paternalLastName", ' ', "maternalLastName") as name, "bornDate" from employees where active = true and extract(month from "bornDate") = extract(month from ${body.date}::DATE)`;
 
@@ -56,7 +56,7 @@ export class StatsService {
     return rows;
   }
 
-  async weeklyFires(body: z.infer<typeof dateSchema>) {
+  async weeklyFires(body: z.infer<typeof dateObjectSchema>) {
     const [firstDate] = getWeekDays(body.date);
     const rows =
       await sql`SELECT COUNT(*) as count FROM assistance where Date = ${firstDate} and 6 IN (incidenceId0, incidenceId1, incidenceId2, incidenceId3, incidenceId4)`;
@@ -64,7 +64,7 @@ export class StatsService {
     return rows;
   }
 
-  async weeklyHires(body: z.infer<typeof dateSchema>) {
+  async weeklyHires(body: z.infer<typeof dateObjectSchema>) {
     const [firstDate, secondDate] = getWeekDays(body.date);
     const rows =
       await sql`SELECT COUNT(*) as count FROM employees where admissionDate >= ${firstDate} and admissionDate <= ${secondDate}`;
@@ -72,7 +72,7 @@ export class StatsService {
     return rows;
   }
 
-  async assistance(body: z.infer<typeof dateSchema>) {
+  async assistance(body: z.infer<typeof dateObjectSchema>) {
     const [firstDate] = getWeekDays(body.date);
     const rows = [];
     for (let i = 0; i < 7; i++) {
@@ -106,7 +106,7 @@ export class StatsService {
       .map((e) => ({ ...e, value: Math.floor(e.value * 100) }));
   }
 
-  async assistanceInfo(body: z.infer<typeof dateSchema>) {
+  async assistanceInfo(body: z.infer<typeof dateObjectSchema>) {
     const [firstDate] = getWeekDays(body.date);
     let dayNumber = getDayNumber(body.date);
     if (dayNumber === 5 || dayNumber === -1) dayNumber = 4;
@@ -117,7 +117,7 @@ export class StatsService {
     return rows;
   }
 
-  async dailyAssistance(body: z.infer<typeof dateSchema>) {
+  async dailyAssistance(body: z.infer<typeof dateObjectSchema>) {
     const [firstDate] = getWeekDays(body.date);
     let dayNumber = getDayNumber(body.date);
     if (dayNumber === 5 || dayNumber === -1) dayNumber = 4;
@@ -140,7 +140,7 @@ export class StatsService {
     ).toFixed(2);
   }
 
-  async dailyIncidencesList(body: z.infer<typeof dateSchema>) {
+  async dailyIncidencesList(body: z.infer<typeof dateObjectSchema>) {
     const [firstDate] = getWeekDays(body.date);
     let dayNumber = getDayNumber(body.date);
     if (dayNumber === 5 || dayNumber === -1) dayNumber = 4;
@@ -177,7 +177,7 @@ export class StatsService {
     return rows;
   }
 
-  async employeeRotation(body: z.infer<typeof dateSchema>) {
+  async employeeRotation(body: z.infer<typeof dateObjectSchema>) {
     const [firstDate, secondDate] = getWeekDays(body.date);
     const dayMiliSeconds = 24 * 60 * 60 * 1000;
 

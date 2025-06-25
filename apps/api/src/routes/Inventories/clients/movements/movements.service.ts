@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { HttpException, Injectable } from '@nestjs/common';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import sql from 'src/utils/db';
 import { clientSchema, idSchema, IEFilterSchema } from './movements.schema';
 

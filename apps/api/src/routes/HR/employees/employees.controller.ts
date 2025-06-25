@@ -18,8 +18,8 @@ import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import {
   createSchema,
   editSchema,
+  getEmployeeSchema,
   getEmployeesSchema,
-  idSchema,
   quitSchema,
   reactivateSchema,
   templateSchema,
@@ -40,17 +40,17 @@ export class EmployeesController {
   }
 
   @Get(':id')
-  getEmployee(@Param(new ZodPiPe(idSchema)) params) {
+  getEmployee(@Param(new ZodPiPe(getEmployeeSchema)) params) {
     return this.employeesService.getEmployee(params);
   }
 
   @Get('assistance/:id')
-  getAssistance(@Param(new ZodPiPe(idSchema)) params) {
+  getAssistance(@Param(new ZodPiPe(getEmployeeSchema)) params) {
     return this.employeesService.getAssistance(params);
   }
 
   @Get('productivity/:id')
-  getProductivity(@Param(new ZodPiPe(idSchema)) params) {
+  getProductivity(@Param(new ZodPiPe(getEmployeeSchema)) params) {
     return this.employeesService.getProductivity(params);
   }
 

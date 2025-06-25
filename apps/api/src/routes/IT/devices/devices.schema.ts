@@ -1,22 +1,18 @@
-import { z } from 'zod';
-
-export const editSchema = z.object({
-  id: z.number(),
-  name: z.string().optional().nullable(),
-  ip: z.string().optional().nullable(),
-  user: z.string().optional().nullable(),
-  password: z.string().optional().nullable(),
-  wifipw: z.string().optional().nullable(),
-});
+import { idSchema } from 'src/utils/schemas';
+import { z } from 'zod/v4';
 
 export const createSchema = z.object({
   name: z.string(),
-  ip: z.string().optional().nullable(),
-  user: z.string().optional().nullable(),
-  password: z.string().optional().nullable(),
-  wifipw: z.string().optional().nullable(),
+  ip: z.string().nullish(),
+  user: z.string().nullish(),
+  password: z.string().nullish(),
+  wifipw: z.string().nullish(),
+});
+
+export const editSchema = createSchema.extend({
+  id: idSchema,
 });
 
 export const deleteSchema = z.object({
-  id: z.number(),
+  id: idSchema,
 });

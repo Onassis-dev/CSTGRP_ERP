@@ -166,6 +166,12 @@ const valueTraduccion = {
   orders: 'Órdenes',
   doc: 'Documento',
   page: 'Página',
+  stock: 'Stock',
+  categoryId: 'Categoría',
+  providerId: 'Proveedor',
+  orderId: 'Orden',
+  suppliers: 'Proveedores',
+  minAmount: 'Cantidad mínima',
 };
 
 export const getTraducction = (value: string | number) => {

@@ -1,36 +1,37 @@
-import { numberSchema } from 'src/utils/schemas';
-import { z } from 'zod';
+import {
+  numberSchema,
+  noEmpleadoRegex,
+  nssRegex,
+  curpRegex,
+  rfcRegex,
+  bloodRegex,
+  accountRegex,
+  infonavitRegex,
+  phoneRegex,
+  idSchema,
+  dateSchema,
+} from 'src/utils/schemas';
+import { z } from 'zod/v4';
 
-const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-const rfcRegex =
-  /^([A-ZÑ\x26]{4}([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|1[0-9]|2[0-9]|3[0-1])[A-ZÑ|\d]{3})$/; // homoclave requerida
-const curpRegex =
-  /^([A-Z][AEIOUX][A-ZÑ]{2}\d{2}(0[1-9]|1[0-2])(0[1-9]|1[0-9]|2[0-9]|3[0-1])[HMX](AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[BCDFGHJKLMNPQRSTVWXYZÑ]{3}[A-ZÑ\d])(\d)$/;
-const bloodRegex = /^(A|B|AB|O)[+-]$/;
-const nssRegex = /^[0-9]{11}$/;
-const infonavitRegex = /^[0-9]{10}$/;
-const accountRegex = /^[0-9]{10}$/;
-const noEmpleadoRegex = /^[0-9]{5}$/;
-const phoneRegex = /^((\+\d{1,2}\d{10})|(\d{10}))$/;
+export const getEmployeeSchema = z.object({
+  id: idSchema,
+});
+
+export const getEmployeesSchema = z.object({
+  active: z.string().transform((val) => val === 'true'),
+});
 
 export const createSchema = z.object({
   noEmpleado: z.string().refine((value) => noEmpleadoRegex.test(value)),
-  name: z.string().min(3),
-  areaId: z.number(),
-  paternalLastName: z.string().min(3),
-  maternalLastName: z.string().min(3),
-  nss: z.string().refine((value) => nssRegex.test(value)),
-  curp: z.string().refine((value) => curpRegex.test(value)),
-  rfc: z.string().refine((value) => rfcRegex.test(value)),
-  blood: z
-    .string()
-    .refine((value) => bloodRegex.test(value))
-    .optional()
-    .nullable(),
-  account: z
-    .string()
-    .refine((value) => accountRegex.test(value))
-    .nullish(),
+  name: z.string(),
+  areaId: idSchema,
+  paternalLastName: z.string(),
+  maternalLastName: z.string(),
+  nss: z.string().regex(nssRegex),
+  curp: z.string().regex(curpRegex),
+  rfc: z.string().regex(rfcRegex),
+  blood: z.string().regex(bloodRegex).nullish(),
+  account: z.string().regex(accountRegex).nullish(),
   emergencyContact: z.string(),
   boss: z.string().nullish(),
   department: z.string().nullish(),
@@ -39,24 +40,21 @@ export const createSchema = z.object({
     .string()
     .refine((v) => phoneRegex.test(v.replaceAll(' ', '')))
     .transform((v) => v.replaceAll(' ', '')),
-  admissionDate: z.string().refine((value) => dateRegex.test(value)),
+  admissionDate: dateSchema,
   bornLocation: z.string(),
   genre: z.string().length(1),
   sons: z.number(),
   vacations: z.number().nullish(),
   clinicNo: z.string().nullish(),
-  email: z.string().email(),
-  bcpet: z.string().refine((value) => dateRegex.test(value)),
+  email: z.email(),
+  bcpet: dateSchema,
   number: z
     .string()
     .refine((v) => phoneRegex.test(v.replaceAll(' ', '')))
     .transform((v) => v.replaceAll(' ', '')),
   direction: z.string(),
   bank: z.string(),
-  infonavitNo: z
-    .string()
-    .refine((value) => infonavitRegex.test(value))
-    .nullish(),
+  infonavitNo: z.string().regex(infonavitRegex).nullish(),
   infonavitFee: z.string().nullish(),
   infonavitDiscount: z.string().nullish(),
   fonacotNo: z.string().nullish(),
@@ -65,78 +63,55 @@ export const createSchema = z.object({
   nominaSalary: numberSchema,
   immsSalary: numberSchema.nullish(),
   studies: z.string().nullish(),
-  bornDate: z.string().refine((value) => dateRegex.test(value)),
+  bornDate: dateSchema,
   civilStatus: z.string(),
   nationality: z.string(),
-  positionId: z.number(),
+  positionId: idSchema,
   route: z.string().nullish(),
   contract: z.number(),
-  quitDate: z
-    .string()
-    .refine((value) => dateRegex.test(value))
-    .optional()
-    .nullable(),
+  quitDate: dateSchema.nullish(),
   quitStatus: z.string().nullish(),
   quitNotes: z.string().nullish(),
   quitReason: z.string().nullish(),
-  resignationDate: z
-    .string()
-    .refine((value) => dateRegex.test(value))
-    .optional()
-    .nullable(),
-  lastDay: z
-    .string()
-    .refine((value) => dateRegex.test(value))
-    .optional()
-    .nullable(),
-  formatDate: z.string().refine((value) => dateRegex.test(value)),
-});
-
-export const getEmployeesSchema = z.object({
-  active: z.string().optional(),
+  resignationDate: dateSchema.nullish(),
+  lastDay: dateSchema.nullish(),
+  formatDate: dateSchema,
 });
 
 export const editSchema = createSchema
   .omit({ nominaSalary: true, formatDate: true })
   .extend({
-    id: z.coerce.number(),
+    id: idSchema,
   });
 
 export const reactivateSchema = z.object({
-  id: z.number(),
-  admissionDate: z.string().refine((value) => dateRegex.test(value)),
-  areaId: z.number(),
-  positionId: z.number(),
-  formatDate: z.string().refine((value) => dateRegex.test(value)),
+  id: idSchema,
+  admissionDate: dateSchema,
+  areaId: idSchema,
+  positionId: idSchema,
+  formatDate: dateSchema,
 });
 
 export const quitSchema = z.object({
-  id: z.number(),
-  quitDate: z.string().refine((value) => dateRegex.test(value)),
+  id: idSchema,
+  quitDate: dateSchema,
   quitStatus: z.string(),
   quitNotes: z.string().nullish(),
   quitReason: z.string(),
-  resignationDate: z
-    .string()
-    .refine((value) => dateRegex.test(value))
-    .nullish(),
-  lastDay: z.string().refine((value) => dateRegex.test(value)),
-  formatDate: z.string().refine((value) => dateRegex.test(value)),
+  resignationDate: dateSchema.nullish(),
+  lastDay: dateSchema,
+  formatDate: dateSchema,
 });
 
 export const updateSalarySchema = z.object({
   newSalary: numberSchema,
   salaryReason: z.string(),
-  changeDate: z.string().refine((value) => dateRegex.test(value)),
+  changeDate: dateSchema,
   reasonComment: z.string().nullable(),
   petitioner: z.string(),
   comments: z.string().nullish(),
-  id: z.number(),
-  formatDate: z.string().refine((value) => dateRegex.test(value)),
-});
-
-export const idSchema = z.object({
-  id: z.string(),
+  id: idSchema,
+  formatDate: dateSchema,
 });
 
 export const templateSchema = z.object({

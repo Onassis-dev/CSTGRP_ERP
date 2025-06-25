@@ -3,7 +3,7 @@ import { InventoryService } from './inventory.service';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
-import { idSchema } from './inventory.schema';
+import { idObjectSchema } from 'src/utils/schemas';
 
 @ApiTags('Inventory')
 @Controller('inventory')
@@ -17,17 +17,17 @@ export class InventoryController {
   }
 
   @Get('history/:id')
-  getMaterialMovements(@Param(new ZodPiPe(idSchema)) params) {
+  getMaterialMovements(@Param(new ZodPiPe(idObjectSchema)) params) {
     return this.inventoryService.getMaterialMovements(params);
   }
 
   @Get('history/download/:id')
-  exportMaterialMovements(@Param(new ZodPiPe(idSchema)) params) {
+  exportMaterialMovements(@Param(new ZodPiPe(idObjectSchema)) params) {
     return this.inventoryService.exportMaterialmMovements(params);
   }
 
   @Get('comparison/:id')
-  getMaterialComparison(@Param(new ZodPiPe(idSchema)) params) {
+  getMaterialComparison(@Param(new ZodPiPe(idObjectSchema)) params) {
     return this.inventoryService.getMaterialComparison(params);
   }
 

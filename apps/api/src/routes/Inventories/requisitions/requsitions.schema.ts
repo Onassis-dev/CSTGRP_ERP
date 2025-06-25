@@ -1,9 +1,9 @@
-import { numberSchema } from 'src/utils/schemas';
-import { z } from 'zod';
+import { idSchema, intSchema, numberSchema } from 'src/utils/schemas';
+import { z } from 'zod/v4';
 
 export const movementsFilterSchema = z.object({
   code: z.string().nullable(),
-  programation: z.string().nullable(),
+  programation: intSchema,
   jobpo: z.string().nullable(),
 });
 
@@ -14,7 +14,7 @@ export const jobsSchema = z.object({
 export const requisitionSchema = z.object({
   petitioner: z.string(),
   motive: z.string(),
-  areaId: z.string(),
+  areaId: idSchema,
   code: z.string(),
   requested: numberSchema,
   jobIds: z.array(z.string()).transform((v) => v.map((vv) => Number(vv))),
@@ -23,7 +23,7 @@ export const requisitionSchema = z.object({
 export const suppliesSchema = z.object({
   petitioner: z.string(),
   motive: z.string(),
-  areaId: z.string(),
+  areaId: idSchema,
   job: z
     .string()
     .optional()

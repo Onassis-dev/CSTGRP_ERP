@@ -1,6 +1,6 @@
 import { Injectable, HttpException } from '@nestjs/common';
 import { loginSchema } from './auth.schema';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import sql from 'src/utils/db';
 import bcrypt from 'bcrypt';
 import { Secret } from 'jsonwebtoken';

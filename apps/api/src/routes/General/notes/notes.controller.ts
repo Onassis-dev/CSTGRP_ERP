@@ -10,10 +10,11 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
-import { createNoteSchema, editNoteSchema, idSchema } from './notes.schema';
+import { createNoteSchema, editNoteSchema } from './notes.schema';
 import { NotesService } from './notes.service';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
-import { z } from 'zod';
+import { z } from 'zod/v4';
+import { idObjectSchema } from 'src/utils/schemas';
 
 @ApiTags('Notes')
 @Controller('notes')
@@ -41,7 +42,7 @@ export class NotesController {
   }
 
   @Delete(':id')
-  deleteNote(@Param(new ZodPiPe(idSchema)) params: z.infer<typeof idSchema>) {
+  deleteNote(@Param(new ZodPiPe(idObjectSchema)) params) {
     return this.notesService.deleteNote(params);
   }
 }

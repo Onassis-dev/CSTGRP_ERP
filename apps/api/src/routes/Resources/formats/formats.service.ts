@@ -10,7 +10,7 @@ import {
   formatNameSchema,
   nameSchema,
 } from './formats.schema';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import { File } from '@nest-lab/fastify-multer';
 
 const targetPath = join(

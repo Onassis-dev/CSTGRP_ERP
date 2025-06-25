@@ -12,7 +12,6 @@ import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import {
-  idSchema,
   movementsFilterSchema,
   repositionSchema,
   returnSchema,
@@ -20,6 +19,7 @@ import {
   suppliesSchema,
   updateAmountSchema,
 } from './movements.schema';
+import { idObjectSchema } from 'src/utils/schemas';
 
 @ApiTags('Material Movements')
 @Controller('materialmovements')
@@ -58,7 +58,7 @@ export class MovementsController {
   }
 
   @Put('activate')
-  activateMovement(@Body(new ZodPiPe(idSchema)) body) {
+  activateMovement(@Body(new ZodPiPe(idObjectSchema)) body) {
     return this.movementsService.activateMovement(body);
   }
 

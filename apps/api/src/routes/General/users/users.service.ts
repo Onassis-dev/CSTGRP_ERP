@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { deleteSchema, editSchema, registerSchema } from './users.schema';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import sql from 'src/utils/db';
 import bcrypt from 'bcrypt';
 import { ContextProvider } from 'src/interceptors/context.provider';

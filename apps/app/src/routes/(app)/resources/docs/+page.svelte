@@ -5,7 +5,7 @@
 	import { TableBody, TableCell, TableHeader, TableRow } from '$lib/components/ui/table';
 	import TableHead from '$lib/components/ui/table/table-head.svelte';
 	import api from '$lib/utils/server';
-	import { PlusCircle } from 'lucide-svelte';
+	import { Pen, PlusCircle } from 'lucide-svelte';
 	import DeletePopUp from '$lib/components/complex/DeletePopUp.svelte';
 	import { showSuccess } from '$lib/utils/showToast';
 	import DocsForm from './DocsForm.svelte';
@@ -39,6 +39,14 @@
 
 <MenuBar>
 	{#snippet right()}
+		<Button
+			variant="outline"
+			class="bg-white"
+			onclick={() =>
+				window.open('https://onassis.getoutline.com/doc/guia-de-uso-A8UK7w0TXH', '_blank')}
+		>
+			<Pen class=" size-3.5" />Modificar
+		</Button>
 		<Button onclick={createRow}><PlusCircle class=" size-3.5" />Añadir fila</Button>
 	{/snippet}
 </MenuBar>

@@ -1,7 +1,7 @@
 import autoTable from 'jspdf-autotable';
 import jsPDF from 'jspdf';
 import { HttpException, Injectable } from '@nestjs/common';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 import sql from 'src/utils/db';
 import { formatDate, getWeekDays } from 'src/utils/functions';
 import { editSchema, getSingleSchema, weekSchema } from './assistance.schema';

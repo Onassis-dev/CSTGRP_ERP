@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import sql from 'src/utils/db';
 import { filtersSchema } from './records.schema';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 
 @Injectable()
 export class RecordsService {
