@@ -3,7 +3,8 @@
 		DropdownMenu,
 		DropdownMenuContent,
 		DropdownMenuTrigger,
-		DropdownMenuItem
+		DropdownMenuItem,
+		DropdownMenuSeparator
 	} from '$lib/components/ui/dropdown-menu';
 	import { Ellipsis, Pen, Trash, Eye } from 'lucide-svelte';
 	import { TableCell } from '$lib/components/ui/table';
@@ -33,7 +34,7 @@
 			<Ellipsis class="text-muted-foreground size-3.5" />
 		</DropdownMenuTrigger>
 
-		<DropdownMenuContent>
+		<DropdownMenuContent side="bottom" align="start">
 			{#if viewFunc}
 				<DropdownMenuItem onclick={viewFunc}>
 					<Eye class="size-3.5" /> Ver
@@ -44,11 +45,6 @@
 					<Pen class="size-3.5" /> Editar
 				</DropdownMenuItem>
 			{/if}
-			{#if deleteFunc}
-				<DropdownMenuItem onclick={deleteFunc}>
-					<Trash class="size-3.5" /> Eliminar
-				</DropdownMenuItem>
-			{/if}
 			{#each extraButtons as button}
 				<DropdownMenuItem onclick={button.fn}>
 					<button.icon class="size-3.5" />
@@ -56,6 +52,12 @@
 				</DropdownMenuItem>
 			{/each}
 			{@render children?.()}
+			{#if deleteFunc}
+				<DropdownMenuSeparator />
+				<DropdownMenuItem onclick={deleteFunc} class="text-red-500">
+					<Trash class="size-3.5" /> Eliminar
+				</DropdownMenuItem>
+			{/if}
 		</DropdownMenuContent>
 	</DropdownMenu>
 </TableCell>

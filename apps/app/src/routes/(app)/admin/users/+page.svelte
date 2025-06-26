@@ -20,6 +20,7 @@
 	import { getAreas } from '$lib/utils/queries';
 	import { createQuery } from '@tanstack/svelte-query';
 	import { refetch } from '$lib/utils/query';
+	import OptionsHead from '$lib/components/basic/OptionsHead.svelte';
 
 	let show: boolean = $state(false);
 	let show1: boolean = $state(false);
@@ -142,15 +143,15 @@
 
 <CusTable>
 	<TableHeader>
-		<TableHead class="fixed left-3 z-30 bg-inherit p-1"></TableHead>
-		<TableHead colspan={1}></TableHead>
+		<OptionsHead />
+		<TableHead colspan={1}>-</TableHead>
 		<TableHead colspan={5}>General</TableHead>
 		<TableHead colspan={3}>RRHH</TableHead>
 		<TableHead colspan={6}>Almacen</TableHead>
 		<TableHead colspan={2}>-</TableHead>
 	</TableHeader>
 	<TableHeader>
-		<TableHead class="fixed left-3 z-30 bg-inherit p-1"></TableHead>
+		<OptionsHead />
 		<TableHead class="w-[12.5%]">Usuario</TableHead>
 		<TableHead class="w-[12.5%]">Usuarios</TableHead>
 		<TableHead class="w-[12.5%]">Estructura</TableHead>

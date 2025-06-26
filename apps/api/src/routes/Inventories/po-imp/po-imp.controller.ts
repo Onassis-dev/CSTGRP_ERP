@@ -14,13 +14,9 @@ import { PoImpService } from './po-imp.service';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
-import {
-  exportSchema,
-  idSchema,
-  IEFilterSchema,
-  importSchema,
-} from './po-imp.schema';
+import { exportSchema, IEFilterSchema, importSchema } from './po-imp.schema';
 import { updateExportSchema, updateImportSchema } from './po-imp.schema';
+import { idObjectSchema } from 'src/utils/schemas';
 
 @ApiTags('PO-Imports')
 @Controller('po-imp')
@@ -28,7 +24,7 @@ import { updateExportSchema, updateImportSchema } from './po-imp.schema';
 export class PoImpController {
   constructor(private readonly poImpService: PoImpService) {}
   @Get('job/comparison/:id')
-  getJobComparison(@Param(new ZodPiPe(idSchema)) params) {
+  getJobComparison(@Param(new ZodPiPe(idObjectSchema)) params) {
     return this.poImpService.getJobComparison(params);
   }
 
@@ -38,7 +34,7 @@ export class PoImpController {
   }
 
   @Get(':id')
-  getOneIE(@Param(new ZodPiPe(idSchema)) params) {
+  getOneIE(@Param(new ZodPiPe(idObjectSchema)) params) {
     return this.poImpService.getOneIE(params);
   }
 
@@ -63,7 +59,7 @@ export class PoImpController {
   }
 
   @Delete(':id')
-  deleteIE(@Param(new ZodPiPe(idSchema)) body, @Req() req) {
+  deleteIE(@Param(new ZodPiPe(idObjectSchema)) body, @Req() req) {
     return this.poImpService.deleteIE(body, req.cookies.token);
   }
 }

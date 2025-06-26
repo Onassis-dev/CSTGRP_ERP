@@ -20,7 +20,7 @@
 
 <input
 	class={cn(
-		'file h-8 w-full cursor-pointer rounded-sm border border-input bg-background px-3 py-1 text-sm ring-offset-background file:cursor-pointer file:border-0 file:bg-transparent file:text-sm file:text-muted-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring  disabled:cursor-not-allowed disabled:opacity-50',
+		'file border-input bg-background ring-offset-background file:text-muted-foreground placeholder:text-muted-foreground focus-visible:ring-ring h-8 w-full cursor-pointer rounded-sm border px-3 py-1 text-sm file:cursor-pointer file:border-0 file:bg-transparent file:text-sm focus-visible:outline-none focus-visible:ring-1  disabled:cursor-not-allowed disabled:opacity-50',
 		className
 	)}
 	bind:files

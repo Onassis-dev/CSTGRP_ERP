@@ -4,7 +4,6 @@ import { z } from 'zod/v4';
 import sql from 'src/utils/db';
 import {
   exportSchema,
-  idSchema,
   IEFilterSchema,
   importSchema,
   updateExportSchema,
@@ -13,6 +12,7 @@ import {
 import { updateMaterialAmount } from 'src/utils/functions';
 import exceljs from 'exceljs';
 import { ContextProvider } from 'src/interceptors/context.provider';
+import { idObjectSchema } from 'src/utils/schemas';
 
 @Injectable()
 export class PoImpService {
@@ -46,7 +46,7 @@ export class PoImpService {
     return movements;
   }
 
-  async getOneIE(body: z.infer<typeof idSchema>) {
+  async getOneIE(body: z.infer<typeof idObjectSchema>) {
     const [data] = await sql`select * from materialie where id = ${body.id}`;
     const materials =
       await sql`select (select code from materials where id = "materialId"), amount, "realAmount", active from materialmovements where "movementId" = ${body.id} and NOT extra`;
@@ -54,7 +54,7 @@ export class PoImpService {
     return { ...data, due: data.due.toISOString().split('T')[0], materials };
   }
 
-  async getJobComparison(body: z.infer<typeof idSchema>) {
+  async getJobComparison(body: z.infer<typeof idObjectSchema>) {
     const movements = await sql`SELECT
     materials.code,
     materials.measurement,
@@ -201,7 +201,7 @@ export class PoImpService {
     return;
   }
 
-  async activateMovement(body: z.infer<typeof idSchema>) {
+  async activateMovement(body: z.infer<typeof idObjectSchema>) {
     const [movement] =
       await sql`select active, (select code from materials where id = "materialId"), (select jobpo from materialie where id = "movementId") from materialmovements where id = ${body.id}`;
 
@@ -281,7 +281,7 @@ export class PoImpService {
     return;
   }
 
-  async deleteIE(body: z.infer<typeof idSchema>, token: string) {
+  async deleteIE(body: z.infer<typeof idObjectSchema>, token: string) {
     const user: any = await jwt.verify(token, process.env.JWT_SECRET);
     if (user.username !== 'juan' && user.username !== 'admin')
       throw new HttpException(
