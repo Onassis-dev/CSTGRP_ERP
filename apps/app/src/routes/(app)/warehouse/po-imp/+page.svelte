@@ -5,9 +5,9 @@
 	import { Input } from '$lib/components/ui/input';
 	import { TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
 	import api from '$lib/utils/server';
-	import { onMount } from 'svelte';
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
 	import OptionsCell from '$lib/components/basic/OptionsCell.svelte';
+	import OptionsHead from '$lib/components/basic/OptionsHead.svelte';
 	import { formatDate } from '$lib/utils/functions';
 	import JobComparisonCard from './JobComparisonCard.svelte';
 	import { Pen, Ruler } from 'lucide-svelte';
@@ -135,7 +135,7 @@
 
 <CusTable>
 	<TableHeader>
-		<TableHead class="border-r-0"></TableHead>
+		<OptionsHead />
 		<TableHead class="w-[10%]">Importacion</TableHead>
 		<TableHead class="w-[10%]">Job-PO</TableHead>
 		<TableHead class="w-[10%]">Ubicacion</TableHead>

@@ -18,6 +18,7 @@
 	import { createQuery } from '@tanstack/svelte-query';
 	import { getClients } from '$lib/utils/queries';
 	import { downloadFile } from '$lib/utils/files';
+	import OptionsHead from '$lib/components/basic/OptionsHead.svelte';
 
 	let show = $state(false);
 	let show1 = $state(false);
@@ -124,7 +125,7 @@
 
 <CusTable>
 	<TableHeader>
-		<TableHead class="fixed left-3 z-30 bg-inherit p-1"></TableHead>
+		<OptionsHead />
 		<TableHead>Codigo</TableHead>
 		<TableHead>Descripcion</TableHead>
 		<TableHead>Ubicacion</TableHead>

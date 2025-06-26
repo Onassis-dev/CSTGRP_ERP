@@ -31,6 +31,7 @@
 	import { refetch } from '$lib/utils/query';
 	import { downloadFile } from '$lib/utils/files';
 	import { getAreas, getOptions, getPositions } from '$lib/utils/queries';
+	import OptionsHead from '$lib/components/basic/OptionsHead.svelte';
 
 	let show1: boolean = $state(false);
 	let show2: boolean = $state(false);
@@ -165,7 +166,7 @@
 <CusTable>
 	<TableHeader>
 		<TableRow>
-			<TableHead class="fixed left-0 z-30 bg-inherit p-1"></TableHead>
+			<OptionsHead />
 			<TableHead>No. empleado</TableHead>
 			<TableHead class="w-1/4">Nombre</TableHead>
 			<TableHead class="w-1/4">Apellido Paterno</TableHead>

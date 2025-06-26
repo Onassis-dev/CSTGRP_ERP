@@ -1,6 +1,5 @@
 <script lang="ts">
 	import CusTable from '$lib/components/basic/CusTable.svelte';
-	import Cookies from 'js-cookie';
 	import { Button } from '$lib/components/ui/button';
 	import { TableBody, TableCell, TableHeader, TableRow } from '$lib/components/ui/table';
 	import TableHead from '$lib/components/ui/table/table-head.svelte';
@@ -13,6 +12,7 @@
 	import OptionsCell from '$lib/components/basic/OptionsCell.svelte';
 	import { createQuery } from '@tanstack/svelte-query';
 	import { refetch } from '$lib/utils/query';
+	import OptionsHead from '$lib/components/basic/OptionsHead.svelte';
 
 	let show = $state(false);
 	let show1 = $state(false);
@@ -45,7 +45,7 @@
 			onclick={() =>
 				window.open('https://onassis.getoutline.com/doc/guia-de-uso-A8UK7w0TXH', '_blank')}
 		>
-			<Pen class=" size-3.5" />Modificar
+			<Pen class=" size-3.5" />Editar
 		</Button>
 		<Button onclick={createRow}><PlusCircle class=" size-3.5" />Añadir fila</Button>
 	{/snippet}
@@ -53,7 +53,7 @@
 
 <CusTable>
 	<TableHeader>
-		<TableHead class="fixed left-0 z-30 bg-inherit p-1"></TableHead>
+		<OptionsHead />
 		<TableHead class="w-[60%]">Documento</TableHead>
 		<TableHead class="w-[60%]">Pagina</TableHead>
 	</TableHeader>

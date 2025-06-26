@@ -216,7 +216,6 @@
 										id="c-todas"
 										checked={selectedAreas[0] === 'Todas'}
 										onCheckedChange={(v) => {
-											console.log(v);
 											checkAll(v);
 										}}
 									/>

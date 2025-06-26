@@ -12,6 +12,7 @@
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
 	import OptionsCell from '$lib/components/basic/OptionsCell.svelte';
 	import { createQuery } from '@tanstack/svelte-query';
+	import OptionsHead from '$lib/components/basic/OptionsHead.svelte';
 
 	let show: boolean = $state(false);
 	let show1: boolean = $state(false);
@@ -44,7 +45,7 @@
 
 <CusTable>
 	<TableHeader>
-		<TableHead class="fixed left-0 z-30 bg-inherit p-1"></TableHead>
+		<OptionsHead />
 		<TableHead class="w-[20%]">Nombre</TableHead>
 		<TableHead class="w-[20%]">Ip</TableHead>
 		<TableHead class="w-[20%]">Usuario</TableHead>

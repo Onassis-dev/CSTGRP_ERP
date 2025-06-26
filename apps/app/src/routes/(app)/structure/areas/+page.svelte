@@ -13,6 +13,7 @@
 	import { Badge } from '$lib/components/ui/badge';
 	import { createQuery } from '@tanstack/svelte-query';
 	import { refetch } from '$lib/utils/query';
+	import OptionsHead from '$lib/components/basic/OptionsHead.svelte';
 
 	let show: boolean = $state(false);
 	let show1: boolean = $state(false);
@@ -50,7 +51,7 @@
 
 <CusTable>
 	<TableHeader>
-		<TableHead></TableHead>
+		<OptionsHead />
 		<TableHead class="w-full">Nombre</TableHead>
 		<TableHead>Captura</TableHead>
 		<TableHead>Tipo</TableHead>

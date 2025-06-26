@@ -14,6 +14,7 @@
 	import { refetch } from '$lib/utils/query';
 	import { formatDate } from '$lib/utils/functions';
 	import { Input } from '$lib/components/ui/input';
+	import OptionsHead from '$lib/components/basic/OptionsHead.svelte';
 
 	let searchParams: any = $state({
 		name: ''
@@ -58,7 +59,7 @@
 
 <CusTable>
 	<TableHeader>
-		<TableHead class="fixed left-0 z-30 bg-inherit p-1"></TableHead>
+		<OptionsHead />
 		<TableHead class="w-[50%]">Nombre</TableHead>
 		<TableHead class="w-[50%]">Contacto</TableHead>
 		<TableHead class="">RFC</TableHead>

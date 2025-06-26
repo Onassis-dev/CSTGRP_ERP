@@ -9,6 +9,7 @@
 	import OptionsCell from '$lib/components/basic/OptionsCell.svelte';
 	import MaterialComparisonCard from './MaterialComparisonCard.svelte';
 	import { createQuery } from '@tanstack/svelte-query';
+	import OptionsHead from '$lib/components/basic/OptionsHead.svelte';
 
 	let show = $state(false);
 
@@ -51,7 +52,7 @@
 
 <CusTable>
 	<TableHeader>
-		<TableHead class="fixed left-3 z-30 bg-inherit p-1"></TableHead>
+		<OptionsHead />
 		<TableHead>PART NUMBER</TableHead>
 		<TableHead>DESCRIPTION</TableHead>
 		<TableHead>LOCATION</TableHead>

@@ -141,8 +141,6 @@ export class OrdersService {
       order.products = JSON.parse(order.products);
     } catch {}
 
-    console.log(order);
-
     const templatePath = path.resolve(
       __dirname,
       '..',

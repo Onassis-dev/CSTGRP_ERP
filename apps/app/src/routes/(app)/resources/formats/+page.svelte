@@ -14,6 +14,7 @@
 	import { createQuery } from '@tanstack/svelte-query';
 	import { refetch } from '$lib/utils/query';
 	import { goto } from '$app/navigation';
+	import OptionsHead from '$lib/components/basic/OptionsHead.svelte';
 
 	let show = $state(false);
 	let show1 = $state(false);
@@ -51,7 +52,7 @@
 <CusTable>
 	<TableHeader>
 		{#if canEdit}
-			<TableHead class="fixed left-0 z-30 bg-inherit p-1"></TableHead>
+			<OptionsHead />
 		{/if}
 		<TableHead class="w-full">Nombre</TableHead>
 		<TableHead class="w-[1px] p-0"></TableHead>

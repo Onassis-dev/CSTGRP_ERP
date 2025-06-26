@@ -15,6 +15,7 @@
 	import { formatDate } from '$lib/utils/functions';
 	import { downloadFile } from '$lib/utils/files';
 	import { Input } from '$lib/components/ui/input';
+	import OptionsHead from '$lib/components/basic/OptionsHead.svelte';
 
 	let searchParams: any = $state({
 		name: ''
@@ -65,7 +66,7 @@
 
 <CusTable>
 	<TableHeader>
-		<TableHead class="fixed left-0 z-30 bg-inherit p-1"></TableHead>
+		<OptionsHead />
 		<TableHead class="">Folio</TableHead>
 		<TableHead class="w-full">Proveedor</TableHead>
 		<TableHead class="">Neto</TableHead>

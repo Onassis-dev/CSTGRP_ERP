@@ -13,6 +13,7 @@
 	import OptionsCell from '$lib/components/basic/OptionsCell.svelte';
 	import { createQuery } from '@tanstack/svelte-query';
 	import { refetch } from '$lib/utils/query';
+	import OptionsHead from '$lib/components/basic/OptionsHead.svelte';
 
 	let show: boolean = $state(false);
 	let show1: boolean = $state(false);
@@ -45,7 +46,7 @@
 
 <CusTable>
 	<TableHeader>
-		<TableHead class="fixed left-0 z-30 bg-inherit p-1"></TableHead>
+		<OptionsHead />
 		<TableHead class="w-[80%]">Correo</TableHead>
 		<TableHead class="w-[30%]">Contraseña</TableHead>
 	</TableHeader>

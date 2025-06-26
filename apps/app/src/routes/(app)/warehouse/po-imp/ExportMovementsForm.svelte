@@ -68,7 +68,6 @@
 		const fileName = form.get('file')?.name;
 		if (fileName?.includes('.pdf')) {
 			result = (await api.post('/inventoryvarious/jobpdf', form)).data;
-			console.log(result);
 			formData.jobpo = result.jobpo;
 			formData.due = result.dueDate;
 
@@ -79,7 +78,6 @@
 			formData.jobpo = result.jobpo;
 			formData.due = result.dueDate;
 			materials = result.materials;
-			console.log(result);
 		}
 		if (!result) showError(null, 'Archivo invalido');
 	}

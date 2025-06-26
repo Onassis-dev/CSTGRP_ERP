@@ -125,7 +125,6 @@ export class FormatsService {
   }
 
   async importFormats(file) {
-    console.log(file.buffer);
     const zip = new AdmZip(file.buffer);
     zip.extractAllTo(targetPath, true);
   }

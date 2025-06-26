@@ -16,6 +16,7 @@
 	import { createQuery } from '@tanstack/svelte-query';
 	import { refetch } from '$lib/utils/query';
 	import { getClients } from '$lib/utils/queries';
+	import OptionsHead from '$lib/components/basic/OptionsHead.svelte';
 
 	let show = $state(false);
 	let show2 = $state(false);
@@ -87,7 +88,7 @@
 
 <CusTable>
 	<TableHeader>
-		<TableHead class="fixed left-3 z-30 bg-inherit p-1"></TableHead>
+		<OptionsHead />
 		<TableHead>Programacion</TableHead>
 		<TableHead>Job-PO</TableHead>
 		<TableHead>Codigo</TableHead>

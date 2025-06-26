@@ -47,7 +47,6 @@ export class DocsService {
       },
     );
     let { data }: { data: string } = await response.json();
-    console.log(data);
 
     const regex = /!\[\]\(/g;
     const indexes = [...data.matchAll(regex)].map((match) => match.index);

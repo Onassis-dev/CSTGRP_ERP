@@ -14,6 +14,7 @@
 	import { createQuery } from '@tanstack/svelte-query';
 	import { refetch } from '$lib/utils/query';
 	import { downloadFile } from '$lib/utils/files';
+	import OptionsHead from '$lib/components/basic/OptionsHead.svelte';
 
 	let filters = $state({
 		folio: ''
@@ -55,7 +56,7 @@
 
 <CusTable>
 	<TableHeader>
-		<TableHead class="fixed left-3 z-30 bg-inherit p-1"></TableHead>
+		<OptionsHead />
 		<TableHead>Folio</TableHead>
 		<TableHead>Codigo</TableHead>
 		<TableHead>Descripción</TableHead>

@@ -158,7 +158,6 @@
 			showSuccess('Informacion actualizada');
 		} else {
 			const newId = (await api.post('employees', form)).data;
-			console.log(newId);
 			employee.id = newId.toString();
 			employee = { ...employee, ...formData };
 			showSuccess('Empleado registrado');

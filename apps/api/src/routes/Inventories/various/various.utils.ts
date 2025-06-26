@@ -75,7 +75,6 @@ export function processImport(text: string) {
   });
 
   if (materials.length === 0) {
-    console.log('sin materiales');
     throw new Error('Sin materiales');
   }
 

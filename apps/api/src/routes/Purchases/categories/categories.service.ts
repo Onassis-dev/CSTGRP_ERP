@@ -172,16 +172,13 @@ export class CategoriesService {
 
       for (const product of products) {
         if (inserted[product.id + '_' + order.supplierId]) continue;
-        console.log(product.id, order.supplierId);
 
         try {
           await sql`insert into products_suppliers ${sql({
             productId: product.id,
             supplierId: order.supplierId,
           })}`;
-        } catch (e) {
-          console.log(e);
-        }
+        } catch (e) {}
 
         inserted[product.id + '_' + order.supplierId] = true;
       }

@@ -25,12 +25,12 @@
 	}: Props = $props();
 </script>
 
-<TableCell class="bg-background sticky left-0 border-r-0 p-0 lg:bg-transparent">
+<TableCell class="options-cell bg-background sticky left-0 border-r-0 p-0">
 	<DropdownMenu>
 		<DropdownMenuTrigger
-			class="hover:bg-muted/50 flex aspect-square h-full items-center justify-center"
+			class="hover:bg-muted/50 flex aspect-square h-full items-center justify-center "
 		>
-			<Ellipsis class="text-muted-foreground size-3" />
+			<Ellipsis class="text-muted-foreground size-3.5" />
 		</DropdownMenuTrigger>
 
 		<DropdownMenuContent>
@@ -59,3 +59,19 @@
 		</DropdownMenuContent>
 	</DropdownMenu>
 </TableCell>
+
+<style>
+	:global(.options-cell) {
+		position: relative;
+	}
+	:global(.options-cell::after) {
+		content: '';
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		right: -1px;
+		width: 1px;
+		height: 100%;
+		background-color: hsl(var(--border));
+	}
+</style>

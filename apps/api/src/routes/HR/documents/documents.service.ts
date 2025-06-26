@@ -187,7 +187,6 @@ export class DocumentsService {
     });
 
     const pdfBuf = await convert(docxBuf, 'pdf', undefined);
-    console.log(pdfBuf);
     return pdfBuf;
   }
 
