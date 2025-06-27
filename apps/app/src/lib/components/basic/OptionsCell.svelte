@@ -63,9 +63,6 @@
 </TableCell>
 
 <style>
-	:global(.options-cell) {
-		position: relative;
-	}
 	:global(.options-cell::after) {
 		content: '';
 		position: absolute;
