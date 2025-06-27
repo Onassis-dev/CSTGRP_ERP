@@ -6,7 +6,11 @@
 
 <MenuBar>
 	{#snippet right()}
-		<Button href="https://onassis.getoutline.com/doc/sistemas-4DKyqJXUj1" target="_blank">
+		<Button
+			href="https://onassis.getoutline.com/doc/sistemas-4DKyqJXUj1"
+			target="_blank"
+			size="action"
+		>
 			<PlusCircle class=" size-3.5" />Modificar
 		</Button>
 	{/snippet}

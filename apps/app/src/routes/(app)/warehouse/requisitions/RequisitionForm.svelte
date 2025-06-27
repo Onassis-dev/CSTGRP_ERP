@@ -7,8 +7,8 @@
 		Dialog,
 		DialogBody,
 		DialogContent,
-		DialogHeader,
-		DialogTitle
+		DialogFooter,
+		DialogHeader
 	} from '$lib/components/ui/dialog';
 	import { Input } from '$lib/components/ui/input';
 	import {
@@ -91,12 +91,10 @@
 </script>
 
 <Dialog bind:open={show}>
-	<DialogContent class="grid h-[90%] max-w-4xl grid-rows-[auto_1fr] gap-4">
-		<DialogHeader>
-			<DialogTitle>Requerir {selectedMovement?.code}</DialogTitle>
-		</DialogHeader>
+	<DialogContent class="grid min-h-[90%] grid-rows-[auto_1fr] gap-4 sm:max-w-4xl">
+		<DialogHeader title={`Requerir ${selectedMovement?.code}`} />
 		<DialogBody>
-			<div class="mb-4 grid w-full grid-cols-3 gap-4">
+			<div class="mb-4 grid w-full gap-4 sm:grid-cols-3">
 				<Label name="Solicitante:">
 					<Input bind:value={formData.petitioner} />
 				</Label>
@@ -113,7 +111,7 @@
 						class="disabled:opacity-100"
 					/>
 				</Label>
-				<Label name="Material requerido:" class="col-span-2">
+				<Label name="Material requerido:" class="sm:col-span-2">
 					<Input bind:value={formData.requested} />
 				</Label>
 			</div>
@@ -140,8 +138,7 @@
 					{/each}
 				</TableBody>
 			</Table>
-
-			<Button onclick={handleSubmit} class="mt-4 w-full">Guardar cambios</Button>
 		</DialogBody>
+		<DialogFooter submitFunc={handleSubmit} hideFunc={() => (show = false)} />
 	</DialogContent>
 </Dialog>

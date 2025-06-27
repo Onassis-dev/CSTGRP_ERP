@@ -113,7 +113,7 @@
 	{#snippet right()}
 		<DropdownMenu>
 			<DropdownMenuTrigger>
-				<Button><Pen class=" size-3.5" />Registrar</Button>
+				<Button size="action"><Pen class=" size-3.5" />Registrar</Button>
 				<DropdownMenuContent>
 					<DropdownMenuItem
 						onclick={() => {
@@ -163,10 +163,6 @@
 </CusTable>
 
 <JobComparisonCard bind:show={show2} bind:selectedJob={selectedMovement} />
-<DeletePopUp
-	bind:show={show3}
-	text="¿Estás seguro de que quieres eliminar este movimiento?"
-	deleteFunc={handleDelete}
-/>
+<DeletePopUp bind:show={show3} text="Eliminar movimiento" deleteFunc={handleDelete} />
 <ImportMovementsForm bind:show={show4} {selectedMovement} />
 <ExportMovementsForm bind:show={show5} {selectedMovement} />

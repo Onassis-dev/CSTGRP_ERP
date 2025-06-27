@@ -8,18 +8,17 @@
 		variants: {
 			variant: {
 				default: 'bg-primary text-primary-foreground hover:bg-primary/90',
-				destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+				destructive: 'bg-red-500 text-white hover:bg-red-600',
 				outline: 'border-input bg-background hover:bg-accent hover:text-accent-foreground border',
 				secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
 				ghost: 'hover:bg-accent hover:text-accent-foreground',
 				link: 'text-primary underline-offset-4 hover:underline'
 			},
 			size: {
-				default: 'h-10 px-4 py-2',
-				sm: 'h-9 rounded-sm px-3',
-				lg: 'h-11 rounded-sm px-8',
+				default: 'h-8 px-4 py-2',
+				lg: 'h-10 rounded-sm px-8',
 				icon: 'size-7 min-w-7',
-				action: 'h-[28px] rounded-sm px-2 gap-1.5'
+				action: 'h-7 rounded-sm px-2 gap-1.5'
 			}
 		},
 		defaultVariants: {
@@ -44,7 +43,7 @@
 	let {
 		class: className,
 		variant = 'default',
-		size = 'action',
+		size = 'default',
 		ref = $bindable(null),
 		href = undefined,
 		type = 'button',

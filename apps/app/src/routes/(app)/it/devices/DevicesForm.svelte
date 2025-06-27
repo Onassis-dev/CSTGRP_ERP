@@ -1,14 +1,12 @@
 <script lang="ts">
 	import { preventDefault } from 'svelte/legacy';
-
 	import Label from '$lib/components/basic/Label.svelte';
-	import { Button } from '$lib/components/ui/button';
 	import {
 		Dialog,
 		DialogBody,
 		DialogContent,
-		DialogHeader,
-		DialogTitle
+		DialogFooter,
+		DialogHeader
 	} from '$lib/components/ui/dialog';
 	import { Input } from '$lib/components/ui/input';
 	import api from '$lib/utils/server';
@@ -49,34 +47,27 @@
 
 <Dialog bind:open={show}>
 	<DialogContent>
-		<DialogHeader>
-			<DialogTitle>
-				{selectedDevice.id ? `Editar ${selectedDevice.name}` : 'Registrar dispositivo'}
-			</DialogTitle>
-		</DialogHeader>
+		<DialogHeader
+			title={selectedDevice.id ? `Editar ${selectedDevice.name}` : 'Registrar dispositivo'}
+		/>
 
-		<DialogBody>
-			<form onsubmit={preventDefault(handleSubmit)}>
-				<div class="grid w-full grid-cols-2 gap-4">
-					<Label name="Nombre">
-						<Input name="text" bind:value={formData.name} />
-					</Label>
-					<Label name="IP">
-						<Input name="text" bind:value={formData.ip} />
-					</Label>
-					<Label name="Usuario">
-						<Input name="text" bind:value={formData.user} />
-					</Label>
-					<Label name="Contrasena">
-						<Input name="text" bind:value={formData.password} />
-					</Label>
-					<Label name="Wifi">
-						<Input name="text" bind:value={formData.wifipw} />
-					</Label>
-				</div>
-
-				<Button type="submit" class="mt-4 w-full">Guardar cambios</Button>
-			</form>
+		<DialogBody grid="2">
+			<Label name="Nombre" class="col-span-full">
+				<Input name="text" bind:value={formData.name} />
+			</Label>
+			<Label name="IP">
+				<Input name="text" bind:value={formData.ip} />
+			</Label>
+			<Label name="Usuario">
+				<Input name="text" bind:value={formData.user} />
+			</Label>
+			<Label name="Contrasena">
+				<Input name="text" bind:value={formData.password} />
+			</Label>
+			<Label name="Wifi">
+				<Input name="text" bind:value={formData.wifipw} />
+			</Label>
 		</DialogBody>
+		<DialogFooter submitFunc={handleSubmit} hideFunc={() => (show = false)} />
 	</DialogContent>
 </Dialog>

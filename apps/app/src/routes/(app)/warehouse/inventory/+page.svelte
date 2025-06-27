@@ -119,7 +119,9 @@
 			variant="outline"
 			size="icon"><FileDown class="size-3.5" /></Button
 		>
-		<Button onclick={createMaterial}><PlusCircle class=" size-3.5" />Añadir Material</Button>
+		<Button onclick={createMaterial} size="action"
+			><PlusCircle class=" size-3.5" />Añadir Material</Button
+		>
 	{/snippet}
 </MenuBar>
 
@@ -152,8 +154,9 @@
 				/>
 
 				<TableCell>{material.code}</TableCell>
-				<TableCell class="w-full min-w-24 max-w-1 overflow-hidden text-ellipsis"
-					>{material.description}</TableCell
+				<TableCell
+					class="w-full min-w-24 max-w-1 overflow-hidden text-ellipsis"
+					title={material.description}>{material.description}</TableCell
 				>
 				<TableCell>{material.location || ''}</TableCell>
 				<TableCell><Badge color="gray">{material.leftoverAmount}</Badge></TableCell>

@@ -2,13 +2,12 @@
 	import { preventDefault } from 'svelte/legacy';
 	import Label from '$lib/components/basic/Label.svelte';
 	import Select from '$lib/components/basic/Select.svelte';
-	import { Button } from '$lib/components/ui/button';
 	import {
 		Dialog,
 		DialogBody,
 		DialogContent,
-		DialogHeader,
-		DialogTitle
+		DialogFooter,
+		DialogHeader
 	} from '$lib/components/ui/dialog';
 	import { Input } from '$lib/components/ui/input';
 	import api from '$lib/utils/server';
@@ -63,31 +62,22 @@
 
 <Dialog bind:open={show}>
 	<DialogContent>
-		<DialogHeader>
-			<DialogTitle>
-				{selectedRow.id ? `Editar ${selectedRow.name}` : 'Registrar fila'}
-			</DialogTitle>
-		</DialogHeader>
+		<DialogHeader title={selectedRow.id ? `Editar ${selectedRow.name}` : 'Registrar fila'} />
 
-		<DialogBody>
-			<form onsubmit={preventDefault(handleSubmit)}>
-				<div class="grid w-full grid-cols-2 gap-4">
-					<Label name="Empleado">
-						<Input name="text" bind:value={formData.name} />
-					</Label>
-					<Label name="Posicion">
-						<Input name="text" bind:value={formData.position} />
-					</Label>
-					<Label name="Correo">
-						<Select items={emails} bind:value={formData.emailId} />
-					</Label>
-					<Label name="Extension">
-						<Input name="text" bind:value={formData.extension} />
-					</Label>
-				</div>
-
-				<Button type="submit" class="mt-4 w-full">Guardar cambios</Button>
-			</form>
+		<DialogBody grid="2">
+			<Label name="Empleado">
+				<Input name="text" bind:value={formData.name} />
+			</Label>
+			<Label name="Posicion">
+				<Input name="text" bind:value={formData.position} />
+			</Label>
+			<Label name="Correo">
+				<Select items={emails} bind:value={formData.emailId} />
+			</Label>
+			<Label name="Extension">
+				<Input name="text" bind:value={formData.extension} />
+			</Label>
 		</DialogBody>
+		<DialogFooter submitFunc={handleSubmit} hideFunc={() => (show = false)} />
 	</DialogContent>
 </Dialog>

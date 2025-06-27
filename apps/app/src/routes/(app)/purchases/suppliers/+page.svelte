@@ -53,7 +53,9 @@
 		/>
 	{/snippet}
 	{#snippet right()}
-		<Button onclick={createDevice}><PlusCircle class=" size-3.5" />Añadir proveedor</Button>
+		<Button onclick={createDevice} size="action"
+			><PlusCircle class=" size-3.5" />Añadir proveedor</Button
+		>
 	{/snippet}
 </MenuBar>
 
@@ -95,7 +97,7 @@
 <ComputersForm bind:show bind:selectedDevice />
 <DeletePopUp
 	bind:show={show1}
-	text="Borrar proveedor"
+	text="Eliminar proveedor"
 	deleteFunc={async () => {
 		await api.delete('/purchases/suppliers', { data: { id: parseInt(selectedDevice.id || '') } });
 		showSuccess('Proveedor eliminado');

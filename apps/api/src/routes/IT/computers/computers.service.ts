@@ -6,7 +6,8 @@ import sql from 'src/utils/db';
 @Injectable()
 export class ComputersService {
   async findAllComputers() {
-    const computers = await sql`Select * from computers order by name asc`;
+    const computers =
+      await sql`Select *, active::text from computers order by name asc`;
     return computers;
   }
 

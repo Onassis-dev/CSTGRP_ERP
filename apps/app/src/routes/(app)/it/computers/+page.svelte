@@ -42,7 +42,9 @@
 
 <MenuBar>
 	{#snippet right()}
-		<Button onclick={createDevice}><PlusCircle class=" size-3.5" />Añadir computadora</Button>
+		<Button onclick={createDevice} size="action"
+			><PlusCircle class=" size-3.5" />Añadir computadora</Button
+		>
 	{/snippet}
 </MenuBar>
 
@@ -92,7 +94,7 @@
 <ComputersForm bind:show bind:selectedDevice />
 <DeletePopUp
 	bind:show={show1}
-	text="Borrar computadora"
+	text="Eliminar computadora"
 	deleteFunc={async () => {
 		await api.delete('/computers', { data: { id: parseInt(selectedDevice.id || '') } });
 		showSuccess('Computadora eliminada');

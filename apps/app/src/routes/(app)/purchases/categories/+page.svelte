@@ -39,7 +39,9 @@
 
 <MenuBar>
 	{#snippet right()}
-		<Button onclick={createDevice}><PlusCircle class=" size-3.5" />Añadir categoria</Button>
+		<Button onclick={createDevice} size="action"
+			><PlusCircle class=" size-3.5" />Añadir categoria</Button
+		>
 	{/snippet}
 </MenuBar>
 
@@ -61,7 +63,7 @@
 <ComputersForm bind:show bind:selectedDevice />
 <DeletePopUp
 	bind:show={show1}
-	text="Borrar categoria"
+	text="Eliminar categoria"
 	deleteFunc={async () => {
 		await api.delete('/purchases/categories', { data: { id: parseInt(selectedDevice.id || '') } });
 		showSuccess('Categoria eliminada');

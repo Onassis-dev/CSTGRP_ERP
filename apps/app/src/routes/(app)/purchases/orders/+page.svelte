@@ -60,7 +60,8 @@
 		/>
 	{/snippet}
 	{#snippet right()}
-		<Button onclick={createDevice}><PlusCircle class=" size-3.5" />Crear orden</Button>
+		<Button onclick={createDevice} size="action"><PlusCircle class=" size-3.5" />Crear orden</Button
+		>
 	{/snippet}
 </MenuBar>
 
@@ -114,7 +115,7 @@
 <ComputersForm bind:show bind:selectedDevice />
 <DeletePopUp
 	bind:show={show1}
-	text="Borrar orden"
+	text="Eliminar orden"
 	deleteFunc={async () => {
 		await api.delete('/purchases/orders', { data: { id: parseInt(selectedDevice.id || '') } });
 		showSuccess('Orden eliminada');

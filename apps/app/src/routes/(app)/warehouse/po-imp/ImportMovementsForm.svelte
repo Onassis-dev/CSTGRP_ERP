@@ -6,8 +6,8 @@
 		Dialog,
 		DialogBody,
 		DialogContent,
-		DialogHeader,
-		DialogTitle
+		DialogFooter,
+		DialogHeader
 	} from '$lib/components/ui/dialog';
 	import { FileInput, Input } from '$lib/components/ui/input';
 	import {
@@ -22,6 +22,7 @@
 	import { showSuccess } from '$lib/utils/showToast';
 	import { Trash } from 'lucide-svelte';
 	import { refetch } from '$lib/utils/query';
+	import Label from '$lib/components/basic/Label.svelte';
 
 	interface Props {
 		show: boolean;
@@ -115,30 +116,24 @@
 </script>
 
 <Dialog bind:open={show}>
-	<DialogContent class="max-w-3xl">
-		<DialogHeader>
-			<DialogTitle
-				>{selectedMovement.id ? 'Actualizar importacion' : 'Registrar importacion'}</DialogTitle
-			>
-		</DialogHeader>
+	<DialogContent class="min-h-[90%] sm:max-w-3xl">
+		<DialogHeader
+			title={selectedMovement.id ? 'Actualizar importacion' : 'Registrar importacion'}
+		/>
 		<DialogBody>
-			<div class="grid w-full grid-cols-3 gap-4">
-				<div class="space-y-2">
-					<span>Importacion</span>
+			<div class="grid w-full gap-4 sm:grid-cols-3">
+				<Label name="Importacion">
 					<Input disabled={inputDisabled} name="text" bind:value={formData.import} />
-				</div>
-				<div class="space-y-2">
-					<span>Ubicacion</span>
+				</Label>
+				<Label name="Ubicacion">
 					<Select items={options} bind:value={formData.location} />
-				</div>
-				<div class="space-y-2">
-					<span>Fecha</span>
+				</Label>
+				<Label name="Fecha">
 					<Input type="date" bind:value={formData.due} />
-				</div>
-				<div class=" col-span-3 space-y-2">
-					<span>Archivo</span>
+				</Label>
+				<Label name="Archivo" class="col-span-full">
 					<FileInput type="file" bind:files />
-				</div>
+				</Label>
 			</div>
 
 			<Table class="mt-4">
@@ -185,8 +180,7 @@
 					</TableRow>
 				</TableBody>
 			</Table>
-
-			<Button onclick={handleSubmit} type="submit" class="mt-4 w-full">Guardar cambios</Button>
 		</DialogBody>
+		<DialogFooter submitFunc={handleSubmit} hideFunc={() => (show = false)} />
 	</DialogContent>
 </Dialog>

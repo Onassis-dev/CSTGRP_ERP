@@ -14,8 +14,8 @@
 		Dialog,
 		DialogBody,
 		DialogContent,
-		DialogHeader,
-		DialogTitle
+		DialogFooter,
+		DialogHeader
 	} from '$lib/components/ui/dialog';
 	import { Input } from '$lib/components/ui/input';
 	import api from '$lib/utils/server';
@@ -145,13 +145,8 @@
 </script>
 
 <Dialog bind:open={show}>
-	<DialogContent class="grid h-[90dvh] grid-rows-[auto_1fr] md:max-w-[90dvw]">
-		<DialogHeader>
-			<DialogTitle>
-				{selectedDevice.id ? `Editar orden` : 'Registrar orden'}
-				19,500.00</DialogTitle
-			>
-		</DialogHeader>
+	<DialogContent class="grid min-h-[90%] grid-rows-[auto_1fr] md:max-w-[90dvw]">
+		<DialogHeader title={selectedDevice.id ? `Editar orden` : 'Registrar orden'} />
 
 		<DialogBody class="grid grid-cols-2 gap-4">
 			<div class="flex flex-col gap-4">
@@ -238,8 +233,6 @@
 					<Label name="Comentarios" class="col-span-4 resize-none">
 						<Textarea bind:value={formData.comments} />
 					</Label>
-
-					<Button onclick={handleSubmit} class="col-span-2">Guardar</Button>
 				</div>
 			</div>
 			<Card class="flex w-full max-w-full flex-col overflow-hidden shadow-none">
@@ -314,5 +307,6 @@
 				</CardContent>
 			</Card>
 		</DialogBody>
+		<DialogFooter submitFunc={handleSubmit} hideFunc={() => (show = false)} />
 	</DialogContent>
 </Dialog>

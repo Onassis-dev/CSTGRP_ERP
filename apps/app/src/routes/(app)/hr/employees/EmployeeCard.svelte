@@ -195,7 +195,7 @@
 </script>
 
 <Dialog bind:open={show}>
-	<DialogContent class="max-w-4xl">
+	<DialogContent class="sm:max-w-4xl">
 		<Tabs bind:value={tab}>
 			<DialogHeader class="py-0">
 				<TabsList class="h-10 w-min translate-y-[2.5px] gap-2.5 bg-transparent py-0">

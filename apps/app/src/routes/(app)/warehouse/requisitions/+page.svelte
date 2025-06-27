@@ -82,7 +82,9 @@
 		<Button onclick={exportUncheckedMovements} variant="outline" size="icon"
 			><FileDown class="size-3.5" /></Button
 		>
-		<Button onclick={() => (show2 = true)}><FilePlus2 class=" size-3.5" />Insumos</Button>
+		<Button onclick={() => (show2 = true)} size="action"
+			><FilePlus2 class=" size-3.5" />Insumos</Button
+		>
 	{/snippet}
 </MenuBar>
 

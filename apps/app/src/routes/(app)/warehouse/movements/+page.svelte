@@ -8,9 +8,8 @@
 	import { Input } from '$lib/components/ui/input';
 	import { TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
 	import api from '$lib/utils/server';
-	import { showError, showSuccess } from '$lib/utils/showToast';
+	import { showSuccess } from '$lib/utils/showToast';
 	import { FileDown, Pen, Search } from 'lucide-svelte';
-	import WarningPopUp from './WarningPopUp.svelte';
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
 	import { format } from 'date-fns';
 	import MovementsMenu from './MovementsMenu.svelte';
@@ -19,6 +18,7 @@
 	import { refetch } from '$lib/utils/query';
 	import { getClients } from '$lib/utils/queries';
 	import { downloadFile } from '$lib/utils/files';
+	import DeletePopUp from '$lib/components/complex/DeletePopUp.svelte';
 
 	let show2 = $state(false);
 	let show3 = $state(false);
@@ -99,7 +99,7 @@
 				})}><FileDown class="size-3.5" /></Button
 		>
 
-		<Button onclick={() => (show3 = true)}><Pen class=" size-3.5" />Registrar</Button>
+		<Button onclick={() => (show3 = true)} size="action"><Pen class=" size-3.5" />Registrar</Button>
 	{/snippet}
 </MenuBar>
 
@@ -127,8 +127,9 @@
 				<TableCell>{(movement.jobpo || '') + (movement.extra ? ' -R' : '')}</TableCell>
 				<TableCell>{movement.req || ''}</TableCell>
 				<TableCell>{movement.code}</TableCell>
-				<TableCell class="w-full min-w-24 max-w-1 overflow-hidden text-ellipsis"
-					>{movement.description}</TableCell
+				<TableCell
+					class="w-full min-w-24 max-w-1 overflow-hidden text-ellipsis"
+					title={movement.description}>{movement.description}</TableCell
 				>
 				<TableCell><Badge color="gray">{movement.inventory}</Badge></TableCell>
 				<TableCell><Badge color="gray">{movement.leftoverAmount}</Badge></TableCell>
@@ -177,9 +178,10 @@
 	</TableBody>
 </CusTable>
 
-<WarningPopUp
+<DeletePopUp
 	bind:show={show2}
-	action={checkMovement}
+	deleteFunc={checkMovement}
 	text={`Surtir ${$movements.data[movementI]?.realAmount}${$movements.data[movementI]?.measurement} del material ${$movements.data[movementI]?.code}?`}
+	warning={true}
 />
 <MovementsMenu bind:show={show3} />

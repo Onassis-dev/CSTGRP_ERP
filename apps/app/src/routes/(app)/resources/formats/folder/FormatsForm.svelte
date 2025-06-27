@@ -6,8 +6,8 @@
 		Dialog,
 		DialogBody,
 		DialogContent,
-		DialogHeader,
-		DialogTitle
+		DialogFooter,
+		DialogHeader
 	} from '$lib/components/ui/dialog';
 	import { Input } from '$lib/components/ui/input';
 	import api from '$lib/utils/server';
@@ -55,35 +55,26 @@
 
 <Dialog bind:open={show}>
 	<DialogContent>
-		<DialogHeader>
-			<DialogTitle>
-				{selectedFormat ? `Editar archivo` : 'Crear archivo'}
-			</DialogTitle>
-		</DialogHeader>
+		<DialogHeader title={selectedFormat ? `Editar archivo` : 'Crear archivo'} />
 
-		<DialogBody>
-			<form onsubmit={preventDefault(handleSubmit)}>
-				<div class="grid gap-4">
-					<Label name="Archivo">
-						<Input
-							type="file"
-							bind:files
-							accept=".pdf"
-							onchange={(e) => {
-								const file = (e.target as HTMLInputElement)?.files?.[0];
-								if (!selectedFormat && file?.name) {
-									formData.name = file.name.split('.')[0];
-								}
-							}}
-						/>
-					</Label>
-					<Label name="Nombre">
-						<Input name="text" bind:value={formData.name} />
-					</Label>
-				</div>
-
-				<Button type="submit" class="mt-4 w-full">Subir archivo</Button>
-			</form>
+		<DialogBody grid="1">
+			<Label name="Archivo">
+				<Input
+					type="file"
+					bind:files
+					accept=".pdf"
+					onchange={(e) => {
+						const file = (e.target as HTMLInputElement)?.files?.[0];
+						if (!selectedFormat && file?.name) {
+							formData.name = file.name.split('.')[0];
+						}
+					}}
+				/>
+			</Label>
+			<Label name="Nombre">
+				<Input name="text" bind:value={formData.name} />
+			</Label>
 		</DialogBody>
+		<DialogFooter submitFunc={handleSubmit} hideFunc={() => (show = false)} />
 	</DialogContent>
 </Dialog>

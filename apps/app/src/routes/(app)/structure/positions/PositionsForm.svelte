@@ -2,13 +2,12 @@
 	import { preventDefault } from 'svelte/legacy';
 	import Label from '$lib/components/basic/Label.svelte';
 	import Select from '$lib/components/basic/Select.svelte';
-	import { Button } from '$lib/components/ui/button';
 	import {
 		Dialog,
 		DialogBody,
 		DialogContent,
-		DialogHeader,
-		DialogTitle
+		DialogFooter,
+		DialogHeader
 	} from '$lib/components/ui/dialog';
 	import { Input } from '$lib/components/ui/input';
 	import api from '$lib/utils/server';
@@ -62,24 +61,17 @@
 
 <Dialog bind:open={show}>
 	<DialogContent>
-		<DialogHeader>
-			<DialogTitle>
-				{selectedPosition.id ? `Editar ${selectedPosition.name}` : 'Registrar posicion'}
-			</DialogTitle>
-		</DialogHeader>
-		<DialogBody>
-			<form onsubmit={preventDefault(handleSubmit)}>
-				<div class="grid w-full grid-cols-2 gap-4">
-					<Label name="Nombre">
-						<Input name="text" bind:value={formData.name} />
-					</Label>
-					<Label name="Color">
-						<Select class="" items={colors} bind:value={formData.color} />
-					</Label>
-				</div>
-
-				<Button type="submit" class="mt-4 w-full">Guardar cambios</Button>
-			</form>
+		<DialogHeader
+			title={selectedPosition.id ? `Editar ${selectedPosition.name}` : 'Registrar posicion'}
+		/>
+		<DialogBody grid="2">
+			<Label name="Nombre">
+				<Input name="text" bind:value={formData.name} />
+			</Label>
+			<Label name="Color">
+				<Select class="" items={colors} bind:value={formData.color} />
+			</Label>
 		</DialogBody>
+		<DialogFooter submitFunc={handleSubmit} hideFunc={() => (show = false)} />
 	</DialogContent>
 </Dialog>

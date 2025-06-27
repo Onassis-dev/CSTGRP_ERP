@@ -6,8 +6,8 @@
 		Dialog,
 		DialogBody,
 		DialogContent,
-		DialogHeader,
-		DialogTitle
+		DialogFooter,
+		DialogHeader
 	} from '$lib/components/ui/dialog';
 	import { Input } from '$lib/components/ui/input';
 	import api from '$lib/utils/server';
@@ -48,25 +48,16 @@
 
 <Dialog bind:open={show}>
 	<DialogContent>
-		<DialogHeader>
-			<DialogTitle>
-				{selectedEmail.id ? `Editar ${selectedEmail.email}` : 'Registrar correo'}
-			</DialogTitle>
-		</DialogHeader>
+		<DialogHeader title={selectedEmail.id ? `Editar ${selectedEmail.email}` : 'Registrar correo'} />
 
-		<DialogBody>
-			<form onsubmit={preventDefault(handleSubmit)}>
-				<div class="grid w-full grid-cols-2 gap-4">
-					<Label name="Correo">
-						<Input name="text" bind:value={formData.email} />
-					</Label>
-					<Label name="Contrasena">
-						<Input name="text" bind:value={formData.password} />
-					</Label>
-				</div>
-
-				<Button type="submit" class="mt-4 w-full">Guardar cambios</Button>
-			</form>
+		<DialogBody grid="2">
+			<Label name="Correo">
+				<Input name="text" bind:value={formData.email} />
+			</Label>
+			<Label name="Contrasena">
+				<Input name="text" bind:value={formData.password} />
+			</Label>
 		</DialogBody>
+		<DialogFooter submitFunc={handleSubmit} hideFunc={() => (show = false)} />
 	</DialogContent>
 </Dialog>

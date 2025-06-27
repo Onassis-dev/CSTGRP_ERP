@@ -1,11 +1,10 @@
 <script lang="ts">
-	import { preventDefault } from 'svelte/legacy';
 	import Label from '$lib/components/basic/Label.svelte';
-	import { Button } from '$lib/components/ui/button';
 	import {
 		Dialog,
 		DialogBody,
 		DialogContent,
+		DialogFooter,
 		DialogHeader,
 		DialogTitle
 	} from '$lib/components/ui/dialog';
@@ -79,58 +78,50 @@
 </script>
 
 <Dialog bind:open={show}>
-	<DialogContent class="max-w-4xl">
-		<DialogHeader>
-			<DialogTitle class="grid grid-cols-2 gap-4">
-				<span>{selectedDevice.id ? `Editar producto` : 'Registrar producto'}</span>
-				<span>Proveedores: {selectedSuppliers.length || 0}</span>
-			</DialogTitle>
-		</DialogHeader>
+	<DialogContent class="sm:max-w-4xl">
+		<DialogHeader title={selectedDevice.id ? `Editar producto` : 'Registrar producto'} />
 
-		<DialogBody>
-			<div class="grid grid-cols-2 gap-4">
-				<form onsubmit={preventDefault(handleSubmit)}>
-					<div class="grid grid-cols-2 gap-4">
-						<Label name="Categoría">
-							<Select items={$categories?.data} bind:value={formData.categoryId} />
-						</Label>
-						<Label name="Codigo">
-							<Input name="text" bind:value={formData.code} />
-						</Label>
-						<Label name="Descripción" class="col-span-2">
-							<Textarea name="text" bind:value={formData.description} />
-						</Label>
-						<Label name="Medida">
-							<Input name="text" bind:value={formData.measurement} />
-						</Label>
-						<Label name="Precio">
-							<Input name="text" bind:value={formData.price} />
-						</Label>
-					</div>
+		<DialogBody grid="2">
+			<div class="grid max-h-min grid-cols-2 gap-4">
+				<Label name="Categoría">
+					<Select items={$categories?.data} bind:value={formData.categoryId} />
+				</Label>
+				<Label name="Codigo">
+					<Input bind:value={formData.code} />
+				</Label>
+				<Label name="Descripción" class="col-span-2">
+					<Textarea bind:value={formData.description} />
+				</Label>
+				<Label name="Medida">
+					<Input bind:value={formData.measurement} />
+				</Label>
+				<Label name="Precio">
+					<Input bind:value={formData.price} />
+				</Label>
+				<Label name="Proveedores elegidos">
+					<Input value={selectedSuppliers.length || 0} readonly />
+				</Label>
+			</div>
 
-					<Button type="submit" class="mt-4 w-full">Guardar cambios</Button>
-				</form>
-				<div
-					class="grid max-h-96 grid-cols-[1fr_auto] gap-3 overflow-y-auto rounded-xl border p-1 px-2"
-				>
-					{#each $suppliers?.data as supplier}
-						<Label
-							labelClass={selectedSuppliers.includes(supplier.value) ? 'text-foreground' : ''}
-							name={supplier.name + ' ' + supplier.value}
-						/>
-						<Checkbox
-							checked={selectedSuppliers.includes(supplier.value)}
-							onCheckedChange={() => {
-								if (selectedSuppliers.includes(supplier.value)) {
-									selectedSuppliers = selectedSuppliers.filter((id: any) => id !== supplier.value);
-								} else {
-									selectedSuppliers = [...selectedSuppliers, supplier.value];
-								}
-							}}
-						/>
-					{/each}
-				</div>
+			<div class="grid h-96 grid-cols-[1fr_auto] gap-3 overflow-y-auto rounded-xl border p-1 px-2">
+				{#each $suppliers?.data as supplier}
+					<Label
+						labelClass={selectedSuppliers.includes(supplier.value) ? 'text-foreground' : ''}
+						name={supplier.name + ' ' + supplier.value}
+					/>
+					<Checkbox
+						checked={selectedSuppliers.includes(supplier.value)}
+						onCheckedChange={() => {
+							if (selectedSuppliers.includes(supplier.value)) {
+								selectedSuppliers = selectedSuppliers.filter((id: any) => id !== supplier.value);
+							} else {
+								selectedSuppliers = [...selectedSuppliers, supplier.value];
+							}
+						}}
+					/>
+				{/each}
 			</div>
 		</DialogBody>
+		<DialogFooter submitFunc={handleSubmit} hideFunc={() => (show = false)} />
 	</DialogContent>
 </Dialog>

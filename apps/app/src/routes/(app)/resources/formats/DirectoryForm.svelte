@@ -6,8 +6,8 @@
 		Dialog,
 		DialogBody,
 		DialogContent,
-		DialogHeader,
-		DialogTitle
+		DialogFooter,
+		DialogHeader
 	} from '$lib/components/ui/dialog';
 	import { Input } from '$lib/components/ui/input';
 	import api from '$lib/utils/server';
@@ -51,22 +51,13 @@
 
 <Dialog bind:open={show}>
 	<DialogContent>
-		<DialogHeader>
-			<DialogTitle>
-				{selectedFolder ? `Editar carpeta` : 'Crear carpeta'}
-			</DialogTitle>
-		</DialogHeader>
+		<DialogHeader title={selectedFolder ? `Editar carpeta` : 'Crear carpeta'} />
 
-		<DialogBody>
-			<form onsubmit={preventDefault(handleSubmit)}>
-				<div class="">
-					<Label name="Nombre">
-						<Input name="text" bind:value={formData.name} />
-					</Label>
-				</div>
-
-				<Button type="submit" class="mt-4 w-full">Crear</Button>
-			</form>
+		<DialogBody grid="1">
+			<Label name="Nombre">
+				<Input name="text" bind:value={formData.name} />
+			</Label>
 		</DialogBody>
+		<DialogFooter submitFunc={handleSubmit} hideFunc={() => (show = false)} />
 	</DialogContent>
 </Dialog>

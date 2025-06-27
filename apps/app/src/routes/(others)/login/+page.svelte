@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import Label from '$lib/components/basic/Label.svelte';
 	import { Button } from '$lib/components/ui/button';
-	import { Card, CardHeader, CardContent, CardTitle } from '$lib/components/ui/card';
+	import Card from '$lib/components/ui/card/card.svelte';
 	import { Input } from '$lib/components/ui/input';
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
@@ -29,36 +30,24 @@
 	});
 </script>
 
-<section class="flex min-h-screen w-full flex-col items-center justify-center">
-	<Card class="mx-auto w-[95%] max-w-md">
-		<CardHeader>
-			<CardTitle>Ingresar</CardTitle>
-		</CardHeader>
-		<CardContent>
-			<form onsubmit={login}>
-				<div class="mb-6 grid gap-6">
-					<div class="mb-6">
-						<p class="mb-2">Nombre de usuario</p>
-						<Input
-							bind:value={credentials.username}
-							type="text"
-							id="username"
-							placeholder="usuario"
-						/>
-					</div>
-					<div class="mb-6">
-						<p class="mb-2">Contraseña</p>
-						<Input
-							bind:value={credentials.password}
-							type="password"
-							id="password"
-							placeholder="•••••••••"
-						/>
-					</div>
-
-					<Button type="submit">Acceder</Button>
-				</div>
-			</form>
-		</CardContent>
+<section class="flex min-h-screen w-full flex-col items-center">
+	<img src="/logo.png" alt="logo" class="mb-3 mt-32 h-10" />
+	<h1 class="mb-6 text-2xl font-bold">Ingresar</h1>
+	<Card class="mx-2 w-96 max-w-full p-6 shadow-sm">
+		<form onsubmit={login} class="flex flex-col gap-4">
+			<Label name="Usuario" labelClass="text-foreground text-sm">
+				<Input bind:value={credentials.username} placeholder="Usuario" class="h-9 shadow-sm" />
+			</Label>
+			<Label name="Contraseña" labelClass="text-foreground text-sm">
+				<Input
+					bind:value={credentials.password}
+					type="password"
+					placeholder="••••••••"
+					class="h-9 shadow-sm"
+					autocomplete="current-password"
+				/>
+			</Label>
+			<Button type="submit" class="h-9">Acceder</Button>
+		</form>
 	</Card>
 </section>

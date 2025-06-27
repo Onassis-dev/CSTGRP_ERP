@@ -43,7 +43,7 @@
 {#if canEdit}
 	<MenuBar>
 		{#snippet right()}
-			<Button onclick={createRow}><PlusCircle class=" size-3.5" />Añadir fila</Button>
+			<Button onclick={createRow} size="action"><PlusCircle class=" size-3.5" />Añadir fila</Button>
 		{/snippet}
 	</MenuBar>
 {/if}
@@ -77,7 +77,7 @@
 	<DirectoryForm bind:show bind:selectedRow />
 	<DeletePopUp
 		bind:show={show1}
-		text="Borrar fila"
+		text="Eliminar contacto"
 		deleteFunc={async () => {
 			await api.delete('/resources/directory', {
 				data: { id: parseInt((selectedRow as any).id || '') }

@@ -40,7 +40,7 @@
 </script>
 
 <Dialog bind:open={show}>
-	<DialogContent class="grid h-[90%] max-w-6xl grid-rows-[auto_1fr] gap-4">
+	<DialogContent class="grid min-h-[90%] grid-rows-[auto_1fr] gap-4 sm:max-w-6xl">
 		<DialogHeader>
 			<DialogTitle>
 				{selectedMaterial.code}

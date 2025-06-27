@@ -7,8 +7,8 @@
 		Dialog,
 		DialogBody,
 		DialogContent,
-		DialogHeader,
-		DialogTitle
+		DialogFooter,
+		DialogHeader
 	} from '$lib/components/ui/dialog';
 	import { Input } from '$lib/components/ui/input';
 	import {
@@ -81,10 +81,8 @@
 </script>
 
 <Dialog bind:open={show}>
-	<DialogContent class="max-w-3xl">
-		<DialogHeader>
-			<DialogTitle>Pedir insumos</DialogTitle>
-		</DialogHeader>
+	<DialogContent class="sm:max-w-3xl">
+		<DialogHeader title="Pedir insumos" />
 		<DialogBody>
 			<div class="mb-4 grid w-full grid-cols-3 gap-4">
 				<Label name="Solicitante:">
@@ -145,8 +143,7 @@
 					</TableRow>
 				</TableBody>
 			</Table>
-
-			<Button onclick={handleSubmit} type="submit" class="mt-4 w-full">Guardar cambios</Button>
 		</DialogBody>
+		<DialogFooter submitFunc={handleSubmit} hideFunc={() => (show = false)} />
 	</DialogContent>
 </Dialog>

@@ -3,8 +3,8 @@
 		Dialog,
 		DialogBody,
 		DialogContent,
-		DialogHeader,
-		DialogTitle
+		DialogFooter,
+		DialogHeader
 	} from '$lib/components/ui/dialog';
 	import {
 		Table,
@@ -22,6 +22,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Trash } from 'lucide-svelte';
 	import { refetch } from '$lib/utils/query';
+	import Label from '$lib/components/basic/Label.svelte';
 
 	interface Props {
 		show: boolean;
@@ -65,7 +66,8 @@
 		form.append('file', files[0]);
 
 		let result;
-		const fileName = form.get('file')?.name;
+		const fileEntry = form.get('file');
+		const fileName = fileEntry instanceof File ? fileEntry.name : '';
 		if (fileName?.includes('.pdf')) {
 			result = (await api.post('/inventoryvarious/jobpdf', form)).data;
 			formData.jobpo = result.jobpo;
@@ -121,28 +123,22 @@
 </script>
 
 <Dialog bind:open={show}>
-	<DialogContent class="max-w-3xl ">
-		<DialogHeader>
-			<DialogTitle>{selectedMovement.id ? 'Actualizar job-po' : 'Registrar job-po'}</DialogTitle>
-		</DialogHeader>
-		<DialogBody class="h-[85lvh]">
-			<div class="grid w-full grid-cols-3 gap-4">
-				<div class="space-y-2">
-					<span>Programacion</span>
+	<DialogContent class="min-h-[90%] sm:max-w-3xl">
+		<DialogHeader title={selectedMovement.id ? 'Actualizar job-po' : 'Registrar job-po'} />
+		<DialogBody>
+			<div class="grid w-full gap-4 sm:grid-cols-3">
+				<Label name="Programacion">
 					<Input name="text" bind:value={formData.programation} />
-				</div>
-				<div class="space-y-2">
-					<span>Job o PO</span>
+				</Label>
+				<Label name="Job o PO">
 					<Input disabled={inputDisabled} name="text" bind:value={formData.jobpo} />
-				</div>
-				<div class="space-y-2">
-					<span>Fecha</span>
+				</Label>
+				<Label name="Fecha">
 					<Input type="date" bind:value={formData.due} />
-				</div>
-				<div class="col-span-3 space-y-2">
-					<span>Archivo</span>
+				</Label>
+				<Label name="Archivo" class="col-span-full">
 					<FileInput type="file" bind:files />
-				</div>
+				</Label>
 			</div>
 
 			<Table class="mt-4">
@@ -180,7 +176,7 @@
 							>
 							<TableCell class="w-5">{materials[i].measurement}</TableCell>
 							<TableCell class="w-1 p-0 text-center"
-								><Checkbox class="mx-auto size-5" bind:checked={materials[i].active} /></TableCell
+								><Checkbox class="mx-auto" bind:checked={materials[i].active} /></TableCell
 							>
 							<TableCell class="flex h-8 justify-center p-0 px-[1px]"
 								><Button
@@ -200,8 +196,7 @@
 					</TableRow>
 				</TableBody>
 			</Table>
-
-			<Button onclick={handleSubmit} type="submit" class="mt-4 w-full">Guardar cambios</Button>
 		</DialogBody>
+		<DialogFooter submitFunc={handleSubmit} hideFunc={() => (show = false)} />
 	</DialogContent>
 </Dialog>

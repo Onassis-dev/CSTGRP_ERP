@@ -121,17 +121,24 @@
 	{#snippet left()}
 		<Input menu type="date" bind:value={dateSelected} onchange={getProductivity} />
 		{#if viewComplete}
-			<Button class="flex-none" variant="outline" onclick={() => (viewComplete = !viewComplete)}
-				><Book class=" size-3.5" />Ver resumen</Button
+			<Button
+				class="flex-none"
+				variant="outline"
+				size="action"
+				onclick={() => (viewComplete = !viewComplete)}><Book class=" size-3.5" />Ver resumen</Button
 			>
 		{:else}
-			<Button class="flex-none" variant="outline" onclick={() => (viewComplete = !viewComplete)}
+			<Button
+				class="flex-none"
+				variant="outline"
+				size="action"
+				onclick={() => (viewComplete = !viewComplete)}
 				><BookOpen class=" size-3.5" />Ver todo</Button
 			>
 		{/if}
 	{/snippet}
 	{#snippet right()}
-		<Button onclick={() => (show = true)}><Pen class=" size-3.5" />Capturar</Button>
+		<Button onclick={() => (show = true)} size="action"><Pen class=" size-3.5" />Capturar</Button>
 		<!-- <ExportProductivity productivity={separatedProductivity} {areas} {positions} {weekDays} /> -->
 	{/snippet}
 </MenuBar>

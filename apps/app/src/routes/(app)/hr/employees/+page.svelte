@@ -159,7 +159,9 @@
 				</DropdownMenuContent>
 			</DropdownMenuTrigger>
 		</DropdownMenu>
-		<Button onclick={createEmployee}><PlusCircle class=" size-3.5" />Añadir empleado</Button>
+		<Button onclick={createEmployee} size="action"
+			><PlusCircle class=" size-3.5" />Añadir empleado</Button
+		>
 	{/snippet}
 </MenuBar>
 

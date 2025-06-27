@@ -40,7 +40,9 @@
 
 <MenuBar>
 	{#snippet right()}
-		<Button onclick={createEmail}><PlusCircle class=" size-3.5" />Añadir correo</Button>
+		<Button onclick={createEmail} size="action"
+			><PlusCircle class=" size-3.5" />Añadir correo</Button
+		>
 	{/snippet}
 </MenuBar>
 
@@ -64,7 +66,7 @@
 <EmailsForm bind:show bind:selectedEmail />
 <DeletePopUp
 	bind:show={show1}
-	text="Borrar correo"
+	text="Eliminar correo"
 	deleteFunc={async () => {
 		await api.delete('/emails', { data: { id: parseInt(selectedEmail.id || '') } });
 		showSuccess('Correo eliminada');

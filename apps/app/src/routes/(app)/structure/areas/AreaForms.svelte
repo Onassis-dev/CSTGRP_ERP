@@ -2,14 +2,13 @@
 	import { preventDefault } from 'svelte/legacy';
 	import Label from '$lib/components/basic/Label.svelte';
 	import Select from '$lib/components/basic/Select.svelte';
-	import { Button } from '$lib/components/ui/button';
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import {
 		Dialog,
 		DialogBody,
 		DialogContent,
-		DialogHeader,
-		DialogTitle
+		DialogFooter,
+		DialogHeader
 	} from '$lib/components/ui/dialog';
 	import { Input } from '$lib/components/ui/input';
 	import api from '$lib/utils/server';
@@ -69,30 +68,21 @@
 
 <Dialog bind:open={show}>
 	<DialogContent>
-		<DialogHeader>
-			<DialogTitle>
-				{selectedArea.id ? `Editar ${selectedArea.name}` : 'Registrar Area'}
-			</DialogTitle>
-		</DialogHeader>
-		<DialogBody>
-			<form onsubmit={preventDefault(handleSubmit)}>
-				<div class="grid w-full grid-cols-2 gap-4">
-					<Label name="Nombre">
-						<Input name="text" bind:value={formData.name} />
-					</Label>
-					<Label name="Es capturada">
-						<Checkbox name="text" bind:checked={formData.captured} />
-					</Label>
-					<Label name="Color">
-						<Select class="mt-2" items={colors} bind:value={formData.color} />
-					</Label>
-					<Label name="Tipo">
-						<Select class="mt-2" items={types} bind:value={formData.type} />
-					</Label>
-				</div>
-
-				<Button type="submit" class="mt-4 w-full">Guardar cambios</Button>
-			</form>
+		<DialogHeader title={selectedArea.id ? `Editar ${selectedArea.name}` : 'Registrar Area'} />
+		<DialogBody grid="2">
+			<Label name="Nombre">
+				<Input name="text" bind:value={formData.name} />
+			</Label>
+			<Label name="Es capturada">
+				<Checkbox name="text" bind:checked={formData.captured} />
+			</Label>
+			<Label name="Color">
+				<Select class="mt-2" items={colors} bind:value={formData.color} />
+			</Label>
+			<Label name="Tipo">
+				<Select class="mt-2" items={types} bind:value={formData.type} />
+			</Label>
 		</DialogBody>
+		<DialogFooter submitFunc={handleSubmit} hideFunc={() => (show = false)} />
 	</DialogContent>
 </Dialog>

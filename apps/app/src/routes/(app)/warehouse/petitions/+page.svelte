@@ -93,8 +93,4 @@
 	</TableBody>
 </CusTable>
 
-<DeletePopUp
-	bind:show
-	text="¿Estás seguro de que quieres eliminar esta requisicion?"
-	deleteFunc={handleDelete}
-/>
+<DeletePopUp bind:show text="Eliminar requisicion" deleteFunc={handleDelete} />

@@ -8,8 +8,8 @@
 		Dialog,
 		DialogContent,
 		DialogBody,
-		DialogHeader,
-		DialogTitle
+		DialogFooter,
+		DialogHeader
 	} from '$lib/components/ui/dialog';
 	import { Input } from '$lib/components/ui/input';
 	import { getDayNumber } from '$lib/utils/functions';
@@ -167,9 +167,7 @@
 
 <Dialog bind:open={show}>
 	<DialogContent>
-		<DialogHeader>
-			<DialogTitle>Captura de produccion</DialogTitle>
-		</DialogHeader>
+		<DialogHeader title="Captura de produccion" />
 		<DialogBody>
 			<div class="grid w-full gap-0.5" onkeydown={handleNegate} role="button" tabindex="0">
 				<div class="flex items-center justify-end gap-2">
@@ -259,10 +257,9 @@
 								(formData.goal2 ? 3 : formData.goal1 ? 2 : formData.goal0 ? 1 : 1)
 						)}%</Badge
 					>
-
-					<Button onclick={handleSubmit} type="submit" class="mt-4 w-full">Guardar</Button>
 				</form>
 			</div>
 		</DialogBody>
+		<DialogFooter submitFunc={handleSubmit} hideFunc={() => (show = false)} />
 	</DialogContent>
 </Dialog>

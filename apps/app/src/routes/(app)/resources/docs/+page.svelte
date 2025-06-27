@@ -47,7 +47,7 @@
 		>
 			<Pen class=" size-3.5" />Editar
 		</Button>
-		<Button onclick={createRow}><PlusCircle class=" size-3.5" />Añadir fila</Button>
+		<Button onclick={createRow} size="action"><PlusCircle class=" size-3.5" />Añadir fila</Button>
 	{/snippet}
 </MenuBar>
 
@@ -71,7 +71,7 @@
 <DocsForm bind:show bind:selectedRow />
 <DeletePopUp
 	bind:show={show1}
-	text="Borrar fila"
+	text="Eliminar documento"
 	deleteFunc={async () => {
 		await api.delete('/resources/docs', {
 			data: { id: parseInt((selectedRow as any).id || '') }

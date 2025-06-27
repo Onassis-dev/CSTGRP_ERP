@@ -7,6 +7,7 @@
 		Dialog,
 		DialogBody,
 		DialogContent,
+		DialogFooter,
 		DialogHeader,
 		DialogTitle
 	} from '$lib/components/ui/dialog';
@@ -73,40 +74,32 @@
 
 <Dialog bind:open={show}>
 	<DialogContent>
-		<DialogHeader>
-			<DialogTitle>
-				{selectedMaterial.id ? `Editar ${selectedMaterial.code}` : 'Registrar Material'}
-			</DialogTitle>
-		</DialogHeader>
-		<DialogBody>
-			<img src={selectedMaterial.image} alt="" class="w-full" />
-			<form onsubmit={preventDefault(handleSubmit)}>
-				<div class="grid w-full grid-cols-2 gap-4">
-					<Label name="Imagen" class="col-span-2">
-						<FileInput name="text" bind:files />
-					</Label>
-					<Label name="Codigo">
-						<Input name="text" bind:value={formData.code} />
-					</Label>
-					<Label name="Cliente">
-						<Select items={$clientsQuery?.data} bind:value={formData.clientId} />
-					</Label>
-					<Label name="Descripcion" class="col-span-2">
-						<Input name="text" bind:value={formData.description} />
-					</Label>
-					<Label name="Ubicacion" class="col-span-2">
-						<Input name="text" bind:value={formData.location} />
-					</Label>
-					<Label name="Medida">
-						<Select items={measurements} bind:value={formData.measurement} />
-					</Label>
-					<Label name="Cantidad minima">
-						<Input name="" type="text" bind:value={formData.minAmount} />
-					</Label>
-				</div>
-
-				<Button type="submit" class="mt-4 w-full">Guardar cambios</Button>
-			</form>
+		<DialogHeader
+			title={selectedMaterial.id ? `Editar ${selectedMaterial.code}` : 'Registrar Material'}
+		/>
+		<DialogBody grid="2">
+			<Label name="Imagen" class="col-span-full">
+				<FileInput name="text" bind:files />
+			</Label>
+			<Label name="Codigo">
+				<Input name="text" bind:value={formData.code} />
+			</Label>
+			<Label name="Cliente">
+				<Select items={$clientsQuery?.data} bind:value={formData.clientId} />
+			</Label>
+			<Label name="Descripcion" class="col-span-full">
+				<Input name="text" bind:value={formData.description} />
+			</Label>
+			<Label name="Ubicacion" class="col-span-full">
+				<Input name="text" bind:value={formData.location} />
+			</Label>
+			<Label name="Medida">
+				<Select items={measurements} bind:value={formData.measurement} />
+			</Label>
+			<Label name="Cantidad minima">
+				<Input name="" type="text" bind:value={formData.minAmount} />
+			</Label>
 		</DialogBody>
+		<DialogFooter submitFunc={handleSubmit} hideFunc={() => (show = false)} />
 	</DialogContent>
 </Dialog>

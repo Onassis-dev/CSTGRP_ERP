@@ -1,27 +1,39 @@
 <script lang="ts">
-	import { CircleAlert } from 'lucide-svelte';
+	import { OctagonAlert } from 'lucide-svelte';
 	import { Button } from '../ui/button';
 	import { Dialog, DialogBody, DialogContent } from '../ui/dialog';
+	import { cn } from '$lib/utils';
 
 	interface Props {
 		show?: boolean;
 		deleteFunc: any;
 		text: any;
+		warning?: boolean;
 	}
 
-	let { show = $bindable(false), deleteFunc, text }: Props = $props();
+	let { show = $bindable(false), deleteFunc, text, warning = false }: Props = $props();
 </script>
 
 <Dialog bind:open={show}>
-	<DialogContent>
-		<DialogBody class="space-y-4 border-none">
-			<div class="text-center">
-				<CircleAlert class="mx-auto mb-4 h-16 w-16 text-gray-400 dark:text-gray-200" />
-				<h3 class=" text-lg font-normal text-gray-500 dark:text-gray-400">{text}</h3>
-			</div>
-			<div class="text-center">
-				<Button onclick={deleteFunc} variant="destructive" class="me-2">Eliminar</Button>
+	<DialogContent closeButton={false} class="h-auto sm:max-w-lg">
+		<DialogBody class="border-none">
+			<h2 class="text-center text-lg font-semibold">
+				<div
+					class={cn(
+						'mx-auto mb-2 flex size-14 items-center justify-center rounded-full',
+						warning ? 'bg-yellow-50' : 'bg-red-50'
+					)}
+				>
+					<OctagonAlert class={cn('size-7', warning ? 'text-yellow-500' : 'text-red-500')} />
+				</div>
+				Confirmar acción
+			</h2>
+			<p class="text-muted-foreground mt-2 text-center text-sm">{text}</p>
+			<div class="mt-4 flex justify-center gap-2">
 				<Button onclick={() => (show = false)} variant="outline">Cancelar</Button>
+				<Button onclick={deleteFunc} variant={warning ? 'default' : 'destructive'}>
+					{warning ? 'Confirmar' : 'Eliminar'}
+				</Button>
 			</div>
 		</DialogBody>
 	</DialogContent>

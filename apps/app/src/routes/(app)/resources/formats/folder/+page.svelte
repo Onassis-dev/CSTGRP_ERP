@@ -47,7 +47,9 @@
 {#if canEdit}
 	<MenuBar>
 		{#snippet right()}
-			<Button onclick={createDevice}><PlusCircle class=" size-3.5" />Añadir archivo</Button>
+			<Button onclick={createDevice} size="action"
+				><PlusCircle class=" size-3.5" />Añadir archivo</Button
+			>
 		{/snippet}
 	</MenuBar>
 {/if}
@@ -87,7 +89,7 @@
 	<FormatsForm bind:show bind:selectedFormat {selectedFolder} />
 	<DeletePopUp
 		bind:show={show1}
-		text="Borrar archivo"
+		text="Eliminar archivo"
 		deleteFunc={async () => {
 			await api.delete('/resources/formats', {
 				data: { name: selectedFormat, folder: selectedFolder }

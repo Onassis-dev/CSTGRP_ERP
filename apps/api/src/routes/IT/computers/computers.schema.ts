@@ -6,7 +6,7 @@ export const createSchema = z.object({
   anydeskPW: z.string().nullish(),
   owner: z.string().nullish(),
   name: z.string(),
-  active: z.boolean(),
+  active: z.coerce.string().transform((val) => val === 'true'),
   lastMaintance: dateSchema.nullish(),
   password: z.string().nullish(),
 });

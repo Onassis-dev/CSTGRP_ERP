@@ -1,5 +1,11 @@
 <script lang="ts">
 	import { run } from 'svelte/legacy';
+	import {
+		DropdownMenu,
+		DropdownMenuContent,
+		DropdownMenuTrigger,
+		DropdownMenuItem
+	} from '$lib/components/ui/dropdown-menu';
 	import Cookies from 'js-cookie';
 	import { sidebarOpen } from '../../utils/store';
 	import * as Accordion from '$lib/components/ui/accordion/index.js';
@@ -8,7 +14,6 @@
 	import {
 		GitMerge,
 		LogOut,
-		CircleAlert,
 		Monitor,
 		Shield,
 		UserCircle,
@@ -18,15 +23,11 @@
 		ShoppingCart,
 		AlertTriangle
 	} from 'lucide-svelte';
-	import { Dialog, DialogBody, DialogContent } from '$lib/components/ui/dialog';
-	import { Button } from '$lib/components/ui/button';
 	import { goto } from '$app/navigation';
 	import { cn } from '$lib/utils';
 	import { browser } from '$app/environment';
 	import { hasAccess } from '$lib/utils/functions';
 	import Notes from './Notes.svelte';
-
-	let showModal = $state(false);
 
 	const username = Cookies.get('username');
 
@@ -229,35 +230,19 @@
 			<UserCircle class="size-3.5 text-[#5c5e63]" />
 			{username}
 		</p>
-		<button
-			class="hover:bg-muted flex h-8 w-full items-center gap-2 rounded-md p-2 text-sm"
-			onclick={() => (showModal = true)}
-		>
-			<LogOut class="size-3.5 text-[#5c5e63]" />
-			Salir
-		</button>
+
+		<DropdownMenu>
+			<DropdownMenuTrigger
+				class="hover:bg-muted flex h-8 w-full items-center gap-2 rounded-md p-2 text-sm"
+			>
+				<LogOut class="size-3.5 text-[#5c5e63]" />
+				Salir
+			</DropdownMenuTrigger>
+			<DropdownMenuContent side="bottom" align="start">
+				<DropdownMenuItem onclick={() => goto('/login')} class="text-red-500">
+					Cerrar sesión
+				</DropdownMenuItem>
+			</DropdownMenuContent>
+		</DropdownMenu>
 	</div>
 </Card>
-
-<Dialog bind:open={showModal}>
-	<DialogContent>
-		<DialogBody class="space-y-4">
-			<div class="text-center">
-				<CircleAlert class="mx-auto mb-4 h-16 w-16 text-gray-400 dark:text-gray-200" />
-				<h3 class=" text-lg font-normal text-gray-500 dark:text-gray-400">Deseas cerrar sesion?</h3>
-			</div>
-			<div class="text-center">
-				<Button
-					variant="destructive"
-					class="me-2"
-					onclick={() => {
-						showModal = false;
-						goto('/login');
-					}}>Salir</Button
-				>
-
-				<Button onclick={() => (showModal = false)} variant="outline">Cancelar</Button>
-			</div>
-		</DialogBody>
-	</DialogContent>
-</Dialog>

@@ -40,7 +40,7 @@
 	<Select.Trigger
 		{chevron}
 		{disabled}
-		class={cn(className, cell ? 'h-full w-full border-none' : '', menu ? 'h-[28px]' : '')}
+		class={cn(className, cell ? 'h-full w-full border-none' : '', menu ? 'h-7' : '')}
 	>
 		{#if children}{@render children()}{:else}
 			{triggerContent}

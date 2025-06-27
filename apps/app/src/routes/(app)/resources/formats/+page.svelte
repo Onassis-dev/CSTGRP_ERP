@@ -44,7 +44,9 @@
 {#if canEdit}
 	<MenuBar>
 		{#snippet right()}
-			<Button onclick={createDevice}><PlusCircle class=" size-3.5" />Añadir carpeta</Button>
+			<Button onclick={createDevice} size="action"
+				><PlusCircle class=" size-3.5" />Añadir carpeta</Button
+			>
 		{/snippet}
 	</MenuBar>
 {/if}
@@ -81,7 +83,7 @@
 	<DirectoryForm bind:show bind:selectedFolder />
 	<DeletePopUp
 		bind:show={show1}
-		text="Borrar carpeta"
+		text="Eliminar carpeta"
 		deleteFunc={async () => {
 			await api.delete('/resources/formats/folder', { data: { name: selectedFolder } });
 			showSuccess('Carpeta eliminada');

@@ -39,7 +39,9 @@
 
 <MenuBar>
 	{#snippet right()}
-		<Button onclick={createPosition}><PlusCircle class=" size-3.5" />Añadir posicion</Button>
+		<Button onclick={createPosition} size="action"
+			><PlusCircle class=" size-3.5" />Añadir posicion</Button
+		>
 	{/snippet}
 </MenuBar>
 
@@ -63,7 +65,7 @@
 <PositionsForm bind:show bind:selectedPosition />
 <DeletePopUp
 	bind:show={show1}
-	text="Borrar posicion"
+	text="Eliminar posicion"
 	deleteFunc={async () => {
 		await api.delete('positions', { data: { id: parseInt(selectedPosition.id || '') } });
 		showSuccess('Posicion eliminada');

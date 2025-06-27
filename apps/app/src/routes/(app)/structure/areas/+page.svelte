@@ -45,7 +45,7 @@
 
 <MenuBar>
 	{#snippet right()}
-		<Button onclick={createArea}><PlusCircle class="size-3.5" />Añadir area</Button>
+		<Button onclick={createArea} size="action"><PlusCircle class="size-3.5" />Añadir area</Button>
 	{/snippet}
 </MenuBar>
 
@@ -79,7 +79,7 @@
 <AreaForms bind:show bind:selectedArea />
 <DeletePopUp
 	bind:show={show1}
-	text="Borrar area"
+	text="Eliminar area"
 	deleteFunc={async () => {
 		await api.delete('areas', { data: { id: parseInt(selectedArea.id || '') } });
 		showSuccess('Area eliminada');

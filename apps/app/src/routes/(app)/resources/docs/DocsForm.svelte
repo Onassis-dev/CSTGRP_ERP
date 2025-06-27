@@ -6,8 +6,8 @@
 		Dialog,
 		DialogBody,
 		DialogContent,
-		DialogHeader,
-		DialogTitle
+		DialogFooter,
+		DialogHeader
 	} from '$lib/components/ui/dialog';
 	import { Input } from '$lib/components/ui/input';
 	import api from '$lib/utils/server';
@@ -51,25 +51,16 @@
 
 <Dialog bind:open={show}>
 	<DialogContent>
-		<DialogHeader>
-			<DialogTitle>
-				{selectedRow.id ? `Editar fila` : 'Registrar fila'}
-			</DialogTitle>
-		</DialogHeader>
+		<DialogHeader title={selectedRow.id ? `Editar fila` : 'Registrar fila'} />
 
-		<DialogBody>
-			<form onsubmit={preventDefault(handleSubmit)}>
-				<div class="grid w-full gap-4">
-					<Label name="Documento">
-						<Input name="text" bind:value={formData.doc} />
-					</Label>
-					<Label name="Pagina">
-						<Input name="text" bind:value={formData.page} />
-					</Label>
-				</div>
-
-				<Button type="submit" class="mt-4 w-full">Guardar cambios</Button>
-			</form>
+		<DialogBody grid="1">
+			<Label name="Documento">
+				<Input name="text" bind:value={formData.doc} />
+			</Label>
+			<Label name="Pagina">
+				<Input name="text" bind:value={formData.page} />
+			</Label>
 		</DialogBody>
+		<DialogFooter submitFunc={handleSubmit} hideFunc={() => (show = false)} />
 	</DialogContent>
 </Dialog>

@@ -2,13 +2,12 @@
 	import { preventDefault } from 'svelte/legacy';
 	import Label from '$lib/components/basic/Label.svelte';
 	import Select from '$lib/components/basic/Select.svelte';
-	import { Button } from '$lib/components/ui/button';
 	import {
 		Dialog,
 		DialogBody,
 		DialogContent,
-		DialogHeader,
-		DialogTitle
+		DialogFooter,
+		DialogHeader
 	} from '$lib/components/ui/dialog';
 	import { Input } from '$lib/components/ui/input';
 	import api from '$lib/utils/server';
@@ -28,8 +27,8 @@
 	}
 
 	const activeValues = [
-		{ value: true, name: 'Activa' },
-		{ value: false, name: 'Inactiva' }
+		{ value: 'true', name: 'Activa' },
+		{ value: 'false', name: 'Inactiva' }
 	];
 
 	async function handleSubmit() {
@@ -54,40 +53,33 @@
 
 <Dialog bind:open={show}>
 	<DialogContent>
-		<DialogHeader>
-			<DialogTitle>
-				{selectedDevice.id ? `Editar ${selectedDevice.name}` : 'Registrar computadora'}
-			</DialogTitle>
-		</DialogHeader>
+		<DialogHeader
+			title={selectedDevice.id ? `Editar ${selectedDevice.name}` : 'Registrar computadora'}
+		/>
 
-		<DialogBody>
-			<form onsubmit={preventDefault(handleSubmit)}>
-				<div class="grid w-full grid-cols-2 gap-4">
-					<Label name="Nombre">
-						<Input name="text" bind:value={formData.name} />
-					</Label>
-					<Label name="Usuario">
-						<Input name="text" bind:value={formData.owner} />
-					</Label>
-					<Label name="Anydesk">
-						<Input name="text" bind:value={formData.anydesk} />
-					</Label>
-					<Label name="Anydesk PW">
-						<Input name="text" bind:value={formData.anydeskPW} />
-					</Label>
-					<Label name="PW">
-						<Input name="text" bind:value={formData.password} />
-					</Label>
-					<Label name="Activa">
-						<Select items={activeValues} bind:value={formData.active} />
-					</Label>
-					<Label name="Último Mantenimiento">
-						<Input name="text" bind:value={formData.lastMaintance} />
-					</Label>
-				</div>
-
-				<Button type="submit" class="mt-4 w-full">Guardar cambios</Button>
-			</form>
+		<DialogBody grid="2">
+			<Label name="Nombre" class="col-span-full">
+				<Input name="text" bind:value={formData.name} />
+			</Label>
+			<Label name="Usuario">
+				<Input name="text" bind:value={formData.owner} />
+			</Label>
+			<Label name="Anydesk">
+				<Input name="text" bind:value={formData.anydesk} />
+			</Label>
+			<Label name="Anydesk PW">
+				<Input name="text" bind:value={formData.anydeskPW} />
+			</Label>
+			<Label name="PW">
+				<Input name="text" bind:value={formData.password} />
+			</Label>
+			<Label name="Activa">
+				<Select items={activeValues} bind:value={formData.active} />
+			</Label>
+			<Label name="Último Mantenimiento">
+				<Input name="text" bind:value={formData.lastMaintance} />
+			</Label>
 		</DialogBody>
+		<DialogFooter submitFunc={handleSubmit} hideFunc={() => (show = false)} />
 	</DialogContent>
 </Dialog>
