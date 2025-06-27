@@ -65,7 +65,13 @@ export const traductions: Record<string, Traduction> = {
 	categories: { text: 'Categorías', icon: Package },
 	products: { text: 'Productos', icon: Package },
 	suppliers: { text: 'Proveedores', icon: Users },
-	orders: { text: 'Órdenes', icon: FileText }
+	orders: { text: 'Órdenes', icon: FileText },
+	corte: { text: 'Corte', icon: FileText },
+	'cortes-varios': { text: 'Cortes Varios', icon: FileText },
+	produccion: { text: 'Producción', icon: FileText },
+	calidad: { text: 'Calidad', icon: FileText },
+	serigrafia: { text: 'Serigrafía', icon: FileText },
+	production: { text: 'Producción', icon: FileText }
 };
 
 export function capitalize(string: string) {

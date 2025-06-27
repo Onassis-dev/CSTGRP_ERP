@@ -7,6 +7,7 @@ import { FastifyMulterModule } from '@nest-lab/fastify-multer';
 import { ITModule } from './routes/IT/it.module';
 import { ResourcesModule } from './routes/Resources/resources.module';
 import { PurchasesModule } from './routes/Purchases/purchases.module';
+import { ProductionModule } from './routes/Production/production.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { PurchasesModule } from './routes/Purchases/purchases.module';
     ITModule,
     ResourcesModule,
     PurchasesModule,
+    ProductionModule,
   ],
 })
 export class AppModule {}

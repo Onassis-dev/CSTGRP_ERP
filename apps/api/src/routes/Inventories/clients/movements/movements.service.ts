@@ -2,12 +2,13 @@ import jwt from 'jsonwebtoken';
 import { HttpException, Injectable } from '@nestjs/common';
 import { z } from 'zod/v4';
 import sql from 'src/utils/db';
-import { clientSchema, idSchema, IEFilterSchema } from './movements.schema';
+import { clientSchema, IEFilterSchema } from './movements.schema';
+import { idObjectSchema } from 'src/utils/schemas';
 
 @Injectable()
 export class MovementsService {
   async getMaterialComparison(
-    body: z.infer<typeof idSchema>,
+    body: z.infer<typeof idObjectSchema>,
     token: string,
     query: z.infer<typeof clientSchema>,
   ) {
@@ -78,7 +79,7 @@ export class MovementsService {
   }
 
   async getJobComparison(
-    body: z.infer<typeof idSchema>,
+    body: z.infer<typeof idObjectSchema>,
     token: string,
     query: z.infer<typeof clientSchema>,
   ) {

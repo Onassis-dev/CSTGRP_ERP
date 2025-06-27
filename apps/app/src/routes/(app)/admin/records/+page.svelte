@@ -3,7 +3,6 @@
 	import CusTable from '$lib/components/basic/CusTable.svelte';
 	import { TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
 	import api from '$lib/utils/server';
-	import { onMount } from 'svelte';
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
 	import { format } from 'date-fns';
 	import { es } from 'date-fns/locale';

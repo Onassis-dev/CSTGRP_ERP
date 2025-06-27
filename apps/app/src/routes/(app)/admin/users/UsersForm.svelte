@@ -151,6 +151,28 @@
 			</div>
 
 			<div class={cardClass}>
+				<h3 class="col-span-full w-full pl-0.5 font-semibold">Producción</h3>
+				<Label name="Perm. Corte">
+					<Select items={permissions} bind:value={formData.perm_prod_corte} />
+				</Label>
+				<Label name="Perm. Cortes Varios">
+					<Select items={permissions} bind:value={formData.perm_prod_cortesVarios} />
+				</Label>
+				<Label name="Perm. Producción">
+					<Select items={permissions} bind:value={formData.perm_prod_produccion} />
+				</Label>
+				<Label name="Perm. Calidad">
+					<Select items={permissions} bind:value={formData.perm_prod_calidad} />
+				</Label>
+				<Label name="Perm. Serigrafía">
+					<Select items={permissions} bind:value={formData.perm_prod_serigrafia} />
+				</Label>
+				<Label name="Perm. Movimientos">
+					<Select items={permissions} bind:value={formData.perm_prodmovements} />
+				</Label>
+			</div>
+
+			<div class={cardClass}>
 				<h3 class="col-span-full w-full pl-0.5 font-semibold">Almacen</h3>
 				<Label name="Perm. Inventario">
 					<Select items={permissions} bind:value={formData.perm_inventory} />

@@ -4,7 +4,6 @@ import {
   createRecordSchema,
   editDocSchema,
   getEmployeeHistorySchema,
-  idSchema,
 } from './records.schema';
 import { z } from 'zod/v4';
 import sql from 'src/utils/db';
@@ -12,6 +11,7 @@ import { ContextProvider } from 'src/interceptors/context.provider';
 import path from 'path';
 import { PDFDocument, StandardFonts } from 'pdf-lib';
 import { drawAlta, drawBaja, drawSalary } from './records.utils';
+import { idObjectSchema } from 'src/utils/schemas';
 // import { markPage } from 'src/utils/pdf';
 
 @Injectable()
@@ -52,7 +52,7 @@ export class RecordsService {
     });
   }
 
-  async getDocData(body: z.infer<typeof idSchema>) {
+  async getDocData(body: z.infer<typeof idObjectSchema>) {
     const [result] =
       await sql`SELECT id, doc FROM employeeRecords WHERE id = ${body.id}`;
 
@@ -75,7 +75,7 @@ export class RecordsService {
     return;
   }
 
-  async downloadDoc(body: z.infer<typeof idSchema>) {
+  async downloadDoc(body: z.infer<typeof idObjectSchema>) {
     const [record] =
       await sql`select * from employeeRecords where id = ${body.id}`;
 

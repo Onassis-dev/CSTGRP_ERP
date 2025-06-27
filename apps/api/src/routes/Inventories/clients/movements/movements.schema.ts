@@ -1,9 +1,5 @@
 import { z } from 'zod/v4';
 
-export const idSchema = z.object({
-  id: z.string(),
-});
-
 export const IEFilterSchema = z.object({
   code: z.string().nullable(),
 });

@@ -21,7 +21,8 @@
 		ShoppingBag,
 		Folders,
 		ShoppingCart,
-		AlertTriangle
+		AlertTriangle,
+		Factory
 	} from 'lucide-svelte';
 	import { goto } from '$app/navigation';
 	import { cn } from '$lib/utils';
@@ -69,6 +70,34 @@
 	{/if}
 
 	<Accordion.Root class="px-2 pt-2" type="single">
+		{#if hasAccess('prod_corte') || hasAccess('prod_cortesVarios') || hasAccess('prod_produccion') || hasAccess('prod_calidad') || hasAccess('prod_serigrafia')}
+			<Accordion.Item value="production" class="border-none">
+				<Accordion.Trigger
+					class="hover:bg-muted  mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
+				>
+					<Factory class="size-3.5 text-[#5c5e63]" />
+					Producción
+				</Accordion.Trigger>
+				<Accordion.Content>
+					{#if hasAccess('prod_corte')}
+						<Accordion.Option href="/production/corte" />
+					{/if}
+					{#if hasAccess('prod_cortesVarios')}
+						<Accordion.Option href="/production/cortes-varios" />
+					{/if}
+					{#if hasAccess('prod_produccion')}
+						<Accordion.Option href="/production/produccion" />
+					{/if}
+					{#if hasAccess('prod_calidad')}
+						<Accordion.Option href="/production/calidad" />
+					{/if}
+					{#if hasAccess('prod_serigrafia')}
+						<Accordion.Option href="/production/serigrafia" />
+					{/if}
+				</Accordion.Content>
+			</Accordion.Item>
+		{/if}
+
 		{#if hasAccess('inventory') || hasAccess('materialmovements') || hasAccess('requisitions') || hasAccess('poimp')}
 			<Accordion.Item value="warehouse" class="border-none">
 				<Accordion.Trigger

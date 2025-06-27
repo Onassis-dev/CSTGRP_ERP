@@ -1,4 +1,9 @@
-import { idSchema, intSchema, signedNumberSchema } from 'src/utils/schemas';
+import {
+  idSchema,
+  intSchema,
+  numberSchema,
+  signedNumberSchema,
+} from 'src/utils/schemas';
 import { z } from 'zod/v4';
 
 export const IEFilterSchema = z.object({
@@ -27,6 +32,8 @@ export const updateImportSchema = importSchema.extend({
 
 export const exportSchema = z.object({
   programation: intSchema,
+  amount: intSchema,
+  part: z.string(),
   jobpo: z.string(),
   due: z.string(),
   materials: z
@@ -39,6 +46,11 @@ export const exportSchema = z.object({
       }),
     )
     .nonempty(),
+  corteTime: numberSchema,
+  cortesVariosTime: numberSchema,
+  produccionTime: numberSchema,
+  calidadTime: numberSchema,
+  serigrafiaTime: numberSchema,
 });
 
 export const updateExportSchema = exportSchema.extend({

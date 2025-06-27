@@ -20,7 +20,7 @@ export class PoImpService {
 
   async getIE(body: z.infer<typeof IEFilterSchema>) {
     const movements = await sql`
-      SELECT * 
+      SELECT *
       FROM materialie
       WHERE 
       ${
@@ -41,7 +41,7 @@ export class PoImpService {
           : sql``
       }
       AND due <> '2024-01-01' AND due <> '2024-01-02'
-      ORDER BY due DESC, jobpo DESC, import DESC`;
+      ORDER BY due DESC, jobpo DESC, import DESC limit 150`;
 
     return movements;
   }
@@ -168,6 +168,7 @@ export class PoImpService {
     delete body.materials;
 
     await sql.begin(async (sql) => {
+      // Add inventory info
       const previousObj = (
         await sql`select jobpo, programation from materialie where id = ${body.id}`
       )[0];
@@ -196,6 +197,12 @@ export class PoImpService {
         `Actualizo la exportacion: ${previousObj?.jobpo}, programacion: ${previousObj?.programation} a ${newObj?.jobpo}, ${newObj?.programation}`,
         sql,
       );
+
+      // Add production info
+      await sql`insert into orders 
+      ("jobId", part, amount, "corteTime", "cortesVariosTime", "produccionTime", "calidadTime", "serigrafiaTime")
+      values 
+      (${body.id}, ${body.part}, ${body.amount}, ${body.corteTime}, ${body.cortesVariosTime}, ${body.produccionTime}, ${body.calidadTime}, ${body.serigrafiaTime})`;
     });
 
     return;
@@ -262,20 +269,27 @@ export class PoImpService {
       );
 
     await sql.begin(async (sql) => {
-      await sql`Select id from materials where code in (${materials})`;
-
-      await sql`Insert into materialie (jobpo, programation, due) values (${body.jobpo}, ${body.programation}, ${body.due})`;
-
-      await this.req.record(`Registro el job: ${body.jobpo}`, sql);
+      // Add inventory info
+      const [insertedJob] =
+        await sql`Insert into materialie (jobpo, programation, due) values (${body.jobpo}, ${body.programation}, ${body.due}) returning id`;
 
       for (const material of body.materials) {
         const [movement] =
           await sql`insert into materialmovements ("materialId", "movementId", amount, "realAmount", active, "activeDate") values
-         ((select Id from materials where code = ${material.code}),(select id from materialie where jobpo = ${body.jobpo}),${-Math.abs(parseFloat(material.amount))},${-Math.abs(parseFloat(material.realAmount))}, ${material.active}, ${material.active ? new Date() : null}) returning "materialId"`;
+         ((select id from materials where code = ${material.code}), ${insertedJob.id} ,${-Math.abs(parseFloat(material.amount))},${-Math.abs(parseFloat(material.realAmount))}, ${material.active}, ${material.active ? new Date() : null}) returning "materialId"`;
 
         if (material.active)
           await updateMaterialAmount(movement.materialId, sql);
       }
+
+      // Add production info
+      await sql`insert into orders 
+      ("jobId", part, amount, "corteTime", "cortesVariosTime", "produccionTime", "calidadTime", "serigrafiaTime")
+      values 
+      (${insertedJob.id}, ${body.part}, ${body.amount}, ${body.corteTime}, ${body.cortesVariosTime}, ${body.produccionTime}, ${body.calidadTime}, ${body.serigrafiaTime})`;
+
+      // Make record
+      await this.req.record(`Registro el job: ${body.jobpo}`, sql);
     });
 
     return;

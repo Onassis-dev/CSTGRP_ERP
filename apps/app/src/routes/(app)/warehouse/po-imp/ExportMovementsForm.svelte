@@ -23,6 +23,7 @@
 	import { Trash } from 'lucide-svelte';
 	import { refetch } from '$lib/utils/query';
 	import Label from '$lib/components/basic/Label.svelte';
+	import Separator from '$lib/components/ui/separator/separator.svelte';
 
 	interface Props {
 		show: boolean;
@@ -123,25 +124,53 @@
 </script>
 
 <Dialog bind:open={show}>
-	<DialogContent class="min-h-[90%] sm:max-w-3xl">
+	<DialogContent class="min-h-[90%] sm:max-w-4xl">
 		<DialogHeader title={selectedMovement.id ? 'Actualizar job-po' : 'Registrar job-po'} />
-		<DialogBody>
+		<DialogBody class="flex flex-col gap-4">
 			<div class="grid w-full gap-4 sm:grid-cols-3">
-				<Label name="Programacion">
-					<Input name="text" bind:value={formData.programation} />
+				<Label name="Programación">
+					<Input bind:value={formData.programation} />
 				</Label>
 				<Label name="Job o PO">
-					<Input disabled={inputDisabled} name="text" bind:value={formData.jobpo} />
+					<Input disabled={inputDisabled} bind:value={formData.jobpo} />
+				</Label>
+				<Label name="Parte">
+					<Input bind:value={formData.part} />
 				</Label>
 				<Label name="Fecha">
 					<Input type="date" bind:value={formData.due} />
 				</Label>
-				<Label name="Archivo" class="col-span-full">
+				<Label name="Cantidad">
+					<Input bind:value={formData.amount} />
+				</Label>
+				<Label name="Archivo">
 					<FileInput type="file" bind:files />
 				</Label>
 			</div>
 
-			<Table class="mt-4">
+			<Separator />
+
+			<div class="grid w-full gap-4 sm:grid-cols-3">
+				<Label name="Corte">
+					<Input bind:value={formData.corteTime} />
+				</Label>
+				<Label name="Cortes varios">
+					<Input bind:value={formData.cortesVariosTime} />
+				</Label>
+				<Label name="Produccion">
+					<Input bind:value={formData.produccionTime} />
+				</Label>
+				<Label name="Calidad">
+					<Input bind:value={formData.calidadTime} />
+				</Label>
+				<Label name="Serigrafia">
+					<Input bind:value={formData.serigrafiaTime} />
+				</Label>
+			</div>
+
+			<Separator />
+
+			<Table divClass="h-auto overflow-visible">
 				<TableHeader class="border-t">
 					<TableHead class="border-l">Codigo</TableHead>
 					<TableHead>Cantidad</TableHead>
@@ -188,14 +217,9 @@
 							>
 						</TableRow>
 					{/each}
-					<TableRow>
-						<TableCell class="border-l" colspan={6}
-							><Button onclick={addMaterial} class="w-full max-w-40">Anadir material</Button
-							></TableCell
-						>
-					</TableRow>
 				</TableBody>
 			</Table>
+			<Button onclick={addMaterial} class="mx-auto">Agregar material</Button>
 		</DialogBody>
 		<DialogFooter submitFunc={handleSubmit} hideFunc={() => (show = false)} />
 	</DialogContent>

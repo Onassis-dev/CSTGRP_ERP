@@ -19,8 +19,6 @@
 			.then(async ({ data }) => (docsContent = await marked.parse(data)))
 			.catch(() => (docsContent = null));
 	});
-
-	$inspect(docsContent);
 </script>
 
 <Dialog.Root bind:open>

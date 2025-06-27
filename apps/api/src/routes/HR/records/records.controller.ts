@@ -15,8 +15,8 @@ import {
   createRecordSchema,
   editDocSchema,
   getEmployeeHistorySchema,
-  idSchema,
 } from './records.schema';
+import { idObjectSchema } from 'src/utils/schemas';
 
 @ApiTags('Employees History')
 @Controller('employees/history')
@@ -35,12 +35,12 @@ export class RecordsController {
   }
 
   @Get('download-doc/:id')
-  downloadDoc(@Param(new ZodPiPe(idSchema)) body) {
+  downloadDoc(@Param(new ZodPiPe(idObjectSchema)) body) {
     return this.recordsService.downloadDoc(body);
   }
 
   @Get('doc/:id')
-  getDocData(@Param(new ZodPiPe(idSchema)) body) {
+  getDocData(@Param(new ZodPiPe(idObjectSchema)) body) {
     return this.recordsService.getDocData(body);
   }
 

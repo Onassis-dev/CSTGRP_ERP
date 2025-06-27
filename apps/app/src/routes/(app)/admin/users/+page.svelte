@@ -22,9 +22,7 @@
 	import { refetch } from '$lib/utils/query';
 	import OptionsHead from '$lib/components/basic/OptionsHead.svelte';
 
-	let show: boolean = $state(false);
-	let show1: boolean = $state(false);
-	let selectedUser = $state({
+	const baseUser = {
 		id: '',
 		username: '',
 		password: '',
@@ -45,8 +43,18 @@
 		perm_directory: 0,
 		perm_docs: 0,
 		perm_purchases: 0,
+		perm_prod_corte: 0,
+		perm_prod_cortesVarios: 0,
+		perm_prod_produccion: 0,
+		perm_prod_calidad: 0,
+		perm_prod_serigrafia: 0,
+		perm_prodmovements: 0,
 		maintance: false
-	});
+	};
+
+	let show: boolean = $state(false);
+	let show1: boolean = $state(false);
+	let selectedUser = $state(baseUser);
 
 	const users = createQuery({
 		queryKey: ['users'],
@@ -63,29 +71,7 @@
 		show = true;
 	}
 	function createUser() {
-		selectedUser = {
-			id: '',
-			username: '',
-			password: '',
-			perm_assistance_areas: '',
-			perm_users: 0,
-			perm_materialmovements: 0,
-			perm_assistance: 0,
-			perm_productivity: 0,
-			perm_employees: 0,
-			perm_inventory: 0,
-			perm_structure: 0,
-			perm_inventorystats: 0,
-			perm_petitions: 0,
-			perm_requisitions: 0,
-			perm_poimp: 0,
-			perm_formats: 0,
-			perm_directory: 0,
-			perm_docs: 0,
-			perm_purchases: 0,
-			maintance: false,
-			perm_it: 0
-		};
+		selectedUser = baseUser;
 		show = true;
 	}
 
@@ -96,29 +82,7 @@
 
 	async function handleDelete() {
 		await api.delete('/users', { data: { id: parseInt(selectedUser.id) } });
-		selectedUser = {
-			id: '',
-			username: '',
-			password: '',
-			perm_assistance_areas: '',
-			perm_users: 0,
-			perm_materialmovements: 0,
-			perm_assistance: 0,
-			perm_productivity: 0,
-			perm_employees: 0,
-			perm_inventory: 0,
-			perm_structure: 0,
-			perm_requisitions: 0,
-			perm_poimp: 0,
-			perm_formats: 0,
-			perm_directory: 0,
-			perm_docs: 0,
-			perm_purchases: 0,
-			maintance: false,
-			perm_it: 0,
-			perm_inventorystats: 0,
-			perm_petitions: 0
-		};
+		selectedUser = baseUser;
 		showSuccess('Usuario eliminado');
 		refetch(['users']);
 		show1 = false;
@@ -149,6 +113,7 @@
 		<TableHead colspan={1}>-</TableHead>
 		<TableHead colspan={5}>General</TableHead>
 		<TableHead colspan={3}>RRHH</TableHead>
+		<TableHead colspan={6}>Producción</TableHead>
 		<TableHead colspan={6}>Almacen</TableHead>
 		<TableHead colspan={2}>-</TableHead>
 	</TableHeader>
@@ -163,6 +128,12 @@
 		<TableHead class="w-[12.5%]">Asistencia</TableHead>
 		<TableHead class="w-[12.5%]">Empleados</TableHead>
 		<TableHead class="w-[12.5%]">Productividad</TableHead>
+		<TableHead class="w-[12.5%]">Corte</TableHead>
+		<TableHead class="w-[12.5%]">Cortes Varios</TableHead>
+		<TableHead class="w-[12.5%]">Producción</TableHead>
+		<TableHead class="w-[12.5%]">Calidad</TableHead>
+		<TableHead class="w-[12.5%]">Serigrafía</TableHead>
+		<TableHead class="w-[12.5%]">Movimientos</TableHead>
 		<TableHead class="w-[12.5%]">Dashboard</TableHead>
 		<TableHead class="w-[12.5%]">Inventario</TableHead>
 		<TableHead class="w-[12.5%]">Movimientos</TableHead>
@@ -254,6 +225,60 @@
 						color={getBadgeColor(user.perm_productivity)}
 					>
 						{@const SvelteComponent_4 = badgeTexts[user.perm_productivity]}
+						<SvelteComponent_4 class="size-3.5" />
+					</Badge></TableCell
+				>
+				<TableCell class="p-1.5 text-center"
+					><Badge
+						class="flex h-full w-full items-center justify-center p-1"
+						color={getBadgeColor(user.perm_prod_corte)}
+					>
+						{@const SvelteComponent_4 = badgeTexts[user.perm_prod_corte]}
+						<SvelteComponent_4 class="size-3.5" />
+					</Badge></TableCell
+				>
+				<TableCell class="p-1.5 text-center"
+					><Badge
+						class="flex h-full w-full items-center justify-center p-1"
+						color={getBadgeColor(user.perm_prod_cortesVarios)}
+					>
+						{@const SvelteComponent_4 = badgeTexts[user.perm_prod_cortesVarios]}
+						<SvelteComponent_4 class="size-3.5" />
+					</Badge></TableCell
+				>
+				<TableCell class="p-1.5 text-center"
+					><Badge
+						class="flex h-full w-full items-center justify-center p-1"
+						color={getBadgeColor(user.perm_prod_produccion)}
+					>
+						{@const SvelteComponent_4 = badgeTexts[user.perm_prod_produccion]}
+						<SvelteComponent_4 class="size-3.5" />
+					</Badge></TableCell
+				>
+				<TableCell class="p-1.5 text-center"
+					><Badge
+						class="flex h-full w-full items-center justify-center p-1"
+						color={getBadgeColor(user.perm_prod_calidad)}
+					>
+						{@const SvelteComponent_4 = badgeTexts[user.perm_prod_calidad]}
+						<SvelteComponent_4 class="size-3.5" />
+					</Badge></TableCell
+				>
+				<TableCell class="p-1.5 text-center"
+					><Badge
+						class="flex h-full w-full items-center justify-center p-1"
+						color={getBadgeColor(user.perm_prod_serigrafia)}
+					>
+						{@const SvelteComponent_4 = badgeTexts[user.perm_prod_serigrafia]}
+						<SvelteComponent_4 class="size-3.5" />
+					</Badge></TableCell
+				>
+				<TableCell class="p-1.5 text-center"
+					><Badge
+						class="flex h-full w-full items-center justify-center p-1"
+						color={getBadgeColor(user.perm_prodmovements)}
+					>
+						{@const SvelteComponent_4 = badgeTexts[user.perm_prodmovements]}
 						<SvelteComponent_4 class="size-3.5" />
 					</Badge></TableCell
 				>

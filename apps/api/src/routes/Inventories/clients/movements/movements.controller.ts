@@ -2,7 +2,8 @@ import { Controller, Get, Param, Query, Req } from '@nestjs/common';
 import { MovementsService } from './movements.service';
 import { ApiTags } from '@nestjs/swagger';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
-import { clientSchema, idSchema, IEFilterSchema } from './movements.schema';
+import { clientSchema, IEFilterSchema } from './movements.schema';
+import { idObjectSchema } from 'src/utils/schemas';
 
 @ApiTags('Clients')
 @Controller('clients')
@@ -11,7 +12,7 @@ export class MovementsController {
 
   @Get('material/comparison/:id')
   getMaterialComparison(
-    @Param(new ZodPiPe(idSchema)) params,
+    @Param(new ZodPiPe(idObjectSchema)) params,
     @Req() req,
     @Query(new ZodPiPe(clientSchema)) query,
   ) {
@@ -25,7 +26,7 @@ export class MovementsController {
   //TODO: Add maintance
   @Get('job/comparison/:id')
   getJobComparison(
-    @Param(new ZodPiPe(idSchema)) params,
+    @Param(new ZodPiPe(idObjectSchema)) params,
     @Req() req,
     @Query(new ZodPiPe(clientSchema)) query,
   ) {

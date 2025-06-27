@@ -174,6 +174,13 @@ const valueTraduccion = {
   minAmount: 'Cantidad mínima',
   realAmount: 'Cantidad real',
   newAmount: 'Nueva cantidad',
+  corteTime: 'Corte',
+  cortesVariosTime: 'Cortes varios',
+  produccionTime: 'Producción',
+  calidadTime: 'Calidad',
+  serigrafiaTime: 'Serigrafia',
+  amount: 'Cantidad',
+  part: 'Parte',
 };
 
 export const getTraducction = (value: string | number) => {

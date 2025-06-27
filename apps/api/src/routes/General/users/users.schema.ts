@@ -22,6 +22,12 @@ export const registerSchema = z.object({
   perm_directory: permType,
   perm_docs: permType,
   perm_purchases: permType,
+  perm_prod_corte: permType,
+  perm_prod_cortesVarios: permType,
+  perm_prod_produccion: permType,
+  perm_prod_calidad: permType,
+  perm_prod_serigrafia: permType,
+  perm_prodmovements: permType,
   perm_assistance_areas: z.string().max(300).nullable(),
   maintance: z.boolean(),
 });
