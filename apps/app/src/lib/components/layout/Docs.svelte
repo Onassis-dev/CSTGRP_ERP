@@ -29,9 +29,11 @@
 			<HelpCircle class="size-3.5" />
 		</Button>
 	</Dialog.Trigger>
-	<Dialog.Content class="h-[92dvh] max-h-[92dvh] w-[92dvw] max-w-[92dvw] overflow-scroll">
-		<div id="docs-content" class="mx-auto h-full w-full max-w-4xl p-4 py-12">
-			{@html docsContent}
+	<Dialog.Content class="min-h-[90%]  min-w-[90%] overflow-hidden">
+		<div class="h-full w-full overflow-scroll">
+			<div id="docs-content" class="mx-auto h-full w-full max-w-4xl p-4 py-12">
+				{@html docsContent}
+			</div>
 		</div>
 	</Dialog.Content>
 </Dialog.Root>
