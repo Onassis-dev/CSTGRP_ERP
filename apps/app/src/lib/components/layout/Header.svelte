@@ -15,6 +15,7 @@
 	});
 
 	let traduction = $derived(getTraduction($location));
+	$inspect(traduction);
 </script>
 
 <header class="sticky flex min-h-[50px] w-full items-center border-b px-3">

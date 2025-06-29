@@ -23,7 +23,13 @@ import {
 	Server,
 	GitFork,
 	BookUser,
-	ShoppingCart
+	ShoppingCart,
+	Bolt,
+	Star,
+	PaintRoller,
+	Scissors,
+	Slice,
+	History
 } from 'lucide-svelte';
 
 export interface Traduction {
@@ -55,7 +61,7 @@ export const traductions: Record<string, Traduction> = {
 	it: { text: 'Sistemas', icon: Network },
 	positions: { text: 'Posiciones', icon: Network },
 	areas: { text: 'Areas', icon: Building },
-	records: { text: 'Historial', icon: FileText },
+	records: { text: 'Historial', icon: History },
 	'po-imp': { text: 'Po-Imp', icon: Truck },
 	imports: { text: 'Importaciones', icon: Truck },
 	petitions: { text: 'Peticiones', icon: FileDown },
@@ -66,12 +72,13 @@ export const traductions: Record<string, Traduction> = {
 	products: { text: 'Productos', icon: Package },
 	suppliers: { text: 'Proveedores', icon: Users },
 	orders: { text: 'Órdenes', icon: FileText },
-	corte: { text: 'Corte', icon: FileText },
-	'cortes-varios': { text: 'Cortes Varios', icon: FileText },
-	produccion: { text: 'Producción', icon: FileText },
-	calidad: { text: 'Calidad', icon: FileText },
-	serigrafia: { text: 'Serigrafía', icon: FileText },
-	production: { text: 'Producción', icon: FileText }
+	corte: { text: 'Corte', icon: Slice },
+	'cortes-varios': { text: 'Cortes Varios', icon: Scissors },
+	produccion: { text: 'Producción', icon: Bolt },
+	calidad: { text: 'Calidad', icon: Star },
+	serigrafia: { text: 'Serigrafía', icon: PaintRoller },
+	production: { text: 'Producción', icon: FileText },
+	history: { text: 'Historial', icon: History }
 };
 
 export function capitalize(string: string) {

@@ -94,6 +94,9 @@
 					{#if hasAccess('prod_serigrafia')}
 						<Accordion.Option href="/production/serigrafia" />
 					{/if}
+					{#if hasAccess('prodmovements')}
+						<Accordion.Option href="/production/history" />
+					{/if}
 				</Accordion.Content>
 			</Accordion.Item>
 		{/if}
