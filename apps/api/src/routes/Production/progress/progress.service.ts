@@ -7,6 +7,8 @@ import {
   getProgressSchema,
 } from './progress.schema';
 import { ContextProvider } from 'src/interceptors/context.provider';
+import { updateOrderAmounts } from '../production.utils';
+import { getTijuanaDate } from 'src/utils/functions';
 
 @Injectable()
 export class ProgressService {
@@ -46,8 +48,8 @@ export class ProgressService {
           'El progreso no puede ser mayor al total',
         );
 
-      await sql`insert into ordermovements ("progressId", ${sql(body.area)}) values (${body.orderId}, ${body.amount})`;
-      await sql`update orders set ${sql(body.area)} = ${order.done + body.amount} where id = ${body.orderId}`;
+      await sql`insert into ordermovements (created_at, "progressId", ${sql(body.area)}) values (${getTijuanaDate()}, ${body.orderId}, ${body.amount})`;
+      await updateOrderAmounts(body.orderId, sql);
     });
   }
 }

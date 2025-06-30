@@ -1,3 +1,5 @@
+import { toZonedTime } from 'date-fns-tz';
+import { format } from 'date-fns';
 import sql from './db';
 
 export function getWeekDays(dateString: any) {
@@ -55,6 +57,12 @@ export function formatDate(strDate?: string) {
   return fechaFormateada;
 }
 
+export function getTijuanaDate() {
+  const timeZone = 'America/Tijuana';
+  const now = new Date();
+  const zonedDate = toZonedTime(now, timeZone);
+  return format(zonedDate, 'yyyy-MM-dd');
+}
 export async function updateMaterialAmount(id, dbInstance?: any) {
   if (!dbInstance) dbInstance = sql;
 

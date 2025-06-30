@@ -19,23 +19,29 @@
 
 	let { show = $bindable(false), selectedEmail = $bindable({}) }: Props = $props();
 	let formData: any = $state();
+	let area = $state('');
 
 	function setFormData() {
 		formData = { ...selectedEmail };
+		area = selectedEmail.corte
+			? 'corte'
+			: selectedEmail.cortesVarios
+				? 'cortesVarios'
+				: selectedEmail.produccion
+					? 'produccion'
+					: selectedEmail.calidad
+						? 'calidad'
+						: 'serigrafia';
 	}
 
 	async function handleSubmit() {
-		if (selectedEmail.id) {
-			await api.put('/emails', {
-				...formData,
-				id: parseInt(formData.id || '')
-			});
-			showSuccess('Correo editada');
-		} else {
-			await api.post('/emails', formData);
-			showSuccess('Correo registrada');
-		}
-		refetch(['emails']);
+		await api.put('/prod-history', {
+			...formData,
+			amount: formData[area],
+			area
+		});
+		showSuccess('Movimiento editado');
+		refetch(['prod-history']);
 		show = false;
 	}
 	$effect(() => {
@@ -46,15 +52,37 @@
 
 <Dialog bind:open={show}>
 	<DialogContent>
-		<DialogHeader title={selectedEmail.id ? `Editar ${selectedEmail.email}` : 'Registrar correo'} />
+		<DialogHeader title={selectedEmail.id ? `Editar movimiento` : 'Registrar movimiento'} />
 
-		<DialogBody grid="2">
-			<Label name="Correo">
-				<Input name="text" bind:value={formData.email} />
+		<DialogBody grid="1">
+			<Label name="Jobpo">
+				<Input name="text" bind:value={formData.jobpo} disabled />
 			</Label>
-			<Label name="Contrasena">
-				<Input name="text" bind:value={formData.password} />
-			</Label>
+			{#if selectedEmail.corte}
+				<Label name="Corte">
+					<Input name="text" bind:value={formData.corte} />
+				</Label>
+			{/if}
+			{#if selectedEmail.cortesVarios}
+				<Label name="Cortes Varios">
+					<Input name="text" bind:value={formData.cortesVarios} />
+				</Label>
+			{/if}
+			{#if selectedEmail.produccion}
+				<Label name="Producción">
+					<Input name="text" bind:value={formData.produccion} />
+				</Label>
+			{/if}
+			{#if selectedEmail.calidad}
+				<Label name="Calidad">
+					<Input name="text" bind:value={formData.calidad} />
+				</Label>
+			{/if}
+			{#if selectedEmail.serigrafia}
+				<Label name="Serigrafía">
+					<Input name="text" bind:value={formData.serigrafia} />
+				</Label>
+			{/if}
 		</DialogBody>
 		<DialogFooter submitFunc={handleSubmit} hideFunc={() => (show = false)} />
 	</DialogContent>

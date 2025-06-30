@@ -31,6 +31,7 @@ type permissionType =
   | 'prod_produccion'
   | 'prod_calidad'
   | 'prod_serigrafia'
+  | 'prodmovements'
   | 'docs';
 
 @Injectable()

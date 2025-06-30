@@ -1,10 +1,6 @@
 import { idSchema, intSchema } from 'src/utils/schemas';
+import { areaSchema } from '../production.utils';
 import { z } from 'zod/v4';
-
-export const areaSchema = z.enum(
-  ['corte', 'cortesVarios', 'produccion', 'calidad', 'serigrafia'],
-  'Area invalida',
-);
 
 export const getProgressSchema = z.object({
   completed: z.string().transform((val) => val === 'true'),

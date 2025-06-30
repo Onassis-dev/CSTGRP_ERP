@@ -96,7 +96,7 @@
 				<TableCell>{device[area]}</TableCell>
 				<TableCell>{device.amount}</TableCell>
 				<TableCell>{device.amount - device[area]}</TableCell>
-				<TableCell>{formatDate(device.due)}</TableCell>
+				<TableCell>{formatDate(device.created_at)}</TableCell>
 			</TableRow>
 		{/each}
 	</TableBody>
