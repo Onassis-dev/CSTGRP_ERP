@@ -87,6 +87,12 @@
 		} catch (error) {
 			products = selectedDevice.products;
 		}
+		products = products.map((product) => {
+			return {
+				...product,
+				total: Number(product.total).toFixed(4)
+			};
+		});
 	}
 
 	async function handleSubmit() {

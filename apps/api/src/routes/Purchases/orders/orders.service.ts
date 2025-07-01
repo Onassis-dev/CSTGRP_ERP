@@ -49,6 +49,7 @@ export class OrdersService {
         currency: body.currency,
         comments: body.comments,
         iva: body.iva,
+        business: body.business,
         net,
         products: JSON.stringify(products),
         supplier: JSON.stringify(supplier),
