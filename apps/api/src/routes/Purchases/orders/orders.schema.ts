@@ -17,17 +17,19 @@ export const createSchema = z.object({
   iva: intSchema,
   comments: z.string().nullable(),
   business: intSchema,
-  products: z.array(
-    z.object({
-      id: idSchema,
-      code: z.string(),
-      description: z.string(),
-      quantity: numberSchema,
-      price: priceSchema,
-      measurement: z.string().nullish(),
-      total: priceSchema,
-    }),
-  ),
+  products: z
+    .array(
+      z.object({
+        id: idSchema,
+        code: z.string(),
+        description: z.string(),
+        quantity: numberSchema,
+        price: priceSchema,
+        measurement: z.string().nullish(),
+        total: priceSchema,
+      }),
+    )
+    .nonempty(),
 });
 
 export const editSchema = createSchema.extend({

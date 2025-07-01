@@ -13,6 +13,7 @@ export class ValidationFilter<T extends $ZodError> {
     const bodyExists = !!exception.issues[0].path[0];
     const message = `${getTraducction(exception.issues[0].path[0] as string)}: ${exception.issues[0].message}`;
 
+    console.log(exception);
     response.status(HttpStatus.BAD_REQUEST).send({
       errors: bodyExists ? exception.issues : 'No se ah mandado ningun dato',
       message: bodyExists ? message : 'No se ah mandado ningun dato',

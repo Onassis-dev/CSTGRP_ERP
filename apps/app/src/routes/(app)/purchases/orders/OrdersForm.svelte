@@ -134,13 +134,15 @@
 		{ value: '8', name: '8%' }
 	];
 
-	const total: number = $derived(
-		products?.reduce((acc, curr) => acc + Number(curr.total), 0) *
+	const total: string = $derived(
+		(
+			products?.reduce((acc, curr) => acc + Number(curr.total), 0) *
 			(1 + Number(formData.iva || 0) / 100)
+		).toFixed(4)
 	);
 
-	const subtotal: number = $derived(
-		products?.reduce((acc, curr) => acc + Number(curr.total), 0) * 1
+	const subtotal: string = $derived(
+		(products?.reduce((acc, curr) => acc + Number(curr.total), 0) * 1).toFixed(4)
 	);
 </script>
 
@@ -202,7 +204,7 @@
 											<Input
 												bind:value={row.quantity}
 												oninput={() => {
-													row.total = row.quantity * row.price;
+													row.total = (row.quantity * row.price).toFixed(4);
 												}}
 												type="number"
 												min={0}
@@ -210,7 +212,7 @@
 											/>
 										</TableCell>
 
-										<TableCell>{Number(row.total).toFixed(2)}</TableCell>
+										<TableCell>{row.total}</TableCell>
 									</TableRow>
 								{/each}
 							</TableBody>
@@ -225,10 +227,10 @@
 						<Select items={iva} bind:value={formData.iva} placeholder="Iva" />
 					</Label>
 					<Label name="SubTotal">
-						<Input value={Number(subtotal).toFixed(2)} type="text" readonly />
+						<Input value={subtotal} type="text" readonly />
 					</Label>
 					<Label name="Total">
-						<Input value={Number(total).toFixed(2)} type="text" readonly />
+						<Input value={total} type="text" readonly />
 					</Label>
 					<Label name="Comentarios" class="col-span-4 resize-none">
 						<Textarea bind:value={formData.comments} />
