@@ -23,7 +23,7 @@ export class ProgressService {
        ${body.completed ? sql`AND (orders.completed = true OR ${sql('orders.' + body.area)} = orderders.amount)` : sql`AND orders.completed = false AND ${sql('orders.' + body.area)} < orders.amount`}
        ${body.job ? sql`AND materialie.jobpo LIKE ${'%' + body.job + '%'}` : sql``}
        ${body.programation ? sql`AND materialie.programation LIKE ${'%' + body.programation + '%'}` : sql``}
-       order by materialie.jobpo desc limit 150`;
+        order by materialie.jobpo desc limit 150`;
 
     return jobs;
   }
@@ -40,8 +40,10 @@ export class ProgressService {
     await validatePerm(body.area, this.req.userId, 2);
 
     await sql.begin(async (sql) => {
-      const [order] =
-        await sql`select SUM(${sql(body.area)})::integer as done, (select amount from orders where id = ${body.orderId}) from ordermovements where "progressId" = ${body.orderId}`;
+      const [order] = await sql`select SUM(${sql(body.area)})::integer as done,
+         (select amount from orders where id = ${body.orderId}),
+         (select jobpo from materialie where id = (select "jobId" from orders where id = ${body.orderId}))
+           from ordermovements where "progressId" = ${body.orderId}`;
 
       if (order.done + body.amount > order.amount)
         throw new BadRequestException(
@@ -50,6 +52,10 @@ export class ProgressService {
 
       await sql`insert into ordermovements (created_at, "progressId", ${sql(body.area)}) values (${getTijuanaDate()}, ${body.orderId}, ${body.amount})`;
       await updateOrderAmounts(body.orderId, sql);
+      await this.req.record(
+        `Agregó ${body.amount}pz a ${body.area}, orden: ${order.jobpo}`,
+        sql,
+      );
     });
   }
 }

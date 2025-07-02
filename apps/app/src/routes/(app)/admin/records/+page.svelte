@@ -29,6 +29,7 @@
 	};
 
 	let options = [
+		{ value: 'production', name: 'Producción' },
 		{ value: 'inventory', name: 'Inventario' },
 		{ value: 'purchases', name: 'Compras' },
 		{ value: 'hr', name: 'RRHH' },
@@ -37,9 +38,7 @@
 	];
 
 	$effect(() => {
-		if (filters.module) {
-			refetch(['records']);
-		}
+		if (filters.module) refetch(['records']);
 	});
 </script>
 

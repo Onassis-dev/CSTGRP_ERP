@@ -1,15 +1,7 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Put,
-  Query,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Put, UseGuards } from '@nestjs/common';
 import { HistoryService } from './history.service';
 import { ApiTags } from '@nestjs/swagger';
-import { getHistorySchema, updateHistorySchema } from './history.schema';
+import { updateHistorySchema } from './history.schema';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { idObjectSchema } from 'src/utils/schemas';
@@ -21,8 +13,8 @@ export class HistoryController {
   constructor(private readonly historyService: HistoryService) {}
 
   @Get('')
-  getOrders(@Query(new ZodPiPe(getHistorySchema)) query) {
-    return this.historyService.getOrders(query);
+  getOrders() {
+    return this.historyService.getOrders();
   }
 
   @Put('')
