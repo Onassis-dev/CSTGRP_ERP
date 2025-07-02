@@ -103,10 +103,23 @@
 	async function getData() {
 		const { data } = await api.get('/po-imp/' + selectedMovement.id);
 		materials = data.materials;
-		formData = { id: data.id, jobpo: data.jobpo, programation: data.programation, due: data.due };
+		formData = {
+			id: data.id,
+			jobpo: data.jobpo,
+			programation: data.programation,
+			due: data.due,
+			corteTime: data.corte,
+			cortesVariosTime: data.cortesVarios,
+			produccionTime: data.produccion,
+			calidadTime: data.calidad,
+			serigrafiaTime: data.serigrafia,
+			part: data.part,
+			amount: data.amount
+		};
 		files = null;
 		inputDisabled = false;
 	}
+
 	let inputDisabled = $state(false);
 	$effect(() => {
 		inputDisabled = !!files;

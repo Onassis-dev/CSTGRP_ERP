@@ -48,10 +48,16 @@ export class PoImpService {
 
   async getOneIE(body: z.infer<typeof idObjectSchema>) {
     const [data] = await sql`select * from materialie where id = ${body.id}`;
+    const [order] = await sql`select * from orders where "jobId" = ${body.id}`;
     const materials =
       await sql`select (select code from materials where id = "materialId"), amount, "realAmount", active from materialmovements where "movementId" = ${body.id} and NOT extra`;
 
-    return { ...data, due: data.due.toISOString().split('T')[0], materials };
+    return {
+      ...order,
+      ...data,
+      due: data.due.toISOString().split('T')[0],
+      materials,
+    };
   }
 
   async getJobComparison(body: z.infer<typeof idObjectSchema>) {
@@ -165,8 +171,6 @@ export class PoImpService {
       });
     }
 
-    delete body.materials;
-
     await sql.begin(async (sql) => {
       // Add inventory info
       const previousObj = (
@@ -174,7 +178,11 @@ export class PoImpService {
       )[0];
 
       const newObj = (
-        await sql`update materialie set ${sql(body)} where id = ${body.id} returning jobpo, programation`
+        await sql`update materialie set ${sql({
+          due: body.due,
+          jobpo: body.jobpo,
+          programation: body.programation,
+        })} where id = ${body.id} returning jobpo, programation`
       )[0];
 
       const prevMaterials =
@@ -193,16 +201,22 @@ export class PoImpService {
         await updateMaterialAmount(id, sql);
       }
 
+      // Add production info
+      await sql`update orders set ${sql({
+        part: body.part,
+        amount: body.amount,
+        corte: body.corteTime,
+        cortesVarios: body.cortesVariosTime,
+        produccion: body.produccionTime,
+        calidad: body.calidadTime,
+        serigrafia: body.serigrafiaTime,
+      })} where "jobId" = ${body.id}`;
+
+      // Make record
       await this.req.record(
         `Actualizo la exportacion: ${previousObj?.jobpo}, programacion: ${previousObj?.programation} a ${newObj?.jobpo}, ${newObj?.programation}`,
         sql,
       );
-
-      // Add production info
-      await sql`insert into orders 
-      ("jobId", part, amount, "corteTime", "cortesVariosTime", "produccionTime", "calidadTime", "serigrafiaTime")
-      values 
-      (${body.id}, ${body.part}, ${body.amount}, ${body.corteTime}, ${body.cortesVariosTime}, ${body.produccionTime}, ${body.calidadTime}, ${body.serigrafiaTime})`;
     });
 
     return;
