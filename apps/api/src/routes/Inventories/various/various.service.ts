@@ -53,9 +53,9 @@ export class VariousService {
 
       const ws = wb.getWorksheet(1);
 
-      // const product = ws.getCell(4, 5);
+      const part = ws.getCell(4, 5).value;
       const jobpo = ws.getCell(6, 5).value;
-      // const amount = ws.getCell(7, 5).value;
+      const amount = ws.getCell(7, 5).value;
       let dueDate = ws.getCell(5, 7).value;
 
       if (dueDate instanceof Date) {
@@ -82,7 +82,7 @@ export class VariousService {
         .filter((item) => item.code);
       console.log(dueDate);
 
-      return { jobpo, dueDate, materials };
+      return { jobpo, dueDate, materials, part, amount };
     } catch (err) {
       console.log(err);
       throw new HttpException('Excel invalido', 400);

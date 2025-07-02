@@ -71,9 +71,7 @@
 		const fileName = fileEntry instanceof File ? fileEntry.name : '';
 		if (fileName?.includes('.pdf')) {
 			result = (await api.post('/inventoryvarious/jobpdf', form)).data;
-			formData.jobpo = result.jobpo;
-			formData.due = result.dueDate;
-
+			formData = { ...result };
 			materials = result.materials;
 		}
 		if (fileName?.includes('.xlsx')) {

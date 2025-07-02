@@ -83,10 +83,12 @@ export function processImport(text: string) {
 
 export function processJob(text: string) {
   let jobpo = '';
+  let part = '';
+  let amount = '';
   let linesArray = text.split(/\s{3,}| {2}/);
 
   // Debugging
-  // linesArray.forEach((line) => console.log(line));
+  linesArray.forEach((line) => console.log(line));
 
   const index = linesArray.findIndex((line: any) =>
     line.includes('RAW MATERIAL COMPONENTS:'),
@@ -97,6 +99,16 @@ export function processJob(text: string) {
 
   jobpo =
     linesArray[linesArray.findIndex((line: any) => line.includes('Job:')) + 1];
+
+  part = linesArray[linesArray.findIndex((line: any) => line === 'Part:') + 1];
+
+  const amountsStart = linesArray.findIndex((line: any) =>
+    line.includes('Schedule Dates'),
+  );
+  amount = (
+    Number(linesArray[amountsStart + 1].replaceAll(',', '')) +
+    Number(linesArray[amountsStart + 3].replaceAll(',', ''))
+  ).toFixed(0);
 
   const dateStr =
     linesArray[
@@ -153,5 +165,5 @@ export function processJob(text: string) {
       material.code[0] === 'P' ? 'CSI-' + material.code : material.code;
   });
 
-  return { materials, jobpo, dueDate };
+  return { materials, jobpo, dueDate, part, amount };
 }
