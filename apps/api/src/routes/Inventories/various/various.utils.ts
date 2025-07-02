@@ -88,7 +88,7 @@ export function processJob(text: string) {
   let linesArray = text.split(/\s{3,}| {2}/);
 
   // Debugging
-  linesArray.forEach((line) => console.log(line));
+  // linesArray.forEach((line) => console.log(line));
 
   const index = linesArray.findIndex((line: any) =>
     line.includes('RAW MATERIAL COMPONENTS:'),

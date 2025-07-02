@@ -76,8 +76,7 @@
 		}
 		if (fileName?.includes('.xlsx')) {
 			result = (await api.post('/inventoryvarious/exportxlsx', form)).data;
-			formData.jobpo = result.jobpo;
-			formData.due = result.dueDate;
+			formData = { ...result };
 			materials = result.materials;
 		}
 		if (!result) showError(null, 'Archivo invalido');

@@ -56,16 +56,22 @@ export class VariousService {
       const part = ws.getCell(4, 5).value;
       const jobpo = ws.getCell(6, 5).value;
       const amount = ws.getCell(7, 5).value;
-      let dueDate = ws.getCell(5, 7).value;
+      let due = ws.getCell(9, 5).value;
 
-      if (dueDate instanceof Date) {
-        dueDate = dueDate.toISOString().split('T')[0];
+      const corteTime = ws.getCell(4, 7).value;
+      const serigrafiaTime = ws.getCell(5, 7).value;
+      const cortesVariosTime = ws.getCell(6, 7).value;
+      const produccionTime = ws.getCell(7, 7).value;
+      const calidadTime = ws.getCell(8, 7).value;
+
+      if (due instanceof Date) {
+        due = due.toISOString().split('T')[0];
       } else {
         throw new HttpException('Fecha incorrecta', 400);
       }
 
       const materials = ws
-        .getRows(10, 100)
+        .getRows(12, 100)
         .map((row) => {
           let amount = row.getCell(8).value;
           if (typeof amount === 'object') amount = (amount as any)?.result;
@@ -73,18 +79,34 @@ export class VariousService {
           if (typeof amount === 'undefined' || isNaN(Number(amount)))
             amount = '0.00';
 
+          const code = row.getCell(4).value;
+
           return {
-            code: row.getCell(4).value,
+            code,
             amount,
             realAmount: amount,
+            active: false,
           };
         })
         .filter((item) => item.code);
-      console.log(dueDate);
 
-      return { jobpo, dueDate, materials, part, amount };
+      console.log(materials);
+
+      return {
+        jobpo,
+        due,
+        materials,
+        part,
+        amount,
+        corteTime,
+        serigrafiaTime,
+        cortesVariosTime,
+        produccionTime,
+        calidadTime,
+      };
     } catch (err) {
       console.log(err);
+      if (err instanceof HttpException) throw err;
       throw new HttpException('Excel invalido', 400);
     }
   }
