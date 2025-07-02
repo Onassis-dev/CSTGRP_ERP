@@ -116,12 +116,12 @@ export function processJob(text: string) {
     ];
 
   const [month, day, year] = dateStr.split('/');
-  let dueDate: any = new Date();
+  let due: any = new Date();
 
-  dueDate.setFullYear(year);
-  dueDate.setMonth(parseInt(month) - 1);
-  dueDate.setDate(day);
-  dueDate = dueDate.toISOString().split('T')[0];
+  due.setFullYear(year);
+  due.setMonth(parseInt(month) - 1);
+  due.setDate(day);
+  due = due.toISOString().split('T')[0];
 
   linesArray = linesArray.slice(index, endIndex);
   const materials: Array<any> = [];
@@ -165,5 +165,5 @@ export function processJob(text: string) {
       material.code[0] === 'P' ? 'CSI-' + material.code : material.code;
   });
 
-  return { materials, jobpo, dueDate, part, amount };
+  return { materials, jobpo, due, part, amount };
 }
