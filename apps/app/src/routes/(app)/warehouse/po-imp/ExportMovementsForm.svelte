@@ -182,7 +182,7 @@
 
 			<Table divClass="h-auto overflow-visible">
 				<TableHeader class="border-t">
-					<TableHead class="border-l">Codigo</TableHead>
+					<TableHead>Codigo</TableHead>
 					<TableHead>Cantidad</TableHead>
 					<TableHead>Real</TableHead>
 					<TableHead>Medida</TableHead>

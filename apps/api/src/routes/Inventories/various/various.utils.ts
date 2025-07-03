@@ -85,18 +85,19 @@ export function processJob(text: string) {
   let jobpo = '';
   let part = '';
   let amount = '';
-  let linesArray = text.split(/\s{3,}| {2}/);
+  const linesArray = text.split(/\s{3,}| {2}/);
 
   // Debugging
   // linesArray.forEach((line) => console.log(line));
 
-  const index = linesArray.findIndex((line: any) =>
+  const startMaterialsIndex = linesArray.findIndex((line: any) =>
     line.includes('RAW MATERIAL COMPONENTS:'),
   );
-  const endIndex = linesArray.findIndex((line: any) =>
+  const startOperationsIndex = linesArray.findIndex((line: any) =>
     line.includes('OPERATIONS'),
   );
 
+  // Get general info
   jobpo =
     linesArray[linesArray.findIndex((line: any) => line.includes('Job:')) + 1];
 
@@ -123,22 +124,26 @@ export function processJob(text: string) {
   due.setDate(day);
   due = due.toISOString().split('T')[0];
 
-  linesArray = linesArray.slice(index, endIndex);
+  // Get materials
+  const materialsLines = linesArray.slice(
+    startMaterialsIndex,
+    startOperationsIndex,
+  );
   const materials: Array<any> = [];
 
   let materialNumber = 0;
-  linesArray.forEach((element: any, i: number) => {
+  materialsLines.forEach((element: any, i: number) => {
     // Materiales
     if (/^\d{2,3}$/.test(element) && Number(element) > Number(materialNumber)) {
       materialNumber = parseInt(element);
       const excludedValues = ['PATTERN', 'SAMPLE', 'IS', 'FREIGHT', 'SCRN'];
       if (
         !excludedValues.some((substring) =>
-          linesArray[i + 1].includes(substring),
+          materialsLines[i + 1].includes(substring),
         )
       ) {
         const material = {
-          code: linesArray[i + 1],
+          code: materialsLines[i + 1],
           amount: '',
           realAmount: '',
           active: false,
@@ -146,10 +151,10 @@ export function processJob(text: string) {
 
         for (let j = 2; j < 9; j++) {
           if (
-            !isNaN(parseNumber(linesArray[i + j])) &&
-            !/\d/.test(linesArray[i + j + 1])
+            !isNaN(parseNumber(materialsLines[i + j])) &&
+            !/\d/.test(materialsLines[i + j + 1])
           ) {
-            material.amount = linesArray[i + j].replace(/,/g, '');
+            material.amount = materialsLines[i + j].replace(/,/g, '');
             material.realAmount = material.amount;
             break;
           }
@@ -165,5 +170,27 @@ export function processJob(text: string) {
       material.code[0] === 'P' ? 'CSI-' + material.code : material.code;
   });
 
-  return { materials, jobpo, due, part, amount };
+  // Get operations
+  const operationsLines = linesArray.slice(startOperationsIndex, -1);
+  const operations: Array<any> = [];
+
+  operationsLines.forEach((text: any, i: number) => {
+    if (text.includes('CrewSize')) {
+      for (let j = i; j < i + 200; j++) {
+        if (/^(\d+,)*\d+\.\d{5}$/.test(operationsLines[j])) {
+          operations.push({
+            code: operationsLines[j - 2],
+            minutes: (
+              (Number(operationsLines[j + 2].replaceAll(',', '')) +
+                Number(operationsLines[j + 3].replaceAll(',', ''))) *
+              60
+            ).toFixed(2),
+          });
+          break;
+        }
+      }
+    }
+  });
+
+  return { materials, jobpo, due, part, amount, operations };
 }
