@@ -205,11 +205,11 @@ export class PoImpService {
       await sql`update orders set ${sql({
         part: body.part,
         amount: body.amount,
-        corte: body.corteTime,
-        cortesVarios: body.cortesVariosTime,
-        produccion: body.produccionTime,
-        calidad: body.calidadTime,
-        serigrafia: body.serigrafiaTime,
+        corteTime: body.corteTime,
+        cortesVariosTime: body.cortesVariosTime,
+        produccionTime: body.produccionTime,
+        calidadTime: body.calidadTime,
+        serigrafiaTime: body.serigrafiaTime,
       })} where "jobId" = ${body.id}`;
 
       // Make record

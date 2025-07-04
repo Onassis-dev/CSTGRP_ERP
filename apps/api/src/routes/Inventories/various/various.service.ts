@@ -90,8 +90,6 @@ export class VariousService {
         })
         .filter((item) => item.code);
 
-      console.log(materials);
-
       return {
         jobpo,
         due,

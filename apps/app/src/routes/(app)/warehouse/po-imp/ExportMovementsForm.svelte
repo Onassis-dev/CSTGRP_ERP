@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Tabs, TabsContent, TabsList, TabsTrigger } from '$lib/components/ui/tabs';
 	import {
 		Dialog,
 		DialogBody,
@@ -23,7 +24,8 @@
 	import { Trash } from 'lucide-svelte';
 	import { refetch } from '$lib/utils/query';
 	import Label from '$lib/components/basic/Label.svelte';
-	import Separator from '$lib/components/ui/separator/separator.svelte';
+	import Select from '$lib/components/basic/Select.svelte';
+	import { untrack } from 'svelte';
 
 	interface Props {
 		show: boolean;
@@ -40,7 +42,22 @@
 		active: boolean;
 	}
 
+	interface operation {
+		code: string;
+		minutes: number;
+		area: string;
+	}
+
+	const areas = [
+		{ name: 'Corte', value: 'corte' },
+		{ name: 'Cortes varios', value: 'cortesVarios' },
+		{ name: 'Produccion', value: 'produccion' },
+		{ name: 'Calidad', value: 'calidad' },
+		{ name: 'Serigrafia', value: 'serigrafia' }
+	];
+
 	let materials: material[] = $state([]);
+	let operations: operation[] = $state([]);
 	let formData: any = $state({});
 	let files: any = $state();
 
@@ -73,11 +90,13 @@
 			result = (await api.post('/inventoryvarious/jobpdf', form)).data;
 			formData = { ...result };
 			materials = result.materials;
+			operations = result.operations;
 		}
 		if (fileName?.includes('.xlsx')) {
 			result = (await api.post('/inventoryvarious/exportxlsx', form)).data;
 			formData = { ...result };
 			materials = result.materials;
+			operations = result.operations;
 		}
 		if (!result) showError(null, 'Archivo invalido');
 	}
@@ -90,8 +109,19 @@
 		materials.splice(i, 1);
 		materials = materials;
 	}
+
+	function addOperation() {
+		operations.push({ code: '', minutes: 0, area: '' });
+		operations = [...operations];
+	}
+	function deleteOperation(i: number) {
+		operations.splice(i, 1);
+		operations = [...operations];
+	}
+
 	function cleanData() {
 		materials = [{ code: '', measurement: '', amount: '', active: false, realAmount: '' }];
+		operations = [];
 		formData = {};
 		files = null;
 		inputDisabled = false;
@@ -105,11 +135,11 @@
 			jobpo: data.jobpo,
 			programation: data.programation,
 			due: data.due,
-			corteTime: data.corte,
-			cortesVariosTime: data.cortesVarios,
-			produccionTime: data.produccion,
-			calidadTime: data.calidad,
-			serigrafiaTime: data.serigrafia,
+			corteTime: data.corteTime,
+			cortesVariosTime: data.cortesVariosTime,
+			produccionTime: data.produccionTime,
+			calidadTime: data.calidadTime,
+			serigrafiaTime: data.serigrafiaTime,
 			part: data.part,
 			amount: data.amount
 		};
@@ -130,6 +160,43 @@
 	});
 	$effect(() => {
 		if (selectedMovement.id) getData();
+	});
+
+	$effect(() => {
+		operations;
+		untrack(() => {
+			if (!operations.length) return;
+			formData.corteTime = operations
+				.reduce((acc, operation) => {
+					if (operation.area === 'corte') acc += Number(operation.minutes);
+					return acc;
+				}, 0)
+				.toFixed(2);
+			formData.cortesVariosTime = operations
+				.reduce((acc, operation) => {
+					if (operation.area === 'cortesVarios') acc += Number(operation.minutes);
+					return acc;
+				}, 0)
+				.toFixed(2);
+			formData.produccionTime = operations
+				.reduce((acc, operation) => {
+					if (operation.area === 'produccion') acc += Number(operation.minutes);
+					return acc;
+				}, 0)
+				.toFixed(2);
+			formData.calidadTime = operations
+				.reduce((acc, operation) => {
+					if (operation.area === 'calidad') acc += Number(operation.minutes);
+					return acc;
+				}, 0)
+				.toFixed(2);
+			formData.serigrafiaTime = operations
+				.reduce((acc, operation) => {
+					if (operation.area === 'serigrafia') acc += Number(operation.minutes);
+					return acc;
+				}, 0)
+				.toFixed(2);
+		});
 	});
 </script>
 
@@ -158,78 +225,133 @@
 				</Label>
 			</div>
 
-			<Separator />
-
-			<div class="grid w-full gap-4 sm:grid-cols-3">
+			<div class="grid w-full gap-4 sm:grid-cols-5">
 				<Label name="Corte">
-					<Input bind:value={formData.corteTime} />
+					<Input bind:value={formData.corteTime} disabled={!!operations.length} />
 				</Label>
 				<Label name="Cortes varios">
-					<Input bind:value={formData.cortesVariosTime} />
+					<Input bind:value={formData.cortesVariosTime} disabled={!!operations.length} />
 				</Label>
 				<Label name="Produccion">
-					<Input bind:value={formData.produccionTime} />
+					<Input bind:value={formData.produccionTime} disabled={!!operations.length} />
 				</Label>
 				<Label name="Calidad">
-					<Input bind:value={formData.calidadTime} />
+					<Input bind:value={formData.calidadTime} disabled={!!operations.length} />
 				</Label>
 				<Label name="Serigrafia">
-					<Input bind:value={formData.serigrafiaTime} />
+					<Input bind:value={formData.serigrafiaTime} disabled={!!operations.length} />
 				</Label>
 			</div>
 
-			<Separator />
+			<Tabs class="w-full" value="materials">
+				<TabsList class="grid w-full grid-cols-2">
+					<TabsTrigger value="materials">Materiales</TabsTrigger>
+					<TabsTrigger value="movements">Movimientos</TabsTrigger>
+				</TabsList>
 
-			<Table divClass="h-auto overflow-visible">
-				<TableHeader class="border-t">
-					<TableHead>Codigo</TableHead>
-					<TableHead>Cantidad</TableHead>
-					<TableHead>Real</TableHead>
-					<TableHead>Medida</TableHead>
-					<TableHead class="w-1">Surtido</TableHead>
-					<TableHead class="w-1 p-0"></TableHead>
-				</TableHeader>
+				<TabsContent value="materials">
+					<Table divClass="h-auto overflow-visible">
+						<TableHeader class="border-t">
+							<TableHead>Codigo</TableHead>
+							<TableHead>Cantidad</TableHead>
+							<TableHead>Real</TableHead>
+							<TableHead>Medida</TableHead>
+							<TableHead class="w-1">Surtido</TableHead>
+							<TableHead class="w-1 p-0"></TableHead>
+						</TableHeader>
 
-				<TableBody>
-					{#each materials as material, i}
-						<TableRow>
-							<TableCell class="border-l p-0 px-[1px]"
-								><MaterialInput
-									bind:value={materials[i].code}
-									bind:measurement={materials[i].measurement}
-								/></TableCell
-							>
-							<TableCell class="p-0 px-[1px]"
-								><Input
-									class="rounded-none border-none !opacity-100"
-									type="text"
-									bind:value={materials[i].amount}
-								/></TableCell
-							>
-							<TableCell class="p-0 px-[1px]"
-								><Input
-									class="rounded-none border-none !opacity-100"
-									type="text"
-									bind:value={materials[i].realAmount}
-								/></TableCell
-							>
-							<TableCell class="w-5">{materials[i].measurement}</TableCell>
-							<TableCell class="w-1 p-0 text-center"
-								><Checkbox class="mx-auto" bind:checked={materials[i].active} /></TableCell
-							>
-							<TableCell class="flex h-8 justify-center p-0 px-[1px]"
-								><Button
-									onclick={() => deleteMaterial(i)}
-									variant="ghost"
-									class="text-destructive-foreground aspect-square p-1"
-									><Trash class="size-5" /></Button
-								></TableCell
-							>
-						</TableRow>
-					{/each}
-				</TableBody>
-			</Table>
-			<Button onclick={addMaterial} class="mx-auto">Agregar material</Button>
+						<TableBody>
+							{#each materials as material, i}
+								<TableRow>
+									<TableCell class="border-l p-0 px-[1px]"
+										><MaterialInput
+											bind:value={materials[i].code}
+											bind:measurement={materials[i].measurement}
+										/></TableCell
+									>
+									<TableCell class="p-0 px-[1px]"
+										><Input
+											class="rounded-none border-none !opacity-100"
+											type="text"
+											bind:value={materials[i].amount}
+										/></TableCell
+									>
+									<TableCell class="p-0 px-[1px]"
+										><Input
+											class="rounded-none border-none !opacity-100"
+											type="text"
+											bind:value={materials[i].realAmount}
+										/></TableCell
+									>
+									<TableCell class="w-5">{materials[i].measurement}</TableCell>
+									<TableCell class="w-1 p-0 text-center"
+										><Checkbox class="mx-auto" bind:checked={materials[i].active} /></TableCell
+									>
+									<TableCell class="flex h-8 justify-center p-0 px-[1px]"
+										><Button
+											onclick={() => deleteMaterial(i)}
+											variant="ghost"
+											class="text-destructive-foreground aspect-square p-1"
+											><Trash class="size-5" /></Button
+										></TableCell
+									>
+								</TableRow>
+							{/each}
+						</TableBody>
+					</Table>
+					<Button onclick={addMaterial} class="mx-auto">Agregar material</Button>
+				</TabsContent>
+				<TabsContent value="movements">
+					<Table divClass="h-auto overflow-visible">
+						<TableHeader class="border-t">
+							<TableHead>Codigo</TableHead>
+							<TableHead>Minutos</TableHead>
+							<TableHead>Area</TableHead>
+							<TableHead class="w-1 p-0"></TableHead>
+						</TableHeader>
+
+						<TableBody>
+							{#each operations as operation, i}
+								<TableRow>
+									<TableCell class="border-l p-0 px-[1px]"
+										><Input
+											class="rounded-none border-none !opacity-100"
+											type="text"
+											bind:value={operation.code}
+										/></TableCell
+									>
+									<TableCell class="p-0 px-[1px]"
+										><Input
+											class="rounded-none border-none !opacity-100"
+											type="text"
+											bind:value={operation.minutes}
+											oninput={() => (operations = [...operations])}
+										/></TableCell
+									>
+									<TableCell class="p-0 px-[1px]"
+										><Select
+											class="rounded-none border-none"
+											placeholder="Area"
+											items={areas}
+											bind:value={operation.area}
+											onValueChange={() => (operations = [...operations])}
+										/></TableCell
+									>
+									<TableCell class="flex h-8 justify-center p-0 px-[1px]"
+										><Button
+											onclick={() => deleteOperation(i)}
+											variant="ghost"
+											class="text-destructive-foreground aspect-square p-1"
+											><Trash class="size-5" /></Button
+										></TableCell
+									>
+								</TableRow>
+							{/each}
+						</TableBody>
+					</Table>
+					<Button onclick={addOperation} class="mx-auto">Agregar operacion</Button>
+				</TabsContent>
+			</Tabs>
 		</DialogBody>
 		<DialogFooter submitFunc={handleSubmit} hideFunc={() => (show = false)} />
 	</DialogContent>
