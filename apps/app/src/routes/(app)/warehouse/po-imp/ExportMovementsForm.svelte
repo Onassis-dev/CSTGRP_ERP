@@ -249,7 +249,7 @@
 					<TabsTrigger value="movements">Movimientos</TabsTrigger>
 				</TabsList>
 
-				<TabsContent value="materials">
+				<TabsContent value="materials" class="mt-4">
 					<Table divClass="h-auto overflow-visible">
 						<TableHeader class="border-t">
 							<TableHead>Codigo</TableHead>
@@ -302,7 +302,7 @@
 					<Button onclick={addMaterial} class="mx-auto">Agregar material</Button>
 				</TabsContent>
 				<TabsContent value="movements">
-					<Table divClass="h-auto overflow-visible">
+					<Table divClass="h-auto overflow-visible mt-4">
 						<TableHeader class="border-t">
 							<TableHead>Codigo</TableHead>
 							<TableHead>Minutos</TableHead>
@@ -328,7 +328,7 @@
 											oninput={() => (operations = [...operations])}
 										/></TableCell
 									>
-									<TableCell class="p-0 px-[1px]"
+									<TableCell class="w-32 p-0 px-[1px]"
 										><Select
 											class="rounded-none border-none"
 											placeholder="Area"

@@ -185,7 +185,7 @@ export function processJob(text: string) {
                 Number(operationsLines[j + 3].replaceAll(',', ''))) *
               60
             ).toFixed(2),
-            area: '',
+            area: 'produccion',
           });
           break;
         }
