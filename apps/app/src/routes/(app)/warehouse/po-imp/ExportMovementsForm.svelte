@@ -165,7 +165,7 @@
 	$effect(() => {
 		operations;
 		untrack(() => {
-			if (!operations.length) return;
+			if (!operations?.length) return;
 			formData.corteTime = operations
 				.reduce((acc, operation) => {
 					if (operation.area === 'corte') acc += Number(operation.minutes);
@@ -227,19 +227,19 @@
 
 			<div class="grid w-full gap-4 sm:grid-cols-5">
 				<Label name="Corte">
-					<Input bind:value={formData.corteTime} disabled={!!operations.length} />
+					<Input bind:value={formData.corteTime} disabled={!!operations?.length} />
 				</Label>
 				<Label name="Cortes varios">
-					<Input bind:value={formData.cortesVariosTime} disabled={!!operations.length} />
+					<Input bind:value={formData.cortesVariosTime} disabled={!!operations?.length} />
 				</Label>
 				<Label name="Produccion">
-					<Input bind:value={formData.produccionTime} disabled={!!operations.length} />
+					<Input bind:value={formData.produccionTime} disabled={!!operations?.length} />
 				</Label>
 				<Label name="Calidad">
-					<Input bind:value={formData.calidadTime} disabled={!!operations.length} />
+					<Input bind:value={formData.calidadTime} disabled={!!operations?.length} />
 				</Label>
 				<Label name="Serigrafia">
-					<Input bind:value={formData.serigrafiaTime} disabled={!!operations.length} />
+					<Input bind:value={formData.serigrafiaTime} disabled={!!operations?.length} />
 				</Label>
 			</div>
 
