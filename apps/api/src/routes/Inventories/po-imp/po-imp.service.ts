@@ -40,7 +40,6 @@ export class PoImpService {
           )`
           : sql``
       }
-      AND due <> '2024-01-01' AND due <> '2024-01-02'
       ORDER BY due DESC, jobpo DESC, import DESC limit 150`;
 
     return movements;
