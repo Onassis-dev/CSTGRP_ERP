@@ -58,8 +58,12 @@ export class MovementsService {
         materialmovements."activeDate" DESC,
         materialmovements.id DESC;`;
 
+    //TODO: Fix this to be in sql
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
     const result = movements.filter(
-      (movement) => movement?.due?.toISOString() !== '2024-01-01T00:00:00.000Z',
+      (movement) => movement?.due >= sixMonthsAgo,
     );
     return result;
   }
