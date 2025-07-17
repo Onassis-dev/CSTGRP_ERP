@@ -329,7 +329,7 @@ async function generateImage(employee) {
   frontCtx.fillText(employee.noEmpleado, numberCenterX, 820);
 
   // Draw date
-  const date = format(new Date(employee.admissionDate), 'dd/MM/yyyy');
+  const date = format(new Date(employee.bcpet), 'dd/MM/yyyy');
   frontCtx.font = font5;
   const dateCenterX =
     (frontCanvas.width - frontCtx.measureText(date).width) / 2;
