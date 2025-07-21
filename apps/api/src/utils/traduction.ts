@@ -13,6 +13,8 @@ const valueTraduccion = {
   active: 'Activo',
   emergencyNumber: 'Número de Emergencia',
   areaId: 'Área',
+  position: 'Puesto',
+  area: 'Área',
   quitDate: 'Fecha de Renuncia',
   resignationDate: 'Fecha de Renuncia',
   lastDay: 'Ultimo dia',
@@ -84,7 +86,6 @@ const valueTraduccion = {
   purchaseDate: 'Fecha de Compra',
   warranty: 'Garantía',
   notes: 'Notas',
-  position: 'Posición',
   phone: 'Teléfono',
   address: 'Dirección',
   city: 'Ciudad',
@@ -181,13 +182,19 @@ const valueTraduccion = {
   serigrafiaTime: 'Serigrafia',
   amount: 'Cantidad',
   part: 'Parte',
+  contrato: 'Contrato',
+  route: 'Ruta',
+  bcpe: 'BCPET',
+  photo: 'Foto',
+  vacation: 'Vacaciones',
 };
 
 export const getTraducction = (value: string | number) => {
   if (typeof value === 'number') value = value.toString();
 
   for (const key in valueTraduccion) {
-    if (value.toLowerCase() === key.toLowerCase()) return valueTraduccion[key];
+    if (value?.toLowerCase() === key?.toLowerCase())
+      return valueTraduccion[key];
   }
 
   return value; // Return original value if no match found

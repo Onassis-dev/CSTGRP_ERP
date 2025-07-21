@@ -17,6 +17,7 @@ import exceljs from 'exceljs';
 import { saveFile } from 'src/utils/storage';
 import { createRecord } from './employees.utils';
 import { ContextProvider } from 'src/interceptors/context.provider';
+import { convertTableToExcel } from 'src/utils/exports';
 
 @Injectable()
 export class EmployeesService {
@@ -260,52 +261,27 @@ export class EmployeesService {
 
   async export() {
     const workbook = new exceljs.Workbook();
-    const worksheet = workbook.addWorksheet('Inventario');
+    const worksheet = workbook.addWorksheet('Empleados');
 
     const rows =
-      await sql`select *, positions.name as position, areas.name as area from employees
+      await sql`select employees.*, employees.active::integer as active, positions.name as position, areas.name as area from employees
     join areas on areas.id = employees."areaId"
     join positions on positions.id = employees."positionId"
-    where active`;
+    order by employees.active DESC, "noEmpleado" DESC`;
 
-    worksheet.columns = [
-      { header: 'No. Empleado', key: 'noEmpleado', width: 25 },
-      { header: 'Nombre', key: 'name', width: 25 },
-      { header: 'Apellido paterno', key: 'paternalLastName', width: 25 },
-      { header: 'Apellido materno', key: 'maternalLastName', width: 25 },
-      { header: 'Área', key: 'area', width: 25 },
-      { header: 'Puesto', key: 'position', width: 25 },
-      { header: 'Salario de Nómina', key: 'nominaSalary', width: 25 },
-      { header: 'Salario IMMS', key: 'immsSalary', width: 25 },
-      { header: 'Fecha de Baja', key: 'quitDate', width: 25 },
-      { header: 'Fecha de Admisión', key: 'admissionDate', width: 25 },
-      { header: 'Fecha de Nacimiento', key: 'bornDate', width: 25 },
-      { header: 'Cuota Infonavit', key: 'infonavitFee', width: 25 },
-      { header: 'Descuento Infonavit', key: 'infonavitDiscount', width: 25 },
-      { header: 'Hijos', key: 'sons', width: 25 },
-      { header: 'Banco', key: 'bank', width: 25 },
-      { header: 'No. Infonavit', key: 'infonavitNo', width: 25 },
-      { header: 'Tipo de Puesto', key: 'positionType', width: 25 },
-      { header: 'Turno', key: 'shift', width: 25 },
-      { header: 'Apellido Paterno', key: 'paternalLastName', width: 25 },
-      { header: 'Apellido Materno', key: 'maternalLastName', width: 25 },
-      { header: 'Nacionalidad', key: 'nationality', width: 25 },
-      { header: 'Estudios', key: 'studies', width: 25 },
-      { header: 'NSS', key: 'nss', width: 25 },
-      { header: 'CURP', key: 'curp', width: 25 },
-      { header: 'Fonacot', key: 'fonacotNo', width: 25 },
-      { header: 'RFC', key: 'rfc', width: 25 },
-      { header: 'Tipo de Sangre', key: 'blood', width: 25 },
-      { header: 'Cuenta Bancaria', key: 'account', width: 25 },
-      { header: 'Contacto de Emergencia', key: 'emergencyContact', width: 25 },
-      { header: 'Número de Emergencia', key: 'emergencyNumber', width: 25 },
-      { header: 'Lugar de Nacimiento', key: 'bornLocation', width: 25 },
-      { header: 'Género', key: 'genre', width: 25 },
-      { header: 'No. de Clínica', key: 'clinicNo', width: 25 },
-      { header: 'Correo Electrónico', key: 'email', width: 25 },
-      { header: 'Número de Teléfono', key: 'number', width: 25 },
-      { header: 'Dirección', key: 'direction', width: 25 },
-    ];
+    worksheet.columns = convertTableToExcel({
+      rows,
+      width: 25,
+      customRows: [
+        { width: 8, key: 'active', header: 'Activo' },
+        { width: 20, key: 'noEmpleado', header: 'No. Empleado' },
+        { width: 20, key: 'name', header: 'Nombre' },
+        { width: 20, key: 'paternalLastName', header: 'Apellido Paterno' },
+        { width: 20, key: 'maternalLastName', header: 'Apellido Materno' },
+        { width: 20, key: 'position', header: 'Puesto' },
+        { width: 20, key: 'area', header: 'Área' },
+      ],
+    });
 
     worksheet.addRows(rows);
 
@@ -321,17 +297,22 @@ export class EmployeesService {
     const worksheet = workbook.addWorksheet('Empleados');
 
     const rows =
-      await sql`select CONCAT(employees.name, ' ', "paternalLastName", ' ', "maternalLastName") as "name", "noEmpleado", positions.name as position, areas.name as area from employees
+      await sql`select "noEmpleado", CONCAT(employees.name, ' ', "paternalLastName", ' ', "maternalLastName") as "name", positions.name as position, areas.name as area from employees
     join areas on areas.id = employees."areaId"
     join positions on positions.id = employees."positionId"
-    where active`;
+    where active
+    order by "noEmpleado" DESC`;
 
-    worksheet.columns = [
-      { header: 'No. Empleado', key: 'noEmpleado', width: 25 },
-      { header: 'Nombre', key: 'name', width: 25 },
-      { header: 'Área', key: 'area', width: 25 },
-      { header: 'Puesto', key: 'position', width: 25 },
-    ];
+    worksheet.columns = convertTableToExcel({
+      rows,
+      width: 30,
+      customRows: [
+        { width: 10, key: 'noEmpleado', header: 'No. Empleado' },
+        { width: 40, key: 'name', header: 'Nombre' },
+        { width: 30, key: 'position', header: 'Puesto' },
+        { width: 30, key: 'area', header: 'Área' },
+      ],
+    });
 
     worksheet.addRows(rows);
 
