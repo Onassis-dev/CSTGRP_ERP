@@ -208,26 +208,29 @@
 				<Label name="Programación">
 					<Input bind:value={formData.programation} />
 				</Label>
-				<Label name="Job o PO">
-					<Input disabled={inputDisabled} bind:value={formData.jobpo} />
+				<Label name="Archivo">
+					<FileInput type="file" bind:files />
 				</Label>
 				<Label name="Parte">
 					<Input bind:value={formData.part} />
 				</Label>
-				<Label name="Fecha">
-					<Input type="date" bind:value={formData.due} />
+				<Label name="Job o PO">
+					<Input disabled={inputDisabled} bind:value={formData.jobpo} />
 				</Label>
 				<Label name="Cantidad">
 					<Input bind:value={formData.amount} />
 				</Label>
-				<Label name="Archivo">
-					<FileInput type="file" bind:files />
+				<Label name="Fecha">
+					<Input type="date" bind:value={formData.due} />
 				</Label>
 			</div>
 
 			<div class="grid w-full gap-4 sm:grid-cols-5">
 				<Label name="Corte">
 					<Input bind:value={formData.corteTime} disabled={!!operations?.length} />
+				</Label>
+				<Label name="Serigrafia">
+					<Input bind:value={formData.serigrafiaTime} disabled={!!operations?.length} />
 				</Label>
 				<Label name="Cortes varios">
 					<Input bind:value={formData.cortesVariosTime} disabled={!!operations?.length} />
@@ -237,9 +240,6 @@
 				</Label>
 				<Label name="Calidad">
 					<Input bind:value={formData.calidadTime} disabled={!!operations?.length} />
-				</Label>
-				<Label name="Serigrafia">
-					<Input bind:value={formData.serigrafiaTime} disabled={!!operations?.length} />
 				</Label>
 			</div>
 
