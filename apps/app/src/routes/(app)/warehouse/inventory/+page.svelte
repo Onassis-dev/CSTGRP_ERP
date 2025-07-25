@@ -19,6 +19,7 @@
 	import { getClients } from '$lib/utils/queries';
 	import { downloadFile } from '$lib/utils/files';
 	import OptionsHead from '$lib/components/basic/OptionsHead.svelte';
+	import Select from '$lib/components/basic/Select.svelte';
 
 	let show = $state(false);
 	let show1 = $state(false);
@@ -37,7 +38,7 @@
 
 	let filters = $state({
 		code: '',
-		clients: ['']
+		clientId: ''
 	});
 
 	const inventoryQuery = createQuery({
@@ -48,7 +49,10 @@
 	let filteredInventory = $derived(
 		$inventoryQuery?.data?.filter((material: any) => {
 			if (filters.code) {
-				if (filters.code) return material.code?.toUpperCase()?.includes(filters.code.toUpperCase());
+				if (!material.code?.toUpperCase()?.includes(filters.code.toUpperCase())) return false;
+			}
+			if (filters.clientId) {
+				if (parseInt(material.clientId) !== parseInt(filters.clientId)) return false;
 			}
 			return true;
 		})
@@ -103,11 +107,24 @@
 		showSuccess('Material eliminado');
 		show2 = false;
 	}
+
+	const clientsQuery = createQuery({
+		queryKey: ['inventory-clients'],
+		queryFn: async () => (await api.get('/inventoryvarious/clients')).data
+	});
 </script>
 
 <MenuBar>
 	{#snippet left()}
-		<Input menu bind:value={filters.code} placeholder="Codigo" />
+		<Input menu bind:value={filters.code} placeholder="Codigo" class="w-52" />
+		<Select
+			placeholder="Cliente"
+			menu
+			items={$clientsQuery?.data}
+			bind:value={filters.clientId}
+			allowDeselect
+			class="w-40"
+		/>
 	{/snippet}
 	{#snippet right()}
 		<Button
