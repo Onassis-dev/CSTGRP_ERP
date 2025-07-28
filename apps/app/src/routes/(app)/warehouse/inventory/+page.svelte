@@ -178,7 +178,7 @@
 				<TableCell>{material.location || ''}</TableCell>
 				<TableCell><Badge color="gray">{material.leftoverAmount}</Badge></TableCell>
 				<TableCell
-					><Badge color={material.amount < material.minAmount ? 'yellow' : 'green'}
+					><Badge color={Number(material.amount) < Number(material.minAmount) ? 'yellow' : 'green'}
 						>{material.amount}</Badge
 					></TableCell
 				>
