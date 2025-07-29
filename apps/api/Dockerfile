@@ -3,7 +3,7 @@ FROM node:20
 # Install LibreOffice, fontconfig, and necessary dependencies
 RUN apt-get update && \
     apt-get install -y \
-    libreoffice libreoffice-writer libreoffice-calc \
+    libreoffice \
     fontconfig fonts-dejavu curl gnupg && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
