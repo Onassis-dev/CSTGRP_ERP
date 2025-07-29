@@ -3,10 +3,11 @@
 	import { afterNavigate } from '$app/navigation';
 	import { browser } from '$app/environment';
 	import { Button } from '../ui/button';
-	import { PanelRight } from 'lucide-svelte';
+	import { PanelRight, SearchIcon } from 'lucide-svelte';
 	import { getTraduction } from './traduction';
 	import Docs from './Docs.svelte';
-	import Command from './tools/Command.svelte';
+
+	let { open = $bindable(false) }: { open: boolean } = $props();
 
 	afterNavigate(() => {
 		if (browser) {
@@ -28,7 +29,15 @@
 	</h3>
 
 	<div class="ml-auto flex items-center gap-2">
-		<Command />
+		<Button
+			variant="outline"
+			size="action"
+			onclick={() => (open = true)}
+			class="flex items-center gap-2 text-sm"
+		>
+			<SearchIcon class="size-4" />
+			<span class="-mb-0.5 mr-0.5">Buscar</span>
+		</Button>
 		<Docs />
 	</div>
 </header>

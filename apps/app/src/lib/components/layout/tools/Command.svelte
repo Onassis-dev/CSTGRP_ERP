@@ -3,11 +3,11 @@
 	import * as Command from '$lib/components/ui/command/index.js';
 	import Conversor from './Conversor.svelte';
 	import ZenpetForm from './ZenpetForm.svelte';
-	import { Button } from '$lib/components/ui/button';
-	import { SearchIcon } from 'lucide-svelte';
+	import { RulerIcon } from 'lucide-svelte';
 
-	let open = $state(false);
+	let { open = $bindable(false) }: { open: boolean } = $props();
 	let showZenpetForm = $state(false);
+	let showConversor = $state(false);
 
 	function handleKeydown(e: KeyboardEvent) {
 		if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
@@ -19,17 +19,7 @@
 
 <svelte:document onkeydown={handleKeydown} />
 
-<Button
-	variant="outline"
-	size="action"
-	onclick={() => (open = true)}
-	class="flex items-center gap-2 text-sm"
->
-	<SearchIcon class="size-4" />
-	<span class="-mb-0.5 mr-0.5">Buscar</span>
-</Button>
-
-<Command.Dialog bind:open class="z-[51]">
+<Command.Dialog bind:open class="z-[100]">
 	<Command.Input placeholder="Buscar..." />
 	<Command.List>
 		<Command.Empty>No results found.</Command.Empty>
@@ -43,9 +33,18 @@
 				<TicketIcon class="mr-2 size-4" />
 				<span>Etiquetas de Zenpet</span>
 			</Command.Item>
+			<Command.Item
+				onSelect={() => {
+					showConversor = true;
+					open = false;
+				}}
+			>
+				<RulerIcon class="mr-2 size-4" />
+				<span>Convertir Medidas</span>
+			</Command.Item>
 		</Command.Group>
 	</Command.List>
 </Command.Dialog>
 
-<Conversor />
+<Conversor bind:show={showConversor} />
 <ZenpetForm bind:show={showZenpetForm} />

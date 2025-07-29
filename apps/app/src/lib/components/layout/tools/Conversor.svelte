@@ -1,12 +1,17 @@
 <script lang="ts">
-	import { Card } from '$lib/components/ui/card';
-	import { onMount, untrack } from 'svelte';
 	import Select from '../../basic/Select.svelte';
 	import { Input } from '../../ui/input';
 	import Button from '../../ui/button/button.svelte';
 	import { Copy } from 'lucide-svelte';
+	import { Dialog, DialogBody, DialogContent, DialogHeader } from '$lib/components/ui/dialog';
+	import Label from '../../basic/Label.svelte';
+	import { showSuccess } from '$lib/utils/showToast';
 
-	let open = $state(false);
+	interface Props {
+		show?: boolean;
+	}
+
+	let { show = $bindable(false) }: Props = $props();
 
 	const measurements = [
 		{
@@ -70,25 +75,37 @@
 	});
 </script>
 
-{#if open}
-	<Card
-		class="absolute right-5 top-5 z-[51] grid grid-cols-2 grid-rows-[auto_auto_auto] gap-2 p-2 shadow-md"
-	>
-		<p class="col-span-2 text-center text-sm font-semibold">Convertir</p>
-		<Input type="number" bind:value={amount} class="max-w-36" placeholder="de"></Input>
-		<p
-			class=" flex max-w-36 items-center justify-between gap-2 rounded-sm px-3 text-sm font-medium"
-		>
-			{result}
-			<Button
-				variant="ghost"
-				size="icon"
-				onclick={() => navigator.clipboard.writeText(result.toString())}
-			>
-				<Copy class="size-3.5" />
-			</Button>
-		</p>
-		<Select items={measurements} bind:value={from} class="max-w-36" placeholder="de"></Select>
-		<Select items={measurements} bind:value={to} class="max-w-36" placeholder="a"></Select>
-	</Card>
-{/if}
+<Dialog bind:open={show}>
+	<DialogContent class="z-[51] h-[80vh] sm:max-w-sm">
+		<DialogHeader title="Convertir Medidas" />
+
+		<DialogBody grid="1">
+			<Label name="Cantidad" class="col-span-full">
+				<Input type="number" bind:value={amount} placeholder="Ingrese cantidad" />
+			</Label>
+			<Label name="De">
+				<Select items={measurements} bind:value={from} placeholder="Seleccionar unidad" />
+			</Label>
+			<Label name="A">
+				<Select items={measurements} bind:value={to} placeholder="Seleccionar unidad" />
+			</Label>
+			<Label name="Resultado" class="col-span-full">
+				<div
+					class="flex items-center justify-between gap-2 rounded-sm border px-3 py-2 text-sm font-medium"
+				>
+					<span>{result}</span>
+					<Button
+						variant="ghost"
+						size="icon"
+						onclick={() => {
+							navigator.clipboard.writeText(result.toString());
+							showSuccess('Copiado');
+						}}
+					>
+						<Copy class="size-3.5" />
+					</Button>
+				</div>
+			</Label>
+		</DialogBody>
+	</DialogContent>
+</Dialog>
