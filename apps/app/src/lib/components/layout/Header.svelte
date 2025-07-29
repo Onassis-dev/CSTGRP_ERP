@@ -6,6 +6,7 @@
 	import { PanelRight } from 'lucide-svelte';
 	import { getTraduction } from './traduction';
 	import Docs from './Docs.svelte';
+	import Command from './tools/Command.svelte';
 
 	afterNavigate(() => {
 		if (browser) {
@@ -26,5 +27,8 @@
 		{traduction.text}
 	</h3>
 
-	<Docs />
+	<div class="ml-auto flex items-center gap-2">
+		<Command />
+		<Docs />
+	</div>
 </header>

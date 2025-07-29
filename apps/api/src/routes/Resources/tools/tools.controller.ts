@@ -1,4 +1,4 @@
-import { Controller, Body, UseGuards, Post } from '@nestjs/common';
+import { Controller, UseGuards, Get, Query } from '@nestjs/common';
 import { ToolsService } from './tools.service';
 import { ApiTags } from '@nestjs/swagger';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
@@ -7,12 +7,12 @@ import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 
 @ApiTags('Tools')
 @Controller('resources/tools')
-@UseGuards(new AuthGuard())
+@UseGuards(new AuthGuard('directory'))
 export class ToolsController {
   constructor(private readonly toolsService: ToolsService) {}
 
-  @Post('zenpet')
-  register(@Body(new ZodPiPe(generateZenpetSchema)) body) {
-    return this.toolsService.generateZenpet(body);
+  @Get('zenpet')
+  register(@Query(new ZodPiPe(generateZenpetSchema)) query) {
+    return this.toolsService.generateZenpet(query);
   }
 }

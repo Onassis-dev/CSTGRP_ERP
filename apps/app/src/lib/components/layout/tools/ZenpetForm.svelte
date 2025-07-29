@@ -25,10 +25,11 @@
 	});
 
 	async function handleSubmit() {
-		const response = await api.post('/resources/tools/zenpet', formData, {
+		const response = await api.get('/resources/tools/zenpet', {
+			params: formData,
 			responseType: 'arraybuffer'
 		});
-		// show = false;
+		show = false;
 
 		const blob = new Blob([response.data], { type: 'application/pdf' });
 		const url = URL.createObjectURL(blob);

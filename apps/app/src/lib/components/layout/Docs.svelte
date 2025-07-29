@@ -22,8 +22,8 @@
 </script>
 
 <Dialog.Root bind:open>
-	<Dialog.Trigger class="ml-auto">
-		<Button variant="ghost" size="icon">
+	<Dialog.Trigger>
+		<Button variant="outline" size="icon">
 			<HelpCircle class="size-3.5" />
 		</Button>
 	</Dialog.Trigger>
