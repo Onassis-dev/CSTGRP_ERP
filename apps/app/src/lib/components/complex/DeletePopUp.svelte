@@ -12,10 +12,18 @@
 	}
 
 	let { show = $bindable(false), deleteFunc, text, warning = false }: Props = $props();
+	let confirmButton = $state<HTMLButtonElement | null>(null);
 </script>
 
 <Dialog bind:open={show}>
-	<DialogContent closeButton={false} class="h-auto sm:max-w-lg">
+	<DialogContent
+		closeButton={false}
+		class="h-auto sm:max-w-lg"
+		onOpenAutoFocus={(e) => {
+			e.preventDefault();
+			confirmButton?.focus();
+		}}
+	>
 		<DialogBody class="border-none">
 			<h2 class="text-center text-lg font-semibold">
 				<div
@@ -31,7 +39,11 @@
 			<p class="text-muted-foreground mt-2 text-center text-sm">{text}</p>
 			<div class="mt-4 flex justify-center gap-2">
 				<Button onclick={() => (show = false)} variant="outline">Cancelar</Button>
-				<Button onclick={deleteFunc} variant={warning ? 'default' : 'destructive'}>
+				<Button
+					onclick={deleteFunc}
+					variant={warning ? 'default' : 'destructive'}
+					bind:ref={confirmButton}
+				>
 					{warning ? 'Confirmar' : 'Eliminar'}
 				</Button>
 			</div>
