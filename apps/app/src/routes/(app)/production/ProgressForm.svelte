@@ -16,6 +16,7 @@
 		show?: boolean;
 		selectedOrder: any;
 		area: string;
+		date: string;
 	}
 
 	let { show = $bindable(false), selectedOrder = $bindable({}), area }: Props = $props();
@@ -29,7 +30,8 @@
 		await api.post('/progress', {
 			orderId: selectedOrder.id,
 			area,
-			amount: formData.newProgress
+			amount: formData.newProgress,
+			date: formData.date
 		});
 		showSuccess('Progreso guardado');
 		refetch(['orders', { area }]);
@@ -49,13 +51,16 @@
 
 		<DialogBody grid="2">
 			<Label name="Job/PO">
-				<Input name="text" bind:value={formData.jobpo} disabled />
+				<Input bind:value={formData.jobpo} disabled />
 			</Label>
 			<Label name="Parte">
-				<Input name="text" bind:value={formData.part} disabled />
+				<Input bind:value={formData.part} disabled />
+			</Label>
+			<Label name="Fecha" class="col-span-full">
+				<Input type="date" bind:value={formData.date} />
 			</Label>
 			<Label name="Cantidad" class="col-span-full">
-				<Input name="text" bind:value={formData.newProgress} />
+				<Input bind:value={formData.newProgress} />
 			</Label>
 		</DialogBody>
 		<DialogFooter submitFunc={handleSubmit} hideFunc={() => (show = false)} />

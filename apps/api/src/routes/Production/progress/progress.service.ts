@@ -8,7 +8,6 @@ import {
 } from './progress.schema';
 import { ContextProvider } from 'src/interceptors/context.provider';
 import { updateOrderAmounts } from '../production.utils';
-import { getTijuanaDate } from 'src/utils/functions';
 
 @Injectable()
 export class ProgressService {
@@ -32,7 +31,7 @@ export class ProgressService {
     await validatePerm(body.area, this.req.userId, 1);
 
     const movements =
-      await sql`select * from ordermovements where "progressId" = ${body.id} and ${sql(body.area)} <> 0`;
+      await sql`select * from ordermovements where "progressId" = ${body.id} and ${sql(body.area)} <> 0 order by created_at desc`;
     return movements;
   }
 
@@ -50,7 +49,7 @@ export class ProgressService {
           'El progreso no puede ser mayor al total',
         );
 
-      await sql`insert into ordermovements (created_at, "progressId", ${sql(body.area)}) values (${getTijuanaDate()}, ${body.orderId}, ${body.amount})`;
+      await sql`insert into ordermovements (created_at, "progressId", ${sql(body.area)}) values (${body.date}, ${body.orderId}, ${body.amount})`;
       await updateOrderAmounts(body.orderId, sql);
       await this.req.record(
         `Agregó ${body.amount}pz a ${body.area}, orden: ${order.jobpo}`,

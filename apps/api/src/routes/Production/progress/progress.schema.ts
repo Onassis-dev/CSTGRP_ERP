@@ -1,4 +1,4 @@
-import { idSchema, intSchema } from 'src/utils/schemas';
+import { dateSchema, idSchema, intSchema } from 'src/utils/schemas';
 import { areaSchema } from '../production.utils';
 import { z } from 'zod/v4';
 
@@ -18,4 +18,5 @@ export const captureProgressSchema = z.object({
   orderId: idSchema,
   amount: intSchema.min(1, 'La cantidad debe ser mayor a 0'),
   area: areaSchema,
+  date: dateSchema,
 });
