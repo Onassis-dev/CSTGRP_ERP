@@ -37,17 +37,34 @@
 
 	const products = [
 		{ name: 'Cono', value: 'cono' },
-		{ name: 'Collar', value: 'collar' }
+		{ name: 'Collar', value: 'collar' },
+		{ name: 'Tick Tornado', value: 'tick-tornado' }
 	];
 
-	const sizes = [
-		{ name: 'XXL', value: 'xxl' },
-		{ name: 'XL', value: 'xl' },
-		{ name: 'L', value: 'l' },
-		{ name: 'M', value: 'm' },
-		{ name: 'S', value: 's' },
-		{ name: 'XS', value: 'xs' }
-	];
+	const sizes: Record<string, { name: string; value: string }[]> = {
+		collar: [
+			{ name: 'XXL', value: 'xxl' },
+			{ name: 'XL', value: 'xl' },
+			{ name: 'L', value: 'l' },
+			{ name: 'M', value: 'm' },
+			{ name: 'S', value: 's' },
+			{ name: 'XS', value: 'xs' }
+		],
+		cono: [
+			{ name: 'XL', value: 'xl' },
+			{ name: 'L', value: 'l' },
+			{ name: 'M', value: 'm' },
+			{ name: 'S', value: 's' }
+		],
+		'tick-tornado': [
+			{ name: '48', value: '48' },
+			{ name: '192', value: '192' },
+			{ name: '192 bilingue', value: '192b' },
+			{ name: '216', value: '216' }
+		]
+	};
+
+	let sizesOptions = $derived(sizes[formData.product]);
 </script>
 
 <Dialog bind:open={show}>
@@ -68,7 +85,7 @@
 				<Select items={products} bind:value={formData.product} />
 			</Label>
 			<Label name="Talla">
-				<Select items={sizes} bind:value={formData.size} />
+				<Select items={sizesOptions} bind:value={formData.size} />
 			</Label>
 		</DialogBody>
 		<DialogFooter submitFunc={handleSubmit} hideFunc={() => (show = false)} />
