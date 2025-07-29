@@ -11,6 +11,7 @@
 	import api from '$lib/utils/server';
 	import Cookies from 'js-cookie';
 	import { queryClient, setupQuerySync } from '$lib/utils/query';
+	import Command from '$lib/components/layout/tools/Command.svelte';
 
 	interface Props {
 		children?: import('svelte').Snippet;
@@ -54,3 +55,5 @@
 </QueryClientProvider>
 
 <Toaster />
+
+<Command />

@@ -16,7 +16,6 @@
 		show?: boolean;
 		selectedOrder: any;
 		area: string;
-		date: string;
 	}
 
 	let { show = $bindable(false), selectedOrder = $bindable({}), area }: Props = $props();

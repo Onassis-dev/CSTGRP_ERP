@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { Card } from '$lib/components/ui/card';
 	import { onMount, untrack } from 'svelte';
-	import Select from '../basic/Select.svelte';
-	import { Input } from '../ui/input';
-	import Button from '../ui/button/button.svelte';
+	import Select from '../../basic/Select.svelte';
+	import { Input } from '../../ui/input';
+	import Button from '../../ui/button/button.svelte';
 	import { Copy } from 'lucide-svelte';
 
 	let open = $state(false);
@@ -67,21 +67,6 @@
 
 	$effect(() => {
 		convert();
-	});
-
-	onMount(() => {
-		const handleKeyDown = (event: KeyboardEvent) => {
-			if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
-				event.preventDefault();
-				open = !open;
-			}
-		};
-
-		window.addEventListener('keydown', handleKeyDown);
-
-		return () => {
-			window.removeEventListener('keydown', handleKeyDown);
-		};
 	});
 </script>
 

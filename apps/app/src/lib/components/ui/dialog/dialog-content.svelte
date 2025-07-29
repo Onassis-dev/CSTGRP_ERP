@@ -4,7 +4,6 @@
 	import type { Snippet } from 'svelte';
 	import * as Dialog from './index.js';
 	import { cn } from '$lib/utils.js';
-	import Conversor from '$lib/components/layout/Conversor.svelte';
 
 	let {
 		ref = $bindable(null),
@@ -30,7 +29,6 @@
 		)}
 		{...restProps}
 	>
-		<Conversor />
 		{@render children?.()}
 		{#if closeButton}
 			<DialogPrimitive.Close

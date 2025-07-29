@@ -29,7 +29,8 @@ import {
 	PaintRoller,
 	Scissors,
 	Slice,
-	History
+	History,
+	Hammer
 } from 'lucide-svelte';
 
 export interface Traduction {
@@ -78,7 +79,8 @@ export const traductions: Record<string, Traduction> = {
 	calidad: { text: 'Calidad', icon: Star },
 	serigrafia: { text: 'Serigrafía', icon: PaintRoller },
 	production: { text: 'Producción', icon: FileText },
-	history: { text: 'Historial', icon: History }
+	history: { text: 'Historial', icon: History },
+	tools: { text: 'Herramientas', icon: Hammer }
 };
 
 export function capitalize(string: string) {
