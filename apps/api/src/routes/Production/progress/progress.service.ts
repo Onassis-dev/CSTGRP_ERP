@@ -20,7 +20,7 @@ export class ProgressService {
     const jobs = await sql`select materialie.*, orders.*
        from orders join materialie on orders."jobId" = materialie.id 
        where ${sql(`${body.area}Time`)} <> 0
-       ${body.completed ? sql`AND (orders.completed = true OR ${sql('orders.' + body.area)} = orderders.amount)` : sql`AND orders.completed = false AND ${sql('orders.' + body.area)} < orders.amount`}
+       ${body.completed ? sql`AND (orders.completed = true OR ${sql('orders.' + body.area)} = orders.amount)` : sql`AND orders.completed = false AND ${sql('orders.' + body.area)} < orders.amount`}
        ${body.job ? sql`AND materialie.jobpo LIKE ${'%' + body.job + '%'}` : sql``}
        ${body.programation ? sql`AND materialie.programation LIKE ${'%' + body.programation + '%'}` : sql``}
         order by materialie.jobpo desc limit 150`;
