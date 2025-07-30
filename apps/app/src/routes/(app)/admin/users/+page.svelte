@@ -47,7 +47,8 @@
 			prod_produccion: 0,
 			prod_calidad: 0,
 			prod_serigrafia: 0,
-			prodmovements: 0
+			prodmovements: 0,
+			reports: 0
 		},
 		perm_assistance_areas: '',
 		maintance: false
@@ -113,6 +114,7 @@
 		<OptionsHead />
 		<TableHead colspan={1}>-</TableHead>
 		<TableHead colspan={5}>General</TableHead>
+		<TableHead colspan={1}>-</TableHead>
 		<TableHead colspan={3}>RRHH</TableHead>
 		<TableHead colspan={6}>Producción</TableHead>
 		<TableHead colspan={6}>Almacen</TableHead>
@@ -126,6 +128,7 @@
 		<TableHead class="w-[12.5%]">Formatos</TableHead>
 		<TableHead class="w-[12.5%]">Directorio</TableHead>
 		<TableHead class="w-[12.5%]">Docs</TableHead>
+		<TableHead class="w-[12.5%]">Reportes</TableHead>
 		<TableHead class="w-[12.5%]">Asistencia</TableHead>
 		<TableHead class="w-[12.5%]">Empleados</TableHead>
 		<TableHead class="w-[12.5%]">Productividad</TableHead>
@@ -200,7 +203,15 @@
 						<SvelteComponent_1 class="size-3.5" />
 					</Badge></TableCell
 				>
-
+				<TableCell class="p-1.5 text-center"
+					><Badge
+						class="flex h-full w-full items-center justify-center p-1"
+						color={getBadgeColor(user.permissions.reports)}
+					>
+						{@const SvelteComponent_2 = badgeTexts[user.permissions.reports]}
+						<SvelteComponent_2 class="size-3.5" />
+					</Badge></TableCell
+				>
 				<TableCell class="p-1.5 text-center"
 					><Badge
 						class="flex h-full w-full items-center justify-center p-1"

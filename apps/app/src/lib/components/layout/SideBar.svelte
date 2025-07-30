@@ -21,7 +21,8 @@
 		Folders,
 		ShoppingCart,
 		AlertTriangle,
-		Factory
+		Factory,
+		LineChartIcon
 	} from 'lucide-svelte';
 	import { goto } from '$app/navigation';
 	import { cn } from '$lib/utils';
@@ -64,6 +65,20 @@
 	</a>
 
 	<Accordion.Root class="px-2 pt-2" type="single">
+		{#if hasAccess('reports')}
+			<Accordion.Item value="reports" class="border-none">
+				<Accordion.Trigger
+					class="hover:bg-muted  mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
+				>
+					<LineChartIcon class="size-3.5 text-[#5c5e63]" />
+					Reportes
+				</Accordion.Trigger>
+				<Accordion.Content>
+					<Accordion.Option href="/reports/orders" />
+				</Accordion.Content>
+			</Accordion.Item>
+		{/if}
+
 		{#if hasAccess('prod_corte') || hasAccess('prod_cortesVarios') || hasAccess('prod_produccion') || hasAccess('prod_calidad') || hasAccess('prod_serigrafia')}
 			<Accordion.Item value="production" class="border-none">
 				<Accordion.Trigger

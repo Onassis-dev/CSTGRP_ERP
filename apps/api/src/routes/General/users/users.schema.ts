@@ -26,6 +26,7 @@ export const permissionsList = {
   prod_calidad: permType,
   prod_serigrafia: permType,
   prodmovements: permType,
+  reports: permType,
 };
 
 export const registerSchema = z.object({

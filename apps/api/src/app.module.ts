@@ -8,6 +8,7 @@ import { ITModule } from './routes/IT/it.module';
 import { ResourcesModule } from './routes/Resources/resources.module';
 import { PurchasesModule } from './routes/Purchases/purchases.module';
 import { ProductionModule } from './routes/Production/production.module';
+import { ReportsModule } from './routes/Reports/reports.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { ProductionModule } from './routes/Production/production.module';
     ResourcesModule,
     PurchasesModule,
     ProductionModule,
+    ReportsModule,
   ],
 })
 export class AppModule {}

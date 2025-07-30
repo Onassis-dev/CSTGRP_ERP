@@ -138,6 +138,13 @@
 			</div>
 
 			<div class={cardClass}>
+				<h3 class="col-span-full w-full pl-0.5 font-semibold">Reportes</h3>
+				<Label name="Perm. Reportes">
+					<Select items={permissions} bind:value={formData.permissions.reports} />
+				</Label>
+			</div>
+
+			<div class={cardClass}>
 				<h3 class="col-span-full w-full pl-0.5 font-semibold">RRHH</h3>
 				<Label name="Perm. Empleados">
 					<Select items={permissions} bind:value={formData.permissions.employees} />
