@@ -25,15 +25,10 @@
 	});
 
 	async function handleSubmit() {
-		const response = await api.get('/resources/tools/zenpet', {
-			params: formData,
-			responseType: 'arraybuffer'
-		});
-		show = false;
-
-		const blob = new Blob([response.data], { type: 'application/pdf' });
-		const url = URL.createObjectURL(blob);
+		const params = new URLSearchParams(formData);
+		const url = `${import.meta.env.VITE_BASEURL}/resources/tools/zenpet?${params.toString()}`;
 		window.open(url, '_blank');
+		show = false;
 	}
 
 	const products = [
