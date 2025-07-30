@@ -1,6 +1,5 @@
 <script lang="ts">
 	import CusTable from '$lib/components/basic/CusTable.svelte';
-	import Cookies from 'js-cookie';
 	import { Button } from '$lib/components/ui/button';
 	import { TableBody, TableCell, TableHeader, TableRow } from '$lib/components/ui/table';
 	import TableHead from '$lib/components/ui/table/table-head.svelte';
@@ -11,12 +10,13 @@
 	import OptionsCell from '$lib/components/basic/OptionsCell.svelte';
 	import { createQuery } from '@tanstack/svelte-query';
 	import OptionsHead from '$lib/components/basic/OptionsHead.svelte';
+	import { userData } from '$lib/utils/store';
 
 	let show = $state(false);
 	let show1 = $state(false);
 	let selectedRow = $state({});
 
-	const canEdit = parseInt(Cookies.get('perm_directory') || '0') == 2;
+	const canEdit = ($userData?.permissions.directory || 0) == 2;
 
 	const directory = createQuery({
 		queryKey: ['directory'],

@@ -7,7 +7,7 @@ import { Secret } from 'jsonwebtoken';
 import jwt from 'jsonwebtoken';
 import { sendError } from 'src/utils/errors';
 import dotenv from 'dotenv';
-import { cookieConfig, httpCookieConfig } from 'src/utils/cookies';
+import { httpCookieConfig } from 'src/utils/cookies';
 import { ContextProvider } from 'src/interceptors/context.provider';
 
 dotenv.config();
@@ -59,10 +59,6 @@ export class AuthService {
     }
 
     res.setCookie('token', token, httpCookieConfig);
-    delete user.password;
-    Object.keys(user).forEach((key) => {
-      res.setCookie(key, user[key], cookieConfig);
-    });
 
     await this.req.record(
       `${body.username} inicio sesion, IP: ${ip}, ${location}`,
@@ -70,24 +66,15 @@ export class AuthService {
     res.send();
   }
 
-  async updatePermissions(res, cookies) {
-    if (!cookies || !cookies?.id)
-      throw new HttpException('No cuenta con credenciales', 401);
-    const [user] = await sql`select * from users where id = ${cookies.id}`;
-    if (!user) throw new HttpException('No se encontró el usuario', 401);
-
-    delete user.password;
-    Object.keys(user).forEach((key) => {
-      res.setCookie(key, user[key], cookieConfig);
-    });
-
-    res.send();
+  async logoutUser(res) {
+    res.setCookie('token', '', httpCookieConfig).send();
   }
 
-  async logoutUser(res) {
-    res
-      .setCookie('token', '', httpCookieConfig)
-      .setCookie('username', '', cookieConfig)
-      .send();
+  async getUser() {
+    const [user] = await sql`select * from users where id = ${this.req.userId}`;
+    if (!user) throw new HttpException('No se encontró el usuario', 401);
+    delete user.password;
+
+    return user;
   }
 }

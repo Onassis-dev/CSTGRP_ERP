@@ -22,9 +22,9 @@
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
 	import { Trash } from 'lucide-svelte';
-	import Cookies from 'js-cookie';
 	import { createQuery } from '@tanstack/svelte-query';
 	import { getOptions, getProdAreas } from '$lib/utils/queries';
+	import { userData } from '$lib/utils/store';
 
 	interface Props {
 		show: boolean;
@@ -32,7 +32,7 @@
 
 	let { show = $bindable() }: Props = $props();
 	let formData: any = $state({
-		petitioner: Cookies.get('username')
+		petitioner: $userData?.username
 	});
 
 	interface material {

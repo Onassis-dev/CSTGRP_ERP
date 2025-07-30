@@ -6,7 +6,6 @@
 		DropdownMenuTrigger,
 		DropdownMenuItem
 	} from '$lib/components/ui/dropdown-menu';
-	import Cookies from 'js-cookie';
 	import { sidebarOpen } from '../../utils/store';
 	import * as Accordion from '$lib/components/ui/accordion/index.js';
 	import { Card } from '$lib/components/ui/card';
@@ -27,12 +26,14 @@
 	import { goto } from '$app/navigation';
 	import { cn } from '$lib/utils';
 	import { browser } from '$app/environment';
-	import { hasAccess } from '$lib/utils/functions';
-
-	const username = Cookies.get('username');
+	import { userData } from '$lib/utils/store';
 
 	function closeSidebar() {
 		sidebarOpen.set(false);
+	}
+
+	function hasAccess(name: string) {
+		return ($userData?.permissions[name] || 0) > 0;
 	}
 
 	run(() => {
@@ -253,7 +254,7 @@
 	<div class="mt-auto space-y-1 px-2 pb-2">
 		<p class="hover:bg-muted flex h-8 items-center gap-2 rounded-md px-2 text-sm">
 			<UserCircle class="size-3.5 text-[#5c5e63]" />
-			{username}
+			{$userData?.username}
 		</p>
 
 		<DropdownMenu>

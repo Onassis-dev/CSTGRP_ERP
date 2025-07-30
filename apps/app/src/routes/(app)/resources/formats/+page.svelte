@@ -15,12 +15,13 @@
 	import { refetch } from '$lib/utils/query';
 	import { goto } from '$app/navigation';
 	import OptionsHead from '$lib/components/basic/OptionsHead.svelte';
+	import { userData } from '$lib/utils/store';
 
 	let show = $state(false);
 	let show1 = $state(false);
 	let selectedFolder = $state('');
 
-	const canEdit = parseInt(Cookies.get('perm_formats') || '0') == 2;
+	const canEdit = ($userData?.permissions.formats || 0) == 2;
 
 	const folders = createQuery({
 		queryKey: ['formats-folders'],

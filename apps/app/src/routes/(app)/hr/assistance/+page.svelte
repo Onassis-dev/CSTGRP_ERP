@@ -4,7 +4,6 @@
 	import { Input } from '$lib/components/ui/input';
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
-	import Cookies from 'js-cookie';
 	import { FileDown, PlusCircle } from 'lucide-svelte';
 	import CusTable from '$lib/components/basic/CusTable.svelte';
 	import { TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
@@ -12,6 +11,7 @@
 	import { onMount } from 'svelte';
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
 	import { downloadFile } from '$lib/utils/files';
+	import { userData } from '$lib/utils/store';
 
 	let assistances: any[] = $state([]);
 	let areas: any = {};
@@ -40,9 +40,9 @@
 			incidences[incidence.value] = incidence.name;
 		});
 		incidencesList = incidencesArray;
-		if (Cookies.get('perm_assistance_areas') === 'Todas') return (areasList = areasArray);
+		if ($userData?.permissions.assistance_areas === 'Todas') return (areasList = areasArray);
 
-		const accessibleAreas = Cookies.get('perm_assistance_areas')?.split(',');
+		const accessibleAreas = $userData?.permissions.assistance_areas?.split(',');
 		areasList = areasArray.filter((area: any) => {
 			return accessibleAreas?.includes(area.value);
 		});
@@ -102,7 +102,7 @@
 		<Input menu type="date" bind:value={dateSelected} onchange={getAssistance} class="max-w-36" />
 	{/snippet}
 	{#snippet right()}
-		{#if Cookies.get('perm_assistance_areas') === 'Todas'}
+		{#if $userData?.permissions.assistance_areas === 'Todas'}
 			<!-- <ExportAssistance date={dateSelected} /> -->
 			<Button onclick={exportList} size="icon" variant="outline"
 				><FileDown class="size-3.5" /></Button

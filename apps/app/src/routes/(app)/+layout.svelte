@@ -9,9 +9,11 @@
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import api from '$lib/utils/server';
-	import Cookies from 'js-cookie';
 	import { queryClient, setupQuerySync } from '$lib/utils/query';
 	import Command from '$lib/components/layout/tools/Command.svelte';
+	import { userData } from '$lib/utils/store';
+	import { Loader2 } from 'lucide-svelte';
+	import Cookies from 'js-cookie';
 
 	interface Props {
 		children?: import('svelte').Snippet;
@@ -24,17 +26,20 @@
 	}
 
 	onMount(() => {
-		if (!Cookies.get('username')) goto('/login');
-		window.addEventListener('unhandledrejection', handleUnhandledRejection);
+		api
+			.get('/auth/user')
+			.then((res) => {
+				userData.set(res.data);
+				if (!$userData) goto('/login');
+				Object.keys(Cookies.get()).forEach(function (cookieName) {
+					Cookies.remove(cookieName);
+				});
+			})
+			.catch(() => {
+				goto('/login');
+			});
 
-		const previousPermissions = Cookies.get();
-		api.get('/auth/update').then((res) => {
-			const newPermissions = Cookies.get();
-			const changed = Object.keys(previousPermissions).some(
-				(key) => previousPermissions[key] !== newPermissions[key]
-			);
-			if (changed) window.location.reload();
-		});
+		window.addEventListener('unhandledrejection', handleUnhandledRejection);
 
 		setupQuerySync(queryClient);
 	});
@@ -46,15 +51,21 @@
 	let open = $state(false);
 </script>
 
-<QueryClientProvider client={queryClient}>
-	<div class="app flex">
-		<SideBar></SideBar>
-		<main class="flex h-[100lvh] w-full flex-col bg-white xl:ml-60 xl:w-[calc(100%-240px)]">
-			<Header bind:open />
-			{@render children?.()}
-		</main>
-	</div>
-</QueryClientProvider>
+{#if $userData}
+	<QueryClientProvider client={queryClient}>
+		<div class="app flex">
+			<SideBar></SideBar>
+			<main class="flex h-[100lvh] w-full flex-col bg-white xl:ml-60 xl:w-[calc(100%-240px)]">
+				<Header bind:open />
+				{@render children?.()}
+			</main>
+		</div>
+	</QueryClientProvider>
 
-<Command bind:open />
-<Toaster />
+	<Command bind:open />
+	<Toaster />
+{:else}
+	<div class="flex h-screen w-screen items-center justify-center">
+		<Loader2 class="size-14 animate-spin" strokeWidth={1} />
+	</div>
+{/if}

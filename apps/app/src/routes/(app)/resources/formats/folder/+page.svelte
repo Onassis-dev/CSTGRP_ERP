@@ -15,6 +15,7 @@
 	import { refetch } from '$lib/utils/query';
 	import { downloadFile } from '$lib/utils/files';
 	import OptionsHead from '$lib/components/basic/OptionsHead.svelte';
+	import { userData } from '$lib/utils/store';
 
 	const selectedFolder = new URLSearchParams(window.location.search).get('name') || '';
 
@@ -22,7 +23,7 @@
 	let show1 = $state(false);
 	let selectedFormat = $state('');
 
-	const canEdit = parseInt(Cookies.get('perm_formats') || '0') == 2;
+	const canEdit = ($userData?.permissions.formats || 0) == 2;
 
 	const formats = createQuery({
 		queryKey: ['formats', selectedFolder],

@@ -22,11 +22,11 @@
 	import { formatDate } from '$lib/utils/functions';
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
-	import Cookies from 'js-cookie';
 	import { refetch } from '$lib/utils/query';
 	import { getOptions, getProdAreas } from '$lib/utils/queries';
 	import { createQuery } from '@tanstack/svelte-query';
 	import { untrack } from 'svelte';
+	import { userData } from '$lib/utils/store';
 
 	interface Props {
 		show?: boolean;
@@ -39,7 +39,7 @@
 
 	async function setFormData() {
 		formData = { ...selectedMovement };
-		formData.petitioner = Cookies.get('username');
+		formData.petitioner = $userData?.username;
 		await getJobs();
 	}
 

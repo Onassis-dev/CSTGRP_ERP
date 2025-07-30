@@ -1,4 +1,3 @@
-import Cookies from 'js-cookie';
 import api from './server';
 
 export function formatDate(strDate?: string) {
@@ -35,10 +34,6 @@ export function getDayNumber(date: string | Date) {
 
 export function getImage(image: string) {
 	return import.meta.env.VITE_BASEURL + '/static/' + image;
-}
-
-export function hasAccess(name: string) {
-	return parseInt(Cookies.get('perm_' + name) || '0') > 0;
 }
 
 export function getPreview(file: any): Promise<string | null> {
