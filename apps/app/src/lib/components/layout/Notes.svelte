@@ -1,137 +1,44 @@
 <script lang="ts">
-	import * as Popover from '$lib/components/ui/popover/index.js';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import { Check, NotepadText, Trash, X } from 'lucide-svelte';
+	import { Dialog, DialogBody, DialogContent, DialogHeader } from '$lib/components/ui/dialog';
 	import { onMount } from 'svelte';
-	import { Button } from '../ui/button';
-	import { Input } from '../ui/input';
-	import { Textarea } from '../ui/textarea';
 	import api from '$lib/utils/server';
+	import { Textarea } from '../ui/textarea';
 
-	type Note = {
-		id: number;
-		title: string;
-		content: string;
-	};
+	let { show = $bindable(false) }: { show: boolean } = $props();
 
-	let notes = $state<Note[]>([]);
+	let text = $state('');
 
-	const getNotes = async () => {
+	const getNote = async () => {
 		const response = await api.get('/notes');
-		notes = response.data;
+		text = response.data;
 	};
-
-	const createNote = async () => {
-		const response = await api.post('/notes', { title: newNote.title, content: ' ' });
-		notes = response.data;
-		newNote.title = '';
-	};
-
-	const deleteNote = async (id: number) => {
-		const response = await api.delete(`/notes/${id}`);
-		notes = response.data;
-	};
-
 	const editNote = async () => {
-		await api.put(`/notes`, {
-			id: selectedNote?.id,
-			title: selectedNote?.title || ' ',
-			content: selectedNote?.content || ' '
-		});
+		await api.put(`/notes`, { text });
 	};
 
 	onMount(() => {
-		getNotes();
+		getNote();
 	});
 
-	let selectedNote = $state<Note | null>(null);
-	let newNote = $state({
-		title: ''
+	$effect(() => {
+		text;
+		const handler = setTimeout(() => {
+			editNote();
+		}, 250);
+		return () => clearTimeout(handler);
 	});
 </script>
 
-<Popover.Root>
-	<Popover.Trigger class="w-full">
-		<p class="hover:bg-muted flex h-8 w-full items-center gap-2 rounded-md px-2 text-sm">
-			<NotepadText class="size-3.5 text-[#5c5e63]" />
-			Notas
-		</p>
-	</Popover.Trigger>
-	<Popover.Content
-		sideOffset={10}
-		side="right"
-		align="start"
-		class="flex h-[50lvh] max-h-screen w-80 flex-col overflow-hidden p-0"
-	>
-		<div class="flex h-12 items-center justify-between border-b px-3 text-sm font-semibold">
-			<p>Notas personales</p>
-			{#if selectedNote}
-				<Button
-					variant="ghost"
-					size="icon"
-					onclick={() => {
-						getNotes();
-						selectedNote = null;
-					}}><X class="size-3.5" /></Button
-				>
-			{/if}
-		</div>
+<Dialog bind:open={show}>
+	<DialogContent class="z-[51] min-h-[50vh] sm:max-w-md">
+		<DialogHeader title="Notas" />
 
-		{#if selectedNote}
-			<div class="flex max-w-full flex-1 flex-col gap-[1px] overflow-y-auto">
-				<Input
-					placeholder="Titulo"
-					class="!ring-none rounded-none border-none p-3"
-					bind:value={selectedNote.title}
-					onblur={editNote}
-				/>
-				<div class="w-full border"></div>
-				<Textarea
-					placeholder="Escribe aqui..."
-					onblur={editNote}
-					class="h-full resize-none rounded-none border-none"
-					bind:value={selectedNote.content}
-				/>
-			</div>
-		{:else}
-			<div class="flex max-w-full flex-1 flex-col overflow-y-auto">
-				{#each notes as note}
-					<div class="grid grid-cols-[1fr_auto] items-center gap-2 border-b p-3">
-						<button
-							class="h-5 w-full overflow-hidden text-ellipsis whitespace-nowrap text-left text-sm font-medium"
-							onclick={() => (selectedNote = note)}
-						>
-							{note.title}
-						</button>
-
-						<DropdownMenu.Root>
-							<DropdownMenu.Trigger
-								><Button variant="ghost" size="icon">
-									<Trash class="size-3.5 text-[#5c5e63]" />
-								</Button></DropdownMenu.Trigger
-							>
-							<DropdownMenu.Content>
-								<DropdownMenu.Item onclick={() => deleteNote(note.id)}>Borrar</DropdownMenu.Item>
-							</DropdownMenu.Content>
-						</DropdownMenu.Root>
-					</div>
-				{/each}
-
-				<div class="grid grid-cols-[1fr_auto] items-center gap-2 p-3">
-					<Input
-						placeholder="Nueva nota"
-						class="overflow-hidden text-ellipsis whitespace-nowrap text-left text-sm font-medium"
-						bind:value={newNote.title}
-						onkeydown={(event) => {
-							if (event.key === 'Enter') createNote();
-						}}
-					/>
-
-					<Button variant="ghost" size="icon" onclick={createNote}>
-						<Check class="size-3.5 text-[#5c5e63]" />
-					</Button>
-				</div>
-			</div>
-		{/if}
-	</Popover.Content>
-</Popover.Root>
+		<DialogBody class="p-0">
+			<Textarea
+				bind:value={text}
+				class="h-full w-full resize-none rounded-none !border-0"
+				placeholder="Escribe tus notas aquí..."
+			/>
+		</DialogBody>
+	</DialogContent>
+</Dialog>

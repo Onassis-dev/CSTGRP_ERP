@@ -28,7 +28,6 @@
 	import { cn } from '$lib/utils';
 	import { browser } from '$app/environment';
 	import { hasAccess } from '$lib/utils/functions';
-	import Notes from './Notes.svelte';
 
 	const username = Cookies.get('username');
 
@@ -62,12 +61,6 @@
 			CST Group
 		{/if}
 	</a>
-
-	{#if hasAccess('directory')}
-		<div class="-y-1 mt-2 px-2 pb-2">
-			<Notes />
-		</div>
-	{/if}
 
 	<Accordion.Root class="px-2 pt-2" type="single">
 		{#if hasAccess('prod_corte') || hasAccess('prod_cortesVarios') || hasAccess('prod_produccion') || hasAccess('prod_calidad') || hasAccess('prod_serigrafia')}

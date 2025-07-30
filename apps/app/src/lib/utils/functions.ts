@@ -125,3 +125,11 @@ export async function downloadFile(url: string, name: string) {
 		console.error('Error descargando el archivo:', error);
 	}
 }
+
+export function debounce<T extends (...args: any[]) => void>(fn: T, delay: number) {
+	let timeout: ReturnType<typeof setTimeout>;
+	return (...args: Parameters<T>) => {
+		clearTimeout(timeout);
+		timeout = setTimeout(() => fn(...args), delay);
+	};
+}
