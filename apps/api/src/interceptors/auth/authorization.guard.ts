@@ -9,30 +9,9 @@ import sql from 'src/utils/db';
 import { FastifyRequest } from 'fastify';
 import { sendError } from 'src/utils/errors';
 import { cookieConfig } from 'src/utils/cookies';
+import { permissionsList } from 'src/routes/General/users/users.schema';
 
-type permissionType =
-  | 'users'
-  | 'employees'
-  | 'productivity'
-  | 'assistance'
-  | 'structure'
-  | 'it'
-  | 'requisitions'
-  | 'materialmovements'
-  | 'poimp'
-  | 'inventorystats'
-  | 'petitions'
-  | 'inventory'
-  | 'formats'
-  | 'directory'
-  | 'purchases'
-  | 'prod_corte'
-  | 'prod_cortesVarios'
-  | 'prod_produccion'
-  | 'prod_calidad'
-  | 'prod_serigrafia'
-  | 'prodmovements'
-  | 'docs';
+type permissionType = keyof typeof permissionsList;
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -54,19 +33,17 @@ export class AuthGuard implements CanActivate {
     };
 
     try {
-      const user: any = await jwt.verify(token, process.env.JWT_SECRET);
-      req.userId = user.id;
+      const decoded: any = await jwt.verify(token, process.env.JWT_SECRET);
+      req.userId = decoded.id;
 
-      const [userperms] = await sql`select * from users where id = ${user.id}`;
-      if (!userperms) return sendError('Usuario invalido', 400);
+      const [user] = await sql`select * from users where id = ${decoded.id}`;
+      if (!user) return sendError('Usuario invalido', 400);
 
       if (!this.requiredPermission) return true;
 
-      const [{ perm }] =
-        await sql`select ${sql('perm_' + this.requiredPermission)} as perm from "users" where "id" = ${user.id}`;
-      res.setCookie('areas', userperms.perm_assistance_areas, cookieConfig);
+      res.setCookie('areas', user.perm_assistance_areas, cookieConfig);
 
-      return perm >= methods[req.method];
+      return user.permissions[this.requiredPermission] >= methods[req.method];
     } catch (err) {
       throw new HttpException('Token invalido', 401);
     }

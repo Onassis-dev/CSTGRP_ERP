@@ -121,90 +121,90 @@
 			<div class={cardClass}>
 				<h3 class="col-span-full w-full pl-0.5 font-semibold">General</h3>
 				<Label name="Perm. Usuarios">
-					<Select items={permissions} bind:value={formData.perm_users} />
+					<Select items={permissions} bind:value={formData.permissions.users} />
 				</Label>
 				<Label name="Perm. Estructura">
-					<Select items={permissions} bind:value={formData.perm_structure} />
+					<Select items={permissions} bind:value={formData.permissions.structure} />
 				</Label>
 				<Label name="Perm. Formatos">
-					<Select items={permissions} bind:value={formData.perm_formats} />
+					<Select items={permissions} bind:value={formData.permissions.formats} />
 				</Label>
 				<Label name="Perm. Directorio">
-					<Select items={permissions} bind:value={formData.perm_directory} />
+					<Select items={permissions} bind:value={formData.permissions.directory} />
 				</Label>
 				<Label name="Perm. Documentos">
-					<Select items={permissions} bind:value={formData.perm_docs} />
+					<Select items={permissions} bind:value={formData.permissions.docs} />
 				</Label>
 			</div>
 
 			<div class={cardClass}>
 				<h3 class="col-span-full w-full pl-0.5 font-semibold">RRHH</h3>
 				<Label name="Perm. Empleados">
-					<Select items={permissions} bind:value={formData.perm_employees} />
+					<Select items={permissions} bind:value={formData.permissions.employees} />
 				</Label>
 				<Label name="Perm. Asistencia">
-					<Select items={permissions} bind:value={formData.perm_assistance} />
+					<Select items={permissions} bind:value={formData.permissions.assistance} />
 				</Label>
 				<Label name="Perm. Productividad">
-					<Select items={permissions} bind:value={formData.perm_productivity} />
+					<Select items={permissions} bind:value={formData.permissions.productivity} />
 				</Label>
 			</div>
 
 			<div class={cardClass}>
 				<h3 class="col-span-full w-full pl-0.5 font-semibold">Producción</h3>
 				<Label name="Perm. Corte">
-					<Select items={permissions} bind:value={formData.perm_prod_corte} />
+					<Select items={permissions} bind:value={formData.permissions.prod_corte} />
 				</Label>
 				<Label name="Perm. Cortes Varios">
-					<Select items={permissions} bind:value={formData.perm_prod_cortesVarios} />
+					<Select items={permissions} bind:value={formData.permissions.prod_cortesVarios} />
 				</Label>
 				<Label name="Perm. Producción">
-					<Select items={permissions} bind:value={formData.perm_prod_produccion} />
+					<Select items={permissions} bind:value={formData.permissions.prod_produccion} />
 				</Label>
 				<Label name="Perm. Calidad">
-					<Select items={permissions} bind:value={formData.perm_prod_calidad} />
+					<Select items={permissions} bind:value={formData.permissions.prod_calidad} />
 				</Label>
 				<Label name="Perm. Serigrafía">
-					<Select items={permissions} bind:value={formData.perm_prod_serigrafia} />
+					<Select items={permissions} bind:value={formData.permissions.prod_serigrafia} />
 				</Label>
 				<Label name="Perm. Movimientos">
-					<Select items={permissions} bind:value={formData.perm_prodmovements} />
+					<Select items={permissions} bind:value={formData.permissions.prodmovements} />
 				</Label>
 			</div>
 
 			<div class={cardClass}>
 				<h3 class="col-span-full w-full pl-0.5 font-semibold">Almacen</h3>
 				<Label name="Perm. Inventario">
-					<Select items={permissions} bind:value={formData.perm_inventory} />
+					<Select items={permissions} bind:value={formData.permissions.inventory} />
 				</Label>
 				<Label name="Perm. Movimientos">
-					<Select items={permissions} bind:value={formData.perm_materialmovements} />
+					<Select items={permissions} bind:value={formData.permissions.materialmovements} />
 				</Label>
 				<Label name="Perm. Dashboard">
-					<Select items={permissions} bind:value={formData.perm_inventorystats} />
+					<Select items={permissions} bind:value={formData.permissions.inventorystats} />
 				</Label>
 				<Label name="Perm. Requisiciones">
-					<Select items={permissions} bind:value={formData.perm_requisitions} />
+					<Select items={permissions} bind:value={formData.permissions.requisitions} />
 				</Label>
 				<Label name="Perm. Peticiones">
-					<Select items={permissions} bind:value={formData.perm_petitions} />
+					<Select items={permissions} bind:value={formData.permissions.petitions} />
 				</Label>
 				<Label name="Perm. Po-Imp">
-					<Select items={permissions} bind:value={formData.perm_poimp} />
+					<Select items={permissions} bind:value={formData.permissions.poimp} />
 				</Label>
 			</div>
 
 			<div class={cardClass}>
 				<h3 class="col-span-full w-full pl-0.5 font-semibold">Sistemas</h3>
 				<Label name="Perm. Sistemas">
-					<Select items={permissions} bind:value={formData.perm_it} />
+					<Select items={permissions} bind:value={formData.permissions.it} />
 				</Label>
 			</div>
 
 			<div class={cardClass}>
 				<h3 class="col-span-full w-full pl-0.5 font-semibold">Compras</h3>
 				<Label name="Perm. Compras">
-					<Select items={permissions} bind:value={formData.perm_purchases} />
+					<Select items={permissions} bind:value={formData.permissions.purchases} />
 				</Label>
 			</div>
 

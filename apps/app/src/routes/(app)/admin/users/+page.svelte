@@ -14,7 +14,6 @@
 	import { showSuccess } from '$lib/utils/showToast';
 	import UsersForm from './UsersForm.svelte';
 	import { ChevronDown, Eye, Minus, Pen, PlusCircle } from 'lucide-svelte';
-	import { onMount } from 'svelte';
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
 	import OptionsCell from '$lib/components/basic/OptionsCell.svelte';
 	import { getAreas } from '$lib/utils/queries';
@@ -26,29 +25,31 @@
 		id: '',
 		username: '',
 		password: '',
+		permissions: {
+			users: 0,
+			materialmovements: 0,
+			assistance: 0,
+			productivity: 0,
+			employees: 0,
+			inventory: 0,
+			structure: 0,
+			it: 0,
+			inventorystats: 0,
+			petitions: 0,
+			poimp: 0,
+			formats: 0,
+			requisitions: 0,
+			directory: 0,
+			docs: 0,
+			purchases: 0,
+			prod_corte: 0,
+			prod_cortesVarios: 0,
+			prod_produccion: 0,
+			prod_calidad: 0,
+			prod_serigrafia: 0,
+			prodmovements: 0
+		},
 		perm_assistance_areas: '',
-		perm_users: 0,
-		perm_materialmovements: 0,
-		perm_assistance: 0,
-		perm_productivity: 0,
-		perm_employees: 0,
-		perm_inventory: 0,
-		perm_structure: 0,
-		perm_it: 0,
-		perm_inventorystats: 0,
-		perm_petitions: 0,
-		perm_poimp: 0,
-		perm_formats: 0,
-		perm_requisitions: 0,
-		perm_directory: 0,
-		perm_docs: 0,
-		perm_purchases: 0,
-		perm_prod_corte: 0,
-		perm_prod_cortesVarios: 0,
-		perm_prod_produccion: 0,
-		perm_prod_calidad: 0,
-		perm_prod_serigrafia: 0,
-		perm_prodmovements: 0,
 		maintance: false
 	};
 
@@ -154,9 +155,9 @@
 				<TableCell class="p-1.5 text-center"
 					><Badge
 						class="flex h-full w-full items-center justify-center p-1"
-						color={getBadgeColor(user.perm_users)}
+						color={getBadgeColor(user.permissions.users)}
 					>
-						{@const SvelteComponent = badgeTexts[user.perm_users]}
+						{@const SvelteComponent = badgeTexts[user.permissions.users]}
 						<SvelteComponent class="size-3.5" />
 					</Badge></TableCell
 				>
@@ -164,9 +165,9 @@
 				<TableCell class="p-1.5 text-center"
 					><Badge
 						class="flex h-full w-full items-center justify-center p-1"
-						color={getBadgeColor(user.perm_structure)}
+						color={getBadgeColor(user.permissions.structure)}
 					>
-						{@const SvelteComponent_1 = badgeTexts[user.perm_structure]}
+						{@const SvelteComponent_1 = badgeTexts[user.permissions.structure]}
 						<SvelteComponent_1 class="size-3.5" />
 					</Badge></TableCell
 				>
@@ -174,9 +175,9 @@
 				<TableCell class="p-1.5 text-center"
 					><Badge
 						class="flex h-full w-full items-center justify-center p-1"
-						color={getBadgeColor(user.perm_formats)}
+						color={getBadgeColor(user.permissions.formats)}
 					>
-						{@const SvelteComponent_1 = badgeTexts[user.perm_formats]}
+						{@const SvelteComponent_1 = badgeTexts[user.permissions.formats]}
 						<SvelteComponent_1 class="size-3.5" />
 					</Badge></TableCell
 				>
@@ -184,18 +185,18 @@
 				<TableCell class="p-1.5 text-center"
 					><Badge
 						class="flex h-full w-full items-center justify-center p-1"
-						color={getBadgeColor(user.perm_directory)}
+						color={getBadgeColor(user.permissions.directory)}
 					>
-						{@const SvelteComponent_1 = badgeTexts[user.perm_directory]}
+						{@const SvelteComponent_1 = badgeTexts[user.permissions.directory]}
 						<SvelteComponent_1 class="size-3.5" />
 					</Badge></TableCell
 				>
 				<TableCell class="p-1.5 text-center"
 					><Badge
 						class="flex h-full w-full items-center justify-center p-1"
-						color={getBadgeColor(user.perm_docs)}
+						color={getBadgeColor(user.permissions.docs)}
 					>
-						{@const SvelteComponent_1 = badgeTexts[user.perm_docs]}
+						{@const SvelteComponent_1 = badgeTexts[user.permissions.docs]}
 						<SvelteComponent_1 class="size-3.5" />
 					</Badge></TableCell
 				>
@@ -203,18 +204,18 @@
 				<TableCell class="p-1.5 text-center"
 					><Badge
 						class="flex h-full w-full items-center justify-center p-1"
-						color={getBadgeColor(user.perm_assistance)}
+						color={getBadgeColor(user.permissions.assistance)}
 					>
-						{@const SvelteComponent_2 = badgeTexts[user.perm_assistance]}
+						{@const SvelteComponent_2 = badgeTexts[user.permissions.assistance]}
 						<SvelteComponent_2 class="size-3.5" />
 					</Badge></TableCell
 				>
 				<TableCell class="p-1.5 text-center"
 					><Badge
 						class="flex h-full w-full items-center justify-center p-1"
-						color={getBadgeColor(user.perm_employees)}
+						color={getBadgeColor(user.permissions.employees)}
 					>
-						{@const SvelteComponent_3 = badgeTexts[user.perm_employees]}
+						{@const SvelteComponent_3 = badgeTexts[user.permissions.employees]}
 						<SvelteComponent_3 class="size-3.5" />
 					</Badge></TableCell
 				>
@@ -222,63 +223,63 @@
 				<TableCell class="p-1.5 text-center"
 					><Badge
 						class="flex h-full w-full items-center justify-center p-1"
-						color={getBadgeColor(user.perm_productivity)}
+						color={getBadgeColor(user.permissions.productivity)}
 					>
-						{@const SvelteComponent_4 = badgeTexts[user.perm_productivity]}
+						{@const SvelteComponent_4 = badgeTexts[user.permissions.productivity]}
 						<SvelteComponent_4 class="size-3.5" />
 					</Badge></TableCell
 				>
 				<TableCell class="p-1.5 text-center"
 					><Badge
 						class="flex h-full w-full items-center justify-center p-1"
-						color={getBadgeColor(user.perm_prod_corte)}
+						color={getBadgeColor(user.permissions.prod_corte)}
 					>
-						{@const SvelteComponent_4 = badgeTexts[user.perm_prod_corte]}
+						{@const SvelteComponent_4 = badgeTexts[user.permissions.prod_corte]}
 						<SvelteComponent_4 class="size-3.5" />
 					</Badge></TableCell
 				>
 				<TableCell class="p-1.5 text-center"
 					><Badge
 						class="flex h-full w-full items-center justify-center p-1"
-						color={getBadgeColor(user.perm_prod_cortesVarios)}
+						color={getBadgeColor(user.permissions.prod_cortesVarios)}
 					>
-						{@const SvelteComponent_4 = badgeTexts[user.perm_prod_cortesVarios]}
+						{@const SvelteComponent_4 = badgeTexts[user.permissions.prod_cortesVarios]}
 						<SvelteComponent_4 class="size-3.5" />
 					</Badge></TableCell
 				>
 				<TableCell class="p-1.5 text-center"
 					><Badge
 						class="flex h-full w-full items-center justify-center p-1"
-						color={getBadgeColor(user.perm_prod_produccion)}
+						color={getBadgeColor(user.permissions.prod_produccion)}
 					>
-						{@const SvelteComponent_4 = badgeTexts[user.perm_prod_produccion]}
+						{@const SvelteComponent_4 = badgeTexts[user.permissions.prod_produccion]}
 						<SvelteComponent_4 class="size-3.5" />
 					</Badge></TableCell
 				>
 				<TableCell class="p-1.5 text-center"
 					><Badge
 						class="flex h-full w-full items-center justify-center p-1"
-						color={getBadgeColor(user.perm_prod_calidad)}
+						color={getBadgeColor(user.permissions.prod_calidad)}
 					>
-						{@const SvelteComponent_4 = badgeTexts[user.perm_prod_calidad]}
+						{@const SvelteComponent_4 = badgeTexts[user.permissions.prod_calidad]}
 						<SvelteComponent_4 class="size-3.5" />
 					</Badge></TableCell
 				>
 				<TableCell class="p-1.5 text-center"
 					><Badge
 						class="flex h-full w-full items-center justify-center p-1"
-						color={getBadgeColor(user.perm_prod_serigrafia)}
+						color={getBadgeColor(user.permissions.prod_serigrafia)}
 					>
-						{@const SvelteComponent_4 = badgeTexts[user.perm_prod_serigrafia]}
+						{@const SvelteComponent_4 = badgeTexts[user.permissions.prod_serigrafia]}
 						<SvelteComponent_4 class="size-3.5" />
 					</Badge></TableCell
 				>
 				<TableCell class="p-1.5 text-center"
 					><Badge
 						class="flex h-full w-full items-center justify-center p-1"
-						color={getBadgeColor(user.perm_prodmovements)}
+						color={getBadgeColor(user.permissions.prodmovements)}
 					>
-						{@const SvelteComponent_4 = badgeTexts[user.perm_prodmovements]}
+						{@const SvelteComponent_4 = badgeTexts[user.permissions.prodmovements]}
 						<SvelteComponent_4 class="size-3.5" />
 					</Badge></TableCell
 				>
@@ -286,54 +287,54 @@
 				<TableCell class="p-1.5 text-center"
 					><Badge
 						class="flex h-full w-full items-center justify-center p-1"
-						color={getBadgeColor(user.perm_inventorystats)}
+						color={getBadgeColor(user.permissions.inventorystats)}
 					>
-						{@const SvelteComponent_5 = badgeTexts[user.perm_inventorystats]}
+						{@const SvelteComponent_5 = badgeTexts[user.permissions.inventorystats]}
 						<SvelteComponent_5 class="size-3.5" />
 					</Badge></TableCell
 				>
 				<TableCell class="p-1.5 text-center"
 					><Badge
 						class="flex h-full w-full items-center justify-center p-1"
-						color={getBadgeColor(user.perm_inventory)}
+						color={getBadgeColor(user.permissions.inventory)}
 					>
-						{@const SvelteComponent_6 = badgeTexts[user.perm_inventory]}
+						{@const SvelteComponent_6 = badgeTexts[user.permissions.inventory]}
 						<SvelteComponent_6 class="size-3.5" />
 					</Badge></TableCell
 				>
 				<TableCell class="p-1.5 text-center"
 					><Badge
 						class="flex h-full w-full items-center justify-center p-1"
-						color={getBadgeColor(user.perm_materialmovements)}
+						color={getBadgeColor(user.permissions.materialmovements)}
 					>
-						{@const SvelteComponent_7 = badgeTexts[user.perm_materialmovements]}
+						{@const SvelteComponent_7 = badgeTexts[user.permissions.materialmovements]}
 						<SvelteComponent_7 class="size-3.5" />
 					</Badge></TableCell
 				>
 				<TableCell class="p-1.5 text-center"
 					><Badge
 						class="flex h-full w-full items-center justify-center p-1"
-						color={getBadgeColor(user.perm_requisitions)}
+						color={getBadgeColor(user.permissions.requisitions)}
 					>
-						{@const SvelteComponent_8 = badgeTexts[user.perm_requisitions]}
+						{@const SvelteComponent_8 = badgeTexts[user.permissions.requisitions]}
 						<SvelteComponent_8 class="size-3.5" />
 					</Badge></TableCell
 				>
 				<TableCell class="p-1.5 text-center"
 					><Badge
 						class="flex h-full w-full items-center justify-center p-1"
-						color={getBadgeColor(user.perm_petitions)}
+						color={getBadgeColor(user.permissions.petitions)}
 					>
-						{@const SvelteComponent_9 = badgeTexts[user.perm_petitions]}
+						{@const SvelteComponent_9 = badgeTexts[user.permissions.petitions]}
 						<SvelteComponent_9 class="size-3.5" />
 					</Badge></TableCell
 				>
 				<TableCell class="p-1.5 text-center"
 					><Badge
 						class="flex h-full w-full items-center justify-center p-1"
-						color={getBadgeColor(user.perm_poimp)}
+						color={getBadgeColor(user.permissions.poimp)}
 					>
-						{@const SvelteComponent_10 = badgeTexts[user.perm_poimp]}
+						{@const SvelteComponent_10 = badgeTexts[user.permissions.poimp]}
 						<SvelteComponent_10 class="size-3.5" />
 					</Badge></TableCell
 				>
@@ -341,18 +342,18 @@
 				<TableCell class="p-1.5 text-center"
 					><Badge
 						class="flex h-full w-full items-center justify-center p-1"
-						color={getBadgeColor(user.perm_it)}
+						color={getBadgeColor(user.permissions.it)}
 					>
-						{@const SvelteComponent_11 = badgeTexts[user.perm_it]}
+						{@const SvelteComponent_11 = badgeTexts[user.permissions.it]}
 						<SvelteComponent_11 class="size-3.5" />
 					</Badge></TableCell
 				>
 				<TableCell class="p-1.5 text-center"
 					><Badge
 						class="flex h-full w-full items-center justify-center p-1"
-						color={getBadgeColor(user.perm_purchases)}
+						color={getBadgeColor(user.permissions.purchases)}
 					>
-						{@const SvelteComponent_11 = badgeTexts[user.perm_purchases]}
+						{@const SvelteComponent_11 = badgeTexts[user.permissions.purchases]}
 						<SvelteComponent_11 class="size-3.5" />
 					</Badge></TableCell
 				>

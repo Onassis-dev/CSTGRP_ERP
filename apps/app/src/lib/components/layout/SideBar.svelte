@@ -242,7 +242,7 @@
 					{#if hasAccess('formats')}
 						<Accordion.Option href="/resources/formats" />
 					{/if}
-					{#if hasAccess('docs') && parseInt(Cookies.get('perm_docs') || '0') > 1}
+					{#if hasAccess('docs')}
 						<Accordion.Option href="/resources/docs" />
 					{/if}
 				</Accordion.Content>

@@ -53,7 +53,6 @@ export class ToolsService {
       if (i % 10 === 0) pageNo++;
       if (i === 10) i = 0;
 
-      console.log(getYPosition(i));
       fillBox({
         page: pages[pageNo],
         font,
@@ -69,7 +68,7 @@ export class ToolsService {
       fillBox({
         page: pages[pageNo],
         font,
-        text: new Date().toLocaleDateString('es-MX', {
+        text: new Date(body.date).toLocaleDateString('es-MX', {
           day: '2-digit',
           month: '2-digit',
           year: 'numeric',
