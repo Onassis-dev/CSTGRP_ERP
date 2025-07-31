@@ -51,12 +51,6 @@
 	let areas = $derived(getOptions($areasQuery.data));
 
 	async function handleSubmit() {
-		Object.keys(formData).forEach((key) => {
-			if (key.startsWith('perm_')) {
-				formData[key] = parseInt(formData[key]);
-			}
-		});
-
 		if (selectedUser.id) {
 			if (formData.password === '') delete formData.password;
 			await api.put('users', {

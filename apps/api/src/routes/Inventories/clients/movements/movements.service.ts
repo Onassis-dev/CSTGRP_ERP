@@ -143,7 +143,7 @@ async function getUserName(token: string, query: z.infer<typeof clientSchema>) {
   const user: any = await jwt.verify(token, process.env.JWT_SECRET);
 
   let [area] = await sql`select id from clients where name = ${user.username}`;
-  if (!area && user.perm_inventory)
+  if (!area && user.permissions?.inventory)
     [area] =
       await sql`select id from clients where name = ${query.clientId || ''}`;
   if (!area) throw new HttpException('Cliente no encontrado', 403);

@@ -62,7 +62,8 @@ export class ProgressService {
 }
 
 async function validatePerm(area: string, userId: string, required: 1 | 2) {
-  const [{ perm }] =
-    await sql`select ${sql('perm_prod_' + area)} as perm from users where id = ${userId}`;
+  const [{ permissions }] =
+    await sql`select permissions from users where id = ${userId}`;
+  const perm = permissions[`prod_${area}`];
   if (perm < required) throw new BadRequestException('Permiso insuficiente.');
 }
