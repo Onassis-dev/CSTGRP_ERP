@@ -1,5 +1,4 @@
 import { HttpException, Injectable } from '@nestjs/common';
-import jwt from 'jsonwebtoken';
 import { z } from 'zod/v4';
 import sql from 'src/utils/db';
 import {
@@ -251,35 +250,6 @@ export class MovementsService {
         throw new HttpException(`El job ${body.job} no existe.`, 400);
       throw err;
     }
-
-    return;
-  }
-
-  async deleteIE(body: z.infer<typeof idObjectSchema>, token: string) {
-    const user: any = await jwt.verify(token, process.env.JWT_SECRET);
-    if (user.username !== 'juan' && user.username !== 'admin')
-      throw new HttpException(
-        'No tienes permisos para eliminar movimientos',
-        403,
-      );
-
-    const movements =
-      await sql`select "materialId" from materialmovements where "movementId" = ${body.id}`;
-
-    await sql.begin(async (sql) => {
-      const deleted = (
-        await sql`delete from materialie where id = ${body.id} returning jobpo, import`
-      )[0];
-
-      for (const movement of movements) {
-        await updateMaterialAmount(movement.materialId, sql);
-      }
-
-      await this.req.record(
-        `Elimino ${deleted?.jobpo ? 'el job' : 'la importacion'} ${deleted?.jobpo || deleted?.import}`,
-        sql,
-      );
-    });
 
     return;
   }
