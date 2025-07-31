@@ -14,6 +14,7 @@
 	import { PlusCircle } from 'lucide-svelte';
 	import ProgressForm from './ProgressForm.svelte';
 	import MovementCard from './MovementCard.svelte';
+	import { Badge } from '$lib/components/ui/badge';
 
 	interface Props {
 		area: string;
@@ -69,7 +70,7 @@
 		<TableHead class="w-1/6">Completado</TableHead>
 		<TableHead class="w-1/6">Cantidad</TableHead>
 		<TableHead class="w-1/6">Faltante</TableHead>
-		<TableHead class="w-1/6">Fecha</TableHead>
+		<TableHead class="w-1/6">Due date</TableHead>
 	</TableHeader>
 	<TableBody>
 		{#each $orders?.data as device, i}
@@ -96,7 +97,11 @@
 				<TableCell>{device[area]}</TableCell>
 				<TableCell>{device.amount}</TableCell>
 				<TableCell>{device.amount - device[area]}</TableCell>
-				<TableCell>{formatDate(device.created_at)}</TableCell>
+				<TableCell>
+					<Badge color={device.overdue && filters.completed === 'false' ? 'yellow' : 'outline'}
+						>{formatDate(device.due)}</Badge
+					>
+				</TableCell>
 			</TableRow>
 		{/each}
 	</TableBody>

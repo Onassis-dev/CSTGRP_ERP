@@ -6,6 +6,7 @@
 		variants: {
 			variant: {
 				default: 'bg-primary text-primary-foreground hover:bg-primary/80 ',
+				outline: 'bg-transparent text-foreground outline-border ',
 				secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80 ',
 				gray: 'bg-gray text-gray-foreground outline-gray-foreground/20 ',
 				red: 'bg-red text-red-foreground outline-red-foreground/20 ',

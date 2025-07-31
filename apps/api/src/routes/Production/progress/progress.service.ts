@@ -8,6 +8,7 @@ import {
 } from './progress.schema';
 import { ContextProvider } from 'src/interceptors/context.provider';
 import { updateOrderAmounts } from '../production.utils';
+import { getTijuanaDate } from 'src/utils/functions';
 
 @Injectable()
 export class ProgressService {
@@ -16,7 +17,8 @@ export class ProgressService {
   async getOrders(body: z.infer<typeof getProgressSchema>) {
     await validatePerm(body.area, this.req.userId, 1);
 
-    const jobs = await sql`select materialie.*, orders.*
+    const jobs =
+      await sql`select materialie.*, orders.*, ${getTijuanaDate()} >= materialie."due" as "overdue"
        from orders join materialie on orders."jobId" = materialie.id 
        where ${sql(`${body.area}Time`)} <> 0
        ${body.completed ? sql`AND (orders.completed = true OR ${sql('orders.' + body.area)} = orders.amount)` : sql`AND orders.completed = false AND ${sql('orders.' + body.area)} < orders.amount`}
