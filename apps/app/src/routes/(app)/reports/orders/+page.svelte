@@ -27,7 +27,7 @@
 	});
 
 	const orders = createQuery({
-		queryKey: ['orders', { ...filters }],
+		queryKey: ['orders'],
 		queryFn: async () =>
 			(
 				await api.get(`/reports/production/orders`, {
@@ -38,7 +38,7 @@
 
 	async function checkMovement() {
 		try {
-			const result = await api.put('/reports/production/orders', {
+			await api.put('/reports/production/orders', {
 				id: selectedRow.id
 			});
 			showSuccess(selectedRow.invoiced ? 'Check eliminado' : 'Check marcado');
@@ -50,7 +50,7 @@
 	}
 
 	$effect(() => {
-		filters;
+		({ ...filters });
 		refetch(['orders']);
 	});
 </script>
