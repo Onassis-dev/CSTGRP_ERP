@@ -18,8 +18,7 @@
 
 	let filters = $state({
 		programation: '',
-		job: '',
-		completed: ''
+		jobpo: ''
 	});
 
 	const clients = createQuery({
@@ -49,18 +48,24 @@
 			if (err.response.status !== 400) throw err;
 		}
 	}
+
+	$effect(() => {
+		filters;
+		refetch(['orders']);
+	});
 </script>
 
 <MenuBar>
 	<div class="flex flex-col gap-1.5 lg:flex-row">
-		<!-- <Input menu bind:value={filters.programation} placeholder="Programación" class="max-w-32" />
-		<Input menu bind:value={filters.job} placeholder="Job" class="max-w-32" /> -->
+		<Input menu bind:value={filters.programation} placeholder="Programación" class="max-w-32" />
+		<Input menu bind:value={filters.jobpo} placeholder="Job" class="max-w-32" />
 	</div>
 </MenuBar>
 
 <CusTable>
 	<TableHeader>
 		<!-- <TableHead class="w-[25%]">Cliente</TableHead> -->
+		<TableHead class="w-[25%]">Programación</TableHead>
 		<TableHead class="w-[25%]">Job</TableHead>
 		<TableHead class="w-[100%]">Parte</TableHead>
 		<TableHead class="w-[100%]">Tiempo</TableHead>
@@ -77,6 +82,7 @@
 						</Badge>
 					{/if}
 				</TableCell> -->
+				<TableCell>{row.programation || ''}</TableCell>
 				<TableCell>{row.jobpo || ''}</TableCell>
 				<TableCell>{row.part || ''}</TableCell>
 				<TableCell>{row.time || ''}</TableCell>

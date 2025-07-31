@@ -10,11 +10,15 @@ export class ProductionService {
 
   async getOrders(body: z.infer<typeof getOrdersSchema>) {
     const orders = await sql`
-    select orders.id, materialie.jobpo, orders.part, materialie."due", materialie."clientId", orders.invoiced,
+    select orders.id, materialie.programation, materialie.jobpo, orders.part, materialie."due", materialie."clientId", orders.invoiced,
     ("corteTime" + "serigrafiaTime" + "produccionTime" + "calidadTime" + "cortesVariosTime") as "time"
     from orders
     join materialie on materialie.id = orders."jobId"
-    order by materialie."due" desc, materialie.jobpo desc limit 150`;
+    WHERE
+      ${body.jobpo ? sql`materialie.jobpo LIKE ${'%' + body.jobpo + '%'}` : sql`TRUE`} AND
+      ${body.programation ? sql`materialie.programation LIKE ${'%' + body.programation + '%'}` : sql`TRUE`}
+    order by materialie."due" desc, materialie.jobpo desc limit 150
+    `;
     return orders;
   }
 
