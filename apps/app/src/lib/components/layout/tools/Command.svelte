@@ -5,6 +5,7 @@
 	import ZenpetForm from './ZenpetForm.svelte';
 	import { RulerIcon } from 'lucide-svelte';
 	import Notes from '../Notes.svelte';
+	import { userData } from '$lib/utils/store';
 
 	let { open = $bindable(false) }: { open: boolean } = $props();
 	let showZenpetForm = $state(false);
@@ -13,6 +14,7 @@
 
 	function handleKeydown(e: KeyboardEvent) {
 		if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+			if ($userData?.permissions.directory < 1) return;
 			e.preventDefault();
 			open = !open;
 		}

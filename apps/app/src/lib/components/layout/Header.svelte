@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { location, sidebarOpen } from './../../utils/store';
+	import { location, sidebarOpen, userData } from './../../utils/store';
 	import { afterNavigate } from '$app/navigation';
 	import { browser } from '$app/environment';
 	import { Button } from '../ui/button';
@@ -29,15 +29,17 @@
 	</h3>
 
 	<div class="ml-auto flex items-center gap-2">
-		<Button
-			variant="outline"
-			size="action"
-			onclick={() => (open = true)}
-			class="flex items-center gap-2 text-sm"
-		>
-			<SearchIcon class="size-4" />
-			<span class="-mb-0.5 mr-0.5">Buscar</span>
-		</Button>
-		<Docs />
+		{#if $userData?.permissions.directory >= 1}
+			<Button
+				variant="outline"
+				size="action"
+				onclick={() => (open = true)}
+				class="flex items-center gap-2 text-sm"
+			>
+				<SearchIcon class="size-4" />
+				<span class="-mb-0.5 mr-0.5">Buscar</span>
+			</Button>
+			<Docs />
+		{/if}
 	</div>
 </header>
