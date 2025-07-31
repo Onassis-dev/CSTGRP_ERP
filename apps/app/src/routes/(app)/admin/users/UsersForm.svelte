@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Label from '$lib/components/basic/Label.svelte';
+	import * as SelectBasic from '$lib/components/ui/select/index.js';
 	import Select from '$lib/components/basic/Select.svelte';
-	import { Button } from '$lib/components/ui/button';
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import {
 		Dialog,
@@ -10,19 +10,13 @@
 		DialogFooter,
 		DialogHeader
 	} from '$lib/components/ui/dialog';
-	import {
-		DropdownMenu,
-		DropdownMenuTrigger,
-		DropdownMenuContent
-	} from '$lib/components/ui/dropdown-menu';
 	import { Input } from '$lib/components/ui/input';
-	import { Label as LabelBase } from '$lib/components/ui/label';
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
-	import { ChevronDown } from 'lucide-svelte';
 	import { refetch } from '$lib/utils/query';
 	import { getOptions } from '$lib/utils/queries';
 	import { createQuery } from '@tanstack/svelte-query';
+	import { baseUser } from './users.utils';
 
 	interface Props {
 		show?: boolean;
@@ -33,8 +27,11 @@
 	let formData: any = $state();
 
 	function setFormData() {
-		selectedAreas = selectedUser?.perm_assistance_areas?.split(',') || [];
-		formData = { ...selectedUser };
+		const data = { ...selectedUser };
+		Object.keys(baseUser.permissions).forEach((key) => {
+			data.permissions[key] = parseInt(data.permissions[key] || '0');
+		});
+		formData = data;
 	}
 
 	const permissions = [
@@ -42,7 +39,6 @@
 		{ value: 1, name: 'Leer', color: 'green' },
 		{ value: 2, name: 'Modificar', color: 'blue' }
 	];
-	let selectedAreas: any[] = $state([]);
 
 	const areasQuery = createQuery({
 		queryKey: ['areas'],
@@ -53,39 +49,14 @@
 	async function handleSubmit() {
 		if (selectedUser.id) {
 			if (formData.password === '') delete formData.password;
-			await api.put('users', {
-				...formData,
-				id: parseInt(formData.id || ''),
-				perm_assistance_areas: selectedAreas[0] === 'Todas' ? 'Todas' : selectedAreas.join(',')
-			});
+			await api.put('users', formData);
 			showSuccess('Usuario actualizado');
 		} else {
-			await api.post('users', {
-				...formData,
-				id: parseInt(formData.id || ''),
-				perm_assistance_areas: selectedAreas[0] === 'Todas' ? 'Todas' : selectedAreas.join(',')
-			});
+			await api.post('users', formData);
 			showSuccess('Usuario registrado');
 		}
 		refetch(['users']);
 		show = false;
-	}
-
-	function handleCheck(v: any, i: number) {
-		if (v) {
-			selectedAreas.push(areas[i].value);
-		} else {
-			selectedAreas = selectedAreas.filter((area) => {
-				return area !== areas[i].value;
-			});
-		}
-	}
-	function checkAll(v: any) {
-		if (v) {
-			selectedAreas = ['Todas'];
-		} else {
-			selectedAreas = [];
-		}
 	}
 
 	$effect(() => {
@@ -97,7 +68,7 @@
 </script>
 
 <Dialog bind:open={show}>
-	<DialogContent>
+	<DialogContent class="overflow-y-hidden">
 		<DialogHeader
 			title={selectedUser.id
 				? `Editar información de ${selectedUser.username}`
@@ -209,40 +180,39 @@
 				</Label>
 			</div>
 
-			<div class="col-span-full grid grid-cols-2 gap-4 rounded-md border p-2">
-				<h3 class="col-span-2 w-full pl-0.5 font-semibold">Extras</h3>
+			<div class={cardClass}>
+				<h3 class="col-span-full w-full pl-0.5 font-semibold">Extras</h3>
 				<Label name="Areas">
-					<DropdownMenu>
-						<DropdownMenuTrigger>
-							<Button variant="outline" class="w-full"
-								>Seleccionar<ChevronDown class="text-primary ms-2 size-3.5" /></Button
-							>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent>
-							{#each areas as area, i}
-								<li class="list-none">
-									<Checkbox
-										id={'c-' + area.name}
-										checked={selectedAreas.includes(area.value) || selectedAreas[0] === 'Todas'}
-										onCheckedChange={(v) => {
-											handleCheck(v, i);
-										}}
-									/>
-									<LabelBase for={'c-' + area.name}>{area.name}</LabelBase>
-								</li>
-							{/each}
-							<li class="list-none">
-								<Checkbox
-									id="c-todas"
-									checked={selectedAreas[0] === 'Todas'}
-									onCheckedChange={(v) => {
-										checkAll(v);
-									}}
-								/>
-								<LabelBase for="c-todas" class="font-semibold">Todas</LabelBase>
-							</li>
-						</DropdownMenuContent>
-					</DropdownMenu>
+					<SelectBasic.Root
+						type="multiple"
+						name="assistance_areas"
+						bind:value={formData.assistance_areas}
+					>
+						<SelectBasic.Trigger>Asistencia</SelectBasic.Trigger>
+						<SelectBasic.Content>
+							<SelectBasic.Group>
+								{#each areas as area (area.value)}
+									<SelectBasic.Item value={area.value} label={area.name}>
+										{area.name}
+									</SelectBasic.Item>
+								{/each}
+							</SelectBasic.Group>
+						</SelectBasic.Content>
+					</SelectBasic.Root>
+				</Label>
+				<Label name="Areas">
+					<SelectBasic.Root type="multiple" name="prod_areas" bind:value={formData.prod_areas}>
+						<SelectBasic.Trigger>Producción</SelectBasic.Trigger>
+						<SelectBasic.Content>
+							<SelectBasic.Group>
+								{#each areas as area (area.value)}
+									<SelectBasic.Item value={area.value} label={area.name}>
+										{area.name}
+									</SelectBasic.Item>
+								{/each}
+							</SelectBasic.Group>
+						</SelectBasic.Content>
+					</SelectBasic.Root>
 				</Label>
 				<Label name="Mantenimiento">
 					<Checkbox bind:checked={formData.maintance} />

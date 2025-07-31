@@ -33,8 +33,9 @@ export const registerSchema = z.object({
   username: z.string(),
   password: z.string().min(3),
   permissions: z.object(permissionsList),
-  perm_assistance_areas: z.string().max(300).nullable(),
   maintance: z.boolean(),
+  assistance_areas: z.array(z.coerce.number().int()),
+  prod_areas: z.array(z.coerce.number().int()),
 });
 
 export const editSchema = registerSchema.extend({

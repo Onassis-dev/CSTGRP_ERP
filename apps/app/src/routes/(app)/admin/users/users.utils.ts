@@ -1,0 +1,33 @@
+export const baseUser = {
+	id: '',
+	username: '',
+	password: '',
+	permissions: {
+		users: 0,
+		materialmovements: 0,
+		assistance: 0,
+		productivity: 0,
+		employees: 0,
+		inventory: 0,
+		structure: 0,
+		it: 0,
+		inventorystats: 0,
+		petitions: 0,
+		poimp: 0,
+		formats: 0,
+		requisitions: 0,
+		directory: 0,
+		docs: 0,
+		purchases: 0,
+		prod_corte: 0,
+		prod_cortesVarios: 0,
+		prod_produccion: 0,
+		prod_calidad: 0,
+		prod_serigrafia: 0,
+		prodmovements: 0,
+		reports: 0
+	},
+	assistance_areas: [],
+	prod_areas: [],
+	maintance: false
+};
