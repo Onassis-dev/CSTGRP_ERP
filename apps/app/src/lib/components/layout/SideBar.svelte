@@ -212,7 +212,7 @@
 				</Accordion.Content>
 			</Accordion.Item>
 		{/if}
-		{#if !hasAccess('inventory') && !hasAccess('users') && !hasAccess('structure') && !hasAccess('it') && !hasAccess('assistance') && !hasAccess('productivity') && !hasAccess('employees') && !hasAccess('materialmovements') && !hasAccess('poimp') && !hasAccess('formats') && !hasAccess('directory') && !hasAccess('purchases')}
+		{#if !hasAccess('inventory') && !hasAccess('reports') && !hasAccess('users') && !hasAccess('structure') && !hasAccess('it') && !hasAccess('assistance') && !hasAccess('productivity') && !hasAccess('employees') && !hasAccess('materialmovements') && !hasAccess('poimp') && !hasAccess('formats') && !hasAccess('directory') && !hasAccess('purchases')}
 			<Accordion.Item value="clients" class="border-none">
 				<Accordion.Trigger
 					class="hover:bg-muted mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
