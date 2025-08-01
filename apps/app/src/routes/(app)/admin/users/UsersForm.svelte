@@ -182,13 +182,13 @@
 
 			<div class={cardClass}>
 				<h3 class="col-span-full w-full pl-0.5 font-semibold">Extras</h3>
-				<Label name="Areas">
+				<Label name="Asistencia">
 					<SelectBasic.Root
 						type="multiple"
 						name="assistance_areas"
 						bind:value={formData.assistance_areas}
 					>
-						<SelectBasic.Trigger>Asistencia</SelectBasic.Trigger>
+						<SelectBasic.Trigger>Areas</SelectBasic.Trigger>
 						<SelectBasic.Content>
 							<SelectBasic.Group>
 								{#each areas as area (area.value)}
@@ -200,9 +200,9 @@
 						</SelectBasic.Content>
 					</SelectBasic.Root>
 				</Label>
-				<Label name="Areas">
+				<Label name="Producción">
 					<SelectBasic.Root type="multiple" name="prod_areas" bind:value={formData.prod_areas}>
-						<SelectBasic.Trigger>Producción</SelectBasic.Trigger>
+						<SelectBasic.Trigger>Areas</SelectBasic.Trigger>
 						<SelectBasic.Content>
 							<SelectBasic.Group>
 								{#each areas as area (area.value)}
