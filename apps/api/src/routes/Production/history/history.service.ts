@@ -1,7 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import sql from 'src/utils/db';
 import { z } from 'zod/v4';
-import { updateHistorySchema } from './history.schema';
+import {
+  getHistorySchema,
+  getMovementsSchema,
+  updateHistorySchema,
+} from './history.schema';
 import { ContextProvider } from 'src/interceptors/context.provider';
 import { idObjectSchema } from 'src/utils/schemas';
 import { updateOrderAmounts } from '../production.utils';
@@ -10,20 +14,41 @@ import { updateOrderAmounts } from '../production.utils';
 export class HistoryService {
   constructor(private readonly req: ContextProvider) {}
 
-  async getOrders() {
-    const jobs = await sql`select *,
-    (select jobpo from materialie where id = (select "jobId" from orders where id = "progressId")) as jobpo
-    from ordermovements order by id desc limit 150`;
+  async getOrders(body: z.infer<typeof getHistorySchema>) {
+    const orders = await sql`
+    select orders.id, materialie.programation, materialie.jobpo, orders.part, materialie."due", materialie."clientId",
+    amount, completed,
+    CASE WHEN "serigrafiaTime" > 0 THEN "serigrafia" ELSE NULL END as "serigrafia",
+    CASE WHEN "corteTime" > 0 THEN "corte" ELSE NULL END as "corte",
+    CASE WHEN "cortesVariosTime" > 0 THEN "cortesVarios" ELSE NULL END as "cortesVarios",
+    CASE WHEN "produccionTime" > 0 THEN "produccion" ELSE NULL END as "produccion",
+    CASE WHEN "calidadTime" > 0 THEN "calidad" ELSE NULL END as "calidad"
+    from orders
+    join materialie on materialie.id = orders."jobId"
+    WHERE
+      ${body.jobpo ? sql`materialie.jobpo LIKE ${'%' + body.jobpo + '%'}` : sql`TRUE`} AND
+      ${body.programation ? sql`materialie.programation LIKE ${'%' + body.programation + '%'}` : sql`TRUE`} AND
+      ${body.clientId ? sql`materialie."clientId" = ${body.clientId}` : sql`TRUE`} AND
+      completed = ${body.completed}
+    order by materialie."due" desc, materialie.jobpo desc limit 100
+    `;
+    return orders;
+  }
+
+  async getMovements(body: z.infer<typeof getMovementsSchema>) {
+    const jobs = await sql`select id, created_at,
+      corte, "cortesVarios", produccion, calidad, serigrafia
+      from ordermovements where "progressId" = ${body.id} order by created_at desc`;
     return jobs;
   }
 
   async updateHistory(body: z.infer<typeof updateHistorySchema>) {
     await sql.begin(async (sql) => {
       const [order] = await sql`select *,
-         (select SUM(${sql(body.area)})::integer from ordermovements where "progressId" = "progressId") as done,
-         (select amount from orders where id = "progressId"),
-         (select jobpo from materialie where id = (select "jobId" from orders where id = "progressId")) as jobpo
-         from ordermovements where id = ${body.id} group by id`;
+         (select SUM(${sql(body.area)})::integer from ordermovements om2 where om2."progressId" = ordermovements."progressId") as done,
+         (select o.amount from orders o where o.id = ordermovements."progressId") as amount,
+         (select m.jobpo from materialie m where m.id = (select o2."jobId" from orders o2 where o2.id = ordermovements."progressId")) as jobpo
+         from ordermovements where id = ${body.id}`;
 
       if (order.done - order[body.area] + body.amount > order.amount)
         throw new BadRequestException(

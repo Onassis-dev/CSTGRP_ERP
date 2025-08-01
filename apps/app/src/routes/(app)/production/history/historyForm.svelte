@@ -11,25 +11,26 @@
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
 	import { refetch } from '$lib/utils/query';
+	import { untrack } from 'svelte';
 
 	interface Props {
 		show?: boolean;
-		selectedEmail: any;
+		selectedMovement: any;
 	}
 
-	let { show = $bindable(false), selectedEmail = $bindable({}) }: Props = $props();
+	let { show = $bindable(false), selectedMovement = $bindable({}) }: Props = $props();
 	let formData: any = $state();
 	let area = $state('');
 
 	function setFormData() {
-		formData = { ...selectedEmail };
-		area = selectedEmail.corte
+		formData = { ...selectedMovement };
+		area = selectedMovement?.corte
 			? 'corte'
-			: selectedEmail.cortesVarios
+			: selectedMovement?.cortesVarios
 				? 'cortesVarios'
-				: selectedEmail.produccion
+				: selectedMovement?.produccion
 					? 'produccion'
-					: selectedEmail.calidad
+					: selectedMovement?.calidad
 						? 'calidad'
 						: 'serigrafia';
 	}
@@ -47,38 +48,36 @@
 	$effect(() => {
 		show;
 		setFormData();
+		untrack(() => console.log(formData));
 	});
 </script>
 
 <Dialog bind:open={show}>
 	<DialogContent>
-		<DialogHeader title={selectedEmail.id ? `Editar movimiento` : 'Registrar movimiento'} />
+		<DialogHeader title={selectedMovement?.id ? `Editar movimiento` : 'Registrar movimiento'} />
 
 		<DialogBody grid="1">
-			<Label name="Jobpo">
-				<Input name="text" bind:value={formData.jobpo} disabled />
-			</Label>
-			{#if selectedEmail.corte}
+			{#if selectedMovement?.corte}
 				<Label name="Corte">
 					<Input name="text" bind:value={formData.corte} />
 				</Label>
 			{/if}
-			{#if selectedEmail.cortesVarios}
+			{#if selectedMovement?.cortesVarios}
 				<Label name="Cortes Varios">
 					<Input name="text" bind:value={formData.cortesVarios} />
 				</Label>
 			{/if}
-			{#if selectedEmail.produccion}
+			{#if selectedMovement?.produccion}
 				<Label name="Producción">
 					<Input name="text" bind:value={formData.produccion} />
 				</Label>
 			{/if}
-			{#if selectedEmail.calidad}
+			{#if selectedMovement?.calidad}
 				<Label name="Calidad">
 					<Input name="text" bind:value={formData.calidad} />
 				</Label>
 			{/if}
-			{#if selectedEmail.serigrafia}
+			{#if selectedMovement?.serigrafia}
 				<Label name="Serigrafía">
 					<Input name="text" bind:value={formData.serigrafia} />
 				</Label>

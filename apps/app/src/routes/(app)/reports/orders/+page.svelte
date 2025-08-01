@@ -77,13 +77,13 @@
 
 <CusTable>
 	<TableHeader>
-		<!-- <TableHead class="w-[25%]">Cliente</TableHead> -->
 		<TableHead class="w-[25%]">Programación</TableHead>
 		<TableHead class="w-[25%]">Job</TableHead>
 		<TableHead class="w-[100%]">Parte</TableHead>
 		<TableHead class="w-[100%]">Tiempo</TableHead>
 		<TableHead class="w-[100%]">Due Date</TableHead>
 		<TableHead class="w-[100%]">Facturado</TableHead>
+		<TableHead class="w-[25%]">Cliente</TableHead>
 	</TableHeader>
 	<TableBody>
 		{#each $orders?.data as row, i}
@@ -104,11 +104,9 @@
 					/></TableCell
 				>
 				<TableCell>
-					{#if $clients?.data?.[row.clientId]}
-						<Badge color={$clients?.data?.[row.clientId]?.color}
-							>{$clients?.data?.[row.clientId]?.name}
-						</Badge>
-					{/if}
+					<Badge color={$clients?.data?.[row.clientId]?.color}
+						>{$clients?.data?.[row.clientId]?.name}
+					</Badge>
 				</TableCell>
 			</TableRow>
 		{/each}

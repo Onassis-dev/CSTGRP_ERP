@@ -3,8 +3,6 @@
 	import { TableBody, TableCell, TableHeader, TableRow } from '$lib/components/ui/table';
 	import TableHead from '$lib/components/ui/table/table-head.svelte';
 	import api from '$lib/utils/server';
-	import DeletePopUp from '$lib/components/complex/DeletePopUp.svelte';
-	import { showSuccess } from '$lib/utils/showToast';
 	import EmailsForm from './historyForm.svelte';
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
 	import OptionsCell from '$lib/components/basic/OptionsCell.svelte';
@@ -12,67 +10,156 @@
 	import { refetch } from '$lib/utils/query';
 	import OptionsHead from '$lib/components/basic/OptionsHead.svelte';
 	import { formatDate } from '$lib/utils/functions';
+	import { getClients, getOptions } from '$lib/utils/queries';
+	import Input from '$lib/components/ui/input/input.svelte';
+	import Select from '$lib/components/basic/Select.svelte';
+	import Badge from '$lib/components/ui/badge/badge.svelte';
+	import OrderCard from './OrderCard.svelte';
+	import DeletePopUp from '$lib/components/complex/DeletePopUp.svelte';
+	import { showSuccess } from '$lib/utils/showToast';
 
-	let show: boolean = $state(false);
-	let show1: boolean = $state(false);
-	let selectedEmail: any = $state({});
+	let showCard: boolean = $state(false);
+	let showForm: boolean = $state(false);
+	let selectedOrder: any = $state({});
+	let selectedMovement: any = $state({});
+	let showDelete: boolean = $state(false);
+
+	let filters = $state({
+		programation: '',
+		jobpo: '',
+		clientId: '',
+		completed: 'false'
+	});
+
+	const completedOptions = [
+		{ name: 'Completado', color: 'green', value: 'true' },
+		{ name: 'Pendiente', color: 'yellow', value: 'false' }
+	];
 
 	const prodHistory = createQuery({
 		queryKey: ['prod-history'],
-		queryFn: async () => (await api.get('/prod-history')).data
+		queryFn: async () =>
+			(
+				await api.get('/prod-history', {
+					params: filters
+				})
+			).data
 	});
 
-	function editEmail(i: number) {
-		selectedEmail = $prodHistory?.data?.[i];
-		show = true;
-	}
-	function createEmail() {
-		selectedEmail = {};
-		show = true;
-	}
-	function deleteEmail(i: number) {
-		selectedEmail = $prodHistory?.data?.[i];
-		show1 = true;
-	}
+	$effect(() => {
+		({ ...filters });
+		refetch(['prod-history']);
+	});
+
+	const clients = createQuery({
+		queryKey: ['clients'],
+		queryFn: getClients
+	});
+
+	const clientsQuery = $derived(getOptions($clients.data));
 </script>
 
-<MenuBar />
-
+<MenuBar>
+	<div class="flex flex-col gap-1.5 lg:flex-row">
+		<Input menu bind:value={filters.programation} placeholder="Programación" class="max-w-32" />
+		<Input menu bind:value={filters.jobpo} placeholder="Job" class="max-w-32" />
+		<Select
+			placeholder="Cliente"
+			menu
+			items={clientsQuery}
+			bind:value={filters.clientId}
+			allowDeselect
+			class="w-40"
+		/>
+		<Select
+			placeholder="Completado"
+			menu
+			items={completedOptions}
+			bind:value={filters.completed}
+			class="w-40"
+		/>
+	</div>
+</MenuBar>
 <CusTable>
 	<TableHeader>
 		<OptionsHead />
-		<TableHead class="w-1/6">Orden</TableHead>
-		<TableHead class="w-1/6">Corte</TableHead>
-		<TableHead class="w-1/6">Cortes Varios</TableHead>
-		<TableHead class="w-1/6">Producción</TableHead>
-		<TableHead class="w-1/6">Calidad</TableHead>
-		<TableHead class="w-1/6">Serigrafía</TableHead>
-		<TableHead class="w-1/6">Fecha</TableHead>
+		<TableHead class="">Cliente</TableHead>
+		<TableHead class="">Programación</TableHead>
+		<TableHead class="">Job/PO</TableHead>
+		<TableHead class="">Parte</TableHead>
+		<TableHead class="w-full">Due date</TableHead>
+		<TableHead class="">Cantidad</TableHead>
+		<TableHead class="">Corte</TableHead>
+		<TableHead class="">Cortes Varios</TableHead>
+		<TableHead class="">Producción</TableHead>
+		<TableHead class="">Calidad</TableHead>
+		<TableHead class="">Serigrafía</TableHead>
 	</TableHeader>
 	<TableBody>
 		{#each $prodHistory?.data as email, i}
 			<TableRow>
-				<OptionsCell editFunc={() => editEmail(i)} deleteFunc={() => deleteEmail(i)} />
+				<OptionsCell
+					viewFunc={() => {
+						selectedOrder = email;
+						showCard = true;
+					}}
+				/>
+				<TableCell>
+					<Badge color={$clients?.data?.[email.clientId]?.color}>
+						{$clients?.data?.[email.clientId]?.name}
+					</Badge>
+				</TableCell>
+				<TableCell>{email.programation}</TableCell>
 				<TableCell>{email.jobpo}</TableCell>
-				<TableCell>{email.corte || ''}</TableCell>
-				<TableCell>{email.cortesVarios || ''}</TableCell>
-				<TableCell>{email.produccion || ''}</TableCell>
-				<TableCell>{email.calidad || ''}</TableCell>
-				<TableCell>{email.serigrafia || ''}</TableCell>
-				<TableCell>{formatDate(email.created_at)}</TableCell>
+				<TableCell>{email.part}</TableCell>
+				<TableCell>{formatDate(email.due)}</TableCell>
+				<TableCell>{email.amount}</TableCell>
+				<TableCell
+					><Badge color={email.corte === email.amount ? 'green' : 'outline'}
+						>{email.corte === null ? '' : email.corte}</Badge
+					></TableCell
+				>
+				<TableCell
+					><Badge color={email.cortesVarios === email.amount ? 'green' : 'outline'}
+						>{email.cortesVarios === null ? '' : email.cortesVarios}</Badge
+					></TableCell
+				>
+				<TableCell
+					><Badge color={email.produccion === email.amount ? 'green' : 'outline'}
+						>{email.produccion === null ? '' : email.produccion}</Badge
+					></TableCell
+				>
+				<TableCell
+					><Badge color={email.calidad === email.amount ? 'green' : 'outline'}
+						>{email.calidad === null ? '' : email.calidad}</Badge
+					></TableCell
+				>
+				<TableCell
+					><Badge color={email.serigrafia === email.amount ? 'green' : 'outline'}
+						>{email.serigrafia === null ? '' : email.serigrafia}</Badge
+					></TableCell
+				>
 			</TableRow>
 		{/each}
 	</TableBody>
 </CusTable>
 
-<EmailsForm bind:show bind:selectedEmail />
+<EmailsForm bind:show={showForm} bind:selectedMovement />
+<OrderCard
+	bind:show={showCard}
+	bind:showForm
+	bind:selectedOrder
+	bind:selectedMovement
+	bind:showDelete
+/>
+
 <DeletePopUp
-	bind:show={show1}
+	bind:show={showDelete}
 	text="Eliminar movimiento"
 	deleteFunc={async () => {
-		await api.delete('/prod-history', { data: { id: parseInt(selectedEmail.id || '') } });
+		await api.delete('/prod-history', { data: { id: selectedMovement.id } });
 		showSuccess('Movimiento eliminado');
 		refetch(['prod-history']);
-		show1 = false;
+		showDelete = false;
 	}}
 />

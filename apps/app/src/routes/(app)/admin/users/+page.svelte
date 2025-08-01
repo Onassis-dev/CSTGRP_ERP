@@ -105,7 +105,7 @@
 		<TableHead class="w-[12.5%]">Producción</TableHead>
 		<TableHead class="w-[12.5%]">Calidad</TableHead>
 		<TableHead class="w-[12.5%]">Serigrafía</TableHead>
-		<TableHead class="w-[12.5%]">Movimientos</TableHead>
+		<TableHead class="w-[12.5%]">Historial</TableHead>
 		<TableHead class="w-[12.5%]">Dashboard</TableHead>
 		<TableHead class="w-[12.5%]">Inventario</TableHead>
 		<TableHead class="w-[12.5%]">Movimientos</TableHead>
