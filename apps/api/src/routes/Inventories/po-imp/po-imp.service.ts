@@ -181,6 +181,7 @@ export class PoImpService {
           due: body.due,
           jobpo: body.jobpo,
           programation: body.programation,
+          clientId: body.clientId,
         })} where id = ${body.id} returning jobpo, programation`
       )[0];
 
@@ -202,6 +203,7 @@ export class PoImpService {
 
       // Add production info
       await sql`update orders set ${sql({
+        areaId: body.areaId,
         part: body.part,
         amount: body.amount,
         corteTime: body.corteTime,
@@ -284,7 +286,7 @@ export class PoImpService {
     await sql.begin(async (sql) => {
       // Add inventory info
       const [insertedJob] =
-        await sql`Insert into materialie (jobpo, programation, due) values (${body.jobpo}, ${body.programation}, ${body.due}) returning id`;
+        await sql`Insert into materialie (jobpo, programation, due, "clientId") values (${body.jobpo}, ${body.programation}, ${body.due}, ${body.clientId}) returning id`;
 
       for (const material of body.materials) {
         const [movement] =
@@ -297,9 +299,9 @@ export class PoImpService {
 
       // Add production info
       await sql`insert into orders 
-      ("jobId", part, amount, "corteTime", "cortesVariosTime", "produccionTime", "calidadTime", "serigrafiaTime")
+      ("areaId", "jobId", part, amount, "corteTime", "cortesVariosTime", "produccionTime", "calidadTime", "serigrafiaTime")
       values 
-      (${insertedJob.id}, ${body.part}, ${body.amount}, ${body.corteTime}, ${body.cortesVariosTime}, ${body.produccionTime}, ${body.calidadTime}, ${body.serigrafiaTime})`;
+      (${body.areaId}, ${insertedJob.id}, ${body.part}, ${body.amount}, ${body.corteTime}, ${body.cortesVariosTime}, ${body.produccionTime}, ${body.calidadTime}, ${body.serigrafiaTime})`;
 
       // Make record
       await this.req.record(`Registro el job: ${body.jobpo}`, sql);

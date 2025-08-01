@@ -16,7 +16,8 @@ export class ProductionService {
     join materialie on materialie.id = orders."jobId"
     WHERE
       ${body.jobpo ? sql`materialie.jobpo LIKE ${'%' + body.jobpo + '%'}` : sql`TRUE`} AND
-      ${body.programation ? sql`materialie.programation LIKE ${'%' + body.programation + '%'}` : sql`TRUE`}
+      ${body.programation ? sql`materialie.programation LIKE ${'%' + body.programation + '%'}` : sql`TRUE`} AND
+      ${body.clientId ? sql`materialie."clientId" = ${body.clientId}` : sql`TRUE`}
     order by materialie."due" desc, materialie.jobpo desc limit 150
     `;
     return orders;

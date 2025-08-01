@@ -16,7 +16,7 @@
 	import { format } from 'date-fns';
 	import { es } from 'date-fns/locale';
 	import { createQuery } from '@tanstack/svelte-query';
-	import { getClients } from '$lib/utils/queries';
+	import { getClients, getOptions } from '$lib/utils/queries';
 	import { downloadFile } from '$lib/utils/files';
 	import OptionsHead from '$lib/components/basic/OptionsHead.svelte';
 	import Select from '$lib/components/basic/Select.svelte';
@@ -57,11 +57,6 @@
 			return true;
 		})
 	);
-
-	const clients = createQuery({
-		queryKey: ['clients'],
-		queryFn: getClients
-	});
 
 	function viewMaterial(i: number) {
 		selectedMaterial = filteredInventory[i];
@@ -108,10 +103,12 @@
 		show2 = false;
 	}
 
-	const clientsQuery = createQuery({
-		queryKey: ['inventory-clients'],
-		queryFn: async () => (await api.get('/inventoryvarious/clients')).data
+	const clients = createQuery({
+		queryKey: ['clients'],
+		queryFn: getClients
 	});
+
+	const clientsQuery = $derived(getOptions($clients.data));
 </script>
 
 <MenuBar>
@@ -120,7 +117,7 @@
 		<Select
 			placeholder="Cliente"
 			menu
-			items={$clientsQuery?.data}
+			items={clientsQuery}
 			bind:value={filters.clientId}
 			allowDeselect
 			class="w-40"

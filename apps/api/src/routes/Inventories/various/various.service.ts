@@ -23,11 +23,16 @@ export class VariousService {
     return rows;
   }
 
+  async getAreas() {
+    const rows = await sql`select id as value, name from areas`;
+    return rows;
+  }
+
   async convertJobPdf(pdfFile: File) {
     try {
       const pdfText = await processPDF(pdfFile);
 
-      return processJob(pdfText);
+      return await processJob(pdfText);
     } catch (err) {
       console.log(err);
       throw new HttpException('PDF invalido', 400);

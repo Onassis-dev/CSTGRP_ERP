@@ -43,7 +43,7 @@
 			variant="outline"
 			class="bg-white"
 			onclick={() =>
-				window.open('https://onassis.getoutline.com/doc/guia-de-uso-A8UK7w0TXH', '_blank')}
+				window.open('https://outline.onassis.dev/doc/guia-de-uso-A8UK7w0TXH', '_blank')}
 		>
 			<Pen class=" size-3.5" />Editar
 		</Button>

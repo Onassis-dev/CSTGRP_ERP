@@ -31,10 +31,10 @@ export class DocsService {
       await sql`Select doc from docs where page = ${body.page}`
     )[0]?.doc;
 
-    const docId = docUrl.split('/').pop();
+    const docId = docUrl.split('-').pop();
 
     const response = await fetch(
-      'https://app.getoutline.com/api/documents.export',
+      'https://outline.onassis.dev/api/documents.export',
       {
         method: 'POST',
         headers: {
@@ -46,6 +46,7 @@ export class DocsService {
         }),
       },
     );
+
     let { data }: { data: string } = await response.json();
 
     const regex = /!\[\]\(/g;
@@ -54,7 +55,7 @@ export class DocsService {
 
     for (const index of indexes) {
       const imageUrl = data.slice(index + 4, index + 69);
-      const attachmentUrl = `https://app.getoutline.com` + imageUrl;
+      const attachmentUrl = `https://outline.onassis.dev` + imageUrl;
       try {
         const attachmentResponse = await fetch(attachmentUrl, {
           method: 'POST',

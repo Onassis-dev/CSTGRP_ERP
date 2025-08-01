@@ -1,6 +1,7 @@
 import { parseNumber } from 'src/utils/parseData';
 import { File } from '@nest-lab/fastify-multer';
 import * as pdfjsLib from 'pdfjs-dist';
+import sql from 'src/utils/db';
 
 export async function processPDF(pdfFile: File) {
   const pdfData = new Uint8Array(pdfFile.buffer);
@@ -81,7 +82,7 @@ export function processImport(text: string) {
   return { dueDate, importNum, materials };
 }
 
-export function processJob(text: string) {
+export async function processJob(text: string) {
   let jobpo = '';
   let part = '';
   let amount = '';
@@ -193,5 +194,8 @@ export function processJob(text: string) {
     }
   });
 
-  return { materials, jobpo, due, part, amount, operations };
+  const [{ clientId }] =
+    await sql`select id as "clientId" from clients where name = 'CSI'`;
+
+  return { materials, jobpo, due, part, amount, operations, clientId };
 }

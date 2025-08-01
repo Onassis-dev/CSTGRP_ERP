@@ -7,23 +7,21 @@
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
 	import { createQuery } from '@tanstack/svelte-query';
 	import Input from '$lib/components/ui/input/input.svelte';
-	import { getClients } from '$lib/utils/queries';
+	import { getClients, getOptions } from '$lib/utils/queries';
 	import { formatDate } from '$lib/utils/functions';
 	import DeletePopUp from '$lib/components/complex/DeletePopUp.svelte';
 	import { refetch } from '$lib/utils/query';
 	import { showSuccess } from '$lib/utils/showToast';
+	import Badge from '$lib/components/ui/badge/badge.svelte';
+	import Select from '$lib/components/basic/Select.svelte';
 
 	let selectedRow: any = $state({});
 	let show = $state(false);
 
 	let filters = $state({
 		programation: '',
-		jobpo: ''
-	});
-
-	const clients = createQuery({
-		queryKey: ['clients'],
-		queryFn: getClients
+		jobpo: '',
+		clientId: ''
 	});
 
 	const orders = createQuery({
@@ -53,12 +51,27 @@
 		({ ...filters });
 		refetch(['orders']);
 	});
+
+	const clients = createQuery({
+		queryKey: ['clients'],
+		queryFn: getClients
+	});
+
+	const clientsQuery = $derived(getOptions($clients.data));
 </script>
 
 <MenuBar>
 	<div class="flex flex-col gap-1.5 lg:flex-row">
 		<Input menu bind:value={filters.programation} placeholder="Programación" class="max-w-32" />
 		<Input menu bind:value={filters.jobpo} placeholder="Job" class="max-w-32" />
+		<Select
+			placeholder="Cliente"
+			menu
+			items={clientsQuery}
+			bind:value={filters.clientId}
+			allowDeselect
+			class="w-40"
+		/>
 	</div>
 </MenuBar>
 
@@ -75,13 +88,6 @@
 	<TableBody>
 		{#each $orders?.data as row, i}
 			<TableRow>
-				<!-- <TableCell>
-					{#if $clients?.data?.[row.clientId]}
-						<Badge color={$clients?.data?.[row.clientId]?.color}
-							>{$clients?.data?.[row.clientId]?.name}
-						</Badge>
-					{/if}
-				</TableCell> -->
 				<TableCell>{row.programation || ''}</TableCell>
 				<TableCell>{row.jobpo || ''}</TableCell>
 				<TableCell>{row.part || ''}</TableCell>
@@ -97,6 +103,13 @@
 						checked={row.invoiced}
 					/></TableCell
 				>
+				<TableCell>
+					{#if $clients?.data?.[row.clientId]}
+						<Badge color={$clients?.data?.[row.clientId]?.color}
+							>{$clients?.data?.[row.clientId]?.name}
+						</Badge>
+					{/if}
+				</TableCell>
 			</TableRow>
 		{/each}
 	</TableBody>

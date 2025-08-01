@@ -26,6 +26,7 @@
 	import Label from '$lib/components/basic/Label.svelte';
 	import Select from '$lib/components/basic/Select.svelte';
 	import { untrack } from 'svelte';
+	import { createQuery } from '@tanstack/svelte-query';
 
 	interface Props {
 		show: boolean;
@@ -47,6 +48,16 @@
 		minutes: number;
 		area: string;
 	}
+
+	const clientsQuery = createQuery({
+		queryKey: ['inventory-clients'],
+		queryFn: async () => (await api.get('/inventoryvarious/clients')).data
+	});
+
+	const areasQuery = createQuery({
+		queryKey: ['inventory-areas'],
+		queryFn: async () => (await api.get('/inventoryvarious/areas')).data
+	});
 
 	const areas = [
 		{ name: 'Corte', value: 'corte' },
@@ -141,7 +152,9 @@
 			calidadTime: data.calidadTime,
 			serigrafiaTime: data.serigrafiaTime,
 			part: data.part,
-			amount: data.amount
+			amount: data.amount,
+			areaId: data.areaId,
+			clientId: data.clientId
 		};
 		files = null;
 		inputDisabled = false;
@@ -204,15 +217,18 @@
 	<DialogContent class="min-h-[90%] sm:max-w-4xl">
 		<DialogHeader title={selectedMovement.id ? 'Actualizar job-po' : 'Registrar job-po'} />
 		<DialogBody class="flex flex-col gap-4">
-			<div class="grid w-full gap-4 sm:grid-cols-3">
-				<Label name="Programación">
-					<Input bind:value={formData.programation} />
-				</Label>
+			<div class="grid w-full gap-4 sm:grid-cols-4">
 				<Label name="Archivo">
 					<FileInput type="file" bind:files />
 				</Label>
+				<Label name="Programación">
+					<Input bind:value={formData.programation} />
+				</Label>
 				<Label name="Parte">
 					<Input bind:value={formData.part} />
+				</Label>
+				<Label name="Cliente">
+					<Select items={$clientsQuery?.data} bind:value={formData.clientId} />
 				</Label>
 				<Label name="Job o PO">
 					<Input disabled={inputDisabled} bind:value={formData.jobpo} />
@@ -222,6 +238,9 @@
 				</Label>
 				<Label name="Fecha">
 					<Input type="date" bind:value={formData.due} />
+				</Label>
+				<Label name="Area">
+					<Select items={$areasQuery?.data} bind:value={formData.areaId} />
 				</Label>
 			</div>
 

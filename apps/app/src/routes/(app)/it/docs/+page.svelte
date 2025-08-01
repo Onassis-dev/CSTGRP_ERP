@@ -7,7 +7,7 @@
 <MenuBar>
 	{#snippet right()}
 		<Button
-			href="https://onassis.getoutline.com/doc/sistemas-4DKyqJXUj1"
+			href="https://outline.onassis.dev/doc/sistemas-4DKyqJXUj1"
 			target="_blank"
 			size="action"
 		>
@@ -19,5 +19,5 @@
 <iframe
 	class="h-full w-full"
 	title="Docs"
-	src="https://onassis.getoutline.com/s/c7f4fa03-65d8-4d72-a80f-da7ec1aa20c7"
+	src="https://outline.onassis.dev/s/c7f4fa03-65d8-4d72-a80f-da7ec1aa20c7"
 ></iframe>

@@ -36,6 +36,8 @@ export const exportSchema = z.object({
   part: z.string(),
   jobpo: z.string(),
   due: z.string(),
+  areaId: idSchema,
+  clientId: idSchema,
   materials: z
     .array(
       z.object({

@@ -30,6 +30,11 @@ export class VariousController {
     return this.variousService.getClients();
   }
 
+  @Get('areas')
+  getAreas() {
+    return this.variousService.getAreas();
+  }
+
   @Post('exportxlsx')
   @UseInterceptors(FileInterceptor('file'))
   convertExcel(@UploadedFile() file: File) {
