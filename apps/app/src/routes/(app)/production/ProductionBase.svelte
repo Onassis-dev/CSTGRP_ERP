@@ -14,7 +14,7 @@
 	import { PlusCircle } from 'lucide-svelte';
 	import ProgressForm from './ProgressForm.svelte';
 	import MovementCard from './MovementCard.svelte';
-	import { Badge } from '$lib/components/ui/badge';
+	import { Badge, type BadgeVariant } from '$lib/components/ui/badge';
 
 	interface Props {
 		area: string;
@@ -24,6 +24,12 @@
 		{ name: 'Completado', value: 'true', color: 'green' },
 		{ name: 'Pendiente', value: 'false', color: 'yellow' }
 	];
+
+	const dateStates: Record<number, BadgeVariant> = {
+		0: 'outline',
+		1: 'yellow',
+		2: 'red'
+	};
 
 	let { area }: Props = $props();
 	let filters = $state({
@@ -98,9 +104,7 @@
 				<TableCell>{device.amount}</TableCell>
 				<TableCell>{device.amount - device[area]}</TableCell>
 				<TableCell>
-					<Badge color={device.overdue && filters.completed === 'false' ? 'yellow' : 'outline'}
-						>{formatDate(device.due)}</Badge
-					>
+					<Badge color={dateStates[device.state]}>{formatDate(device.due)}</Badge>
 				</TableCell>
 			</TableRow>
 		{/each}

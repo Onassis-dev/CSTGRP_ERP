@@ -17,8 +17,12 @@ export class ProgressService {
   async getOrders(body: z.infer<typeof getProgressSchema>) {
     await validatePerm(body.area, this.req.userId, 1);
 
-    const jobs =
-      await sql`select materialie.*, orders.*, ${getTijuanaDate()} >= materialie."due" as "overdue"
+    const jobs = await sql`select materialie.*, orders.*,
+       CASE 
+         WHEN ${getTijuanaDate()} >= materialie."due" - INTERVAL '2 days' AND ${getTijuanaDate()} <= materialie."due" THEN 1
+         WHEN ${getTijuanaDate()} > materialie."due" THEN 2
+         ELSE 0
+       END as "state"
        from orders join materialie on orders."jobId" = materialie.id 
        where ${sql(`${body.area}Time`)} <> 0
        ${body.completed ? sql`AND (orders.completed = true OR ${sql('orders.' + body.area)} = orders.amount)` : sql`AND orders.completed = false AND ${sql('orders.' + body.area)} < orders.amount`}
