@@ -3,7 +3,7 @@ import path from 'path';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { generateZenpetSchema, generateUlineSchema } from './tools.schema';
 import { z } from 'zod/v4';
-import { PDFDocument, StandardFonts } from 'pdf-lib';
+import { degrees, PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { fillBox } from 'src/utils/pdf';
 
 @Injectable()
@@ -110,7 +110,6 @@ export class ToolsService {
 
     const template = await fs.readFile(templatePath);
     const pdfDoc = await PDFDocument.load(template);
-    const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
     for (let i = 0; i < body.pages - 1; i++) {
       const copiedPage = await pdfDoc.copyPages(pdfDoc, [0]);
@@ -121,20 +120,19 @@ export class ToolsService {
 
     let number = body.start;
 
+    const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
     for (let pageNo = 0; pageNo < body.pages; pageNo++) {
       for (let col = 0; col < 16; col++) {
         for (let row = 0; row < 6; row++) {
-          fillBox({
-            page: pages[pageNo],
-            font,
-            text: String(number),
+          const width = font.widthOfTextAtSize(String(number), 20);
+          pages[pageNo].drawText(String(number), {
+            x: 42 + col * 36,
+            y: 78 + row * 125.5 - width / 2,
             size: 20,
-            x: 35 + col * 36,
-            y: 55 + row * 125,
-            width: 60,
-            height: 20,
-            align: 'center',
-            rotate: 90,
+            color: rgb(0.2, 0.2, 0.2),
+            rotate: degrees(90),
+            font,
           });
           number++;
         }
