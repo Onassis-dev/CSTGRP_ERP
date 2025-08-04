@@ -1,7 +1,7 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { generateZenpetSchema } from './tools.schema';
+import { generateZenpetSchema, generateUlineSchema } from './tools.schema';
 import { z } from 'zod/v4';
 import { PDFDocument, StandardFonts } from 'pdf-lib';
 import { fillBox } from 'src/utils/pdf';
@@ -86,6 +86,60 @@ export class ToolsService {
       number++;
     }
 
+    const pdfBytes = await pdfDoc.save();
+    return pdfBytes;
+  }
+
+  async generateUline(body: z.infer<typeof generateUlineSchema>) {
+    if (body.pages > 20)
+      throw new BadRequestException(
+        'El rango de páginas no puede ser mayor a 20',
+      );
+
+    const templatePath = path.resolve(
+      __dirname,
+      '..',
+      '..',
+      '..',
+      '..',
+      'static',
+      'templates',
+      'uline',
+      '96.pdf',
+    );
+
+    const template = await fs.readFile(templatePath);
+    const pdfDoc = await PDFDocument.load(template);
+    const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+    for (let i = 0; i < body.pages - 1; i++) {
+      const copiedPage = await pdfDoc.copyPages(pdfDoc, [0]);
+      await pdfDoc.addPage(copiedPage[0]);
+    }
+
+    const pages = await pdfDoc.getPages();
+
+    let number = body.start;
+
+    for (let pageNo = 0; pageNo < body.pages; pageNo++) {
+      for (let col = 0; col < 16; col++) {
+        for (let row = 0; row < 6; row++) {
+          fillBox({
+            page: pages[pageNo],
+            font,
+            text: String(number),
+            size: 20,
+            x: 35 + col * 36,
+            y: 55 + row * 125,
+            width: 60,
+            height: 20,
+            align: 'center',
+            rotate: 90,
+          });
+          number++;
+        }
+      }
+    }
     const pdfBytes = await pdfDoc.save();
     return pdfBytes;
   }

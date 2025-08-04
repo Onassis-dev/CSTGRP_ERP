@@ -8,3 +8,8 @@ export const generateZenpetSchema = z.object({
   product: z.string(),
   size: z.string(),
 });
+
+export const generateUlineSchema = z.object({
+  start: intSchema,
+  pages: intSchema,
+});

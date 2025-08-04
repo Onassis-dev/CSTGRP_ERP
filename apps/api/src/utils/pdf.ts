@@ -1,4 +1,5 @@
 import {
+  degrees,
   layoutMultilineText,
   PDFFont,
   PDFPage,
@@ -19,6 +20,7 @@ interface FillBoxProps {
   align?: 'left' | 'center' | 'right';
   maxLines?: number;
   color?: RGB;
+  rotate?: number;
 }
 
 export const fillBox = ({
@@ -32,6 +34,7 @@ export const fillBox = ({
   height,
   align = 'left',
   maxLines,
+  rotate = 0,
   color = rgb(0.2, 0.2, 0.2),
 }: FillBoxProps) => {
   let alignment;
@@ -52,6 +55,7 @@ export const fillBox = ({
       y: y + (height - size) / 2,
       size,
       color,
+      rotate: degrees(rotate),
     });
   } else {
     lines.forEach((line, i) => {
@@ -61,6 +65,7 @@ export const fillBox = ({
         y: line.y,
         size,
         color,
+        rotate: degrees(rotate),
       });
     });
   }
