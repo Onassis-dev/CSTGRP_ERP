@@ -91,9 +91,9 @@
 		<TableHead class="">Cantidad</TableHead>
 		<TableHead class="">Corte</TableHead>
 		<TableHead class="">Cortes Varios</TableHead>
+		<TableHead class="">Serigrafía</TableHead>
 		<TableHead class="">Producción</TableHead>
 		<TableHead class="">Calidad</TableHead>
-		<TableHead class="">Serigrafía</TableHead>
 	</TableHeader>
 	<TableBody>
 		{#each $prodHistory?.data as email, i}
@@ -125,6 +125,11 @@
 					></TableCell
 				>
 				<TableCell
+					><Badge color={email.serigrafia === email.amount ? 'green' : 'outline'}
+						>{email.serigrafia === null ? '' : email.serigrafia}</Badge
+					></TableCell
+				>
+				<TableCell
 					><Badge color={email.produccion === email.amount ? 'green' : 'outline'}
 						>{email.produccion === null ? '' : email.produccion}</Badge
 					></TableCell
@@ -132,11 +137,6 @@
 				<TableCell
 					><Badge color={email.calidad === email.amount ? 'green' : 'outline'}
 						>{email.calidad === null ? '' : email.calidad}</Badge
-					></TableCell
-				>
-				<TableCell
-					><Badge color={email.serigrafia === email.amount ? 'green' : 'outline'}
-						>{email.serigrafia === null ? '' : email.serigrafia}</Badge
 					></TableCell
 				>
 			</TableRow>
