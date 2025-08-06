@@ -38,7 +38,7 @@ export class ProgressService {
     await validatePerm(body.area, this.req.userId, 1);
 
     const movements =
-      await sql`select * from ordermovements where "progressId" = ${body.id} and ${sql(body.area)} <> 0 order by created_at desc`;
+      await sql`select * from ordermovements where "progressId" = ${body.id} and ${sql(body.area)} <> 0 order by date desc`;
     return movements;
   }
 
@@ -56,7 +56,7 @@ export class ProgressService {
           'El progreso no puede ser mayor al total',
         );
 
-      await sql`insert into ordermovements (created_at, "progressId", ${sql(body.area)}) values (${body.date}, ${body.orderId}, ${body.amount})`;
+      await sql`insert into ordermovements (date, "progressId", ${sql(body.area)}) values (${body.date}, ${body.orderId}, ${body.amount})`;
       await updateOrderAmounts(body.orderId, sql);
       await this.req.record(
         `Agregó ${body.amount}pz a ${body.area}, orden: ${order.jobpo}`,

@@ -52,12 +52,14 @@
 				<TableHeader class="sticky top-0 border-t">
 					<TableHead class="border-l">Cantidad</TableHead>
 					<TableHead>Fecha</TableHead>
+					<TableHead>Capturado</TableHead>
 				</TableHeader>
 				<TableBody>
 					{#each movements as row}
 						<TableRow>
 							<TableCell class="border-l">{row[area]}</TableCell>
-							<TableCell>{formatDate(row.created_at)}</TableCell>
+							<TableCell>{formatDate(row.date)}</TableCell>
+							<TableCell>{new Date(row.created_at).toLocaleString()}</TableCell>
 						</TableRow>
 					{/each}
 				</TableBody>
