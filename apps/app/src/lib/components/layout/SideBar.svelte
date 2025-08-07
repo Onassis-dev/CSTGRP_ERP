@@ -209,6 +209,7 @@
 				<Accordion.Content>
 					<Accordion.Option href="/structure/areas" />
 					<Accordion.Option href="/structure/positions" />
+					<Accordion.Option href="/structure/clients" />
 				</Accordion.Content>
 			</Accordion.Item>
 		{/if}

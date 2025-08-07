@@ -54,6 +54,7 @@
 		<OptionsHead />
 		<TableHead class="w-full">Nombre</TableHead>
 		<TableHead>Captura</TableHead>
+		<TableHead>Activa</TableHead>
 		<TableHead>Tipo</TableHead>
 		<TableHead>Color</TableHead>
 	</TableHeader>
@@ -64,7 +65,12 @@
 				<TableCell>{area.name}</TableCell>
 				<TableCell>
 					{#if area.captured}
-						<Check />
+						<Check class="mx-auto size-4" />
+					{/if}
+				</TableCell>
+				<TableCell>
+					{#if area.active}
+						<Check class="mx-auto size-4" />
 					{/if}
 				</TableCell>
 				<TableCell>

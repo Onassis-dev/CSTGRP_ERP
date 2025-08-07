@@ -40,7 +40,7 @@ export const getPositions = async () => {
 	return result;
 };
 
-export function getOptions(object: Record<string, any> | undefined) {
+export function getAllOptions(object: Record<string, any> | undefined) {
 	const result: any[] = [];
 	if (!object) return [];
 
@@ -48,9 +48,16 @@ export function getOptions(object: Record<string, any> | undefined) {
 		result.push({
 			name: object[key].name,
 			value: object[key].value,
-			color: object[key].color
+			color: object[key].color,
+			active: object[key].active
 		});
 	});
 
 	return result;
+}
+
+export function getOptions(object: Record<string, any> | undefined) {
+	const result = getAllOptions(object);
+	console.log(result);
+	return result.filter((item) => item.active);
 }

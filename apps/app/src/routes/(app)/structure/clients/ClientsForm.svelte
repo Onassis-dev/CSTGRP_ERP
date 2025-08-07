@@ -1,8 +1,6 @@
 <script lang="ts">
-	import { preventDefault } from 'svelte/legacy';
 	import Label from '$lib/components/basic/Label.svelte';
 	import Select from '$lib/components/basic/Select.svelte';
-	import { Checkbox } from '$lib/components/ui/checkbox';
 	import {
 		Dialog,
 		DialogBody,
@@ -14,34 +12,33 @@
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
 	import { refetch } from '$lib/utils/query';
-	import { untrack } from 'svelte';
+	import Checkbox from '$lib/components/ui/checkbox/checkbox.svelte';
 
 	interface Props {
 		show?: boolean;
-		selectedArea: any;
+		selectedPosition: any;
 	}
 
-	let { show = $bindable(false), selectedArea = $bindable({}) }: Props = $props();
+	let { show = $bindable(false), selectedPosition = $bindable({}) }: Props = $props();
 	let formData: any = $state({
 		name: '',
-		captured: false,
 		color: '',
-		type: 'prod',
 		active: true
 	});
 
+	function setFormData() {
+		formData = { ...selectedPosition };
+	}
+
 	async function handleSubmit() {
-		if (selectedArea.id) {
-			await api.put('/areas', {
-				...formData,
-				id: parseInt(formData.id || '')
-			});
-			showSuccess('Area editada');
+		if (selectedPosition.id) {
+			await api.put('/clients-list', formData);
+			showSuccess('Cliente editado');
 		} else {
-			await api.post('/areas', formData);
-			showSuccess('Area registrada');
+			await api.post('/clients-list', formData);
+			showSuccess('Cliente registrado');
 		}
-		refetch(['structure-areas']);
+		refetch(['structure-clients']);
 		show = false;
 	}
 
@@ -57,31 +54,23 @@
 		{ value: 'yellow', name: 'Amarillo', color: 'yellow' },
 		{ value: 'pink', name: 'Rosa', color: 'pink' }
 	];
-	$effect(() => {
-		if (show || true) formData = untrack(() => ({ ...formData, ...selectedArea }));
-	});
 
-	const types = [
-		{ value: 'prod', name: 'Produccion' },
-		{ value: 'admin', name: 'Administracion' }
-	];
+	$effect(() => {
+		if (show) setFormData();
+	});
 </script>
 
 <Dialog bind:open={show}>
 	<DialogContent>
-		<DialogHeader title={selectedArea.id ? `Editar ${selectedArea.name}` : 'Registrar Area'} />
+		<DialogHeader
+			title={selectedPosition.id ? `Editar ${selectedPosition.name}` : 'Registrar cliente'}
+		/>
 		<DialogBody grid="2">
 			<Label name="Nombre">
 				<Input name="text" bind:value={formData.name} />
 			</Label>
-			<Label name="Es capturada">
-				<Checkbox name="text" bind:checked={formData.captured} />
-			</Label>
 			<Label name="Color">
-				<Select class="mt-2" items={colors} bind:value={formData.color} />
-			</Label>
-			<Label name="Tipo">
-				<Select class="mt-2" items={types} bind:value={formData.type} />
+				<Select class="" items={colors} bind:value={formData.color} />
 			</Label>
 			<Label name="Activa">
 				<Checkbox name="text" bind:checked={formData.active} />

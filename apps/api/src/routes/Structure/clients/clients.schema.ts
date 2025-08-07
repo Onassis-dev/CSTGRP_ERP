@@ -3,9 +3,7 @@ import { z } from 'zod/v4';
 
 export const createSchema = z.object({
   name: z.string(),
-  captured: z.boolean(),
   color: z.string(),
-  type: z.string().nullish(),
   active: z.boolean(),
 });
 

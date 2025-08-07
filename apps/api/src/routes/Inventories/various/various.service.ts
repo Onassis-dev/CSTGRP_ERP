@@ -19,12 +19,14 @@ export class VariousService {
   }
 
   async getClients() {
-    const rows = await sql`select id as value, name, color from clients`;
+    const rows =
+      await sql`select id as value, name, color, active from clients`;
     return rows;
   }
 
   async getAreas() {
-    const rows = await sql`select id as value, name from areas`;
+    const rows =
+      await sql`select id as value, name, color, type, active from areas`;
     return rows;
   }
 

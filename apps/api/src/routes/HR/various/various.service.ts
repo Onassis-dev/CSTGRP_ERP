@@ -7,12 +7,14 @@ import { formatDate } from 'src/utils/functions';
 @Injectable()
 export class VariousService {
   async getAreas() {
-    const rows = await sql`select id as value, name, color, type from areas`;
+    const rows =
+      await sql`select id as value, name, color, type, active from areas`;
     return rows;
   }
 
   async getPositions() {
-    const rows = await sql`select id as value, name, color from positions`;
+    const rows =
+      await sql`select id as value, name, color, active from positions`;
     return rows;
   }
 

@@ -27,6 +27,7 @@
 	import Select from '$lib/components/basic/Select.svelte';
 	import { untrack } from 'svelte';
 	import { createQuery } from '@tanstack/svelte-query';
+	import { getAreas, getClients, getOptions } from '$lib/utils/queries';
 
 	interface Props {
 		show: boolean;
@@ -51,13 +52,16 @@
 
 	const clientsQuery = createQuery({
 		queryKey: ['inventory-clients'],
-		queryFn: async () => (await api.get('/inventoryvarious/clients')).data
+		queryFn: getClients
 	});
+
+	const clients = $derived(getOptions($clientsQuery?.data));
 
 	const areasQuery = createQuery({
 		queryKey: ['inventory-areas'],
-		queryFn: async () => (await api.get('/inventoryvarious/areas')).data
+		queryFn: getAreas
 	});
+	const areasList = $derived(getOptions($areasQuery?.data));
 
 	const areas = [
 		{ name: 'Corte', value: 'corte' },
@@ -228,7 +232,7 @@
 					<Input bind:value={formData.part} />
 				</Label>
 				<Label name="Cliente">
-					<Select items={$clientsQuery?.data} bind:value={formData.clientId} />
+					<Select items={clients} bind:value={formData.clientId} />
 				</Label>
 				<Label name="Job o PO">
 					<Input disabled={inputDisabled} bind:value={formData.jobpo} />
@@ -240,7 +244,7 @@
 					<Input type="date" bind:value={formData.due} />
 				</Label>
 				<Label name="Area">
-					<Select items={$areasQuery?.data} bind:value={formData.areaId} />
+					<Select items={areasList} bind:value={formData.areaId} />
 				</Label>
 			</div>
 
