@@ -1,11 +1,6 @@
 <script lang="ts">
 	import CusTable from '$lib/components/basic/CusTable.svelte';
-	import {
-		DropdownMenu,
-		DropdownMenuContent,
-		DropdownMenuItem,
-		DropdownMenuTrigger
-	} from '$lib/components/ui/dropdown-menu';
+
 	import DeletePopUp from '$lib/components/complex/DeletePopUp.svelte';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
@@ -13,10 +8,10 @@
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
 	import UsersForm from './UsersForm.svelte';
-	import { ChevronDown, Eye, Minus, Pen, PlusCircle } from 'lucide-svelte';
+	import { Eye, Minus, Pen, PlusCircle } from 'lucide-svelte';
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
 	import OptionsCell from '$lib/components/basic/OptionsCell.svelte';
-	import { getAreas } from '$lib/utils/queries';
+	import { getClients } from '$lib/utils/queries';
 	import { createQuery } from '@tanstack/svelte-query';
 	import { refetch } from '$lib/utils/query';
 	import OptionsHead from '$lib/components/basic/OptionsHead.svelte';
@@ -31,9 +26,9 @@
 		queryFn: async () => (await api.get('/users')).data
 	});
 
-	const areas = createQuery({
-		queryKey: ['areasList'],
-		queryFn: getAreas
+	const clients = createQuery({
+		queryKey: ['clients'],
+		queryFn: getClients
 	});
 
 	function editUser(i: number) {
@@ -114,7 +109,7 @@
 		<TableHead class="w-[12.5%]">Po-Imp</TableHead>
 		<TableHead class="w-[12.5%]">Sistemas</TableHead>
 		<TableHead class="w-[12.5%]">Compras</TableHead>
-		<TableHead class="w-[12.5%]">Areas</TableHead>
+		<TableHead class="w-[12.5%]">Cliente</TableHead>
 		<TableHead class="w-[12.5%]">Block</TableHead>
 	</TableHeader>
 	<TableBody>
@@ -336,22 +331,15 @@
 						<SvelteComponent_11 class="size-3.5" />
 					</Badge></TableCell
 				>
-				<TableCell class="px-2 py-0">
-					<DropdownMenu>
-						<DropdownMenuTrigger class="h-full w-full">
-							<Button class="border-none" variant="outline"
-								>Areas<ChevronDown class="ms-2 size-3.5" /></Button
-							>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent>
-							{#each user.perm_assistance_areas?.split(',') || [] as area}
-								<DropdownMenuItem class="px-3 py-1"
-									>{area === 'Todas' ? area : $areas?.data?.[area]}</DropdownMenuItem
-								>
-							{/each}
-						</DropdownMenuContent>
-					</DropdownMenu>
+
+				<TableCell class="p-1.5 text-center">
+					{#if user.clientId}
+						<Badge class="" color={$clients?.data?.[user.clientId]?.color}>
+							{$clients?.data?.[user.clientId]?.name}
+						</Badge>
+					{/if}
 				</TableCell>
+
 				<TableCell class="p-1.5 text-center"
 					><Badge
 						class="flex h-full w-full items-center justify-center p-1"

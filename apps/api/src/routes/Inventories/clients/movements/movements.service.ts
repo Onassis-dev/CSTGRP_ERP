@@ -1,18 +1,16 @@
-import jwt from 'jsonwebtoken';
 import { HttpException, Injectable } from '@nestjs/common';
 import { z } from 'zod/v4';
 import sql from 'src/utils/db';
-import { clientSchema, IEFilterSchema } from './movements.schema';
+import { IEFilterSchema } from './movements.schema';
 import { idObjectSchema } from 'src/utils/schemas';
+import { ContextProvider } from 'src/interceptors/context.provider';
 
 @Injectable()
 export class MovementsService {
-  async getMaterialComparison(
-    body: z.infer<typeof idObjectSchema>,
-    token: string,
-    query: z.infer<typeof clientSchema>,
-  ) {
-    const clientId = await getUserName(token, query);
+  constructor(private readonly req: ContextProvider) {}
+
+  async getMaterialComparison(body: z.infer<typeof idObjectSchema>) {
+    const clientId = await getClientId(this.req.userId.toString());
 
     const movements = await sql`SELECT 
         materialmovements."activeDate" as due,
@@ -68,8 +66,9 @@ export class MovementsService {
     return result;
   }
 
-  async getInventory(token: string, query: z.infer<typeof clientSchema>) {
-    const clientId = await getUserName(token, query);
+  async getInventory() {
+    const [{ clientId }] =
+      await sql`select "clientId" from users where id = ${this.req.userId}`;
 
     const inventory =
       await sql`Select id, code, description, location,  measurement, clienttotal as amount from materials where "clientId" = ${clientId} order by code`;
@@ -77,17 +76,9 @@ export class MovementsService {
     return inventory;
   }
 
-  async getClients() {
-    const rows = await sql`select name as value, name, color from clients`;
-    return rows;
-  }
-
-  async getJobComparison(
-    body: z.infer<typeof idObjectSchema>,
-    token: string,
-    query: z.infer<typeof clientSchema>,
-  ) {
-    const clientId = await getUserName(token, query);
+  async getJobComparison(body: z.infer<typeof idObjectSchema>) {
+    const [{ clientId }] =
+      await sql`select "clientId" from users where id = ${this.req.userId}`;
 
     const movements = await sql`SELECT
     materials.code,
@@ -115,43 +106,29 @@ export class MovementsService {
     return movements;
   }
 
-  async getJobs(
-    body: z.infer<typeof IEFilterSchema>,
-    token: string,
-    query: z.infer<typeof clientSchema>,
-  ) {
-    await getUserName(token, query);
+  async getJobs(body: z.infer<typeof IEFilterSchema>) {
+    const clientId = await getClientId(this.req.userId);
 
     const movements = await sql`
       SELECT jobpo, created_at, due, id
       FROM materialie
-      WHERE jobpo ~ '^\\d{6}$'
-        ${
-          body.code
-            ? sql`AND (
-              "jobpo" ILIKE ${'%' + body.code + '%'} OR 
-              "programation" ILIKE ${'%' + body.code + '%'}
-            )`
-            : sql``
-        }
-      ORDER BY due DESC, created_at DESC, jobpo DESC`;
+      WHERE "clientId" = ${clientId}
+        ${body.code ? sql`AND ("jobpo" ILIKE ${'%' + body.code + '%'})` : sql``}
+      ORDER BY due DESC, created_at DESC, jobpo DESC limit 200`;
     return movements;
   }
 }
 
-async function getUserName(token: string, query: z.infer<typeof clientSchema>) {
-  const user: any = await jwt.verify(token, process.env.JWT_SECRET);
+async function getClientId(userId: string) {
+  const [user] = await sql`select "clientId" from users where id = ${userId}`;
 
-  let [area] = await sql`select id from clients where name = ${user.username}`;
-  if (!area && user.permissions?.inventory)
-    [area] =
-      await sql`select id from clients where name = ${query.clientId || ''}`;
-  if (!area) throw new HttpException('Cliente no encontrado', 403);
+  if (!user || !user.clientId)
+    throw new HttpException('Cliente no encontrado', 403);
 
   const [{ maintance }] =
-    await sql`select maintance from users where username = ${user.username}`;
+    await sql`select maintance from users where id = ${userId}`;
   if (maintance)
     throw new HttpException('Sorry, we are under maintenance', 503);
 
-  return area.id;
+  return user.clientId;
 }

@@ -44,7 +44,7 @@
 		</DialogHeader>
 		<DialogBody class="h-full max-w-full">
 			<Table>
-				<TableHeader class="sticky top-0 border-t">
+				<TableHeader class="sticky top-0 border-l border-t">
 					<TableHead>MATERIAL</TableHead>
 					<TableHead>MATERIAL NEEDED</TableHead>
 					<TableHead>ISSUED MATERIAL</TableHead>

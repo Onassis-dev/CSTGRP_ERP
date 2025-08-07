@@ -36,6 +36,7 @@ export const registerSchema = z.object({
   maintance: z.boolean(),
   assistance_areas: z.array(z.coerce.number().int()),
   prod_areas: z.array(z.coerce.number().int()),
+  clientId: idSchema.nullable(),
 });
 
 export const editSchema = registerSchema.extend({

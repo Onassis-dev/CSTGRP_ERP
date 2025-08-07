@@ -54,9 +54,9 @@
 						? [{ fn: () => compareJob(i), name: 'COMPARE', icon: Ruler }]
 						: []}
 				/>
-				<TableCell>{movement.jobpo || ''}</TableCell>
-				<TableCell>{formatDate(movement.due) || ''}</TableCell>
-				<TableCell>{formatDate(movement.created_at) || ''}</TableCell>
+				<TableCell>{movement.jobpo}</TableCell>
+				<TableCell>{formatDate(movement.due)}</TableCell>
+				<TableCell>{formatDate(movement.created_at)}</TableCell>
 			</TableRow>
 		{/each}
 	</TableBody>

@@ -14,7 +14,7 @@
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
 	import { refetch } from '$lib/utils/query';
-	import { getOptions } from '$lib/utils/queries';
+	import { getClients, getOptions } from '$lib/utils/queries';
 	import { createQuery } from '@tanstack/svelte-query';
 	import { baseUser } from './users.utils';
 
@@ -65,6 +65,13 @@
 	});
 
 	const cardClass = 'col-span-full grid grid-cols-2 sm:grid-cols-3 gap-4 rounded-md border p-2';
+
+	const clientsQuery = createQuery({
+		queryKey: ['clients'],
+		queryFn: getClients
+	});
+
+	const clients = $derived(getOptions($clientsQuery?.data));
 </script>
 
 <Dialog bind:open={show}>
@@ -213,6 +220,9 @@
 							</SelectBasic.Group>
 						</SelectBasic.Content>
 					</SelectBasic.Root>
+				</Label>
+				<Label name="Cliente">
+					<Select items={clients} bind:value={formData.clientId} allowDeselect />
 				</Label>
 				<Label name="Mantenimiento">
 					<Checkbox bind:checked={formData.maintance} />
