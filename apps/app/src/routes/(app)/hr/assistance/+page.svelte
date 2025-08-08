@@ -134,8 +134,8 @@
 				<TableCell>{assistance.name}</TableCell>
 
 				<TableCell
-					><Badge color={positions[assistance.positionId || '']?.color}
-						>{positions[assistance.positionId || '']?.name || ''}</Badge
+					><Badge color={$positionsQuery.data?.[assistance.positionId]?.color}
+						>{$positionsQuery.data?.[assistance.positionId]?.name || ''}</Badge
 					></TableCell
 				>
 				<TableCell class="p-[1px] py-[2px]">

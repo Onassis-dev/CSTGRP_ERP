@@ -34,7 +34,7 @@
 			>
 		{/each}
 		<DropdownMenu.Sub>
-			<DropdownMenu.SubTrigger>Cambio de area</DropdownMenu.SubTrigger>
+			<DropdownMenu.SubTrigger>APOYO</DropdownMenu.SubTrigger>
 			<DropdownMenu.SubContent>
 				{#each areas as area}
 					<DropdownMenu.Item
