@@ -8,7 +8,7 @@
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
 	import UsersForm from './UsersForm.svelte';
-	import { Eye, Minus, Pen, PlusCircle } from 'lucide-svelte';
+	import { Circle, Eye, Minus, Pen, PlusCircle } from 'lucide-svelte';
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
 	import OptionsCell from '$lib/components/basic/OptionsCell.svelte';
 	import { getClients } from '$lib/utils/queries';
@@ -53,15 +53,16 @@
 		show1 = false;
 	}
 
-	function getBadgeColor(num: number): 'gray' | 'green' | 'blue' | 'red' {
+	function getBadgeColor(num: number): 'gray' | 'green' | 'blue' | 'purple' | 'red' {
 		if (num === 0) return 'gray';
 		if (num === 1) return 'green';
 		if (num === 2) return 'blue';
-		if (num === 3) return 'red';
+		if (num === 3) return 'purple';
+		if (num === 4) return 'red';
 		return 'gray';
 	}
 
-	const badgeTexts = [null, Eye, Pen, Minus];
+	const badgeTexts = [null, Eye, Pen, Circle, Minus];
 </script>
 
 <MenuBar>
@@ -343,9 +344,9 @@
 				<TableCell class="p-1.5 text-center"
 					><Badge
 						class="flex h-full w-full items-center justify-center p-1"
-						color={getBadgeColor(user.maintance ? 3 : 0)}
+						color={getBadgeColor(user.maintance ? 4 : 0)}
 					>
-						{@const SvelteComponent_12 = badgeTexts[user.maintance ? 3 : 0]}
+						{@const SvelteComponent_12 = badgeTexts[user.maintance ? 4 : 0]}
 						<SvelteComponent_12 class="size-3.5" />
 					</Badge></TableCell
 				>

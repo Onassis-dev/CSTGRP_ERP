@@ -3,12 +3,20 @@ import sql from 'src/utils/db';
 import { createCanvas, loadImage, registerFont } from 'canvas';
 import path from 'path';
 import { formatDate } from 'src/utils/functions';
+import { ContextProvider } from 'src/interceptors/context.provider';
 
 @Injectable()
 export class VariousService {
+  constructor(private readonly req: ContextProvider) {}
   async getAreas() {
     const rows =
       await sql`select id as value, name, color, type, active from areas`;
+    return rows;
+  }
+
+  async getAssistanceAreas() {
+    const rows =
+      await sql`select id as value, name, color, type, active from areas where id in (select unnest(assistance_areas) from users where id = ${this.req.userId})`;
     return rows;
   }
 

@@ -14,7 +14,8 @@ export class AssistanceService {
     const [firstDate] = getWeekDays(body.date);
 
     const assistance =
-      await sql`SELECT id, "incidenceId0", "incidenceId1", "incidenceId2", "incidenceId3", "incidenceId4", "areaId", "positionId", 
+      await sql`SELECT id, "incidenceId0", "incidenceId1", "incidenceId2", "incidenceId3", "incidenceId4", "areaId", "positionId",
+      "areaId0", "areaId1", "areaId2", "areaId3", "areaId4",
       (select CONCAT(name, ' ', "paternalLastName", ' ', "maternalLastName") from employees where id = "employeeId") as name,
       (select "noEmpleado" from employees where id = "employeeId")
 
@@ -29,6 +30,11 @@ export class AssistanceService {
   }
 
   async createWeek(body: z.infer<typeof weekSchema>) {
+    const [user] =
+      await sql`select permissions from users where id = ${this.req.userId}`;
+    if (user.permissions.assistance < 3)
+      throw new HttpException('No tienes permisos para generar semanas', 400);
+
     const [firstDate] = getWeekDays(body.date);
     const [actualDate] = getWeekDays(new Date());
 

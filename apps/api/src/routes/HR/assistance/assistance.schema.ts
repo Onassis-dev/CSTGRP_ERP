@@ -16,4 +16,9 @@ export const editSchema = z.object({
   incidenceId2: intSchema,
   incidenceId3: intSchema,
   incidenceId4: intSchema,
+  areaId0: intSchema.nullable(),
+  areaId1: intSchema.nullable(),
+  areaId2: intSchema.nullable(),
+  areaId3: intSchema.nullable(),
+  areaId4: intSchema.nullable(),
 });

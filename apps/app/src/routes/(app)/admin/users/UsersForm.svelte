@@ -122,7 +122,10 @@
 					<Select items={permissions} bind:value={formData.permissions.employees} />
 				</Label>
 				<Label name="Perm. Asistencia">
-					<Select items={permissions} bind:value={formData.permissions.assistance} />
+					<Select
+						items={[...permissions, { value: 3, name: 'Crear lista', color: 'purple' }]}
+						bind:value={formData.permissions.assistance}
+					/>
 				</Label>
 				<Label name="Perm. Productividad">
 					<Select items={permissions} bind:value={formData.permissions.productivity} />

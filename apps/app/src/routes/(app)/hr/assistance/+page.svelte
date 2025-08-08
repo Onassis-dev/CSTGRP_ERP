@@ -12,13 +12,18 @@
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
 	import { downloadFile } from '$lib/utils/files';
 	import { userData } from '$lib/utils/store';
+	import { createQuery } from '@tanstack/svelte-query';
+	import {
+		getAllOptions,
+		getAssistanceAreas,
+		getIncidences,
+		getOptions,
+		getPositions,
+		getAreas
+	} from '$lib/utils/queries';
+	import AssistanceSelect from './AssistanceSelect.svelte';
 
 	let assistances: any[] = $state([]);
-	let areas: any = {};
-	let positions: any = $state({});
-	let incidences: any = {};
-	let incidencesList: any = $state([]);
-	let areasList: any = $state([]);
 	let dateSelected: any = $state(new Date().toISOString().split('T')[0]);
 	let areaSelected: string = $state('');
 
@@ -26,31 +31,25 @@
 		assistances = (await api.get('/assistance/week/' + dateSelected)).data;
 	}
 
-	async function fetchOptions() {
-		const areasArray = (await api.get('/hrvarious/areas')).data;
-		areasArray.forEach((area: any) => {
-			areas[area.value] = area.name;
-		});
-		const positionsArray = (await api.get('/hrvarious/positions')).data;
-		positionsArray.forEach((position: any) => {
-			positions[position.value] = { name: position.name, color: position.color };
-		});
-		const incidencesArray = (await api.get('/hrvarious/incidences')).data;
-		incidencesArray.forEach((incidence: any) => {
-			incidences[incidence.value] = incidence.name;
-		});
-		incidencesList = incidencesArray;
-		if ($userData?.permissions.assistance_areas === 'Todas') return (areasList = areasArray);
+	const positionsQuery = createQuery({ queryKey: ['positions'], queryFn: getPositions });
+	const incidencesQuery = createQuery({ queryKey: ['incidences'], queryFn: getIncidences });
+	const assistanceAreasQuery = createQuery({
+		queryKey: ['assistance-areas'],
+		queryFn: getAssistanceAreas
+	});
+	const areasQuery = createQuery({
+		queryKey: ['areas'],
+		queryFn: getAreas
+	});
 
-		const accessibleAreas = $userData?.permissions.assistance_areas?.split(',');
-		areasList = areasArray.filter((area: any) => {
-			return accessibleAreas?.includes(area.value);
-		});
-	}
+	let positions = $derived(getOptions($positionsQuery.data));
+	let incidences = $derived(getAllOptions($incidencesQuery.data));
+	let assistanceAreas = $derived(getOptions($assistanceAreasQuery.data));
+	let areas = $derived(getOptions($areasQuery.data));
 
 	let filteredAssistances = $derived(
 		assistances.filter((e) => {
-			return e.areaId === areaSelected;
+			return Number(e.areaId) === Number(areaSelected);
 		})
 	);
 
@@ -62,7 +61,12 @@
 			incidenceId1: parseInt(filteredAssistances[i].incidenceId1 || ''),
 			incidenceId2: parseInt(filteredAssistances[i].incidenceId2 || ''),
 			incidenceId3: parseInt(filteredAssistances[i].incidenceId3 || ''),
-			incidenceId4: parseInt(filteredAssistances[i].incidenceId4 || '')
+			incidenceId4: parseInt(filteredAssistances[i].incidenceId4 || ''),
+			areaId0: parseInt(filteredAssistances[i].areaId0 || ''),
+			areaId1: parseInt(filteredAssistances[i].areaId1 || ''),
+			areaId2: parseInt(filteredAssistances[i].areaId2 || ''),
+			areaId3: parseInt(filteredAssistances[i].areaId3 || ''),
+			areaId4: parseInt(filteredAssistances[i].areaId4 || '')
 		});
 	}
 
@@ -86,7 +90,6 @@
 
 	onMount(() => {
 		getAssistance();
-		fetchOptions();
 	});
 </script>
 
@@ -96,14 +99,13 @@
 			menu
 			class="w-72"
 			placeholder="Eligir Area"
-			items={areasList}
+			items={assistanceAreas}
 			bind:value={areaSelected}
 		/>
 		<Input menu type="date" bind:value={dateSelected} onchange={getAssistance} class="max-w-36" />
 	{/snippet}
 	{#snippet right()}
-		{#if $userData?.permissions.assistance_areas === 'Todas'}
-			<!-- <ExportAssistance date={dateSelected} /> -->
+		{#if $userData?.permissions.assistance === 3}
 			<Button onclick={exportList} size="icon" variant="outline"
 				><FileDown class="size-3.5" /></Button
 			>
@@ -132,51 +134,51 @@
 				<TableCell>{assistance.name}</TableCell>
 
 				<TableCell
-					><Badge color={positions[assistance.positionId || ''].color}
-						>{positions[assistance.positionId || ''].name || ''}</Badge
+					><Badge color={positions[assistance.positionId || '']?.color}
+						>{positions[assistance.positionId || '']?.name || ''}</Badge
 					></TableCell
 				>
 				<TableCell class="p-[1px] py-[2px]">
-					<Select
-						class="rounded-none text-xs"
-						cell={true}
-						items={incidencesList}
+					<AssistanceSelect
+						{areas}
+						{incidences}
+						bind:areaId={filteredAssistances[i].areaId0}
 						bind:value={filteredAssistances[i].incidenceId0}
 						onValueChange={() => editAssistance(i)}
 					/>
 				</TableCell>
 				<TableCell class="p-[1px] py-[2px]">
-					<Select
-						class="rounded-none text-xs"
-						cell={true}
-						items={incidencesList}
+					<AssistanceSelect
+						{areas}
+						{incidences}
+						bind:areaId={filteredAssistances[i].areaId1}
 						bind:value={filteredAssistances[i].incidenceId1}
 						onValueChange={() => editAssistance(i)}
 					/>
 				</TableCell>
 				<TableCell class="p-[1px] py-[2px]">
-					<Select
-						class="rounded-none text-xs"
-						cell={true}
-						items={incidencesList}
+					<AssistanceSelect
+						{areas}
+						{incidences}
+						bind:areaId={filteredAssistances[i].areaId2}
 						bind:value={filteredAssistances[i].incidenceId2}
 						onValueChange={() => editAssistance(i)}
 					/>
 				</TableCell>
 				<TableCell class="p-[1px] py-[2px]">
-					<Select
-						class="rounded-none text-xs"
-						cell={true}
-						items={incidencesList}
+					<AssistanceSelect
+						{areas}
+						{incidences}
+						bind:areaId={filteredAssistances[i].areaId3}
 						bind:value={filteredAssistances[i].incidenceId3}
 						onValueChange={() => editAssistance(i)}
 					/>
 				</TableCell>
 				<TableCell class="p-[1px] py-[2px]">
-					<Select
-						class="rounded-none text-xs"
-						cell={true}
-						items={incidencesList}
+					<AssistanceSelect
+						{areas}
+						{incidences}
+						bind:areaId={filteredAssistances[i].areaId4}
 						bind:value={filteredAssistances[i].incidenceId4}
 						onValueChange={() => editAssistance(i)}
 					/>

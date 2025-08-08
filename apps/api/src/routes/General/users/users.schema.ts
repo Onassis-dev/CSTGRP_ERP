@@ -1,7 +1,7 @@
 import { idSchema, intSchema } from 'src/utils/schemas';
 import { z } from 'zod/v4';
 
-const permType = intSchema.min(0).max(2);
+const permType = intSchema.min(0).max(3);
 
 export const permissionsList = {
   users: permType,

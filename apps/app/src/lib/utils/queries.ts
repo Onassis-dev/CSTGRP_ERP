@@ -20,6 +20,26 @@ export const getAreas = async () => {
 	return result;
 };
 
+export const getAssistanceAreas = async () => {
+	const areasList = (await api.get('/hrvarious/assistance-areas')).data;
+	const result: Record<string, any> = {};
+	areasList.forEach((area: any) => {
+		result[area.value] = area;
+	});
+
+	return result;
+};
+
+export const getIncidences = async () => {
+	const incidencesList = (await api.get('/hrvarious/incidences')).data;
+	const result: Record<string, any> = {};
+	incidencesList.forEach((incidence: any) => {
+		result[incidence.value] = incidence;
+	});
+
+	return result;
+};
+
 export const getProdAreas = async () => {
 	const areasList = (await api.get('/hrvarious/areas')).data;
 	const result: Record<string, any> = {};
@@ -58,6 +78,5 @@ export function getAllOptions(object: Record<string, any> | undefined) {
 
 export function getOptions(object: Record<string, any> | undefined) {
 	const result = getAllOptions(object);
-	console.log(result);
 	return result.filter((item) => item.active);
 }
