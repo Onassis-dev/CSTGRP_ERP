@@ -23,13 +23,15 @@ export class RequisitionsService {
       FROM materialmovements
       JOIN materials on materials.id = materialmovements."materialId"
       JOIN materialie on materialie.id = materialmovements."movementId"
+      JOIN orders on orders."jobId" = materialie.id
       WHERE
       NOT materialmovements.active AND
       NOT materialmovements.extra AND
       (select STRING_AGG(folio::text, ', ') from requisitions where jobs LIKE CONCAT('%', materialie.jobpo, '%') and materialie.jobpo is not null and requisitions."materialId" = materials.id) is null AND
       ${body.jobpo ? sql`materialie.jobpo = ${body.jobpo}` : sql`TRUE`} AND
       ${body.programation ? sql`materialie.programation = ${body.programation}` : sql`TRUE`} AND
-      ${body.code ? sql`materials.code LIKE ${'%' + body.code + '%'}` : sql`TRUE`}
+      ${body.code ? sql`materials.code LIKE ${'%' + body.code + '%'}` : sql`TRUE`} AND
+      orders."areaId" IN (SELECT unnest(prod_areas) FROM users WHERE id = ${this.req.userId})
       ORDER BY materialie.due DESC, materialie.jobpo DESC, materials.code DESC, materialmovements.amount DESC, materialmovements.id DESC
       LIMIT 300`;
     return movements;
@@ -41,8 +43,10 @@ export class RequisitionsService {
       FROM materialmovements
       JOIN materials on materials.id = materialmovements."materialId"
       JOIN materialie on materialie.id = materialmovements."movementId"
+      JOIN orders on orders."jobId" = materialie.id
       WHERE
       materials.code = ${body.code} AND  
+      orders."areaId" IN (SELECT unnest(prod_areas) FROM users WHERE id = ${this.req.userId}) AND
       (select folio from requisitions where jobs LIKE CONCAT('%', materialie.jobpo, '%') and materialie.jobpo is not null and requisitions."materialId" = materials.id) is null AND
       NOT materialmovements.active AND
       NOT materialmovements.extra
