@@ -31,7 +31,7 @@ export const updateImportSchema = importSchema.extend({
 });
 
 export const exportSchema = z.object({
-  programation: intSchema,
+  programation: z.string().max(20).min(2),
   amount: intSchema,
   part: z.string(),
   jobpo: z.string(),
