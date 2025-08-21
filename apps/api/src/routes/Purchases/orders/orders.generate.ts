@@ -4,6 +4,7 @@ import { PDFImage, PDFPage, rgb } from 'pdf-lib';
 import { PDFFont } from 'pdf-lib';
 import { numberToWords } from 'src/routes/HR/documents/documents.utils';
 import { fillBox } from 'src/utils/pdf';
+import { formatNumber } from './orders.utils';
 
 const business = {
   1: {
@@ -279,7 +280,7 @@ export function generateOrder(
       size: 8,
       width: columnsX.total - columnsX.price - 6,
       height: 8,
-      text: `$${Number(product.price).toFixed(3)}`,
+      text: `$${formatNumber(product.price, 3)}`,
       font,
       page,
     });
@@ -290,7 +291,7 @@ export function generateOrder(
       size: 8,
       width: rightMargin - columnsX.total - 6,
       height: 8,
-      text: `$${Number(product.total).toFixed(3)}`,
+      text: `$${formatNumber(product.total, 3)}`,
       font,
       page,
     });
@@ -358,7 +359,7 @@ export function generateOrder(
     size: 10,
     width: 100,
     height: 10,
-    text: `IVA ${Number(data.iva).toFixed(0)}%:`,
+    text: `IVA ${formatNumber(data.iva, 0)}%:`,
     font,
     page,
   });
@@ -380,7 +381,7 @@ export function generateOrder(
     size: 10,
     width: 60,
     height: 10,
-    text: `$${Number(data.net).toFixed(2)}`,
+    text: `$${formatNumber(data.net)}`,
     font,
     page,
     align: 'right',
@@ -392,7 +393,7 @@ export function generateOrder(
     size: 10,
     width: 60,
     height: 10,
-    text: `$${Number(data.tax).toFixed(2)}`,
+    text: `$${formatNumber(data.tax)}`,
     font,
     page,
     align: 'right',
@@ -404,7 +405,7 @@ export function generateOrder(
     size: 10,
     width: 60,
     height: 10,
-    text: `$${Number(data.total).toFixed(2)}`,
+    text: `$${formatNumber(data.total)}`,
     font,
     page,
     align: 'right',
