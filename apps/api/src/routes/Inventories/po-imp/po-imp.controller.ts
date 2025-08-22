@@ -7,7 +7,6 @@ import {
   Post,
   Put,
   Query,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { PoImpService } from './po-imp.service';
@@ -49,17 +48,17 @@ export class PoImpController {
   }
 
   @Put('import')
-  updateImport(@Body(new ZodPiPe(updateImportSchema)) body, @Req() req) {
-    return this.poImpService.updateImport(body, req.cookies.token);
+  updateImport(@Body(new ZodPiPe(updateImportSchema)) body) {
+    return this.poImpService.updateImport(body);
   }
 
   @Put('export')
-  updateExport(@Body(new ZodPiPe(updateExportSchema)) body, @Req() req) {
-    return this.poImpService.updateExport(body, req.cookies.token);
+  updateExport(@Body(new ZodPiPe(updateExportSchema)) body) {
+    return this.poImpService.updateExport(body);
   }
 
   @Delete(':id')
-  deleteIE(@Param(new ZodPiPe(idObjectSchema)) body, @Req() req) {
-    return this.poImpService.deleteIE(body, req.cookies.token);
+  deleteIE(@Param(new ZodPiPe(idObjectSchema)) body) {
+    return this.poImpService.deleteIE(body);
   }
 }

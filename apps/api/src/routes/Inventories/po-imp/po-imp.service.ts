@@ -1,5 +1,4 @@
 import { HttpException, Injectable } from '@nestjs/common';
-import jwt from 'jsonwebtoken';
 import { z } from 'zod/v4';
 import sql from 'src/utils/db';
 import {
@@ -84,13 +83,10 @@ export class PoImpService {
     return movements;
   }
 
-  async updateImport(body: z.infer<typeof updateImportSchema>, token: string) {
-    const user: any = await jwt.verify(token, process.env.JWT_SECRET);
-    if (user.username !== 'juan' && user.username !== 'admin')
-      throw new HttpException(
-        'No tienes permisos para eliminar movimientos',
-        403,
-      );
+  async updateImport(body: z.infer<typeof updateImportSchema>) {
+    const [user] =
+      await sql`select permissions from users where id = ${this.req.userId}`;
+    if (user.permissions.poimp < 3) throw new HttpException('', 403);
 
     const materials = [];
     for (const movement of body.materials) {
@@ -145,13 +141,10 @@ export class PoImpService {
     return;
   }
 
-  async updateExport(body: z.infer<typeof updateExportSchema>, token: string) {
-    const user: any = await jwt.verify(token, process.env.JWT_SECRET);
-    if (user.username !== 'juan' && user.username !== 'admin')
-      throw new HttpException(
-        'No tienes permisos para eliminar movimientos',
-        403,
-      );
+  async updateExport(body: z.infer<typeof updateExportSchema>) {
+    const [user] =
+      await sql`select permissions from users where id = ${this.req.userId}`;
+    if (user.permissions.poimp < 3) throw new HttpException('', 403);
 
     const materials = [];
     for (const movement of body.materials) {
@@ -274,6 +267,7 @@ export class PoImpService {
 
   async postExport(body: z.infer<typeof exportSchema>) {
     const materials = body.materials.map((item: any) => item.code);
+    if (!body.productId) body.productAmount = null;
 
     const materialRows =
       await sql`SELECT code FROM materials WHERE code in ${sql(materials)}`;
@@ -299,9 +293,9 @@ export class PoImpService {
 
       // Add production info
       await sql`insert into orders 
-      ("areaId", "jobId", part, amount, "corteTime", "cortesVariosTime", "produccionTime", "calidadTime", "serigrafiaTime")
+      ("areaId", "jobId", part, amount, "corteTime", "cortesVariosTime", "produccionTime", "calidadTime", "serigrafiaTime", "productId", "productAmount")
       values 
-      (${body.areaId}, ${insertedJob.id}, ${body.part}, ${body.amount}, ${body.corteTime}, ${body.cortesVariosTime}, ${body.produccionTime}, ${body.calidadTime}, ${body.serigrafiaTime})`;
+      (${body.areaId}, ${insertedJob.id}, ${body.part}, ${body.amount}, ${body.corteTime}, ${body.cortesVariosTime}, ${body.produccionTime}, ${body.calidadTime}, ${body.serigrafiaTime}, ${body.productId}, ${body.productAmount})`;
 
       // Make record
       await this.req.record(`Registro el job: ${body.jobpo}`, sql);
@@ -310,13 +304,10 @@ export class PoImpService {
     return;
   }
 
-  async deleteIE(body: z.infer<typeof idObjectSchema>, token: string) {
-    const user: any = await jwt.verify(token, process.env.JWT_SECRET);
-    if (user.username !== 'juan' && user.username !== 'admin')
-      throw new HttpException(
-        'No tienes permisos para eliminar movimientos',
-        403,
-      );
+  async deleteIE(body: z.infer<typeof idObjectSchema>) {
+    const [user] =
+      await sql`select permissions from users where id = ${this.req.userId}`;
+    if (user.permissions.poimp < 3) throw new HttpException('', 403);
 
     const movements =
       await sql`select "materialId" from materialmovements where "movementId" = ${body.id}`;

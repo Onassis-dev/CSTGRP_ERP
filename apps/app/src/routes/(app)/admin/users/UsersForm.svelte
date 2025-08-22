@@ -172,7 +172,10 @@
 					<Select items={permissions} bind:value={formData.permissions.petitions} />
 				</Label>
 				<Label name="Perm. Po-Imp">
-					<Select items={permissions} bind:value={formData.permissions.poimp} />
+					<Select
+						items={[...permissions, { value: 3, name: 'Eliminar y editar', color: 'purple' }]}
+						bind:value={formData.permissions.poimp}
+					/>
 				</Label>
 			</div>
 
