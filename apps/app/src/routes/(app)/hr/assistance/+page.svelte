@@ -8,7 +8,6 @@
 	import CusTable from '$lib/components/basic/CusTable.svelte';
 	import { TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
 	import { Badge } from '$lib/components/ui/badge';
-	import { onMount } from 'svelte';
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
 	import { downloadFile } from '$lib/utils/files';
 	import { userData } from '$lib/utils/store';
@@ -22,17 +21,34 @@
 		getAreas
 	} from '$lib/utils/queries';
 	import AssistanceSelect from './AssistanceSelect.svelte';
+	import { refetch } from '$lib/utils/query';
 
 	let assistances: any[] = $state([]);
+	let filteredAssistances: any[] = $state([]);
 	let dateSelected: any = $state(new Date().toISOString().split('T')[0]);
 	let areaSelected: string = $state('');
 
-	async function getAssistance() {
-		assistances = (await api.get('/assistance/week/' + dateSelected)).data;
+	function filterAssistances() {
+		filteredAssistances = assistances.filter((e) => {
+			return Number(e.areaId) === Number(areaSelected);
+		});
 	}
+
+	const positionQuery = createQuery({
+		queryKey: ['assistance-week'],
+		queryFn: async () => {
+			console.log('refetching');
+			assistances = (await api.get('/assistance/week/' + dateSelected)).data;
+			filterAssistances();
+		},
+		refetchInterval: 6000
+	});
+
+	$positionQuery.data;
 
 	const positionsQuery = createQuery({ queryKey: ['positions'], queryFn: getPositions });
 	const incidencesQuery = createQuery({ queryKey: ['incidences'], queryFn: getIncidences });
+
 	const assistanceAreasQuery = createQuery({
 		queryKey: ['assistance-areas'],
 		queryFn: getAssistanceAreas
@@ -42,16 +58,9 @@
 		queryFn: getAreas
 	});
 
-	let positions = $derived(getOptions($positionsQuery.data));
 	let incidences = $derived(getAllOptions($incidencesQuery.data));
 	let assistanceAreas = $derived(getOptions($assistanceAreasQuery.data));
 	let areas = $derived(getOptions($areasQuery.data));
-
-	let filteredAssistances = $derived(
-		assistances.filter((e) => {
-			return Number(e.areaId) === Number(areaSelected);
-		})
-	);
 
 	async function editAssistance(i: number) {
 		await api.put('assistance', {
@@ -75,7 +84,7 @@
 			date: dateSelected
 		});
 		showSuccess('Semana generada');
-		getAssistance();
+		refetch(['assistance-week']);
 	}
 
 	async function exportList() {
@@ -87,10 +96,6 @@
 			}
 		});
 	}
-
-	onMount(() => {
-		getAssistance();
-	});
 </script>
 
 <MenuBar>
@@ -101,8 +106,15 @@
 			placeholder="Eligir Area"
 			items={assistanceAreas}
 			bind:value={areaSelected}
+			onValueChange={() => filterAssistances()}
 		/>
-		<Input menu type="date" bind:value={dateSelected} onchange={getAssistance} class="max-w-36" />
+		<Input
+			menu
+			type="date"
+			bind:value={dateSelected}
+			onchange={() => refetch(['assistance-week'])}
+			class="max-w-36"
+		/>
 	{/snippet}
 	{#snippet right()}
 		{#if $userData?.permissions.assistance === 3}
