@@ -20,8 +20,7 @@
 </script>
 
 <DropdownMenu.Root>
-	<DropdownMenu.Trigger
-		class={`h-full w-full rounded-none text-xs ${areaId ? 'text-blue-500' : ''}`}
+	<DropdownMenu.Trigger class={`h-full w-full rounded-none text-xs ${areaId ? 'text-red-500' : ''}`}
 		>{incidences.find((e) => e.value === value)?.name || ''}</DropdownMenu.Trigger
 	>
 	<DropdownMenu.Content>

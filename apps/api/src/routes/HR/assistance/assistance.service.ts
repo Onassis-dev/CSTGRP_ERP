@@ -46,8 +46,8 @@ export class AssistanceService {
     if (alreadyExists) throw new HttpException('Ya se genero esa semana', 400);
 
     await sql.begin(async (sql) => {
-      await sql`INSERT INTO assistance ("employeeId", "areaId", "positionId", "mondayDate", "incidenceId0", "incidenceId1", "incidenceId2", "incidenceId3", "incidenceId4")
-    SELECT id, "areaId", "positionId", ${firstDate}, 1,1,1,1,1 FROM employees where active`;
+      await sql`INSERT INTO assistance ("employeeId", "areaId", "positionId", "mondayDate")
+    SELECT id, "areaId", "positionId", ${firstDate} FROM employees where active`;
 
       await sql`INSERT INTO employeeproductivity ("assistanceId")
     select id from assistance where "mondayDate" = ${firstDate} and (select captured from areas where id = assistance."areaId") = true`;

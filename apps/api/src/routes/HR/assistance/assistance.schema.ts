@@ -1,5 +1,7 @@
-import { dateSchema, idSchema, intSchema } from 'src/utils/schemas';
+import { dateSchema, idSchema } from 'src/utils/schemas';
 import { z } from 'zod/v4';
+
+const incidenceSchema = z.number().int().nullable();
 
 export const weekSchema = z.object({
   date: dateSchema,
@@ -11,14 +13,14 @@ export const getSingleSchema = z.object({
 
 export const editSchema = z.object({
   id: idSchema,
-  incidenceId0: intSchema,
-  incidenceId1: intSchema,
-  incidenceId2: intSchema,
-  incidenceId3: intSchema,
-  incidenceId4: intSchema,
-  areaId0: intSchema.nullable(),
-  areaId1: intSchema.nullable(),
-  areaId2: intSchema.nullable(),
-  areaId3: intSchema.nullable(),
-  areaId4: intSchema.nullable(),
+  incidenceId0: incidenceSchema,
+  incidenceId1: incidenceSchema,
+  incidenceId2: incidenceSchema,
+  incidenceId3: incidenceSchema,
+  incidenceId4: incidenceSchema,
+  areaId0: incidenceSchema,
+  areaId1: incidenceSchema,
+  areaId2: incidenceSchema,
+  areaId3: incidenceSchema,
+  areaId4: incidenceSchema,
 });
