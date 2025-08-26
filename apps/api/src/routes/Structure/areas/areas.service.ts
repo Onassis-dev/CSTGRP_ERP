@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { deleteSchema, editSchema, createSchema } from './areas.schema';
 import { z } from 'zod/v4';
 import sql from 'src/utils/db';
@@ -16,6 +16,16 @@ export class AreasService {
   }
 
   async editArea(body: z.infer<typeof editSchema>) {
+    if (!body.captured) {
+      const [employee] =
+        await sql`select * from employees where "areaId" = ${body.id}`;
+      if (employee) {
+        throw new HttpException(
+          'No se puede desactivar una area con empleados',
+          400,
+        );
+      }
+    }
     await sql`update areas set ${sql(body)} where id = ${body.id}`;
     return;
   }
