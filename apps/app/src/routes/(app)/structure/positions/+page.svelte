@@ -2,7 +2,7 @@
 	import CusTable from '$lib/components/basic/CusTable.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
-	import { PlusCircle } from 'lucide-svelte';
+	import { CheckCircle, PlusCircle } from 'lucide-svelte';
 	import PositionsForm from './PositionsForm.svelte';
 	import DeletePopUp from '$lib/components/complex/DeletePopUp.svelte';
 	import api from '$lib/utils/server';
@@ -16,7 +16,11 @@
 
 	let show: boolean = $state(false);
 	let show1: boolean = $state(false);
-	let selectedPosition: any = $state({});
+	let selectedPosition: any = $state({
+		name: '',
+		color: '',
+		supervisor: false
+	});
 
 	const positions = createQuery({
 		queryKey: ['structure-positions'],
@@ -28,7 +32,11 @@
 		show = true;
 	}
 	function createPosition() {
-		selectedPosition = {};
+		selectedPosition = {
+			name: '',
+			color: '',
+			supervisor: false
+		};
 		show = true;
 	}
 	function deletePosition(i: number) {
@@ -50,6 +58,7 @@
 		<OptionsHead />
 		<TableHead class="w-full">Nombre</TableHead>
 		<TableHead>Color</TableHead>
+		<TableHead>Supervisor</TableHead>
 	</TableHeader>
 	<TableBody>
 		{#each $positions?.data as position, i}
@@ -57,6 +66,11 @@
 				<OptionsCell editFunc={() => editPosition(i)} deleteFunc={() => deletePosition(i)} />
 				<TableCell>{position.name}</TableCell>
 				<TableCell><Badge color={position.color}>{position.color}</Badge></TableCell>
+				<TableCell>
+					{#if position.supervisor}
+						<CheckCircle class="size-4 text-green-500" />
+					{/if}
+				</TableCell>
 			</TableRow>
 		{/each}
 	</TableBody>

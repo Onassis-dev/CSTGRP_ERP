@@ -25,7 +25,7 @@
 	});
 
 	const orders = createQuery({
-		queryKey: ['orders'],
+		queryKey: ['reports-orders'],
 		queryFn: async () =>
 			(
 				await api.get(`/reports/production/orders`, {
@@ -41,7 +41,7 @@
 			});
 			showSuccess(selectedRow.invoiced ? 'Check eliminado' : 'Check marcado');
 			show = false;
-			refetch(['orders']);
+			refetch(['reports-orders']);
 		} catch (err: any) {
 			if (err.response.status !== 400) throw err;
 		}
@@ -49,7 +49,7 @@
 
 	$effect(() => {
 		({ ...filters });
-		refetch(['orders']);
+		refetch(['reports-orders']);
 	});
 
 	const clients = createQuery({

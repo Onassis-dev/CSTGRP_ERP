@@ -4,6 +4,7 @@ import { z } from 'zod/v4';
 export const createSchema = z.object({
   name: z.string(),
   color: z.string(),
+  supervisor: z.boolean(),
 });
 
 export const editSchema = createSchema.extend({

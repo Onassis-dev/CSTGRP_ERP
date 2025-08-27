@@ -2,7 +2,11 @@ import { Body, Controller, Get, Put, Query, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { ProductionService } from './production.service';
-import { checkOrderSchema, getOrdersSchema } from './production.schema';
+import {
+  checkOrderSchema,
+  getAreasSchema,
+  getOrdersSchema,
+} from './production.schema';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 
 @ApiTags('Reports')
@@ -14,6 +18,11 @@ export class ProductionController {
   @Get('orders')
   getOrders(@Query(new ZodPiPe(getOrdersSchema)) query) {
     return this.productionService.getOrders(query);
+  }
+
+  @Get('areas')
+  getAreas(@Query(new ZodPiPe(getAreasSchema)) query) {
+    return this.productionService.getAreas(query);
   }
 
   @Put('orders')

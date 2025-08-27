@@ -75,6 +75,7 @@
 				</Accordion.Trigger>
 				<Accordion.Content>
 					<Accordion.Option href="/reports/orders" />
+					<Accordion.Option href="/reports/areas" />
 				</Accordion.Content>
 			</Accordion.Item>
 		{/if}

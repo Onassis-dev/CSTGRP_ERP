@@ -13,6 +13,7 @@
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
 	import { refetch } from '$lib/utils/query';
+	import Checkbox from '$lib/components/ui/checkbox/checkbox.svelte';
 
 	interface Props {
 		show?: boolean;
@@ -20,7 +21,11 @@
 	}
 
 	let { show = $bindable(false), selectedPosition = $bindable({}) }: Props = $props();
-	let formData: any = $state();
+	let formData: any = $state({
+		name: '',
+		color: '',
+		supervisor: false
+	});
 
 	function setFormData() {
 		formData = { ...selectedPosition };
@@ -57,6 +62,8 @@
 		show;
 		setFormData();
 	});
+
+	$inspect(formData);
 </script>
 
 <Dialog bind:open={show}>
@@ -70,6 +77,9 @@
 			</Label>
 			<Label name="Color">
 				<Select class="" items={colors} bind:value={formData.color} />
+			</Label>
+			<Label name="Supervisor">
+				<Checkbox bind:checked={formData.supervisor} />
 			</Label>
 		</DialogBody>
 		<DialogFooter submitFunc={handleSubmit} hideFunc={() => (show = false)} />
