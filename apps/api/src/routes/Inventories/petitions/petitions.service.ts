@@ -15,10 +15,15 @@ export class PetitionsService {
   constructor(private readonly req: ContextProvider) {}
 
   async getPetitions(body: z.infer<typeof filterSchema>) {
-    const movements = await sql`Select id, folio, requested, necesary,
-      (select code from materials where id = requisitions."materialId") as code, 
-      (select description from materials where id = requisitions."materialId") as description
-      from requisitions ${body.folio ? sql`where folio = ${body.folio}` : sql``} order by folio desc limit 100`;
+    const movements =
+      await sql`Select requisitions.id, requisitions.folio, requisitions.requested, requisitions.necesary,
+      materials.code, materials.description, materials.measurement
+      from requisitions
+      JOIN materials on materials.id = requisitions."materialId"
+      WHERE TRUE
+      ${body.folio ? sql`and folio = ${body.folio}` : sql``} 
+      ${body.code ? sql`and materials.code LIKE ${'%' + body.code + '%'}` : sql``}
+       order by folio desc limit 100`;
     return movements;
   }
 

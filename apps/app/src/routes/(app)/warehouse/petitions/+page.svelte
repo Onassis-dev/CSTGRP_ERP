@@ -17,7 +17,8 @@
 	import OptionsHead from '$lib/components/basic/OptionsHead.svelte';
 
 	let filters = $state({
-		folio: ''
+		folio: '',
+		code: ''
 	});
 
 	let show = $state(false);
@@ -50,6 +51,7 @@
 		onsubmit={preventDefault(() => refetch(['petitions']))}
 	>
 		<Input menu bind:value={filters.folio} placeholder="Folio" />
+		<Input menu bind:value={filters.code} placeholder="Codigo" />
 		<Button type="submit" variant="outline" size="icon"><Search class="size-3.5" /></Button>
 	</form>
 </MenuBar>
