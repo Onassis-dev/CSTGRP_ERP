@@ -267,7 +267,6 @@ export class PoImpService {
 
   async postExport(body: z.infer<typeof exportSchema>) {
     const materials = body.materials.map((item: any) => item.code);
-    if (!body.productId) body.productAmount = null;
 
     const materialRows =
       await sql`SELECT code FROM materials WHERE code in ${sql(materials)}`;
@@ -293,9 +292,9 @@ export class PoImpService {
 
       // Add production info
       await sql`insert into orders 
-      ("areaId", "jobId", part, amount, "corteTime", "cortesVariosTime", "produccionTime", "calidadTime", "serigrafiaTime", "productId", "productAmount")
+      ("areaId", "jobId", part, amount, "corteTime", "cortesVariosTime", "produccionTime", "calidadTime", "serigrafiaTime")
       values 
-      (${body.areaId}, ${insertedJob.id}, ${body.part}, ${body.amount}, ${body.corteTime}, ${body.cortesVariosTime}, ${body.produccionTime}, ${body.calidadTime}, ${body.serigrafiaTime}, ${body.productId}, ${body.productAmount})`;
+      (${body.areaId}, ${insertedJob.id}, ${body.part}, ${body.amount}, ${body.corteTime}, ${body.cortesVariosTime}, ${body.produccionTime}, ${body.calidadTime}, ${body.serigrafiaTime})`;
 
       // Make record
       await this.req.record(`Registro el job: ${body.jobpo}`, sql);
