@@ -30,7 +30,7 @@
 
 	function filterAssistances() {
 		filteredAssistances = assistances.filter((e) => {
-			return Number(e.areaId) === Number(areaSelected);
+			return Number(e.actualAreaId) === Number(areaSelected);
 		});
 	}
 
@@ -61,6 +61,7 @@
 	let incidences = $derived(getAllOptions($incidencesQuery.data));
 	let assistanceAreas = $derived(getOptions($assistanceAreasQuery.data));
 	let areas = $derived(getOptions($areasQuery.data));
+	let allAreas = $derived(getAllOptions($areasQuery.data));
 
 	async function editAssistance(i: number) {
 		await api.put('assistance', {
@@ -148,7 +149,15 @@
 		{#each filteredAssistances as assistance, i}
 			<TableRow>
 				<TableCell>{assistance.noEmpleado}</TableCell>
-				<TableCell>{assistance.name}</TableCell>
+				<TableCell
+					>{assistance.name}
+
+					{#if assistance.actualAreaId !== assistance.areaId && assistance.actualAreaId !== null}
+						<Badge color="red" class="ml-0.5 text-xs"
+							>{allAreas.find((e) => e.value === assistance.areaId)?.name}</Badge
+						>
+					{/if}
+				</TableCell>
 
 				<TableCell
 					><Badge color={$positionsQuery.data?.[assistance.positionId]?.color}

@@ -14,13 +14,15 @@ export class AssistanceService {
     const [firstDate] = getWeekDays(body.date);
 
     const assistance =
-      await sql`SELECT id, "incidenceId0", "incidenceId1", "incidenceId2", "incidenceId3", "incidenceId4", "areaId", "positionId",
+      await sql`SELECT assistance.id, "incidenceId0", "incidenceId1", "incidenceId2", "incidenceId3", "incidenceId4", assistance."areaId", assistance."positionId",
       "areaId0", "areaId1", "areaId2", "areaId3", "areaId4", "hours0", "hours1", "hours2", "hours3", "hours4",
-      (select CONCAT(name, ' ', "paternalLastName", ' ', "maternalLastName") from employees where id = "employeeId") as name,
-      (select "noEmpleado" from employees where id = "employeeId")
-
-      from assistance WHERE "mondayDate" = ${firstDate}
-    ORDER BY "areaId", "positionId", "name";`;
+      CONCAT(name, ' ', "paternalLastName", ' ', "maternalLastName") as name,
+      "noEmpleado",
+      employees."areaId" as "actualAreaId"
+      from assistance
+      join employees on employees.id = assistance."employeeId"
+      WHERE "mondayDate" = ${firstDate}
+    ORDER BY assistance."areaId", "positionId", "name";`;
 
     return assistance;
   }

@@ -29,7 +29,7 @@
 	$effect(() => {
 		if (hours !== previousHours) {
 			untrack(() => {
-				inputValue = hours;
+				inputValue = 570 - hours;
 				previousHours = hours;
 			});
 		}
@@ -40,12 +40,13 @@
 	<DropdownMenu.Trigger
 		class={`h-full w-full rounded-none text-xs leading-[1.1] ${areaId ? 'text-red-500' : ''}`}
 	>
+		{incidences.find((e) => e.value === value)?.name}
+		{#if hours !== 570 && hours !== 0 && typeof hours === 'number'}
+			({570 - hours}m)
+		{/if}
 		{#if areaId}
-			{incidences.find((e) => e.value === value)?.name}
 			<br />
 			{areas.find((e) => e.value === areaId)?.name}
-		{:else}
-			{incidences.find((e) => e.value === value)?.name}
 		{/if}
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content>
@@ -60,7 +61,7 @@
 							onclick={() => {
 								const newValue = Number(inputValue);
 								if (newValue > 0 && newValue < 570) {
-									hours = newValue;
+									hours = 570 - newValue;
 									value = incidence.value;
 									onValueChange();
 								} else {
@@ -84,7 +85,7 @@
 			{/if}
 		{/each}
 		<DropdownMenu.Sub>
-			<DropdownMenu.SubTrigger>APOYO</DropdownMenu.SubTrigger>
+			<DropdownMenu.SubTrigger class="text-red-500">APOYO</DropdownMenu.SubTrigger>
 			<DropdownMenu.SubContent>
 				{#each areas as area}
 					<DropdownMenu.Item

@@ -36,19 +36,46 @@ export class ProductionService {
     const [mondayDate] = getWeekDays(body.date);
 
     const areas: any[] = await sql`
-      SELECT 
-        a.id,
-        a.name,
-        SUM(hours0) AS "mondayMinutes", 
-        SUM(hours1) AS "tuesdayMinutes",
-        SUM(hours2) AS "wednesdayMinutes",
-        SUM(hours3) AS "thursdayMinutes",
-        SUM(hours4) AS "fridayMinutes"
+    SELECT 
+      a.id,
+      a.name,
+      SUM(
+        CASE 
+          WHEN (s."areaId" = a.id AND s."areaId0" IS NULL) OR s."areaId0" = a.id
+          THEN COALESCE(s.hours0,0) ELSE 0
+        END
+      ) AS "mondayMinutes",
+      SUM(
+        CASE 
+          WHEN (s."areaId" = a.id AND s."areaId1" IS NULL) OR s."areaId1" = a.id
+          THEN COALESCE(s.hours1,0) ELSE 0
+        END
+      ) AS "tuesdayMinutes",
+      SUM(
+        CASE 
+          WHEN (s."areaId" = a.id AND s."areaId2" IS NULL) OR s."areaId2" = a.id
+          THEN COALESCE(s.hours2,0) ELSE 0
+        END
+      ) AS "wednesdayMinutes",
+      SUM(
+        CASE 
+          WHEN (s."areaId" = a.id AND s."areaId3" IS NULL) OR s."areaId3" = a.id
+          THEN COALESCE(s.hours3,0) ELSE 0
+        END
+      ) AS "thursdayMinutes",
+      SUM(
+        CASE 
+          WHEN (s."areaId" = a.id AND s."areaId4" IS NULL) OR s."areaId4" = a.id
+          THEN COALESCE(s.hours4,0) ELSE 0
+        END
+      ) AS "fridayMinutes"
     FROM assistance s
-    JOIN areas a ON (s."areaId" = a.id OR s."areaId0" = a.id)
+    JOIN areas a ON TRUE   -- we decide matching inside the CASE
     JOIN positions p ON (s."positionId" = p.id)
-    WHERE s."mondayDate" = ${mondayDate} AND p.supervisor = false
-    GROUP BY a.id`;
+    WHERE s."mondayDate" = ${mondayDate}
+      AND p.supervisor = false
+    GROUP BY a.id, a.name;
+`;
 
     for (const area of areas) {
       const [{ prod: mondayProd, goal: mondayGoal }] = await sql`
