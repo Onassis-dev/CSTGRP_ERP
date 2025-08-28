@@ -59,7 +59,7 @@
 							class="bg-primary text-primary-foreground hover:bg-primary/90 flex w-full items-center justify-center"
 							onclick={() => {
 								const newValue = Number(inputValue);
-								if (newValue > 0 && newValue <= 570) {
+								if (newValue > 0 && newValue < 570) {
 									hours = newValue;
 									value = incidence.value;
 									onValueChange();
