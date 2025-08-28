@@ -1,11 +1,17 @@
+# syntax=docker/dockerfile:1.4
 FROM node:20
 
 # Install LibreOffice, fontconfig, and necessary dependencies
-RUN apt-get update && \
+RUN --mount=type=cache,target=/var/cache/apt \
+    --mount=type=cache,target=/var/lib/apt \
+    apt-get update && \
     apt-get install -y \
-    libreoffice \
-    fontconfig fonts-dejavu curl gnupg && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+        libreoffice \
+        fontconfig \
+        fonts-dejavu \
+        curl \
+        gnupg && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install pnpm
 ENV PNPM_HOME="/pnpm"
