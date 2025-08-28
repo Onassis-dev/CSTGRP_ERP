@@ -35,13 +35,13 @@
 		const days = [row.mondayAvg, row.tuesdayAvg, row.wednesdayAvg, row.thursdayAvg, row.fridayAvg];
 		const nonZeroDays = days.filter((day) => day !== null);
 
-		const sum = nonZeroDays.reduce((acc, day) => acc + day, 0);
-		return sum / nonZeroDays.length;
+		const sum = nonZeroDays?.reduce((acc, day) => acc + day, 0);
+		return sum / nonZeroDays?.length;
 	}
 
 	function calculateTotalAvg(rows: any[]) {
-		const sum = rows.reduce((acc, row) => acc + calculateWeekAvg(row), 0);
-		return sum / rows.length;
+		const sum = rows?.reduce((acc, row) => acc + calculateWeekAvg(row), 0);
+		return sum / rows?.length;
 	}
 </script>
 

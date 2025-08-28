@@ -23,4 +23,9 @@ export const editSchema = z.object({
   areaId2: incidenceSchema,
   areaId3: incidenceSchema,
   areaId4: incidenceSchema,
+  hours0: z.number().int(),
+  hours1: z.number().int(),
+  hours2: z.number().int(),
+  hours3: z.number().int(),
+  hours4: z.number().int(),
 });

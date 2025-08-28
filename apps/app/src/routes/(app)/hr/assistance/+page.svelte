@@ -37,9 +37,9 @@
 	const positionQuery = createQuery({
 		queryKey: ['assistance-week'],
 		queryFn: async () => {
-			console.log('refetching');
 			assistances = (await api.get('/assistance/week/' + dateSelected)).data;
 			filterAssistances();
+			return null;
 		},
 		refetchInterval: 6000
 	});
@@ -75,7 +75,12 @@
 			areaId1: parseInt(filteredAssistances[i].areaId1 || ''),
 			areaId2: parseInt(filteredAssistances[i].areaId2 || ''),
 			areaId3: parseInt(filteredAssistances[i].areaId3 || ''),
-			areaId4: parseInt(filteredAssistances[i].areaId4 || '')
+			areaId4: parseInt(filteredAssistances[i].areaId4 || ''),
+			hours0: parseInt(filteredAssistances[i].hours0),
+			hours1: parseInt(filteredAssistances[i].hours1),
+			hours2: parseInt(filteredAssistances[i].hours2),
+			hours3: parseInt(filteredAssistances[i].hours3),
+			hours4: parseInt(filteredAssistances[i].hours4)
 		});
 	}
 
@@ -156,6 +161,7 @@
 						{incidences}
 						bind:areaId={filteredAssistances[i].areaId0}
 						bind:value={filteredAssistances[i].incidenceId0}
+						bind:hours={filteredAssistances[i].hours0}
 						onValueChange={() => editAssistance(i)}
 					/>
 				</TableCell>
@@ -165,6 +171,7 @@
 						{incidences}
 						bind:areaId={filteredAssistances[i].areaId1}
 						bind:value={filteredAssistances[i].incidenceId1}
+						bind:hours={filteredAssistances[i].hours1}
 						onValueChange={() => editAssistance(i)}
 					/>
 				</TableCell>
@@ -174,6 +181,7 @@
 						{incidences}
 						bind:areaId={filteredAssistances[i].areaId2}
 						bind:value={filteredAssistances[i].incidenceId2}
+						bind:hours={filteredAssistances[i].hours2}
 						onValueChange={() => editAssistance(i)}
 					/>
 				</TableCell>
@@ -183,6 +191,7 @@
 						{incidences}
 						bind:areaId={filteredAssistances[i].areaId3}
 						bind:value={filteredAssistances[i].incidenceId3}
+						bind:hours={filteredAssistances[i].hours3}
 						onValueChange={() => editAssistance(i)}
 					/>
 				</TableCell>
@@ -192,6 +201,7 @@
 						{incidences}
 						bind:areaId={filteredAssistances[i].areaId4}
 						bind:value={filteredAssistances[i].incidenceId4}
+						bind:hours={filteredAssistances[i].hours4}
 						onValueChange={() => editAssistance(i)}
 					/>
 				</TableCell>

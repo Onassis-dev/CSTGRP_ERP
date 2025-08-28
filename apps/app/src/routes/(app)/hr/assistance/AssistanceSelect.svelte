@@ -1,12 +1,16 @@
 <script lang="ts">
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import Input from '$lib/components/ui/input/input.svelte';
+	import { showError } from '$lib/utils/showToast';
 	import { Check } from 'lucide-svelte';
+	import { untrack } from 'svelte';
 
 	interface Props {
 		incidences: any[];
 		areas: any[];
 		value: any;
 		areaId: any;
+		hours: any;
 		onValueChange: () => void;
 	}
 
@@ -15,22 +19,69 @@
 		areas,
 		value = $bindable(),
 		areaId = $bindable(),
+		hours = $bindable(0),
 		onValueChange
 	}: Props = $props();
+
+	let inputValue = $state(0);
+	let previousHours = $state(hours);
+
+	$effect(() => {
+		if (hours !== previousHours) {
+			untrack(() => {
+				inputValue = hours;
+				previousHours = hours;
+			});
+		}
+	});
 </script>
 
 <DropdownMenu.Root>
-	<DropdownMenu.Trigger class={`h-full w-full rounded-none text-xs ${areaId ? 'text-red-500' : ''}`}
-		>{incidences.find((e) => e.value === value)?.name || ''}</DropdownMenu.Trigger
+	<DropdownMenu.Trigger
+		class={`h-full w-full rounded-none text-xs leading-[1.1] ${areaId ? 'text-red-500' : ''}`}
 	>
+		{#if areaId}
+			{incidences.find((e) => e.value === value)?.name}
+			<br />
+			{areas.find((e) => e.value === areaId)?.name}
+		{:else}
+			{incidences.find((e) => e.value === value)?.name}
+		{/if}
+	</DropdownMenu.Trigger>
 	<DropdownMenu.Content>
 		{#each incidences as incidence}
-			<DropdownMenu.Item
-				onSelect={() => {
-					value = incidence.value;
-					onValueChange();
-				}}>{incidence.name}</DropdownMenu.Item
-			>
+			{#if incidence.name === 'RETARDO' || incidence.name === 'PERMISO'}
+				<DropdownMenu.Sub>
+					<DropdownMenu.SubTrigger>{incidence.name}</DropdownMenu.SubTrigger>
+					<DropdownMenu.SubContent class="flex flex-col gap-2">
+						<Input bind:value={inputValue} type="number" />
+						<DropdownMenu.Item
+							class="bg-primary text-primary-foreground hover:bg-primary/90 flex w-full items-center justify-center"
+							onclick={() => {
+								const newValue = Number(inputValue);
+								if (newValue > 0 && newValue <= 570) {
+									hours = newValue;
+									value = incidence.value;
+									onValueChange();
+								} else {
+									showError(null, 'El valor debe ser entre 1 y 570 minutos');
+									inputValue = 0;
+								}
+							}}
+						>
+							Guardar
+						</DropdownMenu.Item>
+					</DropdownMenu.SubContent>
+				</DropdownMenu.Sub>
+			{:else}
+				<DropdownMenu.Item
+					onSelect={() => {
+						value = incidence.value;
+						hours = incidence.value === '1' ? 570 : 0;
+						onValueChange();
+					}}>{incidence.name}</DropdownMenu.Item
+				>
+			{/if}
 		{/each}
 		<DropdownMenu.Sub>
 			<DropdownMenu.SubTrigger>APOYO</DropdownMenu.SubTrigger>

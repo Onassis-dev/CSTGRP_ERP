@@ -15,7 +15,7 @@ export class AssistanceService {
 
     const assistance =
       await sql`SELECT id, "incidenceId0", "incidenceId1", "incidenceId2", "incidenceId3", "incidenceId4", "areaId", "positionId",
-      "areaId0", "areaId1", "areaId2", "areaId3", "areaId4",
+      "areaId0", "areaId1", "areaId2", "areaId3", "areaId4", "hours0", "hours1", "hours2", "hours3", "hours4",
       (select CONCAT(name, ' ', "paternalLastName", ' ', "maternalLastName") from employees where id = "employeeId") as name,
       (select "noEmpleado" from employees where id = "employeeId")
 

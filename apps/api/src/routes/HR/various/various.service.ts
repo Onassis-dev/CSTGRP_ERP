@@ -28,7 +28,7 @@ export class VariousService {
 
   async getIncidences() {
     const rows =
-      await sql`select id as value, name from incidences order by name`;
+      await sql`select id as value, name, code from incidences order by name`;
     return rows;
   }
 
