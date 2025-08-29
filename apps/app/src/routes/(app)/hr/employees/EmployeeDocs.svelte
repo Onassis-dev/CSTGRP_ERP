@@ -197,7 +197,7 @@
 			<TableCell class="p-0">
 				<Button
 					onclick={downloadCredential}
-					class="aspect-square h-full rounded-none"
+					class="aspect-square h-full rounded-none p-0"
 					variant="ghost"
 				>
 					<FileDown class="size-3.5" />
@@ -219,7 +219,7 @@
 			<TableCell class="p-0">
 				<Button
 					onclick={downloadApplication}
-					class="aspect-square h-full rounded-none"
+					class="aspect-square h-full rounded-none p-0"
 					variant="ghost"
 				>
 					<FileDown class="size-3.5" />
@@ -243,7 +243,7 @@
 					<TableCell class="p-0">
 						<Button
 							onclick={() => downloadContract(i)}
-							class="aspect-square h-full rounded-none"
+							class="aspect-square h-full rounded-none p-0"
 							variant="ghost"
 						>
 							<FileDown class="size-3.5" />
@@ -289,7 +289,7 @@
 					{#if row.url}
 						<Button
 							onclick={() => downloadDoc(row.url, row.name)}
-							class="aspect-square h-full rounded-none"
+							class="aspect-square h-full rounded-none p-0"
 							variant="ghost"
 						>
 							<FileDown class="size-3.5" />
@@ -299,12 +299,12 @@
 				<TableCell class="p-0">
 					{#if row.url}
 						<DropdownMenu>
-							<DropdownMenuTrigger>
-								<Button class="aspect-square h-full rounded-none" variant="ghost"
-									><Trash class="size-3.5" /></Button
-								>
+							<DropdownMenuTrigger
+								class="flex aspect-square h-full items-center justify-center rounded-none p-0"
+							>
+								<Trash class="size-3.5" />
 								<DropdownMenuContent>
-									<DropdownMenuItem onclick={() => deleteDocument(row.id)}
+									<DropdownMenuItem onclick={() => deleteDocument(row.id)} class="text-red-500"
 										>Eliminar</DropdownMenuItem
 									>
 								</DropdownMenuContent>
