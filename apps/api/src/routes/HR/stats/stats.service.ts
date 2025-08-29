@@ -150,8 +150,8 @@ export class StatsService {
         (select CONCAT(name, ' ', "paternalLastName", ' ', "maternalLastName") as name from employees where id = "employeeId"),
         (select "areaId" from employees where id = "employeeId")
       FROM assistance WHERE "mondayDate" = ${firstDate}
-       AND ${sql('incidenceId' + dayNumber)} <> 1
-      GROUP BY ${sql('incidenceId' + dayNumber)}, "employeeId"`;
+       AND (${sql('incidenceId' + dayNumber)} <> 1 OR ${sql('incidenceId' + dayNumber)} IS NULL)
+      GROUP BY "employeeId", ${sql('incidenceId' + dayNumber)}`;
 
     return rows;
   }

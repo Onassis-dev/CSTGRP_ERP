@@ -167,8 +167,11 @@
 						class="size-10 rounded-full border object-cover"
 					/>
 					<p class="text-sm font-medium">{row.name}</p>
-					<Badge color="green" class="h-min w-min justify-self-end whitespace-nowrap text-sm"
-						>{row.incidence}</Badge
+
+					<Badge
+						color={row.incidence ? 'green' : 'gray'}
+						class="h-min w-min justify-self-end whitespace-nowrap text-sm"
+						>{row.incidence || '---'}</Badge
 					>
 				{/each}
 			</div>
