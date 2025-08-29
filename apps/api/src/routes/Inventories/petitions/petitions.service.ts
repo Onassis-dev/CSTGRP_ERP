@@ -49,8 +49,6 @@ export class PetitionsService {
     const [page] = pdfDoc.getPages();
     const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-    // markPage(page);
-
     fillBox({
       page,
       font,

@@ -36,13 +36,6 @@
 		refetch(['petitions']);
 		show = false;
 	}
-
-	async function download(i: number) {
-		downloadFile({
-			url: '/petitions/download/' + $petitionsQuery?.data[i]?.id,
-			name: 'requisicion-' + $petitionsQuery?.data[i]?.folio + '.pdf'
-		});
-	}
 </script>
 
 <MenuBar>
@@ -75,9 +68,11 @@
 					}}
 					extraButtons={[
 						{
-							fn: () => {
-								download(i);
-							},
+							fn: () =>
+								window.open(
+									import.meta.env.VITE_BASEURL + '/petitions/download/' + movement.id,
+									'_blank'
+								),
 							name: 'Descargar',
 							icon: FileDown
 						}

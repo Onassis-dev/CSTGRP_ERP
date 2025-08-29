@@ -2,6 +2,7 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
   Param,
   Query,
   UseGuards,
@@ -25,6 +26,8 @@ export class PetitionsController {
   }
 
   @Get('/download/:id')
+  @Header('Content-Type', 'application/pdf')
+  @Header('Content-Disposition', 'inline; filename="requisicion.pdf"')
   download(@Param(new ZodPiPe(idObjectSchema)) params) {
     return this.petitionsService.download(params);
   }
