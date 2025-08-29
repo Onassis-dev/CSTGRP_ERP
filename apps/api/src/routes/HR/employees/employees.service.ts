@@ -300,7 +300,7 @@ export class EmployeesService {
       await sql`select "noEmpleado", CONCAT(employees.name, ' ', "paternalLastName", ' ', "maternalLastName") as "name", positions.name as position, areas.name as area from employees
     join areas on areas.id = employees."areaId"
     join positions on positions.id = employees."positionId"
-    where active
+    where employees.active
     order by "noEmpleado" DESC`;
 
     worksheet.columns = convertTableToExcel({
