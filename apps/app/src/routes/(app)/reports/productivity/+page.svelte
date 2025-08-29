@@ -16,7 +16,7 @@
 		queryKey: ['reports-areas'],
 		queryFn: async () =>
 			(
-				await api.get(`/reports/production/areas`, {
+				await api.get(`/reports/areas`, {
 					params: filters
 				})
 			).data

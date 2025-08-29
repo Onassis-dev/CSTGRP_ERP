@@ -78,8 +78,8 @@
 		<OptionsHead />
 		<TableHead colspan={1}>-</TableHead>
 		<TableHead colspan={5}>General</TableHead>
-		<TableHead colspan={1}>-</TableHead>
-		<TableHead colspan={3}>RRHH</TableHead>
+		<TableHead colspan={2}>Reportes</TableHead>
+		<TableHead colspan={4}>RRHH</TableHead>
 		<TableHead colspan={6}>Producción</TableHead>
 		<TableHead colspan={6}>Almacen</TableHead>
 		<TableHead colspan={2}>-</TableHead>
@@ -92,9 +92,11 @@
 		<TableHead class="w-[12.5%]">Formatos</TableHead>
 		<TableHead class="w-[12.5%]">Directorio</TableHead>
 		<TableHead class="w-[12.5%]">Docs</TableHead>
-		<TableHead class="w-[12.5%]">Reportes</TableHead>
-		<TableHead class="w-[12.5%]">Asistencia</TableHead>
+		<TableHead class="w-[12.5%]">Ordenes</TableHead>
+		<TableHead class="w-[12.5%]">Productividad</TableHead>
+		<TableHead class="w-[12.5%]">Dashboard</TableHead>
 		<TableHead class="w-[12.5%]">Empleados</TableHead>
+		<TableHead class="w-[12.5%]">Asistencia</TableHead>
 		<TableHead class="w-[12.5%]">Productividad</TableHead>
 		<TableHead class="w-[12.5%]">Corte</TableHead>
 		<TableHead class="w-[12.5%]">Cortes Varios</TableHead>
@@ -170,19 +172,28 @@
 				<TableCell class="p-1.5 text-center"
 					><Badge
 						class="flex h-full w-full items-center justify-center p-1"
-						color={getBadgeColor(user.permissions.reports)}
+						color={getBadgeColor(user.permissions.reports_orders)}
 					>
-						{@const SvelteComponent_2 = badgeTexts[user.permissions.reports]}
+						{@const SvelteComponent_2 = badgeTexts[user.permissions.reports_orders]}
 						<SvelteComponent_2 class="size-3.5" />
 					</Badge></TableCell
 				>
 				<TableCell class="p-1.5 text-center"
 					><Badge
 						class="flex h-full w-full items-center justify-center p-1"
-						color={getBadgeColor(user.permissions.assistance)}
+						color={getBadgeColor(user.permissions.reports_areas)}
 					>
-						{@const SvelteComponent_2 = badgeTexts[user.permissions.assistance]}
+						{@const SvelteComponent_2 = badgeTexts[user.permissions.reports_areas]}
 						<SvelteComponent_2 class="size-3.5" />
+					</Badge></TableCell
+				>
+				<TableCell class="p-1.5 text-center"
+					><Badge
+						class="flex h-full w-full items-center justify-center p-1"
+						color={getBadgeColor(user.permissions.hr_dashboard)}
+					>
+						{@const SvelteComponent_3 = badgeTexts[user.permissions.hr_dashboard]}
+						<SvelteComponent_3 class="size-3.5" />
 					</Badge></TableCell
 				>
 				<TableCell class="p-1.5 text-center"
@@ -194,7 +205,15 @@
 						<SvelteComponent_3 class="size-3.5" />
 					</Badge></TableCell
 				>
-
+				<TableCell class="p-1.5 text-center"
+					><Badge
+						class="flex h-full w-full items-center justify-center p-1"
+						color={getBadgeColor(user.permissions.assistance)}
+					>
+						{@const SvelteComponent_2 = badgeTexts[user.permissions.assistance]}
+						<SvelteComponent_2 class="size-3.5" />
+					</Badge></TableCell
+				>
 				<TableCell class="p-1.5 text-center"
 					><Badge
 						class="flex h-full w-full items-center justify-center p-1"

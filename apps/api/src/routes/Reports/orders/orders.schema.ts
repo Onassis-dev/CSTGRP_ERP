@@ -10,7 +10,3 @@ export const getOrdersSchema = z.object({
 export const checkOrderSchema = z.object({
   id: idSchema,
 });
-
-export const getAreasSchema = z.object({
-  date: z.coerce.date(),
-});

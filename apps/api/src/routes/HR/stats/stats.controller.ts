@@ -7,7 +7,7 @@ import { areaAssistanceInfoSchema, dateObjectSchema } from './stats.schema';
 
 @ApiTags('HR Stats')
 @Controller('hrstats')
-@UseGuards(new AuthGuard('employees'))
+@UseGuards(new AuthGuard('hr_dashboard'))
 export class StatsController {
   constructor(private readonly statsService: StatsService) {}
 

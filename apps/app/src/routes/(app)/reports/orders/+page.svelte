@@ -28,7 +28,7 @@
 		queryKey: ['reports-orders'],
 		queryFn: async () =>
 			(
-				await api.get(`/reports/production/orders`, {
+				await api.get(`/reports/orders`, {
 					params: filters
 				})
 			).data
@@ -36,7 +36,7 @@
 
 	async function checkMovement() {
 		try {
-			await api.put('/reports/production/orders', {
+			await api.put('/reports/orders/', {
 				id: selectedRow.id
 			});
 			showSuccess(selectedRow.invoiced ? 'Check eliminado' : 'Check marcado');
