@@ -36,7 +36,7 @@
 
 	async function checkMovement() {
 		try {
-			await api.put('/reports/orders/', {
+			await api.put('/reports/orders', {
 				id: selectedRow.id
 			});
 			showSuccess(selectedRow.invoiced ? 'Check eliminado' : 'Check marcado');
