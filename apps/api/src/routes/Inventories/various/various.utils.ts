@@ -179,12 +179,20 @@ export async function processJob(text: string) {
     if (text.includes('CrewSize')) {
       for (let j = i; j < i + 200; j++) {
         if (/^(\d+,)*\d+\.\d{5}$/.test(operationsLines[j])) {
+          let crewSize = 1;
+          for (let k = j; k < j + 10; k++) {
+            if (/^\d{2}\/\d{2}\/\d{4}\s\d+\.\d{2}$/.test(operationsLines[k])) {
+              crewSize = Number(operationsLines[k].split(' ')[1]);
+            }
+          }
+
           operations.push({
             code: operationsLines[j - 2],
             minutes: (
               (Number(operationsLines[j + 2].replaceAll(',', '')) +
                 Number(operationsLines[j + 3].replaceAll(',', ''))) *
-              60
+              60 *
+              crewSize
             ).toFixed(2),
             area: 'produccion',
           });

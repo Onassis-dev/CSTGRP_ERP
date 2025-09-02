@@ -50,7 +50,8 @@
 		<OptionsHead />
 		<TableHead class="w-full">Nombre</TableHead>
 		<TableHead>Color</TableHead>
-		<TableHead>Activa</TableHead>
+		<TableHead>$/hora</TableHead>
+		<TableHead>Activo</TableHead>
 	</TableHeader>
 	<TableBody>
 		{#each $positions?.data as position, i}
@@ -58,6 +59,7 @@
 				<OptionsCell editFunc={() => editPosition(i)} deleteFunc={() => deletePosition(i)} />
 				<TableCell>{position.name}</TableCell>
 				<TableCell><Badge color={position.color}>{position.color}</Badge></TableCell>
+				<TableCell>{position.hourPrice}</TableCell>
 				<TableCell>
 					{#if position.active}
 						<Check class="mx-auto size-4" />

@@ -58,6 +58,13 @@
 	});
 
 	const clientsQuery = $derived(getOptions($clients.data));
+
+	function formatNumber(value: number, decimals: number = 2) {
+		return new Intl.NumberFormat('en-US', {
+			minimumFractionDigits: decimals,
+			maximumFractionDigits: decimals
+		}).format(Number(value));
+	}
 </script>
 
 <MenuBar>
@@ -81,6 +88,7 @@
 		<TableHead class="w-[25%]">Job</TableHead>
 		<TableHead class="w-[100%]">Parte</TableHead>
 		<TableHead class="w-[100%]">Tiempo</TableHead>
+		<TableHead class="w-[100%]">Precio</TableHead>
 		<TableHead class="w-[100%]">Due Date</TableHead>
 		<TableHead class="w-[100%]">Facturado</TableHead>
 		<TableHead class="w-[25%]">Cliente</TableHead>
@@ -88,11 +96,12 @@
 	<TableBody>
 		{#each $orders?.data as row, i}
 			<TableRow>
-				<TableCell>{row.programation || ''}</TableCell>
-				<TableCell>{row.jobpo || ''}</TableCell>
-				<TableCell>{row.part || ''}</TableCell>
-				<TableCell>{row.time || ''}</TableCell>
-				<TableCell>{formatDate(row.due) || ''}</TableCell>
+				<TableCell>{row.programation}</TableCell>
+				<TableCell>{row.jobpo}</TableCell>
+				<TableCell>{row.part}</TableCell>
+				<TableCell>{row.time}</TableCell>
+				<TableCell>${formatNumber(row.price)}</TableCell>
+				<TableCell>{formatDate(row.due)}</TableCell>
 				<TableCell class="px-2 text-center"
 					><Checkbox
 						onclick={(e) => {

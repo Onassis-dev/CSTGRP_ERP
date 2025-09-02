@@ -1,10 +1,11 @@
-import { idSchema } from 'src/utils/schemas';
+import { idSchema, numberSchema } from 'src/utils/schemas';
 import { z } from 'zod/v4';
 
 export const createSchema = z.object({
   name: z.string(),
   color: z.string(),
   active: z.boolean(),
+  hourPrice: numberSchema,
 });
 
 export const editSchema = createSchema.extend({

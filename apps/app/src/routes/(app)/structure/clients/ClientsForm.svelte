@@ -23,7 +23,8 @@
 	let formData: any = $state({
 		name: '',
 		color: '',
-		active: true
+		active: true,
+		hourPrice: 0
 	});
 
 	function setFormData() {
@@ -72,7 +73,10 @@
 			<Label name="Color">
 				<Select class="" items={colors} bind:value={formData.color} />
 			</Label>
-			<Label name="Activa">
+			<Label name="Precio por hora">
+				<Input name="text" bind:value={formData.hourPrice} />
+			</Label>
+			<Label name="Activo">
 				<Checkbox name="text" bind:checked={formData.active} />
 			</Label>
 		</DialogBody>

@@ -11,9 +11,11 @@ export class OrdersService {
   async getOrders(body: z.infer<typeof getOrdersSchema>) {
     const orders = await sql`
     select orders.id, materialie.programation, materialie.jobpo, orders.part, materialie."due", materialie."clientId", orders.invoiced,
-    ("corteTime" + "serigrafiaTime" + "produccionTime" + "calidadTime" + "cortesVariosTime") as "time"
+    ("corteTime" + "serigrafiaTime" + "produccionTime" + "calidadTime" + "cortesVariosTime") as "time",
+    ("corteTime" + "serigrafiaTime" + "produccionTime" + "calidadTime" + "cortesVariosTime") * clients."hourPrice" as "price"
     from orders
     join materialie on materialie.id = orders."jobId"
+    join clients on clients.id = materialie."clientId"
     WHERE
       ${body.jobpo ? sql`materialie.jobpo LIKE ${'%' + body.jobpo + '%'}` : sql`TRUE`} AND
       ${body.programation ? sql`materialie.programation LIKE ${'%' + body.programation + '%'}` : sql`TRUE`} AND
