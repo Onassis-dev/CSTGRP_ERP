@@ -12,7 +12,8 @@ export class OrdersService {
     const orders = await sql`
     select orders.id, materialie.programation, materialie.jobpo, orders.part, materialie."due", materialie."clientId", orders.invoiced,
     ("corteTime" + "serigrafiaTime" + "produccionTime" + "calidadTime" + "cortesVariosTime") as "time",
-    ("corteTime" + "serigrafiaTime" + "produccionTime" + "calidadTime" + "cortesVariosTime") * clients."hourPrice" as "price"
+    (CASE WHEN orders.invoiced THEN orders.price ELSE 
+      ("corteTime" + "serigrafiaTime" + "produccionTime" + "calidadTime" + "cortesVariosTime") * clients."hourPrice" / 60 END) as "price"
     from orders
     join materialie on materialie.id = orders."jobId"
     join clients on clients.id = materialie."clientId"
@@ -26,6 +27,9 @@ export class OrdersService {
   }
 
   async checkOrder(body: z.infer<typeof checkOrderSchema>) {
-    await sql`update orders set invoiced = not invoiced where id = ${body.id}`;
+    await sql`update orders set 
+    invoiced = not invoiced,
+    price = (select "hourPrice" from clients where id = (select "clientId" from materialie where id = (select "jobId" from orders where id = ${body.id}))) * ("corteTime" + "serigrafiaTime" + "produccionTime" + "calidadTime" + "cortesVariosTime") / 60
+    where id = ${body.id}`;
   }
 }
