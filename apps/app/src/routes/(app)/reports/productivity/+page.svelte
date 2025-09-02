@@ -33,7 +33,7 @@
 
 	function calculateWeekAvg(row: any) {
 		const days = [row.mondayAvg, row.tuesdayAvg, row.wednesdayAvg, row.thursdayAvg, row.fridayAvg];
-		const nonZeroDays = days.filter((day) => day !== null);
+		const nonZeroDays = days.filter((day) => day !== null && day !== 0);
 
 		const sum = nonZeroDays?.reduce((acc, day) => acc + day, 0);
 		return sum / nonZeroDays?.length;
