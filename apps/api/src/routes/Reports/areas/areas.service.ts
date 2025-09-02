@@ -47,7 +47,7 @@ export class AreasService {
         END
       ) AS "fridayMinutes"
     FROM assistance s
-    JOIN areas a ON TRUE   -- we decide matching inside the CASE
+    JOIN areas a ON TRUE
     JOIN positions p ON (s."positionId" = p.id)
     WHERE s."mondayDate" = ${mondayDate}
       AND p.supervisor = false
@@ -55,25 +55,25 @@ export class AreasService {
 `;
 
     for (const area of areas) {
-      const [{ prod: mondayProd, goal: mondayGoal }] = await sql`
-        select SUM(ordermovements.produccion) as prod, (${area.mondayMinutes} / AVG("produccionTime" / amount)) as goal from ordermovements join orders on orders.id = ordermovements."progressId" where "areaId" = ${area.id} and "date" = ${mondayDate} and ordermovements."produccion" is not null`;
-      const [{ prod: tuesdayProd, goal: tuesdayGoal }] = await sql`
-        select SUM(ordermovements.produccion) as prod, (${area.tuesdayMinutes} / AVG("produccionTime" / amount)) as goal from ordermovements join orders on orders.id = ordermovements."progressId" where "areaId" = ${area.id} and "date" = ${addDays(mondayDate, 1)} and ordermovements."produccion" is not null`;
+      const [{ prod: mondayProd }] = await sql`
+        select SUM(ordermovements.produccion * ("produccionTime" / amount)) as prod from ordermovements join orders on orders.id = ordermovements."progressId" where "areaId" = ${area.id} and "date" = ${mondayDate} and ordermovements."produccion" is not null`;
+      const [{ prod: tuesdayProd }] = await sql`
+        select SUM(ordermovements.produccion * ("produccionTime" / amount)) as prod from ordermovements join orders on orders.id = ordermovements."progressId" where "areaId" = ${area.id} and "date" = ${addDays(mondayDate, 1)} and ordermovements."produccion" is not null`;
 
-      const [{ prod: wednesdayProd, goal: wednesdayGoal }] = await sql`
-        select SUM(ordermovements.produccion) as prod, (${area.wednesdayMinutes} / AVG("produccionTime" / amount)) as goal from ordermovements join orders on orders.id = ordermovements."progressId" where "areaId" = ${area.id} and "date" = ${addDays(mondayDate, 2)} and ordermovements."produccion" is not null`;
+      const [{ prod: wednesdayProd }] = await sql`
+        select SUM(ordermovements.produccion * ("produccionTime" / amount)) as prod from ordermovements join orders on orders.id = ordermovements."progressId" where "areaId" = ${area.id} and "date" = ${addDays(mondayDate, 2)} and ordermovements."produccion" is not null`;
 
-      const [{ prod: thursdayProd, goal: thursdayGoal }] = await sql`
-        select SUM(ordermovements.produccion) as prod, (${area.thursdayMinutes} / AVG("produccionTime" / amount)) as goal from ordermovements join orders on orders.id = ordermovements."progressId" where "areaId" = ${area.id} and "date" = ${addDays(mondayDate, 3)} and ordermovements."produccion" is not null`;
+      const [{ prod: thursdayProd }] = await sql`
+        select SUM(ordermovements.produccion * ("produccionTime" / amount)) as prod from ordermovements join orders on orders.id = ordermovements."progressId" where "areaId" = ${area.id} and "date" = ${addDays(mondayDate, 3)} and ordermovements."produccion" is not null`;
 
-      const [{ prod: fridayProd, goal: fridayGoal }] = await sql`
-        select SUM(ordermovements.produccion) as prod, (${area.fridayMinutes} / AVG("produccionTime" / amount)) as goal from ordermovements join orders on orders.id = ordermovements."progressId" where "areaId" = ${area.id} and "date" = ${addDays(mondayDate, 4)} and ordermovements."produccion" is not null`;
+      const [{ prod: fridayProd }] = await sql`
+        select SUM(ordermovements.produccion * ("produccionTime" / amount)) as prod from ordermovements join orders on orders.id = ordermovements."progressId" where "areaId" = ${area.id} and "date" = ${addDays(mondayDate, 4)} and ordermovements."produccion" is not null`;
 
-      area.mondayAvg = mondayProd / mondayGoal;
-      area.tuesdayAvg = tuesdayProd / tuesdayGoal;
-      area.wednesdayAvg = wednesdayProd / wednesdayGoal;
-      area.thursdayAvg = thursdayProd / thursdayGoal;
-      area.fridayAvg = fridayProd / fridayGoal;
+      area.mondayAvg = mondayProd / area.mondayMinutes;
+      area.tuesdayAvg = tuesdayProd / area.tuesdayMinutes;
+      area.wednesdayAvg = wednesdayProd / area.wednesdayMinutes;
+      area.thursdayAvg = thursdayProd / area.thursdayMinutes;
+      area.fridayAvg = fridayProd / area.fridayMinutes;
     }
 
     const result = areas.filter((area) => {
@@ -85,10 +85,9 @@ export class AreasService {
         area.fridayAvg,
       ];
 
-      return !averages.every((avg) => isNaN(avg));
+      return !averages.every((avg) => isNaN(avg) || avg === 0);
     });
 
-    console.log(result);
     return result;
   }
 }
