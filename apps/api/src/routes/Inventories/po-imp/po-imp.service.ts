@@ -278,23 +278,49 @@ export class PoImpService {
 
     await sql.begin(async (sql) => {
       // Add inventory info
-      const [insertedJob] =
-        await sql`Insert into materialie (jobpo, programation, due, "clientId") values (${body.jobpo}, ${body.programation}, ${body.due}, ${body.clientId}) returning id`;
+      const [insertedJob] = await sql`Insert into materialie ${sql({
+        jobpo: body.jobpo,
+        programation: body.programation,
+        due: body.due,
+        clientId: body.clientId,
+      })} returning id`;
 
       for (const material of body.materials) {
         const [movement] =
           await sql`insert into materialmovements ("materialId", "movementId", amount, "realAmount", active, "activeDate") values
-         ((select id from materials where code = ${material.code}), ${insertedJob.id} ,${-Math.abs(parseFloat(material.amount))},${-Math.abs(parseFloat(material.realAmount))}, ${material.active}, ${material.active ? new Date() : null}) returning "materialId"`;
+         ((select id from materials where code = ${material.code}), ${insertedJob.id} ,${-Math.abs(parseFloat(material.amount))}, ${-Math.abs(parseFloat(material.realAmount))}, ${material.active}, ${material.active ? new Date() : null})
+         returning "materialId"`;
 
         if (material.active)
           await updateMaterialAmount(movement.materialId, sql);
       }
 
+      //If there is a productId, create the movement
+      let productMovement;
+      if (body.productId) {
+        [productMovement] = await sql`insert into materialmovements ${sql({
+          materialId: body.productId,
+          movementId: insertedJob.id,
+          amount: 0,
+          realAmount: 0,
+          active: true,
+          activeDate: new Date(),
+        })} returning id as "movementId"`;
+      }
+
       // Add production info
-      await sql`insert into orders 
-      ("areaId", "jobId", part, amount, "corteTime", "cortesVariosTime", "produccionTime", "calidadTime", "serigrafiaTime")
-      values 
-      (${body.areaId}, ${insertedJob.id}, ${body.part}, ${body.amount}, ${body.corteTime}, ${body.cortesVariosTime}, ${body.produccionTime}, ${body.calidadTime}, ${body.serigrafiaTime})`;
+      await sql`insert into orders ${sql({
+        areaId: body.areaId,
+        jobId: insertedJob.id,
+        part: body.part,
+        amount: body.amount,
+        corteTime: body.corteTime,
+        cortesVariosTime: body.cortesVariosTime,
+        produccionTime: body.produccionTime,
+        calidadTime: body.calidadTime,
+        serigrafiaTime: body.serigrafiaTime,
+        ...productMovement,
+      })}`;
 
       // Make record
       await this.req.record(`Registro el job: ${body.jobpo}`, sql);

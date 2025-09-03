@@ -27,7 +27,7 @@
 	import Select from '$lib/components/basic/Select.svelte';
 	import { untrack } from 'svelte';
 	import { createQuery } from '@tanstack/svelte-query';
-	import { getAreas, getClients, getOptions } from '$lib/utils/queries';
+	import { getAreas, getClients, getOptions, getProducts } from '$lib/utils/queries';
 
 	interface Props {
 		show: boolean;
@@ -54,7 +54,6 @@
 		queryKey: ['inventory-clients'],
 		queryFn: getClients
 	});
-
 	const clients = $derived(getOptions($clientsQuery?.data));
 
 	const areasQuery = createQuery({
@@ -62,6 +61,12 @@
 		queryFn: getAreas
 	});
 	const areasList = $derived(getOptions($areasQuery?.data));
+
+	const productsQuery = createQuery({
+		queryKey: ['inventory-products'],
+		queryFn: getProducts
+	});
+	const products = $derived(getOptions($productsQuery?.data));
 
 	const areas = [
 		{ name: 'Corte', value: 'corte' },
@@ -145,21 +150,7 @@
 	async function getData() {
 		const { data } = await api.get('/po-imp/' + selectedMovement.id);
 		materials = data.materials;
-		formData = {
-			id: data.id,
-			jobpo: data.jobpo,
-			programation: data.programation,
-			due: data.due,
-			corteTime: data.corteTime,
-			cortesVariosTime: data.cortesVariosTime,
-			produccionTime: data.produccionTime,
-			calidadTime: data.calidadTime,
-			serigrafiaTime: data.serigrafiaTime,
-			part: data.part,
-			amount: data.amount,
-			areaId: data.areaId,
-			clientId: data.clientId
-		};
+		formData = { ...data };
 		files = null;
 		inputDisabled = false;
 	}
@@ -218,7 +209,7 @@
 </script>
 
 <Dialog bind:open={show}>
-	<DialogContent class="min-h-[90%] sm:max-w-4xl">
+	<DialogContent class="min-h-[95%] sm:max-w-5xl">
 		<DialogHeader title={selectedMovement.id ? 'Actualizar job-po' : 'Registrar job-po'} />
 		<DialogBody class="flex flex-col gap-4">
 			<div class="grid w-full gap-4 sm:grid-cols-4">
@@ -234,6 +225,8 @@
 				<Label name="Cliente">
 					<Select items={clients} bind:value={formData.clientId} />
 				</Label>
+			</div>
+			<div class="grid w-full gap-4 sm:grid-cols-5">
 				<Label name="Job o PO">
 					<Input disabled={inputDisabled} bind:value={formData.jobpo} />
 				</Label>
@@ -245,6 +238,13 @@
 				</Label>
 				<Label name="Area">
 					<Select items={areasList} bind:value={formData.areaId} />
+				</Label>
+				<Label name="Producto">
+					<Select
+						items={products}
+						bind:value={formData.productId}
+						disabled={!!selectedMovement.id}
+					/>
 				</Label>
 			</div>
 

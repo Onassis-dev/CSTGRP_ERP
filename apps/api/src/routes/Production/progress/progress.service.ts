@@ -49,7 +49,7 @@ export class ProgressService {
       const [order] = await sql`select SUM(${sql(body.area)})::integer as done,
          (select amount from orders where id = ${body.orderId}),
          (select jobpo from materialie where id = (select "jobId" from orders where id = ${body.orderId}))
-           from ordermovements where "progressId" = ${body.orderId}`;
+          from ordermovements where "progressId" = ${body.orderId}`;
 
       if (order.done + body.amount > order.amount)
         throw new BadRequestException(
@@ -58,6 +58,7 @@ export class ProgressService {
 
       await sql`insert into ordermovements (date, "progressId", ${sql(body.area)}) values (${body.date}, ${body.orderId}, ${body.amount})`;
       await updateOrderAmounts(body.orderId, sql);
+
       await this.req.record(
         `Agregó ${body.amount}pz a ${body.area}, orden: ${order.jobpo}`,
         sql,

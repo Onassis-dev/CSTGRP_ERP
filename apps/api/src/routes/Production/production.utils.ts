@@ -1,5 +1,5 @@
 import postgres from 'postgres';
-import sql from 'src/utils/db';
+import { updateMaterialAmount } from 'src/utils/functions';
 import { z } from 'zod/v4';
 
 export const areaSchema = z.enum(
@@ -8,7 +8,7 @@ export const areaSchema = z.enum(
 );
 
 export const updateOrderAmounts = async (id: number, sql2: postgres.Sql) => {
-  const db = sql2 || sql;
+  const db = sql2;
 
   await db`UPDATE orders SET 
   "corte" = COALESCE((SELECT SUM("corte") FROM ordermovements WHERE "progressId" = ${id}), 0),
@@ -27,4 +27,12 @@ WHERE id = ${id}`;
     ((COALESCE("calidadTime", 0) > 0 AND "calidad" = "amount") OR COALESCE("calidadTime", 0) = 0)
   )
 WHERE id = ${id}`;
+
+  const [updatedMovement] = await db`update materialmovements set 
+    "amount" = (select calidad from orders where id = ${id}),
+    "realAmount" = (select calidad from orders where id = ${id})
+    where id = (select "movementId" from orders where id = ${id}) returning "materialId"`;
+
+  if (updatedMovement)
+    await updateMaterialAmount(updatedMovement.materialId, db);
 };

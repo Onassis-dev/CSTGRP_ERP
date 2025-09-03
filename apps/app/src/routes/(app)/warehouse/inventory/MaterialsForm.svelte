@@ -16,6 +16,7 @@
 	import { showSuccess } from '$lib/utils/showToast';
 	import { refetch } from '$lib/utils/query';
 	import { createQuery } from '@tanstack/svelte-query';
+	import { Textarea } from '$lib/components/ui/textarea';
 
 	const clientsQuery = createQuery({
 		queryKey: ['inventory-clients'],
@@ -28,7 +29,9 @@
 	}
 
 	let { show = $bindable(false), selectedMaterial = $bindable() }: Props = $props();
-	let formData: any = $state();
+	let formData: any = $state({
+		product: false
+	});
 	let files: FileList | undefined = $state();
 
 	function setFormData() {
@@ -41,6 +44,11 @@
 		{ name: 'PIEZAS', value: 'PC' },
 		{ name: 'PIES', value: 'FT' },
 		{ name: 'GALONES', value: 'GAL' }
+	];
+
+	const types = [
+		{ name: 'Materia prima', value: false, color: 'blue' },
+		{ name: 'Producto', value: true, color: 'green' }
 	];
 
 	async function handleSubmit() {
@@ -79,19 +87,22 @@
 		/>
 		<DialogBody grid="2">
 			<Label name="Imagen" class="col-span-full">
-				<FileInput name="text" bind:files />
+				<FileInput bind:files />
 			</Label>
 			<Label name="Codigo">
-				<Input name="text" bind:value={formData.code} />
+				<Input bind:value={formData.code} />
 			</Label>
 			<Label name="Cliente">
 				<Select items={$clientsQuery?.data} bind:value={formData.clientId} />
 			</Label>
 			<Label name="Descripcion" class="col-span-full">
-				<Input name="text" bind:value={formData.description} />
+				<Textarea class="resize-none" bind:value={formData.description} />
 			</Label>
-			<Label name="Ubicacion" class="col-span-full">
-				<Input name="text" bind:value={formData.location} />
+			<Label name="Ubicacion">
+				<Input bind:value={formData.location} />
+			</Label>
+			<Label name="Tipo">
+				<Select items={types} bind:value={formData.product} />
 			</Label>
 			<Label name="Medida">
 				<Select items={measurements} bind:value={formData.measurement} />

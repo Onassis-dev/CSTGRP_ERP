@@ -53,8 +53,13 @@ export const exportSchema = z.object({
   produccionTime: numberSchema,
   calidadTime: numberSchema,
   serigrafiaTime: numberSchema,
+  productId: idSchema.nullish(),
 });
 
-export const updateExportSchema = exportSchema.extend({
-  id: idSchema,
-});
+export const updateExportSchema = exportSchema
+  .extend({
+    id: idSchema,
+  })
+  .omit({
+    productId: true,
+  });

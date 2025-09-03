@@ -5,13 +5,16 @@ import {
   UseInterceptors,
   Get,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { VariousService } from './various.service';
 import { ApiTags } from '@nestjs/swagger';
 import { FileInterceptor, File } from '@nest-lab/fastify-multer';
+import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 
 @ApiTags('Inventory various')
 @Controller('inventoryvarious')
+@UseGuards(new AuthGuard())
 export class VariousController {
   constructor(private readonly variousService: VariousService) {}
 
@@ -33,6 +36,11 @@ export class VariousController {
   @Get('areas')
   getAreas() {
     return this.variousService.getAreas();
+  }
+
+  @Get('products')
+  getProducts() {
+    return this.variousService.getProducts();
   }
 
   @Post('exportxlsx')

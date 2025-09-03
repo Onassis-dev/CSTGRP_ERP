@@ -30,6 +30,12 @@ export class VariousService {
     return rows;
   }
 
+  async getProducts() {
+    const rows =
+      await sql`select id as value, code as name, true as active from materials where product = true`;
+    return rows;
+  }
+
   async convertJobPdf(pdfFile: File) {
     try {
       const pdfText = await processPDF(pdfFile);
