@@ -244,6 +244,7 @@
 						items={products}
 						bind:value={formData.productId}
 						disabled={!!selectedMovement.id}
+						allowDeselect
 					/>
 				</Label>
 			</div>

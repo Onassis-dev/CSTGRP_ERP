@@ -51,7 +51,8 @@
 <Card
 	class={cn(
 		'md: fixed -left-64 bottom-0 top-0 z-40 flex w-60 flex-col rounded-none bg-[#fbfbfb] shadow-none transition-all duration-300 xl:left-0',
-		$sidebarOpen ? 'left-0' : ''
+		$sidebarOpen ? 'left-0' : '',
+		import.meta.env.VITE_TESTING === 'true' && 'bg-yellow-50'
 	)}
 >
 	<a href="/" class="flex h-[49px] w-full items-center gap-3 border-b px-4 pt-0 font-semibold">

@@ -187,6 +187,7 @@ const valueTraduccion = {
   bcpe: 'BCPET',
   photo: 'Foto',
   vacation: 'Vacaciones',
+  clientId: 'Cliente',
 };
 
 export const getTraducction = (value: string | number) => {
