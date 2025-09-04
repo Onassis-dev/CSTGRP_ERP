@@ -47,7 +47,7 @@ export class RequisitionsService {
       WHERE
       materials.code = ${body.code} AND  
       orders."areaId" IN (SELECT unnest(prod_areas) FROM users WHERE id = ${this.req.userId}) AND
-      (select folio from requisitions where jobs LIKE CONCAT('%', materialie.jobpo, '%') and materialie.jobpo is not null and requisitions."materialId" = materials.id) is null AND
+      (select folio from requisitions where jobs LIKE CONCAT('%', materialie.jobpo, '%') and materialie.jobpo is not null and requisitions."materialId" = materials.id limit 1) is null AND
       NOT materialmovements.active AND
       NOT materialmovements.extra
       ORDER BY materialie.due DESC, materialie.jobpo DESC LIMIT 20`;
