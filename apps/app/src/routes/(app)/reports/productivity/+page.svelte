@@ -7,11 +7,14 @@
 	import { createQuery } from '@tanstack/svelte-query';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import { refetch } from '$lib/utils/query';
-	import { UserIcon } from 'lucide-svelte';
+	import { ExpandIcon, ShrinkIcon, UserIcon } from 'lucide-svelte';
+	import { Button } from '$lib/components/ui/button';
 
 	let filters = $state({
 		date: new Date().toISOString().split('T')[0]
 	});
+
+	let showComplete = $state(false);
 
 	const orders = createQuery({
 		queryKey: ['reports-areas'],
@@ -62,6 +65,13 @@
 <MenuBar>
 	<div class="flex flex-col gap-1.5 lg:flex-row">
 		<Input type="date" menu bind:value={filters.date} />
+		<Button size="action" onclick={() => (showComplete = !showComplete)}>
+			{#if showComplete}
+				<ShrinkIcon class="size-3.5" />
+			{:else}
+				<ExpandIcon class="size-3.5" />
+			{/if}
+		</Button>
 	</div>
 </MenuBar>
 
@@ -69,15 +79,25 @@
 	<TableHeader>
 		<TableHead>Area</TableHead>
 		<TableHead>Lunes</TableHead>
-		<TableHead><UserIcon class="size-3.5" /></TableHead>
+		{#if showComplete}
+			<TableHead><UserIcon class="mx-auto size-3.5" /></TableHead>
+		{/if}
 		<TableHead>Martes</TableHead>
-		<TableHead><UserIcon class="size-3.5" /></TableHead>
+		{#if showComplete}
+			<TableHead><UserIcon class="mx-auto size-3.5" /></TableHead>
+		{/if}
 		<TableHead>Miercoles</TableHead>
-		<TableHead><UserIcon class="size-3.5" /></TableHead>
+		{#if showComplete}
+			<TableHead><UserIcon class="mx-auto size-3.5" /></TableHead>
+		{/if}
 		<TableHead>Jueves</TableHead>
-		<TableHead><UserIcon class="size-3.5" /></TableHead>
+		{#if showComplete}
+			<TableHead><UserIcon class="mx-auto size-3.5" /></TableHead>
+		{/if}
 		<TableHead>Viernes</TableHead>
-		<TableHead><UserIcon class="size-3.5" /></TableHead>
+		{#if showComplete}
+			<TableHead><UserIcon class="mx-auto size-3.5" /></TableHead>
+		{/if}
 		<TableHead>Promedio</TableHead>
 		<TableHead class="w-full"></TableHead>
 	</TableHeader>
@@ -88,23 +108,33 @@
 				<TableCell class={row.mondayAvg >= 1 ? 'bg-green-100' : ''}
 					>{formatAvg(row.mondayAvg)}</TableCell
 				>
-				<TableCell class="bg-gray-50">{(row.mondayMinutes / 570).toFixed(2) || ''}</TableCell>
+				{#if showComplete}
+					<TableCell class="bg-gray-50">{(row.mondayMinutes / 570).toFixed(2) || ''}</TableCell>
+				{/if}
 				<TableCell class={row.tuesdayAvg >= 1 ? 'bg-green-100' : ''}
 					>{formatAvg(row.tuesdayAvg)}</TableCell
 				>
-				<TableCell class="bg-gray-50">{(row.tuesdayMinutes / 570).toFixed(2) || ''}</TableCell>
+				{#if showComplete}
+					<TableCell class="bg-gray-50">{(row.tuesdayMinutes / 570).toFixed(2) || ''}</TableCell>
+				{/if}
 				<TableCell class={row.wednesdayAvg >= 1 ? 'bg-green-100' : ''}
 					>{formatAvg(row.wednesdayAvg)}</TableCell
 				>
-				<TableCell class="bg-gray-50">{(row.wednesdayMinutes / 570).toFixed(2) || ''}</TableCell>
+				{#if showComplete}
+					<TableCell class="bg-gray-50">{(row.wednesdayMinutes / 570).toFixed(2) || ''}</TableCell>
+				{/if}
 				<TableCell class={row.thursdayAvg >= 1 ? 'bg-green-100' : ''}
 					>{formatAvg(row.thursdayAvg)}</TableCell
 				>
-				<TableCell class="bg-gray-50">{(row.thursdayMinutes / 570).toFixed(2) || ''}</TableCell>
+				{#if showComplete}
+					<TableCell class="bg-gray-50">{(row.thursdayMinutes / 570).toFixed(2) || ''}</TableCell>
+				{/if}
 				<TableCell class={row.fridayAvg >= 1 ? 'bg-green-100' : ''}
 					>{formatAvg(row.fridayAvg)}</TableCell
 				>
-				<TableCell class="bg-gray-50">{(row.fridayMinutes / 570).toFixed(2) || ''}</TableCell>
+				{#if showComplete}
+					<TableCell class="bg-gray-50">{(row.fridayMinutes / 570).toFixed(2) || ''}</TableCell>
+				{/if}
 				<TableCell class={calculateWeekAvg(row) >= 1 ? 'bg-green-100' : ''}
 					>{formatAvg(calculateWeekAvg(row))}</TableCell
 				>
@@ -112,7 +142,7 @@
 			</TableRow>
 		{/each}
 		<TableRow>
-			<TableCell colspan={10}></TableCell>
+			<TableCell colspan={showComplete ? 10 : 5}></TableCell>
 			<TableCell>Total:</TableCell>
 			<TableCell class={totalAvg >= 1 ? 'bg-green-100' : ''}>{formatAvg(totalAvg)}</TableCell>
 		</TableRow>
