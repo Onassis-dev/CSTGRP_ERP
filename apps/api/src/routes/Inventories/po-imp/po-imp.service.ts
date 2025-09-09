@@ -47,12 +47,16 @@ export class PoImpService {
   async getOneIE(body: z.infer<typeof idObjectSchema>) {
     const [data] = await sql`select * from materialie where id = ${body.id}`;
     const [order] = await sql`select * from orders where "jobId" = ${body.id}`;
+    const [productMovement] =
+      await sql`select "materialId" as "productId" from materialmovements where "id" = ${order.movementId}`;
     const materials =
-      await sql`select (select code from materials where id = "materialId"), amount, "realAmount", active from materialmovements where "movementId" = ${body.id} and NOT extra`;
+      await sql`select (select code from materials where id = "materialId"), amount, "realAmount", active from materialmovements where "movementId" = ${body.id} and NOT extra
+      ${order.movementId ? sql`and id <> ${order.movementId}` : sql``}`;
 
     return {
       ...order,
       ...data,
+      ...productMovement,
       due: data.due.toISOString().split('T')[0],
       materials,
     };
@@ -179,7 +183,9 @@ export class PoImpService {
       )[0];
 
       const prevMaterials =
-        await sql`delete from materialmovements where "movementId" = ${body.id} and not extra returning "materialId"`;
+        await sql`delete from materialmovements where "movementId" = ${body.id} and not extra 
+        and id <> (select "movementId" from orders where "jobId" = ${body.id})
+        returning "materialId"`;
 
       const newMaterials =
         await sql`insert into materialmovements ${sql(materials)} returning "materialId"`;
@@ -267,6 +273,7 @@ export class PoImpService {
 
   async postExport(body: z.infer<typeof exportSchema>) {
     const materials = body.materials.map((item: any) => item.code);
+    if (body.productId) body.part = null;
 
     const materialRows =
       await sql`SELECT code FROM materials WHERE code in ${sql(materials)}`;

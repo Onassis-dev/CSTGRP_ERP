@@ -7,6 +7,7 @@
 	import { createQuery } from '@tanstack/svelte-query';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import { refetch } from '$lib/utils/query';
+	import { UserIcon } from 'lucide-svelte';
 
 	let filters = $state({
 		date: new Date().toISOString().split('T')[0]
@@ -39,10 +40,23 @@
 		return sum / nonZeroDays?.length;
 	}
 
-	function calculateTotalAvg(rows: any[]) {
-		const sum = rows?.reduce((acc, row) => acc + calculateWeekAvg(row), 0);
-		return sum / rows?.length;
-	}
+	let totalAvg = $derived.by(() => {
+		const rows = $orders?.data;
+		if (!rows) return 0;
+		const days: { avg: number; minutes: number }[] = [];
+
+		rows.forEach((row: any) => {
+			days.push({ avg: row.mondayAvg, minutes: Number(row.mondayMinutes) });
+			days.push({ avg: row.tuesdayAvg, minutes: Number(row.tuesdayMinutes) });
+			days.push({ avg: row.wednesdayAvg, minutes: Number(row.wednesdayMinutes) });
+			days.push({ avg: row.thursdayAvg, minutes: Number(row.thursdayMinutes) });
+			days.push({ avg: row.fridayAvg, minutes: Number(row.fridayMinutes) });
+		});
+
+		const sum = days.reduce((acc, day) => acc + day.avg * day.minutes, 0);
+		const totalMinutes = days.reduce((acc, day) => acc + day.minutes, 0);
+		return sum / totalMinutes;
+	});
 </script>
 
 <MenuBar>
@@ -55,10 +69,15 @@
 	<TableHeader>
 		<TableHead>Area</TableHead>
 		<TableHead>Lunes</TableHead>
+		<TableHead><UserIcon class="size-3.5" /></TableHead>
 		<TableHead>Martes</TableHead>
+		<TableHead><UserIcon class="size-3.5" /></TableHead>
 		<TableHead>Miercoles</TableHead>
+		<TableHead><UserIcon class="size-3.5" /></TableHead>
 		<TableHead>Jueves</TableHead>
+		<TableHead><UserIcon class="size-3.5" /></TableHead>
 		<TableHead>Viernes</TableHead>
+		<TableHead><UserIcon class="size-3.5" /></TableHead>
 		<TableHead>Promedio</TableHead>
 		<TableHead class="w-full"></TableHead>
 	</TableHeader>
@@ -69,18 +88,23 @@
 				<TableCell class={row.mondayAvg >= 1 ? 'bg-green-100' : ''}
 					>{formatAvg(row.mondayAvg)}</TableCell
 				>
+				<TableCell class="bg-gray-50">{(row.mondayMinutes / 570).toFixed(2) || ''}</TableCell>
 				<TableCell class={row.tuesdayAvg >= 1 ? 'bg-green-100' : ''}
 					>{formatAvg(row.tuesdayAvg)}</TableCell
 				>
+				<TableCell class="bg-gray-50">{(row.tuesdayMinutes / 570).toFixed(2) || ''}</TableCell>
 				<TableCell class={row.wednesdayAvg >= 1 ? 'bg-green-100' : ''}
 					>{formatAvg(row.wednesdayAvg)}</TableCell
 				>
+				<TableCell class="bg-gray-50">{(row.wednesdayMinutes / 570).toFixed(2) || ''}</TableCell>
 				<TableCell class={row.thursdayAvg >= 1 ? 'bg-green-100' : ''}
 					>{formatAvg(row.thursdayAvg)}</TableCell
 				>
+				<TableCell class="bg-gray-50">{(row.thursdayMinutes / 570).toFixed(2) || ''}</TableCell>
 				<TableCell class={row.fridayAvg >= 1 ? 'bg-green-100' : ''}
 					>{formatAvg(row.fridayAvg)}</TableCell
 				>
+				<TableCell class="bg-gray-50">{(row.fridayMinutes / 570).toFixed(2) || ''}</TableCell>
 				<TableCell class={calculateWeekAvg(row) >= 1 ? 'bg-green-100' : ''}
 					>{formatAvg(calculateWeekAvg(row))}</TableCell
 				>
@@ -88,11 +112,9 @@
 			</TableRow>
 		{/each}
 		<TableRow>
-			<TableCell colspan={5}></TableCell>
+			<TableCell colspan={10}></TableCell>
 			<TableCell>Total:</TableCell>
-			<TableCell class={calculateTotalAvg($orders?.data) >= 1 ? 'bg-green-100' : ''}
-				>{formatAvg(calculateTotalAvg($orders?.data))}</TableCell
-			>
+			<TableCell class={totalAvg >= 1 ? 'bg-green-100' : ''}>{formatAvg(totalAvg)}</TableCell>
 		</TableRow>
 	</TableBody>
 </CusTable>

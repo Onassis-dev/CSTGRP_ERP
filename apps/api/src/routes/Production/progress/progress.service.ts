@@ -56,6 +56,8 @@ export class ProgressService {
           'El progreso no puede ser mayor al total',
         );
 
+      //check to not surpass previous areas
+
       await sql`insert into ordermovements (date, "progressId", ${sql(body.area)}) values (${body.date}, ${body.orderId}, ${body.amount})`;
       await updateOrderAmounts(body.orderId, sql);
 

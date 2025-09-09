@@ -220,7 +220,7 @@
 					<Input bind:value={formData.programation} />
 				</Label>
 				<Label name="Parte">
-					<Input bind:value={formData.part} />
+					<Input bind:value={formData.part} disabled={!!formData.productId} />
 				</Label>
 				<Label name="Cliente">
 					<Select items={clients} bind:value={formData.clientId} />

@@ -33,7 +33,7 @@ export const updateImportSchema = importSchema.extend({
 export const exportSchema = z.object({
   programation: z.string().max(20).min(2),
   amount: intSchema,
-  part: z.string(),
+  part: z.string().nullish(),
   jobpo: z.string(),
   due: z.string(),
   areaId: idSchema,
