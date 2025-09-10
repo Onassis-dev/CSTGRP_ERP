@@ -4,12 +4,14 @@
 	import { Input } from '$lib/components/ui/input';
 	import { TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
 	import api from '$lib/utils/server';
-	import { Ruler } from 'lucide-svelte';
+	import { FileDown, Ruler } from 'lucide-svelte';
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
 	import OptionsCell from '$lib/components/basic/OptionsCell.svelte';
 	import MaterialComparisonCard from './MaterialComparisonCard.svelte';
 	import { createQuery } from '@tanstack/svelte-query';
 	import OptionsHead from '$lib/components/basic/OptionsHead.svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import { downloadFile } from '$lib/utils/files';
 
 	let show = $state(false);
 
@@ -47,7 +49,20 @@
 </script>
 
 <MenuBar>
-	<Input menu bind:value={filters.code} placeholder="Lookup part number" />
+	{#snippet left()}
+		<Input menu bind:value={filters.code} placeholder="Lookup part number" />
+	{/snippet}
+	{#snippet right()}
+		<Button
+			onclick={() =>
+				downloadFile({
+					url: '/clients/export',
+					name: `CST Inventory.xlsx`
+				})}
+			variant="outline"
+			size="icon"><FileDown class="size-3.5" /></Button
+		>
+	{/snippet}
 </MenuBar>
 
 <CusTable>

@@ -31,4 +31,9 @@ export class MovementsController {
   getJobs(@Query(new ZodPiPe(IEFilterSchema)) params) {
     return this.movementsService.getJobs(params);
   }
+
+  @Get('export')
+  export() {
+    return this.movementsService.export();
+  }
 }
