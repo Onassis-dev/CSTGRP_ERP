@@ -48,15 +48,29 @@ export class PoImpService {
     const [data] = await sql`select * from materialie where id = ${body.id}`;
     const [order] = await sql`select * from orders where "jobId" = ${body.id}`;
     const [productMovement] =
-      await sql`select "materialId" as "productId" from materialmovements where "id" = ${order.movementId}`;
+      await sql`select "materialId" as "productId" from materialmovements where "id" = ${order?.movementId || null}`;
     const materials =
       await sql`select (select code from materials where id = "materialId"), amount, "realAmount", active from materialmovements where "movementId" = ${body.id} and NOT extra
-      ${order.movementId ? sql`and id <> ${order.movementId}` : sql``}`;
+      ${order?.movementId ? sql`and id <> ${order.movementId}` : sql``}`;
 
     return {
       ...order,
       ...data,
       ...productMovement,
+      due: data.due.toISOString().split('T')[0],
+      materials,
+    };
+  }
+
+  async getOneIEs(body: z.infer<typeof idObjectSchema>) {
+    const [data] = await sql`select * from materialie where id = ${body.id}`;
+    const [order] = await sql`select * from orders where "jobId" = ${body.id}`;
+    const materials =
+      await sql`select (select code from materials where id = "materialId"), amount, "realAmount", active from materialmovements where "movementId" = ${body.id} and NOT extra`;
+
+    return {
+      ...order,
+      ...data,
       due: data.due.toISOString().split('T')[0],
       materials,
     };
