@@ -56,26 +56,17 @@ function checkAreasAmounts({
   produccion,
   calidad,
 }): boolean {
-  if (Number(cortesVariosTime) > 0) {
-    if (Number(corteTime) > 0 && cortesVarios > corte) return false;
-  }
-
   if (Number(serigrafiaTime) > 0) {
-    if (Number(cortesVariosTime) > 0 && serigrafia > cortesVarios) return false;
     if (Number(corteTime) > 0 && serigrafia > corte) return false;
   }
 
   if (Number(produccionTime) > 0) {
     if (Number(serigrafiaTime) > 0 && produccion > serigrafia) return false;
     if (Number(cortesVariosTime) > 0 && produccion > cortesVarios) return false;
-    if (Number(corteTime) > 0 && produccion > corte) return false;
   }
 
   if (Number(calidadTime) > 0) {
     if (Number(produccionTime) > 0 && calidad > produccion) return false;
-    if (Number(serigrafiaTime) > 0 && calidad > serigrafia) return false;
-    if (Number(cortesVariosTime) > 0 && calidad > cortesVarios) return false;
-    if (Number(corteTime) > 0 && calidad > corte) return false;
   }
 
   return true;
