@@ -7,12 +7,14 @@
 	import Notes from '../Notes.svelte';
 	import { userData } from '$lib/utils/store';
 	import UlineForm from './UlineForm.svelte';
+	import UlineRoundForm from './UlineRoundForm.svelte';
 
 	let { open = $bindable(false) }: { open: boolean } = $props();
 	let showZenpetForm = $state(false);
 	let showConversor = $state(false);
 	let showNotes = $state(false);
 	let showUlineForm = $state(false);
+	let showUlineRoundForm = $state(false);
 
 	function handleKeydown(e: KeyboardEvent) {
 		if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
@@ -66,6 +68,15 @@
 				<TicketIcon class="mr-2 size-4" />
 				<span>Etiquetas de Uline</span>
 			</Command.Item>
+			<Command.Item
+				onSelect={() => {
+					showUlineRoundForm = true;
+					open = false;
+				}}
+			>
+				<TicketIcon class="mr-2 size-4" />
+				<span>Etiquetas Redondas</span>
+			</Command.Item>
 		</Command.Group>
 	</Command.List>
 </Command.Dialog>
@@ -73,4 +84,5 @@
 <Conversor bind:show={showConversor} />
 <ZenpetForm bind:show={showZenpetForm} />
 <UlineForm bind:show={showUlineForm} />
+<UlineRoundForm bind:show={showUlineRoundForm} />
 <Notes bind:show={showNotes} />

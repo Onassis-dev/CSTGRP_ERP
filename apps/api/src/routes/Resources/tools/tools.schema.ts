@@ -13,3 +13,9 @@ export const generateUlineSchema = z.object({
   start: intSchema,
   pages: intSchema,
 });
+
+export const generateUlineRoundSchema = z.object({
+  year: intSchema,
+  week: intSchema,
+  pages: intSchema,
+});

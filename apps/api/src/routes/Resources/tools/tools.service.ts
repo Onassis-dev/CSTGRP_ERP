@@ -1,7 +1,11 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { generateZenpetSchema, generateUlineSchema } from './tools.schema';
+import {
+  generateZenpetSchema,
+  generateUlineSchema,
+  generateUlineRoundSchema,
+} from './tools.schema';
 import { z } from 'zod/v4';
 import { degrees, PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { fillBox } from 'src/utils/pdf';
@@ -135,6 +139,64 @@ export class ToolsService {
             font,
           });
           number++;
+        }
+      }
+    }
+    const pdfBytes = await pdfDoc.save();
+    return pdfBytes;
+  }
+
+  async generateUlineRound(body: z.infer<typeof generateUlineRoundSchema>) {
+    if (body.pages > 20)
+      throw new BadRequestException(
+        'El rango de páginas no puede ser mayor a 20',
+      );
+
+    const templatePath = path.resolve(
+      __dirname,
+      '..',
+      '..',
+      '..',
+      '..',
+      'static',
+      'templates',
+      'uline',
+      'round.pdf',
+    );
+
+    const template = await fs.readFile(templatePath);
+    const pdfDoc = await PDFDocument.load(template);
+
+    for (let i = 0; i < body.pages - 1; i++) {
+      const copiedPage = await pdfDoc.copyPages(pdfDoc, [0]);
+      await pdfDoc.addPage(copiedPage[0]);
+    }
+
+    const pages = await pdfDoc.getPages();
+
+    const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+    for (let pageNo = 0; pageNo < body.pages; pageNo++) {
+      for (let col = 0; col < 9; col++) {
+        for (let row = 0; row < 12; row++) {
+          const x = 62 + col * 58.25;
+          const y = 73 + row * 58.25;
+
+          pages[pageNo].drawText(String(body.year), {
+            x,
+            y: y - 12,
+            size: 11,
+            color: rgb(0.2, 0.2, 0.2),
+            font,
+          });
+
+          pages[pageNo].drawText('S-' + String(body.week), {
+            x,
+            y,
+            size: 11,
+            color: rgb(0.2, 0.2, 0.2),
+            font,
+          });
         }
       }
     }

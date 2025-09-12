@@ -37,7 +37,7 @@ export class InventoryService {
         ORDER BY
             materialmovements."activeDate" DESC,
             materialmovements.id DESC
-        LIMIT 200`;
+        LIMIT 300`;
     return movements;
   }
 
