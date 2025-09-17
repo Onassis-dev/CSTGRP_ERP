@@ -1,6 +1,5 @@
 <script lang="ts">
 	import CusTable from '$lib/components/basic/CusTable.svelte';
-
 	import DeletePopUp from '$lib/components/complex/DeletePopUp.svelte';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
@@ -80,8 +79,9 @@
 		<TableHead colspan={5}>General</TableHead>
 		<TableHead colspan={2}>Reportes</TableHead>
 		<TableHead colspan={4}>RRHH</TableHead>
-		<TableHead colspan={6}>Producción</TableHead>
-		<TableHead colspan={6}>Almacen</TableHead>
+		<TableHead colspan={7}>Producción</TableHead>
+		<TableHead colspan={5}>Almacen</TableHead>
+		<TableHead colspan={1}>Import-Export</TableHead>
 		<TableHead colspan={2}>-</TableHead>
 	</TableHeader>
 	<TableHeader>
@@ -104,12 +104,13 @@
 		<TableHead class="w-[12.5%]">Calidad</TableHead>
 		<TableHead class="w-[12.5%]">Serigrafía</TableHead>
 		<TableHead class="w-[12.5%]">Historial</TableHead>
+		<TableHead class="w-[12.5%]">Jobs</TableHead>
 		<TableHead class="w-[12.5%]">Dashboard</TableHead>
 		<TableHead class="w-[12.5%]">Inventario</TableHead>
 		<TableHead class="w-[12.5%]">Movimientos</TableHead>
 		<TableHead class="w-[12.5%]">Requisiciones</TableHead>
 		<TableHead class="w-[12.5%]">Peticiones</TableHead>
-		<TableHead class="w-[12.5%]">Po-Imp</TableHead>
+		<TableHead class="w-[12.5%]">Importaciones</TableHead>
 		<TableHead class="w-[12.5%]">Sistemas</TableHead>
 		<TableHead class="w-[12.5%]">Compras</TableHead>
 		<TableHead class="w-[12.5%]">Cliente</TableHead>
@@ -281,6 +282,16 @@
 				<TableCell class="p-1.5 text-center"
 					><Badge
 						class="flex h-full w-full items-center justify-center p-1"
+						color={getBadgeColor(user.permissions.jobs)}
+					>
+						{@const SvelteComponent_10 = badgeTexts[user.permissions.jobs]}
+						<SvelteComponent_10 class="size-3.5" />
+					</Badge></TableCell
+				>
+
+				<TableCell class="p-1.5 text-center"
+					><Badge
+						class="flex h-full w-full items-center justify-center p-1"
 						color={getBadgeColor(user.permissions.inventorystats)}
 					>
 						{@const SvelteComponent_5 = badgeTexts[user.permissions.inventorystats]}
@@ -323,13 +334,14 @@
 						<SvelteComponent_9 class="size-3.5" />
 					</Badge></TableCell
 				>
+
 				<TableCell class="p-1.5 text-center"
 					><Badge
 						class="flex h-full w-full items-center justify-center p-1"
-						color={getBadgeColor(user.permissions.poimp)}
+						color={getBadgeColor(user.permissions.imports)}
 					>
-						{@const SvelteComponent_10 = badgeTexts[user.permissions.poimp]}
-						<SvelteComponent_10 class="size-3.5" />
+						{@const SvelteComponent_11 = badgeTexts[user.permissions.imports]}
+						<SvelteComponent_11 class="size-3.5" />
 					</Badge></TableCell
 				>
 

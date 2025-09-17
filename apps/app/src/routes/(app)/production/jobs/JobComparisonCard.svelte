@@ -27,7 +27,7 @@
 	let movements: any[] = $state([]);
 
 	async function fetchData() {
-		movements = (await api.get('/po-imp/job/comparison/' + selectedJob.id)).data;
+		movements = (await api.get('/jobs/comparison/' + selectedJob.id)).data;
 	}
 
 	$effect(() => {

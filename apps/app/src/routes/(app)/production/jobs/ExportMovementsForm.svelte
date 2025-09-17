@@ -83,18 +83,18 @@
 
 	async function handleSubmit() {
 		if (selectedMovement.id) {
-			await api.put('/po-imp/export', {
+			await api.put('/jobs', {
 				...formData,
 				materials
 			});
 		} else {
-			await api.post('/po-imp/export', {
+			await api.post('/jobs', {
 				...formData,
 				materials
 			});
 		}
 
-		refetch(['po-imp']);
+		refetch(['jobs']);
 		show = false;
 		showSuccess(selectedMovement.id ? 'Salida actualizada' : `Salida Registrada`);
 	}
@@ -148,7 +148,7 @@
 	}
 
 	async function getData() {
-		const { data } = await api.get('/po-imp/' + selectedMovement.id);
+		const { data } = await api.get('/jobs/' + selectedMovement.id);
 		materials = data.materials;
 		formData = { ...data };
 		files = null;

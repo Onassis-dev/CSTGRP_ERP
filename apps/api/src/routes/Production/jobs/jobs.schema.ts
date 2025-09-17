@@ -7,9 +7,8 @@ import {
 import { z } from 'zod/v4';
 
 export const IEFilterSchema = z.object({
-  code: z.string().nullable(),
-  type: z.string().nullable(),
-  location: z.string().nullish(),
+  job: z.string().nullable(),
+  programation: z.string().nullable(),
 });
 
 export const importSchema = z.object({
@@ -24,10 +23,6 @@ export const importSchema = z.object({
       }),
     )
     .nonempty(),
-});
-
-export const updateImportSchema = importSchema.extend({
-  id: idSchema,
 });
 
 export const exportSchema = z.object({

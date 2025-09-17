@@ -1,5 +1,4 @@
 <script lang="ts">
-	import ExportMovementsForm from './ExportMovementsForm.svelte';
 	import CusTable from '$lib/components/basic/CusTable.svelte';
 	import Select from '$lib/components/basic/Select.svelte';
 	import { Input } from '$lib/components/ui/input';
@@ -9,8 +8,7 @@
 	import OptionsCell from '$lib/components/basic/OptionsCell.svelte';
 	import OptionsHead from '$lib/components/basic/OptionsHead.svelte';
 	import { formatDate } from '$lib/utils/functions';
-	import JobComparisonCard from './JobComparisonCard.svelte';
-	import { Pen, Ruler } from 'lucide-svelte';
+	import { Pen } from 'lucide-svelte';
 	import DeletePopUp from '$lib/components/complex/DeletePopUp.svelte';
 	import { showSuccess } from '$lib/utils/showToast';
 	import {
@@ -25,7 +23,6 @@
 	import { createQuery } from '@tanstack/svelte-query';
 	import { refetch } from '$lib/utils/query';
 
-	let show2 = $state(false);
 	let show3 = $state(false);
 	let show4 = $state(false);
 	let show5 = $state(false);
@@ -51,8 +48,8 @@
 	];
 
 	const movementsQuery = createQuery({
-		queryKey: ['po-imp', { ...filters }],
-		queryFn: async () => (await api.get('/po-imp', { params: filters })).data
+		queryKey: ['imports', { ...filters }],
+		queryFn: async () => (await api.get('/ie/imports', { params: filters })).data
 	});
 
 	let movements = $derived(
@@ -73,16 +70,12 @@
 		selectedMovement = movements[i];
 		show5 = true;
 	}
-	function compareJob(i: number) {
-		selectedMovement = movements[i];
-		show2 = true;
-	}
 
 	async function handleDelete() {
-		await api.delete('/po-imp/' + selectedMovement.id);
+		await api.delete('/ie/imports/' + selectedMovement.id);
 		selectedMovement = {};
 		showSuccess('Movimiento eliminado');
-		refetch(['po-imp']);
+		refetch(['imports']);
 		show3 = false;
 	}
 </script>
@@ -90,46 +83,27 @@
 <MenuBar>
 	<form
 		class="flex flex-col gap-2 lg:flex-row"
-		onsubmit={preventDefault(() => refetch(['po-imp']))}
+		onsubmit={preventDefault(() => refetch(['imports']))}
 		action={''}
 	>
-		<Select
-			menu
-			class="min-w-36"
-			items={options}
-			bind:value={filters.type}
-			onValueChange={() => refetch(['po-imp'])}
-		/>
 		<Select
 			menu
 			class="min-w-36"
 			items={locations}
 			allowDeselect
 			bind:value={filters.location}
-			onValueChange={() => refetch(['po-imp'])}
+			onValueChange={() => refetch(['imports'])}
 		/>
 		<Input menu bind:value={filters.code} placeholder="Identificador" />
 	</form>
 	{#snippet right()}
-		<DropdownMenu>
-			<DropdownMenuTrigger>
-				<Button size="action"><Pen class=" size-3.5" />Registrar</Button>
-				<DropdownMenuContent>
-					<DropdownMenuItem
-						onclick={() => {
-							selectedMovement = {};
-							show4 = true;
-						}}>Importacion</DropdownMenuItem
-					>
-					<DropdownMenuItem
-						onclick={() => {
-							selectedMovement = {};
-							show5 = true;
-						}}>Job - PO</DropdownMenuItem
-					>
-				</DropdownMenuContent>
-			</DropdownMenuTrigger>
-		</DropdownMenu>
+		<Button
+			size="action"
+			onclick={() => {
+				selectedMovement = {};
+				show4 = true;
+			}}><Pen class=" size-3.5" />Registrar</Button
+		>
 	{/snippet}
 </MenuBar>
 
@@ -137,9 +111,7 @@
 	<TableHeader>
 		<OptionsHead />
 		<TableHead class="w-[10%]">Importacion</TableHead>
-		<TableHead class="w-[10%]">Job-PO</TableHead>
 		<TableHead class="w-[10%]">Ubicacion</TableHead>
-		<TableHead class="w-[10%]">Programacion</TableHead>
 		<TableHead class="w-full">Fecha</TableHead>
 	</TableHeader>
 	<TableBody>
@@ -148,21 +120,14 @@
 				<OptionsCell
 					editFunc={movement.import ? () => editImport(i) : () => editJobPO(i)}
 					deleteFunc={() => deleteIE(i)}
-					extraButtons={movement.jobpo
-						? [{ fn: () => compareJob(i), name: 'Comparar', icon: Ruler }]
-						: []}
 				/>
 				<TableCell>{movement.import || ''}</TableCell>
-				<TableCell>{movement.jobpo || ''}</TableCell>
 				<TableCell>{movement.location || ''}</TableCell>
-				<TableCell>{movement.programation || ''}</TableCell>
 				<TableCell>{formatDate(movement.due) || ''}</TableCell>
 			</TableRow>
 		{/each}
 	</TableBody>
 </CusTable>
 
-<JobComparisonCard bind:show={show2} bind:selectedJob={selectedMovement} />
 <DeletePopUp bind:show={show3} text="Eliminar movimiento" deleteFunc={handleDelete} />
 <ImportMovementsForm bind:show={show4} {selectedMovement} />
-<ExportMovementsForm bind:show={show5} {selectedMovement} />

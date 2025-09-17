@@ -32,6 +32,7 @@
 		{ value: 'production', name: 'Producción' },
 		{ value: 'inventory', name: 'Inventario' },
 		{ value: 'purchases', name: 'Compras' },
+		{ value: 'ie', name: 'Imp-Exp' },
 		{ value: 'hr', name: 'RRHH' },
 		{ value: 'users', name: 'Usuarios' },
 		{ value: 'auth', name: 'Sesión' }

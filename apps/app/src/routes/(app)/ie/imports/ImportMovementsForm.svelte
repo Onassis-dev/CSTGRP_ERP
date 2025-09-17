@@ -42,18 +42,18 @@
 
 	async function handleSubmit() {
 		if (selectedMovement.id) {
-			await api.put('/po-imp/import', {
+			await api.put('/ie/imports/import', {
 				...formData,
 				materials
 			});
 		} else {
-			await api.post('/po-imp/import', {
+			await api.post('/ie/imports/import', {
 				...formData,
 				materials
 			});
 		}
 
-		refetch(['po-imp']);
+		refetch(['imports']);
 
 		show = false;
 		showSuccess(selectedMovement.id ? 'Importacion actualizada' : `Importacion Registrada`);
@@ -87,7 +87,7 @@
 
 	async function getData() {
 		cleanData();
-		const { data } = await api.get('/po-imp/' + selectedMovement.id);
+		const { data } = await api.get('/ie/imports/' + selectedMovement.id);
 		materials = data.materials;
 		formData = { id: data.id, import: data.import, location: data.location, due: data.due };
 		files = null;

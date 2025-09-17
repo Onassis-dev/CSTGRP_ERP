@@ -22,7 +22,8 @@
 		ShoppingCart,
 		AlertTriangle,
 		Factory,
-		LineChartIcon
+		LineChartIcon,
+		Truck
 	} from 'lucide-svelte';
 	import { goto } from '$app/navigation';
 	import { cn } from '$lib/utils';
@@ -85,7 +86,7 @@
 			</Accordion.Item>
 		{/if}
 
-		{#if hasAccess('prod_corte') || hasAccess('prod_cortesVarios') || hasAccess('prod_produccion') || hasAccess('prod_calidad') || hasAccess('prod_serigrafia')}
+		{#if hasAccess('prod_corte') || hasAccess('prod_cortesVarios') || hasAccess('prod_produccion') || hasAccess('prod_calidad') || hasAccess('prod_serigrafia') || hasAccess('jobs')}
 			<Accordion.Item value="production" class="border-none">
 				<Accordion.Trigger
 					class="hover:bg-muted  mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
@@ -112,11 +113,14 @@
 					{#if hasAccess('prodmovements')}
 						<Accordion.Option href="/production/history" />
 					{/if}
+					{#if hasAccess('jobs')}
+						<Accordion.Option href="/production/jobs" />
+					{/if}
 				</Accordion.Content>
 			</Accordion.Item>
 		{/if}
 
-		{#if hasAccess('inventory') || hasAccess('materialmovements') || hasAccess('requisitions') || hasAccess('poimp')}
+		{#if hasAccess('inventory') || hasAccess('materialmovements') || hasAccess('requisitions')}
 			<Accordion.Item value="warehouse" class="border-none">
 				<Accordion.Trigger
 					class="hover:bg-muted  mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
@@ -134,9 +138,7 @@
 					{#if hasAccess('materialmovements')}
 						<Accordion.Option href="/warehouse/movements" />
 					{/if}
-					{#if hasAccess('poimp')}
-						<Accordion.Option href="/warehouse/po-imp" />
-					{/if}
+
 					{#if hasAccess('requisitions')}
 						<Accordion.Option href="/warehouse/requisitions" />
 					{/if}
@@ -146,6 +148,23 @@
 				</Accordion.Content>
 			</Accordion.Item>
 		{/if}
+
+		{#if hasAccess('imports')}
+			<Accordion.Item value="ie" class="border-none">
+				<Accordion.Trigger
+					class="hover:bg-muted  mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
+				>
+					<Truck class="size-3.5 text-[#5c5e63]" />
+					Imp-Exp
+				</Accordion.Trigger>
+				<Accordion.Content>
+					{#if hasAccess('imports')}
+						<Accordion.Option href="/ie/imports" />
+					{/if}
+				</Accordion.Content>
+			</Accordion.Item>
+		{/if}
+
 		{#if hasAccess('purchases')}
 			<Accordion.Item value="purchases" class="border-none">
 				<Accordion.Trigger

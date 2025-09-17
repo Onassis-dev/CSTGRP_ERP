@@ -15,7 +15,6 @@ export const permissionsList = {
   inventorystats: permType,
   requisitions: permType,
   petitions: permType,
-  poimp: permType,
   formats: permType,
   directory: permType,
   docs: permType,
@@ -29,6 +28,8 @@ export const permissionsList = {
   reports_orders: permType,
   reports_areas: permType,
   hr_dashboard: permType,
+  imports: permType,
+  jobs: permType,
 };
 
 export const registerSchema = z.object({

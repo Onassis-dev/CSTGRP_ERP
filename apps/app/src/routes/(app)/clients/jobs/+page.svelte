@@ -23,7 +23,7 @@
 	let selectedMovement: any = $state({});
 
 	const jobs = createQuery({
-		queryKey: ['jobs'],
+		queryKey: ['clients-jobs'],
 		queryFn: async () => (await api.get('/clients/jobs', { params: filters })).data
 	});
 
@@ -34,7 +34,10 @@
 </script>
 
 <MenuBar>
-	<form class="flex flex-col gap-2 lg:flex-row" onsubmit={preventDefault(() => refetch(['jobs']))}>
+	<form
+		class="flex flex-col gap-2 lg:flex-row"
+		onsubmit={preventDefault(() => refetch(['clients-jobs']))}
+	>
 		<Input menu bind:value={filters.code} placeholder="Job" />
 	</form>
 </MenuBar>

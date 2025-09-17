@@ -7,7 +7,7 @@ import { StatsModule } from './stats/stats.module';
 import { RequisitionsModule } from './requisitions/requsitions.module';
 import { PetitionsModule } from './petitions/petitions.module';
 import { ClientMovementsModule } from './clients/movements/movements.module';
-import { PoImpModule } from './po-imp/po-imp.module';
+
 @Module({
   imports: [
     InventoryModule,
@@ -18,7 +18,6 @@ import { PoImpModule } from './po-imp/po-imp.module';
     RequisitionsModule,
     ClientMovementsModule,
     PetitionsModule,
-    PoImpModule,
   ],
 })
 export class InventoriesModule {}

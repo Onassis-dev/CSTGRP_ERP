@@ -158,6 +158,13 @@
 				<Label name="Perm. Movimientos">
 					<Select items={permissions} bind:value={formData.permissions.prodmovements} />
 				</Label>
+
+				<Label name="Perm. Jobs">
+					<Select
+						items={[...permissions, { value: 3, name: 'Eliminar y editar', color: 'purple' }]}
+						bind:value={formData.permissions.jobs}
+					/>
+				</Label>
 			</div>
 
 			<div class={cardClass}>
@@ -177,10 +184,14 @@
 				<Label name="Perm. Peticiones">
 					<Select items={permissions} bind:value={formData.permissions.petitions} />
 				</Label>
-				<Label name="Perm. Po-Imp">
+			</div>
+
+			<div class={cardClass}>
+				<h3 class="col-span-full w-full pl-0.5 font-semibold">Import-Export</h3>
+				<Label name="Perm. Importaciones">
 					<Select
 						items={[...permissions, { value: 3, name: 'Eliminar y editar', color: 'purple' }]}
-						bind:value={formData.permissions.poimp}
+						bind:value={formData.permissions.imports}
 					/>
 				</Label>
 			</div>
