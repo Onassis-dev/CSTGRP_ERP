@@ -48,7 +48,6 @@ export class MovementsService {
                 "materialId" = ${body.id}
                 AND materials."clientId" = ${clientId}
                 AND active = true
-                AND extra = false
             GROUP BY "movementId"
         )
         AND materials."clientId" = ${clientId}
