@@ -82,12 +82,16 @@ export class MovementsService {
   }
 
   async activateMovement(body: z.infer<typeof idObjectSchema>) {
+    const [user] =
+      await sql`select permissions from users where id = ${this.req.userId}`;
+    const maintainDate = user.permissions.materialmovements >= 3;
+
     const [movement] =
       await sql`select active, (select code from materials where id = "materialId"), (select jobpo from materialie where id = "movementId") from materialmovements where id = ${body.id}`;
 
     await sql.begin(async (sql) => {
       const [result] =
-        await sql`UPDATE materialmovements SET active = ${!movement.active}, "activeDate" = ${movement.active ? null : new Date()} WHERE id = ${body.id} returning "materialId", "realAmount"`;
+        await sql`UPDATE materialmovements SET active = ${!movement.active}, "activeDate" = ${movement.active ? (maintainDate ? sql`"activeDate"` : null) : sql`COALESCE("activeDate", ${new Date()})`} WHERE id = ${body.id} returning "materialId", "realAmount"`;
 
       await updateMaterialAmount(result.materialId, sql);
 

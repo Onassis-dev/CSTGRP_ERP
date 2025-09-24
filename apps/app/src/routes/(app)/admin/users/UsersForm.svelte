@@ -173,7 +173,10 @@
 					<Select items={permissions} bind:value={formData.permissions.inventory} />
 				</Label>
 				<Label name="Perm. Movimientos">
-					<Select items={permissions} bind:value={formData.permissions.materialmovements} />
+					<Select
+						items={[...permissions, { value: 3, name: 'Mantener fechas', color: 'purple' }]}
+						bind:value={formData.permissions.materialmovements}
+					/>
 				</Label>
 				<Label name="Perm. Dashboard">
 					<Select items={permissions} bind:value={formData.permissions.inventorystats} />
