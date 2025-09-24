@@ -112,8 +112,9 @@ export class JobsService {
       )[0];
 
       const prevMaterials =
-        await sql`delete from materialmovements where "movementId" = ${body.id} and not extra 
-        and id <> (select "movementId" from orders where "jobId" = ${body.id})
+        await sql`delete from materialmovements where "movementId" = ${body.id} 
+        and not extra
+        and id is distinct from (select "movementId" from orders where "jobId" = ${body.id})
         returning "materialId"`;
 
       const newMaterials =
