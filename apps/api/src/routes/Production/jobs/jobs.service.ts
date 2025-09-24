@@ -131,6 +131,7 @@ export class JobsService {
       }
 
       // Add production info
+      if (!body.part) throw new HttpException('Parte: requerida', 400);
       await sql`update orders set ${sql({
         areaId: body.areaId,
         part: body.part,
