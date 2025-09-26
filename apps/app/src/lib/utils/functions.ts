@@ -126,8 +126,6 @@ export async function openLocalFile(blob: Blob, fileType: 'jpeg' | 'png' | 'jpg'
 	const formData = new FormData();
 	formData.append('file', new File([blob], 'credential.' + fileType));
 
-	const folderHandle = await (window as any).showDirectoryPicker();
-
 	try {
 		await axios.post('https://localhost:55000/open', formData, {
 			headers: { 'Content-Type': 'multipart/form-data' }
