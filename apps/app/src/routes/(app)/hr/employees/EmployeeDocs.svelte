@@ -20,7 +20,7 @@
 	import api from '$lib/utils/server';
 	import { showError, showSuccess } from '$lib/utils/showToast';
 	import { Check, FileDown, Trash, Upload } from 'lucide-svelte';
-	import { downloadFile, openFilePreview } from '$lib/utils/functions';
+	import { downloadFile, openFilePreview, openLocalFile } from '$lib/utils/functions';
 	import { cn } from '$lib/utils';
 	import { format } from 'date-fns';
 	import { es } from 'date-fns/locale';
@@ -98,16 +98,7 @@
 		const credential = await api.get('/employees/documents/credential/' + employee.id, {
 			responseType: 'blob'
 		});
-
-		const url = URL.createObjectURL(new Blob([credential.data], { type: 'image/jpeg' }));
-		const a = document.createElement('a');
-		a.href = url;
-
-		a.download = 'cr' + employee.noEmpleado + '.jpg';
-		document.body.appendChild(a);
-		a.click();
-		document.body.removeChild(a);
-		URL.revokeObjectURL(url);
+		openLocalFile(credential.data, 'jpeg');
 	}
 
 	async function downloadDoc(url: string, name: string) {

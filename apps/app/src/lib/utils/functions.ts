@@ -1,3 +1,4 @@
+import axios from 'axios';
 import api from './server';
 
 export function formatDate(strDate?: string) {
@@ -118,6 +119,19 @@ export async function downloadFile(url: string, name: string) {
 		URL.revokeObjectURL(fileURL);
 	} catch (error) {
 		console.error('Error descargando el archivo:', error);
+	}
+}
+
+export async function openLocalFile(blob: Blob, fileType: 'jpeg' | 'png' | 'jpg') {
+	const formData = new FormData();
+	formData.append('file', new File([blob], 'credential.' + fileType));
+
+	try {
+		await axios.post('https://localhost:55000/open', formData, {
+			headers: { 'Content-Type': 'multipart/form-data' }
+		});
+	} catch (err) {
+		console.error('Error al abrir archivo:', err);
 	}
 }
 
