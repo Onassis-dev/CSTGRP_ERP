@@ -1,15 +1,23 @@
 package main
 
 import (
+	"crypto/rand"
+	"crypto/rsa"
 	"crypto/tls"
+	"crypto/x509"
+	"crypto/x509/pkix"
+	"encoding/pem"
 	"fmt"
 	"io"
 	"log"
+	"math/big"
+	"net"
 	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"time"
 )
 
 var tempDir string
@@ -115,13 +123,57 @@ func handleOpen(w http.ResponseWriter, r *http.Request) {
 
 // --- Generar certificado autofirmado ---
 func generateSelfSignedCert(certFile, keyFile string) error {
-	cmd := exec.Command("openssl", "req",
-		"-x509",
-		"-newkey", "rsa:2048",
-		"-nodes",
-		"-keyout", keyFile,
-		"-out", certFile,
-		"-days", "36500",
-		"-subj", "/CN=localhost")
-	return cmd.Run()
+	// Generar llave privada
+	privateKey, err := rsa.GenerateKey(rand.Reader, 2048)
+	if err != nil {
+		return fmt.Errorf("error generando llave privada: %v", err)
+	}
+
+	// Crear plantilla para el certificado
+	template := x509.Certificate{
+		SerialNumber: big.NewInt(1),
+		Subject: pkix.Name{
+			CommonName: "localhost",
+		},
+		NotBefore: time.Now(),
+		NotAfter:  time.Now().AddDate(100, 0, 0), // 100 años
+		KeyUsage:  x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature,
+		ExtKeyUsage: []x509.ExtKeyUsage{
+			x509.ExtKeyUsageServerAuth,
+		},
+		BasicConstraintsValid: true,
+		DNSNames:              []string{"localhost"},
+		IPAddresses:           []net.IP{net.ParseIP("127.0.0.1")},
+	}
+
+	// Crear certificado
+	derBytes, err := x509.CreateCertificate(rand.Reader, &template, &template, &privateKey.PublicKey, privateKey)
+	if err != nil {
+		return fmt.Errorf("error creando certificado: %v", err)
+	}
+
+	// Guardar certificado
+	certOut, err := os.Create(certFile)
+	if err != nil {
+		return fmt.Errorf("error creando archivo de certificado: %v", err)
+	}
+	defer certOut.Close()
+
+	if err := pem.Encode(certOut, &pem.Block{Type: "CERTIFICATE", Bytes: derBytes}); err != nil {
+		return fmt.Errorf("error codificando certificado: %v", err)
+	}
+
+	// Guardar llave privada
+	keyOut, err := os.Create(keyFile)
+	if err != nil {
+		return fmt.Errorf("error creando archivo de llave privada: %v", err)
+	}
+	defer keyOut.Close()
+
+	privBytes := x509.MarshalPKCS1PrivateKey(privateKey)
+	if err := pem.Encode(keyOut, &pem.Block{Type: "RSA PRIVATE KEY", Bytes: privBytes}); err != nil {
+		return fmt.Errorf("error codificando llave privada: %v", err)
+	}
+
+	return nil
 }
