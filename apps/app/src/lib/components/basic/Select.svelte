@@ -19,7 +19,7 @@
 		children?: import('svelte').Snippet;
 		chevron?: boolean;
 		allowDeselect?: boolean;
-		onValueChange?: () => void;
+		onValueChange?: (v?: any) => void;
 	}
 
 	let {

@@ -11,7 +11,7 @@
 	import ProductivityForm from './ProductivityForm.svelte';
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
 
-	let productivity: any[] = [];
+	let productivity: any[] = $state([]);
 	let separatedProductivity: any = $state({});
 	let show = $state(false);
 	let areas: any = $state({});
@@ -24,54 +24,6 @@
 
 	async function getProductivity() {
 		productivity = (await api.get('/productivity/' + dateSelected)).data;
-
-		productivity = productivity.map((row) => {
-			const codes = [
-				row['0goal2'] ? 3 : row['0goal1'] ? 2 : row['0goal0'] ? 1 : 1,
-				row['1goal2'] ? 3 : row['1goal1'] ? 2 : row['1goal0'] ? 1 : 1,
-				row['2goal2'] ? 3 : row['2goal1'] ? 2 : row['2goal0'] ? 1 : 1,
-				row['3goal2'] ? 3 : row['3goal1'] ? 2 : row['3goal0'] ? 1 : 1,
-				row['4goal2'] ? 3 : row['4goal1'] ? 2 : row['4goal0'] ? 1 : 1
-			];
-			return {
-				...row,
-				'0average': Math.round(
-					(((parseInt(row['0produced0']) || 0) / (parseInt(row['0goal0']) || 1) +
-						(parseInt(row['0produced1']) || 0) / (parseInt(row['0goal1']) || 1) +
-						(parseInt(row['0produced2']) || 0) / (parseInt(row['0goal2']) || 1)) /
-						codes[0]) *
-						100
-				),
-				'1average': Math.round(
-					(((parseInt(row['1produced0']) || 0) / (parseInt(row['1goal0']) || 1) +
-						(parseInt(row['1produced1']) || 0) / (parseInt(row['1goal1']) || 1) +
-						(parseInt(row['1produced2']) || 0) / (parseInt(row['1goal2']) || 1)) /
-						codes[1]) *
-						100
-				),
-				'2average': Math.round(
-					(((parseInt(row['2produced0']) || 0) / (parseInt(row['2goal0']) || 1) +
-						(parseInt(row['2produced1']) || 0) / (parseInt(row['2goal1']) || 1) +
-						(parseInt(row['2produced2']) || 0) / (parseInt(row['2goal2']) || 1)) /
-						codes[2]) *
-						100
-				),
-				'3average': Math.round(
-					(((parseInt(row['3produced0']) || 0) / (parseInt(row['3goal0']) || 1) +
-						(parseInt(row['3produced1']) || 0) / (parseInt(row['3goal1']) || 1) +
-						(parseInt(row['3produced2']) || 0) / (parseInt(row['3goal2']) || 1)) /
-						codes[3]) *
-						100
-				),
-				'4average': Math.round(
-					(((parseInt(row['4produced0']) || 0) / (parseInt(row['4goal0']) || 1) +
-						(parseInt(row['4produced1']) || 0) / (parseInt(row['4goal1']) || 1) +
-						(parseInt(row['4produced2']) || 0) / (parseInt(row['4goal2']) || 1)) /
-						codes[4]) *
-						100
-				)
-			};
-		});
 
 		separatedProductivity = {};
 		productivity.map((row) => {
@@ -90,13 +42,17 @@
 
 	async function fetchOptions() {
 		const areasArray = (await api.get('/hrvarious/areas')).data;
+		const areasBase: any = {};
 		areasArray.forEach((area: any) => {
-			areas[area.value] = area.name;
+			areasBase[area.value] = area.name;
 		});
+		areas = areasBase;
+		const positionsBase: any = {};
 		const positionsArray = (await api.get('/hrvarious/positions')).data;
 		positionsArray.forEach((position: any) => {
-			positions[position.value] = { name: position.name, color: position.color };
+			positionsBase[position.value] = { name: position.name, color: position.color };
 		});
+		positions = positionsBase;
 		const incidencesArray = (await api.get('/hrvarious/incidences')).data;
 		incidencesArray.forEach((incidence: any) => {
 			incidences[incidence.value] = incidence.name;
@@ -203,19 +159,8 @@
 					<TableCell
 						><Badge
 							color={getColors(
-								(row['0average'] +
-									row['1average'] +
-									row['2average'] +
-									row['3average'] +
-									row['4average']) /
-									5
-							)}
-							>{(row['0average'] +
-								row['1average'] +
-								row['2average'] +
-								row['3average'] +
-								row['4average']) /
-								5}%</Badge
+								(row['0avg'] + row['1avg'] + row['2avg'] + row['3avg'] + row['4avg']) / 5
+							)}>{(row['0avg'] + row['1avg'] + row['2avg'] + row['3avg'] + row['4avg']) / 5}%</Badge
 						></TableCell
 					>
 					<TableCell>{row.noEmpleado}</TableCell>
@@ -243,8 +188,7 @@
 
 							<TableCell>{row[j + 'comment'] || ''}</TableCell>
 						{/if}
-						<TableCell
-							><Badge color={getColors(row[j + 'average'])}>{row[j + 'average']}%</Badge></TableCell
+						<TableCell><Badge color={getColors(row[j + 'avg'])}>{row[j + 'avg']}%</Badge></TableCell
 						>
 					{/each}
 				</TableRow>
@@ -253,4 +197,4 @@
 	{/each}
 </CusTable>
 
-<ProductivityForm bind:show productivity={separatedProductivity} {areas} reload={getProductivity} />
+<ProductivityForm bind:show {productivity} {areas} reload={getProductivity} />

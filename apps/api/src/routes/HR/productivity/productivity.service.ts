@@ -9,18 +9,21 @@ export class ProductivityService {
   async getWeek(body: z.infer<typeof weekSchema>) {
     const [firstDate] = getWeekDays(body.date);
 
-    const productivity = await sql`select *,
-    (select name from employees where id = (select "employeeId" from assistance where id = employeeproductivity."assistanceId")),
-    (select "noEmpleado" from employees where id = (select "employeeId" from assistance where id = employeeproductivity."assistanceId")),
-    (select id from areas where id = (select "areaId" from assistance where id = employeeproductivity."assistanceId")) as "areaId",
-    (select id from positions where id = (select "positionId" from assistance where id = employeeproductivity."assistanceId")) as "positionId",
-    (select "incidenceId0" from assistance where id = "assistanceId"),
-    (select "incidenceId1" from assistance where id = "assistanceId"),
-    (select "incidenceId2" from assistance where id = "assistanceId"),
-    (select "incidenceId3" from assistance where id = "assistanceId"),
-    (select "incidenceId4" from assistance where id = "assistanceId")
+    const productivity = await sql`select employeeproductivity.*,
+    employees.name || ' ' || employees."paternalLastName" || ' ' || employees."maternalLastName" as name,
+    employees."noEmpleado",
+    assistance."areaId",
+    assistance."positionId",
+    "incidenceId0",
+    "incidenceId1",
+    "incidenceId2",
+    "incidenceId3",
+    "incidenceId4"
 
-    from employeeproductivity WHERE (select "mondayDate" from assistance where id = "assistanceId") = ${firstDate}
+    FROM employeeproductivity
+    JOIN assistance on assistance.id = employeeproductivity."assistanceId"
+    JOIN employees on employees.id = assistance."employeeId"
+    WHERE assistance."mondayDate" = ${firstDate}
     ORDER BY employeeproductivity.id`;
 
     return productivity;
