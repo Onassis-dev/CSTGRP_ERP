@@ -23,7 +23,6 @@
 	let { show = $bindable(), productivity, areas, reload }: Props = $props();
 	let selectedAreaId: string = $state('');
 	let selectedRowId: string = $state('');
-	let selectedDate = $state(new Date().toISOString().split('T')[0]);
 	let areasList: { value: string; name: string }[] = $derived(
 		Object.keys(areas)
 			.map((areaId) => ({
@@ -40,7 +39,7 @@
 				name: row.name
 			}))
 	);
-	let dayNumber: number = $derived(getDayNumber(selectedDate));
+	let dayNumber = $state(String(getDayNumber(new Date().toISOString().split('T')[0])));
 	let noEmpleadoInput: any = $state(null);
 	let code0Input: any = $state(null);
 	let formData = $state({
@@ -171,11 +170,18 @@
 			<form class="grid w-full gap-0.5">
 				<div class="grid text-sm">
 					<div class="grid grid-cols-[10rem_1fr]">
-						<Input
-							type="date"
+						<Select
+							placeholder="Dia"
 							class="rounded-b-none rounded-r-none border-b-0 border-r-0"
-							bind:value={selectedDate}
-						></Input>
+							items={[
+								{ value: '0', name: 'Lunes' },
+								{ value: '1', name: 'Martes' },
+								{ value: '2', name: 'Miercoles' },
+								{ value: '3', name: 'Jueves' },
+								{ value: '4', name: 'Viernes' }
+							]}
+							bind:value={dayNumber}
+						/>
 						<Select
 							placeholder="Area"
 							class="rounded-b-none rounded-l-none border-b-0"
@@ -237,7 +243,7 @@
 					)}%</Badge
 				>
 			</form>
-		</DialogBody>
-		<DialogFooter submitFunc={handleSubmit} hideFunc={() => (show = false)} />
+		</DialogBody>peero
+		<DialogFooter submitFunc={() => handleSubmit()} hideFunc={() => (show = false)} />
 	</DialogContent>
 </Dialog>

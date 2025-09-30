@@ -157,11 +157,30 @@ export class EmployeesService {
       const [newEmployee] =
         await sql`update "employees" SET ${sql({ ...body, photo: image })} where id = ${body.id} returning *`;
 
+      //Create productivity if needed
+      const [{ captured: isCaptured }] =
+        await sql`select captured from areas where id = ${newEmployee.areaId}`;
+      if (isCaptured) {
+        const [firstDate] = getWeekDays(new Date());
+        const [assistanceRow] =
+          await sql`select id from assistance where "mondayDate" = ${firstDate} and "employeeId" = ${newEmployee.id}`;
+        if (assistanceRow) {
+          const [productivityRow] =
+            await sql`select id from employeeproductivity where "assistanceId" = ${assistanceRow.id}`;
+          if (!productivityRow) {
+            await sql`insert into employeeproductivity ("assistanceId") values
+            (${assistanceRow.id})`;
+            console.log('created productivity');
+          }
+        }
+      }
+
       //Create record
       await this.req.record(
         `Editó al empleado ${newEmployee.name} ${newEmployee.paternalLastName} ${newEmployee.maternalLastName} - ${newEmployee.noEmpleado}`,
         sql,
       );
+
       await createRecord({ previous: previousObj, current: newEmployee }, sql);
     });
 

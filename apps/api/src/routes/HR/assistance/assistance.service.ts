@@ -38,9 +38,10 @@ export class AssistanceService {
       throw new HttpException('No tienes permisos para generar semanas', 400);
 
     const [firstDate] = getWeekDays(body.date);
-    const [actualDate] = getWeekDays(new Date());
+    const actualDate = new Date(new Date().toISOString().split('T')[0]);
 
-    if (new Date(firstDate) > new Date(actualDate))
+    const threeDays = 3 * 24 * 60 * 60 * 1000;
+    if (new Date(firstDate).getTime() - actualDate.getTime() > threeDays)
       throw new HttpException('No se puede generar una semana futura', 400);
 
     const [alreadyExists] =
