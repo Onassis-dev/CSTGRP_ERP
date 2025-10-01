@@ -82,7 +82,7 @@ export const traductions: Record<string, Traduction> = {
 	history: { text: 'Historial', icon: History },
 	tools: { text: 'Herramientas', icon: Hammer },
 	jobs: { text: 'Jobs', icon: FileText },
-	labels: { text: 'Labels', icon: FileText }
+	labels: { text: 'Etiquetas', icon: FileText }
 };
 
 export function capitalize(string: string) {

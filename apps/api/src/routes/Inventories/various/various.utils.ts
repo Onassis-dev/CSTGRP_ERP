@@ -153,7 +153,7 @@ export async function processJob(text: string) {
         destinations.push({
           date: destinationsLines[i],
           so: destinationsLines[i + 1],
-          po: destinationsLines[i + 10],
+          po: destinationsLines[i + 10].replace(/\D/g, ''),
           amount: destinationsLines[i + 4],
         });
       }

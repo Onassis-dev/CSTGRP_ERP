@@ -1,14 +1,22 @@
 <script lang="ts">
 	import Button from '$lib/components/ui/button/button.svelte';
+	import CardContent from '$lib/components/ui/card/card-content.svelte';
+	import Card from '$lib/components/ui/card/card.svelte';
 	import { Input } from '$lib/components/ui/input';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import api from '$lib/utils/server';
+	import { cn } from '$lib/utils';
+	import { openLocalFile } from '$lib/utils/functions';
 
 	interface Props {
 		job: any;
 	}
 
 	let { job = $bindable() }: Props = $props();
+
+	let locked = $state(true);
+	let showAll = $state(false);
+	let download = $state(true);
 
 	const labelList = {
 		inspector: 2,
@@ -45,7 +53,9 @@
 
 		let usedLabels: (keyof typeof labelList)[] = [];
 
-		if (part[0] === 'F') {
+		if (showAll) {
+			usedLabels = Object.keys(labelList) as (keyof typeof labelList)[];
+		} else if (part[0] === 'F') {
 			if (bastones === 2) {
 				usedLabels = [
 					'inspector',
@@ -53,9 +63,9 @@
 					'bastones-back',
 					'codigo-yamaha',
 					'warning',
-					'cantidad',
 					'info',
-					'yamaha'
+					'yamaha',
+					'cantidad'
 				];
 			} else if (bastones === 1) {
 				usedLabels = [
@@ -63,43 +73,43 @@
 					'bastones',
 					'codigo-yamaha',
 					'warning',
-					'cantidad',
 					'info',
-					'yamaha'
+					'yamaha',
+					'cantidad'
 				];
 			} else {
-				usedLabels = ['inspector', 'codigo-yamaha', 'warning', 'cantidad', 'info', 'yamaha'];
+				usedLabels = ['inspector', 'codigo-yamaha', 'warning', 'info', 'yamaha', 'cantidad'];
 			}
 		} else if (part[0] === 'P') {
-			usedLabels = ['cantidad', 'yamaha'];
+			usedLabels = ['yamaha', 'cantidad'];
 		} else if (part[0] === '4') {
 			usedLabels = [
 				'inspector',
 				'bastones',
 				'codigo-polaris',
 				'warning',
-				'cantidad',
 				'info',
-				'outer-armor'
+				'outer-armor',
+				'cantidad'
 			];
 		} else if (part.slice(0, 3) === 'MWV') {
-			usedLabels = ['codigo-yamaha', 'cantidad', 'yamaha'];
+			usedLabels = ['codigo-yamaha', 'yamaha', 'cantidad'];
 		} else if (part.slice(0, 3) === 'MAR') {
-			usedLabels = ['codigo-yamaha', 'cantidad', 'yamaha-info', 'yamaha-info-2'];
+			usedLabels = ['codigo-yamaha', 'yamaha-info', 'yamaha-info-2', 'cantidad'];
 		} else if (part.slice(0, 2) === '18') {
-			usedLabels = ['codigo-chaparral', 'cantidad', 'yamaha'];
+			usedLabels = ['codigo-chaparral', 'yamaha', 'cantidad'];
 		} else if (part.slice(0, 4) === 'DJBC') {
-			usedLabels = ['cantidad', 'info', 'outer-armor'];
+			usedLabels = ['info', 'outer-armor', 'cantidad'];
 		} else if (part.slice(0, 2) === 'MB') {
-			usedLabels = ['cantidad', 'info', 'outer-armor'];
+			usedLabels = ['info', 'outer-armor', 'cantidad'];
 		} else if (part.slice(0, 3) === 'SAN') {
-			usedLabels = ['cantidad', 'info', 'outer-armor'];
+			usedLabels = ['info', 'outer-armor', 'cantidad'];
 		} else if (part.slice(0, 2) === 'ST') {
-			usedLabels = ['cantidad', 'outer-armor'];
+			usedLabels = ['outer-armor', 'cantidad'];
 		} else if (part.slice(0, 2) === '28') {
 			usedLabels = ['codigo-polaris', 'commercial'];
 		} else if (part[0] === 'W' || part[0] === '9') {
-			usedLabels = ['codigo-kawasaki', 'cantidad', 'kawasaki'];
+			usedLabels = ['codigo-kawasaki', 'kawasaki', 'cantidad'];
 		}
 
 		const buttons: LabelButton[] = [];
@@ -128,6 +138,25 @@
 						});
 					}
 				});
+
+				if (!job.destinations.length) {
+					const atLeast = Number(job.amount) / job.perBox;
+					if (atLeast >= 1) {
+						buttons.push({
+							name: label,
+							amount: Math.floor(Number(job.amount) / job.perBox),
+							labelAmount: Number(job.perBox)
+						});
+					}
+					const rest = Number(job.amount) % job.perBox;
+					if (rest) {
+						buttons.push({
+							name: label,
+							amount: 1,
+							labelAmount: rest
+						});
+					}
+				}
 			} else if (label === 'codigo-chaparral' || label === 'codigo-kawasaki') {
 				job.destinations.forEach((destination: any) => {
 					buttons.push({
@@ -149,24 +178,63 @@
 	});
 </script>
 
-<Tabs.Content value={job.jobpo}>
+<Tabs.Content value={job.jobpo} class="space-y-4">
 	<div>
-		<Input bind:value={job.jobpo} />
-		<Input bind:value={job.part} />
-		<Input bind:value={job.description} />
-		<Input bind:value={job.amount} />
-		<Input bind:value={job.perBox} />
-		{#each job.destinations as destination}
-			<p>Hola</p>
-			<Input bind:value={destination.po} />
-			<Input bind:value={destination.so} />
-			<Input bind:value={destination.amount} />
+		<Button variant="outline" onclick={() => (locked = !locked)}>
+			{locked ? 'Desbloquear' : 'Bloquear'}
+		</Button>
+		<Button variant="outline" onclick={() => (showAll = !showAll)}>
+			{showAll ? 'Filtrar' : 'Mostrar Todo'}
+		</Button>
+		<Button variant="outline" onclick={() => (download = !download)}>
+			{download ? 'Ver en Navegador' : 'Ver en PC'}
+		</Button>
+	</div>
+	<Card>
+		<CardContent>
+			<div class="grid grid-cols-2 gap-4">
+				<div>
+					<p class="text-muted-foreground text-xs">Jobpo:</p>
+					<Input bind:value={job.jobpo} disabled={locked} />
+				</div>
+				<div>
+					<p class="text-muted-foreground text-xs">Part:</p>
+					<Input bind:value={job.part} disabled={locked} />
+				</div>
+				<div class="col-span-2">
+					<p class="text-muted-foreground text-xs">Description:</p>
+					<Input bind:value={job.description} disabled={locked} />
+				</div>
+				<div>
+					<p class="text-muted-foreground text-xs">Amount:</p>
+					<Input bind:value={job.amount} disabled={locked} />
+				</div>
+				<div>
+					<p class="text-muted-foreground text-xs">Per Box:</p>
+					<Input bind:value={job.perBox} disabled={locked} />
+				</div>
+			</div>
+		</CardContent>
+	</Card>
+
+	<div class="grid grid-cols-3 gap-4">
+		{#each job.destinations as destination, i}
+			<Card class="grid grid-cols-[auto_1fr] items-center gap-2 p-3">
+				<span class="col-span-2 text-sm">Destino {i + 1}</span>
+				<p class="text-muted-foreground text-xs">Po:</p>
+				<Input bind:value={destination.po} disabled={locked} />
+				<p class="text-muted-foreground text-xs">So:</p>
+				<Input bind:value={destination.so} disabled={locked} />
+				<p class="text-muted-foreground text-xs">Qty:</p>
+				<Input bind:value={destination.amount} disabled={locked} />
+			</Card>
 		{/each}
 	</div>
 
-	<div>
+	<div class="flex flex-wrap gap-2">
 		{#each selectedLabels as label}
 			<Button
+				class="grid-row-2 grid h-auto gap-0"
 				onclick={async () => {
 					console.log(job);
 					const result = await api.post(
@@ -185,12 +253,20 @@
 						},
 						{ responseType: 'arraybuffer' }
 					);
-					window.open(
-						URL.createObjectURL(new Blob([result.data], { type: 'image/jpeg' })),
-						'_blank'
-					);
-					URL.revokeObjectURL(URL.createObjectURL(new Blob([result.data])));
-				}}>{label.name}, {label.amount}</Button
+					if (download) {
+						openLocalFile(result.data, 'jpg');
+					} else {
+						window.open(
+							URL.createObjectURL(new Blob([result.data], { type: 'image/jpeg' })),
+							'_blank'
+						);
+						URL.revokeObjectURL(URL.createObjectURL(new Blob([result.data])));
+					}
+				}}
+				>{label.name}
+				<span class={cn('text-blue-200', label.name === 'cantidad' && 'text-red-300')}
+					>{label.amount}</span
+				></Button
 			>
 		{/each}
 	</div>
