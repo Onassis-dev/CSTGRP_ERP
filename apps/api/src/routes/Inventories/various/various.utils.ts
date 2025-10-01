@@ -86,10 +86,13 @@ export async function processJob(text: string) {
   let jobpo = '';
   let part = '';
   let amount = '';
+  let description = '';
   const linesArray = text.split(/\s{3,}| {2}/);
 
-  // Debugging
-  // linesArray.forEach((line) => console.log(line));
+  // Debugging;
+  // linesArray.forEach((line, i) => {
+  //   if (i < 150) console.log(line);
+  // });
 
   const startMaterialsIndex = linesArray.findIndex((line: any) =>
     line.includes('RAW MATERIAL COMPONENTS:'),
@@ -97,12 +100,20 @@ export async function processJob(text: string) {
   const startOperationsIndex = linesArray.findIndex((line: any) =>
     line.includes('OPERATIONS'),
   );
+  const startDestinationsIndex = linesArray.findIndex((line: any) =>
+    line.includes('SHIPPING SCHEDULE:'),
+  );
 
   // Get general info
   jobpo =
     linesArray[linesArray.findIndex((line: any) => line.includes('Job:')) + 1];
 
   part = linesArray[linesArray.findIndex((line: any) => line === 'Part:') + 1];
+
+  description =
+    linesArray[
+      linesArray.findIndex((line: any) => line.includes('Description:')) + 1
+    ];
 
   const amountsStart = linesArray.findIndex((line: any) =>
     line.includes('Schedule Dates'),
@@ -124,6 +135,30 @@ export async function processJob(text: string) {
   due.setMonth(parseInt(month) - 1);
   due.setDate(day);
   due = due.toISOString().split('T')[0];
+
+  // Get destinations
+  const destinations = [];
+
+  if (startDestinationsIndex !== -1) {
+    const destinationsLines = linesArray.slice(
+      startDestinationsIndex,
+      startMaterialsIndex,
+    );
+
+    destinationsLines.forEach((line: any, i: number) => {
+      if (
+        /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(line) &&
+        /^\d+$/.test(destinationsLines[i + 1])
+      ) {
+        destinations.push({
+          date: destinationsLines[i],
+          so: destinationsLines[i + 1],
+          po: destinationsLines[i + 10],
+          amount: destinationsLines[i + 4],
+        });
+      }
+    });
+  }
 
   // Get materials
   const materialsLines = linesArray.slice(
@@ -205,5 +240,15 @@ export async function processJob(text: string) {
   const [{ clientId }] =
     await sql`select id as "clientId" from clients where name = 'CSI'`;
 
-  return { materials, jobpo, due, part, amount, operations, clientId };
+  return {
+    materials,
+    jobpo,
+    due,
+    part,
+    amount,
+    operations,
+    clientId,
+    description,
+    destinations,
+  };
 }

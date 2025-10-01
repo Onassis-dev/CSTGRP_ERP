@@ -76,7 +76,7 @@
 	<TableHeader>
 		<OptionsHead />
 		<TableHead colspan={1}>-</TableHead>
-		<TableHead colspan={5}>General</TableHead>
+		<TableHead colspan={6}>General</TableHead>
 		<TableHead colspan={2}>Reportes</TableHead>
 		<TableHead colspan={4}>RRHH</TableHead>
 		<TableHead colspan={7}>Producción</TableHead>
@@ -92,6 +92,7 @@
 		<TableHead class="w-[12.5%]">Formatos</TableHead>
 		<TableHead class="w-[12.5%]">Directorio</TableHead>
 		<TableHead class="w-[12.5%]">Docs</TableHead>
+		<TableHead class="w-[12.5%]">Labels</TableHead>
 		<TableHead class="w-[12.5%]">Ordenes</TableHead>
 		<TableHead class="w-[12.5%]">Productividad</TableHead>
 		<TableHead class="w-[12.5%]">Dashboard</TableHead>
@@ -167,6 +168,15 @@
 						color={getBadgeColor(user.permissions.docs)}
 					>
 						{@const SvelteComponent_1 = badgeTexts[user.permissions.docs]}
+						<SvelteComponent_1 class="size-3.5" />
+					</Badge></TableCell
+				>
+				<TableCell class="p-1.5 text-center"
+					><Badge
+						class="flex h-full w-full items-center justify-center p-1"
+						color={getBadgeColor(user.permissions.labels)}
+					>
+						{@const SvelteComponent_1 = badgeTexts[user.permissions.labels]}
 						<SvelteComponent_1 class="size-3.5" />
 					</Badge></TableCell
 				>

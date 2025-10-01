@@ -25,8 +25,7 @@ import {
   templateSchema,
   updateSalarySchema,
 } from './employees.schema';
-import { FileInterceptor } from '@nest-lab/fastify-multer';
-import { File } from '@nest-lab/fastify-multer';
+import { FileInterceptor, File } from '@nest-lab/fastify-multer';
 
 @ApiTags('Employees')
 @Controller('employees')

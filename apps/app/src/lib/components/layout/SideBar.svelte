@@ -287,6 +287,9 @@
 					{#if hasAccess('docs')}
 						<Accordion.Option href="/resources/docs" />
 					{/if}
+					{#if hasAccess('labels')}
+						<Accordion.Option href="/resources/labels" />
+					{/if}
 				</Accordion.Content>
 			</Accordion.Item>
 		{/if}

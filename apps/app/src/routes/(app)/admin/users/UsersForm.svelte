@@ -107,6 +107,9 @@
 				<Label name="Perm. Documentos">
 					<Select items={permissions} bind:value={formData.permissions.docs} />
 				</Label>
+				<Label name="Perm. Labels">
+					<Select items={permissions} bind:value={formData.permissions.labels} />
+				</Label>
 			</div>
 
 			<div class={cardClass}>

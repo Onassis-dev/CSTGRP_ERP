@@ -188,6 +188,7 @@ const valueTraduccion = {
   photo: 'Foto',
   vacation: 'Vacaciones',
   clientId: 'Cliente',
+  labels: 'Labels',
 };
 
 export const getTraducction = (value: string | number) => {
