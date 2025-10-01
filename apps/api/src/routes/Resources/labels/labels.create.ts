@@ -398,7 +398,7 @@ export function createLabel(
     ctx.font = '60px SwissBold';
     ctx.fillText(info.jobpo, x[0], y[0]);
     ctx.fillText(info.date, x[3], y[3]);
-    ctx.fillText(info.amount.toString(), x[4], y[4]);
+    ctx.fillText(String(info.amount), x[4], y[4]);
     ctx.fillText(info.so || '', x[5], y[5]);
     ctx.fillText(info.po || '', x[6], y[6]);
 
@@ -431,6 +431,187 @@ export function createLabel(
       const desc2Width = ctx.measureText(lines[1]).width;
       const desc2X = (ctx.canvas.width - desc2Width) / 2;
       ctx.fillText(lines[1], desc2X, y[2] + 60);
+    }
+  }
+
+  if (type === 'codigo-kawasaki') {
+    const x = [125, 0, 0, 700, 0, 700];
+    const y = [500, 190, 370, 105, 210, 500];
+    const height = 520;
+    const adjustments = [0, 0, 0];
+
+    for (let i = 0; i < 3; i++) {
+      const verticalOffset = height * i + adjustments[i];
+
+      ctx.font = '60px SwissBold';
+      const partWidth = ctx.measureText(info.code).width;
+      const partX = (ctx.canvas.width - partWidth) / 2;
+      ctx.fillText(info.code, partX, y[1] + verticalOffset);
+
+      ctx.font = '40px SwissBold';
+      ctx.fillText(info.date, x[3], y[3] + verticalOffset);
+      ctx.fillText(info.jobpo, x[0], y[0] + verticalOffset);
+      ctx.fillText(info.po || '', x[5], y[5] + verticalOffset);
+
+      const barcodeCanvas = createCanvas(0, 0);
+      JsBarcode(barcodeCanvas, info.code.replace(/-/g, ''), {
+        format: 'CODE39',
+        width: 2,
+        height: 80,
+        displayValue: false,
+      });
+      const barcodeX = (ctx.canvas.width - barcodeCanvas.width) / 2;
+      ctx.drawImage(barcodeCanvas, barcodeX, y[4] + verticalOffset);
+
+      ctx.font = '40px Swiss';
+      const words = info.description.split(' ');
+      let line = '';
+      const lines = [];
+
+      for (const word of words) {
+        const testLine = line + (line ? ' ' : '') + word;
+        const metrics = ctx.measureText(testLine);
+        if (metrics.width > 800) {
+          lines.push(line);
+          line = word;
+        } else {
+          line = testLine;
+        }
+      }
+      if (line) {
+        lines.push(line);
+      }
+
+      const desc1Width = ctx.measureText(lines[0]).width;
+      const desc1X = (ctx.canvas.width - desc1Width) / 2;
+
+      let desc2X = 0;
+      if (lines.length > 1) {
+        const desc2Width = ctx.measureText(lines[1]).width;
+        desc2X = (ctx.canvas.width - desc2Width) / 2;
+      }
+      ctx.fillText(lines[0], desc1X, y[2] + verticalOffset);
+      if (lines.length > 1) {
+        ctx.fillText(lines[1], desc2X, y[2] + verticalOffset + 45);
+      }
+    }
+  }
+
+  if (type === 'codigo-polaris') {
+    const x = [125, 0, 0, 700, 0];
+    const y = [105, 190, 380, 105, 220];
+    const height = 520;
+    const adjustments = [0, 0, 0];
+
+    for (let i = 0; i < 3; i++) {
+      const verticalOffset = height * i + adjustments[i];
+
+      ctx.font = '60px SwissBold';
+      const partWidth = ctx.measureText(info.code).width;
+      const partX = (ctx.canvas.width - partWidth) / 2;
+      ctx.fillText(info.code, partX, y[1] + verticalOffset);
+
+      ctx.font = '40px SwissBold';
+      ctx.fillText(info.jobpo, x[0], y[0] + verticalOffset);
+      ctx.fillText(info.date, x[3], y[3] + verticalOffset);
+
+      const barcodeCanvas = createCanvas(0, 0);
+      JsBarcode(barcodeCanvas, info.code.replace(/-/g, ''), {
+        format: 'CODE39',
+        width: 2,
+        height: 80,
+        displayValue: false,
+      });
+      const barcodeX = (ctx.canvas.width - barcodeCanvas.width) / 2;
+      ctx.drawImage(barcodeCanvas, barcodeX, y[4] + verticalOffset);
+
+      ctx.font = '40px Swiss';
+      const words = info.description.split(' ');
+      let line = '';
+      const lines = [];
+
+      for (const word of words) {
+        const testLine = line + (line ? ' ' : '') + word;
+        const metrics = ctx.measureText(testLine);
+        if (metrics.width > 800) {
+          lines.push(line);
+          line = word;
+        } else {
+          line = testLine;
+        }
+      }
+      if (line) {
+        lines.push(line);
+      }
+
+      const desc1Width = ctx.measureText(lines[0]).width;
+      const desc1X = (ctx.canvas.width - desc1Width) / 2;
+      ctx.fillText(lines[0], desc1X, y[2] + verticalOffset);
+
+      if (lines.length > 1) {
+        const desc2Width = ctx.measureText(lines[1]).width;
+        const desc2X = (ctx.canvas.width - desc2Width) / 2;
+        ctx.fillText(lines[1], desc2X, y[2] + verticalOffset + 45);
+      }
+    }
+  }
+
+  if (type === 'codigo-chaparral') {
+    const x = [125, 0, 0, 670, 0, 660, 140];
+    const y = [120, 190, 360, 120, 210, 480, 480];
+    const height = 520;
+    const adjustments = [0, 0, 0];
+
+    for (let i = 0; i < 3; i++) {
+      const verticalOffset = height * i + adjustments[i];
+
+      ctx.font = '60px SwissBold';
+      const partWidth = ctx.measureText(info.code).width;
+      const partX = (ctx.canvas.width - partWidth) / 2;
+      ctx.fillText(info.code, partX, y[1] + verticalOffset);
+
+      ctx.font = '40px SwissBold';
+      ctx.fillText(info.jobpo, x[0], y[0] + verticalOffset);
+      ctx.fillText(info.date, x[3], y[3] + verticalOffset);
+      ctx.fillText(info.po || '', x[5], y[5] + verticalOffset);
+      ctx.fillText(info.so || '', x[6], y[6] + verticalOffset);
+
+      const barcodeCanvas = createCanvas(0, 0);
+      JsBarcode(barcodeCanvas, info.code.replace(/-/g, ''), {
+        format: 'CODE39',
+        width: 2,
+        height: 80,
+        displayValue: false,
+      });
+      const barcodeX = (ctx.canvas.width - barcodeCanvas.width) / 2;
+      ctx.drawImage(barcodeCanvas, barcodeX, y[4] + verticalOffset);
+
+      ctx.font = '40px Swiss';
+      const words = info.description.split(' ');
+      let line = '';
+      const lines = [];
+
+      for (const word of words) {
+        const testLine = line + (line ? ' ' : '') + word;
+        const metrics = ctx.measureText(testLine);
+        if (metrics.width > 800) {
+          lines.push(line);
+          line = word;
+        } else {
+          line = testLine;
+        }
+      }
+      if (line) lines.push(line);
+
+      const desc1Width = ctx.measureText(lines[0]).width;
+      const desc1X = (ctx.canvas.width - desc1Width) / 2;
+      ctx.fillText(lines[0], desc1X, y[2] + verticalOffset);
+
+      if (lines.length > 1) {
+        const desc2Width = ctx.measureText(lines[1]).width;
+        const desc2X = (ctx.canvas.width - desc2Width) / 2;
+        ctx.fillText(lines[1], desc2X, y[2] + verticalOffset + 45);
+      }
     }
   }
 }

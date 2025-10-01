@@ -250,5 +250,6 @@ export async function processJob(text: string) {
     clientId,
     description,
     destinations,
+    perBox: 10,
   };
 }
