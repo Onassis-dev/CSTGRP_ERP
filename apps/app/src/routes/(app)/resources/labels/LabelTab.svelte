@@ -44,6 +44,7 @@
 		po?: string;
 		so?: string;
 		labelAmount?: number;
+		destinationIndex?: number;
 	};
 
 	let selectedLabels: LabelButton[] = $derived.by(() => {
@@ -116,7 +117,7 @@
 
 		usedLabels.forEach((label) => {
 			if (label === 'cantidad') {
-				job.destinations.forEach((destination: any) => {
+				job.destinations.forEach((destination: any, i: number) => {
 					const atLeast = Number(destination.amount) / job.perBox;
 					if (atLeast >= 1) {
 						buttons.push({
@@ -124,7 +125,8 @@
 							amount: Math.floor(Number(destination.amount) / job.perBox),
 							po: destination.po,
 							so: destination.so,
-							labelAmount: Number(job.perBox)
+							labelAmount: Number(job.perBox),
+							destinationIndex: i + 1
 						});
 					}
 					const rest = Number(destination.amount) % job.perBox;
@@ -134,7 +136,8 @@
 							amount: 1,
 							po: destination.po,
 							so: destination.so,
-							labelAmount: rest
+							labelAmount: rest,
+							destinationIndex: i + 1
 						});
 					}
 				});
@@ -194,23 +197,23 @@
 		<CardContent>
 			<div class="grid grid-cols-2 gap-4">
 				<div>
-					<p class="text-muted-foreground text-xs">Jobpo:</p>
+					<p class="text-muted-foreground text-xs">Job:</p>
 					<Input bind:value={job.jobpo} disabled={locked} />
 				</div>
 				<div>
-					<p class="text-muted-foreground text-xs">Part:</p>
+					<p class="text-muted-foreground text-xs">Codigo:</p>
 					<Input bind:value={job.part} disabled={locked} />
 				</div>
 				<div class="col-span-2">
-					<p class="text-muted-foreground text-xs">Description:</p>
+					<p class="text-muted-foreground text-xs">Descripción:</p>
 					<Input bind:value={job.description} disabled={locked} />
 				</div>
 				<div>
-					<p class="text-muted-foreground text-xs">Amount:</p>
+					<p class="text-muted-foreground text-xs">Cantidad:</p>
 					<Input bind:value={job.amount} disabled={locked} />
 				</div>
 				<div>
-					<p class="text-muted-foreground text-xs">Per Box:</p>
+					<p class="text-muted-foreground text-xs">Pz/Caja:</p>
 					<Input bind:value={job.perBox} disabled={locked} />
 				</div>
 			</div>
@@ -264,6 +267,9 @@
 					}
 				}}
 				>{label.name}
+				{#if label.destinationIndex}
+					({label.destinationIndex})
+				{/if}
 				<span class={cn('text-blue-200', label.name === 'cantidad' && 'text-red-300')}
 					>{label.amount}</span
 				></Button
