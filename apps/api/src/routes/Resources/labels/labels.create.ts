@@ -337,17 +337,17 @@ export function createLabel(
       displayValue: false,
     });
 
-    ctx.drawImage(barcode1Canvas, 45, 240);
-    ctx.drawImage(barcode2Canvas, 740, 125);
+    ctx.drawImage(barcode1Canvas, 45, 255);
+    ctx.drawImage(barcode2Canvas, 740, 140);
 
     const x = [520, 550, 550, 595, 200, 70];
-    const y = [100, 268, 135, 183, 385, 385];
+    const y = [115, 263, 150, 198, 400, 400];
 
     ctx.font = '55px SwissBold';
     ctx.fillText(info.code, x[0], y[0]);
     ctx.fillText('1 PC.', x[3], y[3]);
 
-    ctx.font = '23px SwissBold';
+    ctx.font = '26px Swiss';
     const words = info.description.split(' ');
     let line = '';
     const lines = [];
@@ -355,7 +355,7 @@ export function createLabel(
     for (const word of words) {
       const testLine = line + (line ? ' ' : '') + word;
       const metrics = ctx.measureText(testLine);
-      if (metrics.width > 450) {
+      if (metrics.width > 420) {
         lines.push(line);
         line = word;
       } else {
