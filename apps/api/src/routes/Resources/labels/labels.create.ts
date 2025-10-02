@@ -1,7 +1,24 @@
 import { CanvasRenderingContext2D, createCanvas } from 'canvas';
 import JsBarcode from 'jsbarcode';
 import { downloadLabelSchema } from './labels.schema';
+import { format } from 'date-fns';
 import { z } from 'zod/v4';
+
+export function formatYamahaDate(date: string): string {
+  const parsedDate = new Date(date);
+  const weekNumber = format(parsedDate, 'ww');
+  const year = parsedDate.getFullYear() - 2000;
+  return `${weekNumber}${year}`;
+}
+
+export function formatCodigoYamahaDate(date: string): string {
+  const formattedDate = format(new Date(date), 'yyMMdd');
+  return `Y${formattedDate}Z`;
+}
+
+export function formatDate(date: string): string {
+  return format(new Date(date), 'MM/dd/yyyy');
+}
 
 export function createLabel(
   ctx: CanvasRenderingContext2D,
@@ -22,7 +39,7 @@ export function createLabel(
     ctx.font = '55px SwissBold';
     ctx.fillStyle = '#000000';
     ctx.fillText(info.jobpo, 730, 705);
-    ctx.fillText(info.date, 730, 805);
+    ctx.fillText(formatDate(info.date), 730, 805);
 
     ctx.font = '55px Swiss';
     const words = info.description.split(' ');
@@ -79,7 +96,7 @@ export function createLabel(
       ctx.font = '50px SwissBold';
       ctx.fillText(info.jobpo, x[0], y[0]);
       ctx.fillText(info.code, x[1], y[1]);
-      ctx.fillText(info.date, x[3], y[3]);
+      ctx.fillText(formatDate(info.date), x[3], y[3]);
 
       ctx.font = '45px Swiss';
       const words = info.description.split(' ');
@@ -120,7 +137,7 @@ export function createLabel(
 
       ctx.font = '45px SwissBold';
       ctx.fillText(info.jobpo, x[0], y[0]);
-      ctx.fillText('CS  ' + info.date, x[3], y[3]);
+      ctx.fillText('CS  ' + formatYamahaDate(info.date), x[3], y[3]);
 
       ctx.font = '65px SwissBold';
       ctx.fillText(info.code, x[1], y[1]);
@@ -164,7 +181,7 @@ export function createLabel(
 
       ctx.font = '60px SwissBold';
       ctx.fillText(info.jobpo, x[0], y[0]);
-      ctx.fillText(info.date, x[3], y[3]);
+      ctx.fillText(formatDate(info.date), x[3], y[3]);
       ctx.fillText(info.code, x[1], y[1]);
 
       ctx.font = '45px Swiss';
@@ -206,7 +223,7 @@ export function createLabel(
 
       ctx.font = '60px SwissBold';
       ctx.fillText(info.jobpo, x[0], y[0]);
-      ctx.fillText(info.date, x[3], y[3]);
+      ctx.fillText(formatDate(info.date), x[3], y[3]);
       ctx.fillText(info.code, x[1], y[1]);
 
       ctx.font = '45px Swiss';
@@ -250,7 +267,7 @@ export function createLabel(
 
       ctx.fillText(info.jobpo, x[0], yPos);
 
-      ctx.fillText(info.date, x[1], yPos);
+      ctx.fillText(formatYamahaDate(info.date), x[1], yPos);
     }
   }
 
@@ -354,7 +371,7 @@ export function createLabel(
     if (lines.length > 2) ctx.fillText(lines[2], x[1], y[1] + 50);
 
     ctx.font = '30px Swiss';
-    ctx.fillText(info.date, x[2], y[2]);
+    ctx.fillText(formatCodigoYamahaDate(info.date), x[2], y[2]);
 
     ctx.font = '25px SwissBold';
     ctx.fillText(info.jobpo, x[5], y[5]);
@@ -397,7 +414,7 @@ export function createLabel(
 
     ctx.font = '60px SwissBold';
     ctx.fillText(info.jobpo, x[0], y[0]);
-    ctx.fillText(info.date, x[3], y[3]);
+    ctx.fillText(formatDate(info.date), x[3], y[3]);
     ctx.fillText(String(info.amount), x[4], y[4]);
     ctx.fillText(info.so || '', x[5], y[5]);
     ctx.fillText(info.po || '', x[6], y[6]);
@@ -449,7 +466,7 @@ export function createLabel(
       ctx.fillText(info.code, partX, y[1] + verticalOffset);
 
       ctx.font = '40px SwissBold';
-      ctx.fillText(info.date, x[3], y[3] + verticalOffset);
+      ctx.fillText(formatDate(info.date), x[3], y[3] + verticalOffset);
       ctx.fillText(info.jobpo, x[0], y[0] + verticalOffset);
       ctx.fillText(info.po || '', x[5], y[5] + verticalOffset);
 
@@ -513,7 +530,7 @@ export function createLabel(
 
       ctx.font = '40px SwissBold';
       ctx.fillText(info.jobpo, x[0], y[0] + verticalOffset);
-      ctx.fillText(info.date, x[3], y[3] + verticalOffset);
+      ctx.fillText(formatDate(info.date), x[3], y[3] + verticalOffset);
 
       const barcodeCanvas = createCanvas(0, 0);
       JsBarcode(barcodeCanvas, info.code.replace(/-/g, ''), {
@@ -572,7 +589,7 @@ export function createLabel(
 
       ctx.font = '40px SwissBold';
       ctx.fillText(info.jobpo, x[0], y[0] + verticalOffset);
-      ctx.fillText(info.date, x[3], y[3] + verticalOffset);
+      ctx.fillText(formatDate(info.date), x[3], y[3] + verticalOffset);
       ctx.fillText(info.po || '', x[5], y[5] + verticalOffset);
       ctx.fillText(info.so || '', x[6], y[6] + verticalOffset);
 

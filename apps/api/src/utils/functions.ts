@@ -63,6 +63,7 @@ export function getTijuanaDate() {
   const zonedDate = toZonedTime(now, timeZone);
   return format(zonedDate, 'yyyy-MM-dd');
 }
+
 export async function updateMaterialAmount(id, dbInstance?: any) {
   if (!dbInstance) dbInstance = sql;
 
