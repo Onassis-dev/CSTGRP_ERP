@@ -322,12 +322,19 @@ export function createLabel(
 
   if (type === 'codigo-yamaha') {
     const barcode1Canvas = createCanvas(0, 0);
-    JsBarcode(barcode1Canvas, info.code.replace(/-/g, ''), {
-      format: 'CODE39',
-      width: 2,
-      height: 100,
-      displayValue: false,
-    });
+    JsBarcode(
+      barcode1Canvas,
+      (info.code.length === 12 ? info.code + '-00' : info.code).replace(
+        /-/g,
+        '',
+      ),
+      {
+        format: 'CODE39',
+        width: 2,
+        height: 100,
+        displayValue: false,
+      },
+    );
 
     const barcode2Canvas = createCanvas(0, 0);
     JsBarcode(barcode2Canvas, '1', {
