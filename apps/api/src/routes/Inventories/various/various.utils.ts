@@ -87,12 +87,14 @@ export async function processJob(text: string) {
   let part = '';
   let amount = '';
   let description = '';
+  let perBox = 0;
+
   const linesArray = text.split(/\s{3,}| {2}/);
 
   // Debugging;
-  // linesArray.forEach((line, i) => {
-  //   if (i < 150) console.log(line);
-  // });
+  linesArray.forEach((line, i) => {
+    if (i < 1000) console.log(line);
+  });
 
   const startMaterialsIndex = linesArray.findIndex((line: any) =>
     line.includes('RAW MATERIAL COMPONENTS:'),
@@ -122,6 +124,21 @@ export async function processJob(text: string) {
     Number(linesArray[amountsStart + 1].replaceAll(',', '')) +
     Number(linesArray[amountsStart + 3].replaceAll(',', ''))
   ).toFixed(0);
+
+  if (part[0] === 'F') perBox = 20;
+  if (part.startsWith('F6H') || part.startsWith('F6A')) perBox = 13;
+
+  const boxesIndex = linesArray.findIndex(
+    (line: string) => line.includes('KRAFT') || line.includes('CORRUGATED'),
+  );
+  if (boxesIndex !== -1) {
+    for (let i = boxesIndex; i < boxesIndex + 10; i++) {
+      if (/^\d+(\.\d{2})$/.test(linesArray[i])) {
+        perBox = Number(amount) / Number(linesArray[i]);
+        break;
+      }
+    }
+  }
 
   const dateStr =
     linesArray[
@@ -250,6 +267,6 @@ export async function processJob(text: string) {
     clientId,
     description,
     destinations,
-    perBox: 10,
+    perBox,
   };
 }
