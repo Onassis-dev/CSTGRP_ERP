@@ -321,24 +321,24 @@ export function createLabel(
   }
 
   if (type === 'codigo-yamaha') {
-    const barcode1Canvas = createCanvas(550, 130);
+    const barcode1Canvas = createCanvas(0, 0);
     JsBarcode(barcode1Canvas, info.code.replace(/-/g, ''), {
       format: 'CODE39',
-      width: 2,
+      width: 1.8,
       height: 100,
       displayValue: false,
     });
 
-    const barcode2Canvas = createCanvas(130, 70);
+    const barcode2Canvas = createCanvas(0, 0);
     JsBarcode(barcode2Canvas, '1', {
       format: 'CODE39',
-      width: 1,
-      height: 40,
+      width: 2,
+      height: 60,
       displayValue: false,
     });
 
-    ctx.drawImage(barcode1Canvas, 20, 240);
-    ctx.drawImage(barcode2Canvas, 815, 125);
+    ctx.drawImage(barcode1Canvas, 45, 240);
+    ctx.drawImage(barcode2Canvas, 740, 125);
 
     const x = [520, 550, 550, 595, 200, 70];
     const y = [100, 268, 135, 183, 385, 385];
