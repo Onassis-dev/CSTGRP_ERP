@@ -134,7 +134,7 @@ export async function processJob(text: string) {
   if (boxesIndex !== -1) {
     for (let i = boxesIndex; i < boxesIndex + 10; i++) {
       if (/^\d+(\.\d{2})$/.test(linesArray[i])) {
-        perBox = Number(amount) / Number(linesArray[i]);
+        perBox = Math.round(Number(amount) / Number(linesArray[i]));
         break;
       }
     }
