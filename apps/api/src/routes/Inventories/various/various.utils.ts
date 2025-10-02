@@ -92,9 +92,9 @@ export async function processJob(text: string) {
   const linesArray = text.split(/\s{3,}| {2}/);
 
   // Debugging;
-  linesArray.forEach((line, i) => {
-    if (i < 1000) console.log(line);
-  });
+  // linesArray.forEach((line, i) => {
+  //   if (i < 1000) console.log(line);
+  // });
 
   const startMaterialsIndex = linesArray.findIndex((line: any) =>
     line.includes('RAW MATERIAL COMPONENTS:'),
