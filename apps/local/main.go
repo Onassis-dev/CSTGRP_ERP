@@ -108,7 +108,7 @@ func handleOpen(w http.ResponseWriter, r *http.Request) {
 	// Abrir archivo
 	var cmd *exec.Cmd
 	if runtime.GOOS == "windows" {
-		cmd = exec.Command("cmd", "/c", "start", "", savePath)
+		cmd = exec.Command("rundll32", "shell32.dll,ShellExec_RunDLL", savePath)
 	} else {
 		cmd = exec.Command("xdg-open", savePath)
 	}

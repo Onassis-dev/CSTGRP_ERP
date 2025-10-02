@@ -14,7 +14,7 @@ setup:
 
 # Compilar para Windows x64
 build-windows: setup
-	GOOS=windows GOARCH=amd64 go build -ldflags="-s -w" -o $(BUILD)/$(EXE_WIN) main.go
+	GOOS=windows GOARCH=amd64 go build -ldflags="-s -w -H=windowsgui" -o $(BUILD)/$(EXE_WIN) main.go
 	@echo "¡Windows .exe listo en $(BUILD)/$(EXE_WIN)!"
 
 # Compilar para Linux x64
