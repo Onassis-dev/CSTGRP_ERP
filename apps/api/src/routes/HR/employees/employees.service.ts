@@ -137,7 +137,9 @@ export class EmployeesService {
       //Generate productivity for the week
       const [{ captured }] =
         await sql`select captured from areas where "id" = ${employee.areaId}`;
-      if (!captured) return employee.id;
+      const [{ supervisor }] =
+        await sql`select supervisor from positions where "id" = ${employee.positionId}`;
+      if (!captured || supervisor) return employee.id;
 
       await sql`insert into employeeproductivity ("assistanceId") values
     (${assistanceRow.id})`;
@@ -160,7 +162,9 @@ export class EmployeesService {
       //Create productivity if needed
       const [{ captured: isCaptured }] =
         await sql`select captured from areas where id = ${newEmployee.areaId}`;
-      if (isCaptured) {
+      const [{ supervisor }] =
+        await sql`select supervisor from positions where id = ${newEmployee.positionId}`;
+      if (isCaptured && !supervisor) {
         const [firstDate] = getWeekDays(new Date());
         const [assistanceRow] =
           await sql`select id from assistance where "mondayDate" = ${firstDate} and "employeeId" = ${newEmployee.id}`;
@@ -225,6 +229,9 @@ export class EmployeesService {
       const [{ captured }] =
         await sql`select captured from areas where "id" = ${employee.areaId}`;
       if (!captured) return;
+      const [{ supervisor }] =
+        await sql`select supervisor from positions where id = ${employee.positionId}`;
+      if (supervisor) return;
 
       await sql`insert into employeeproductivity ("assistanceId") values
     (${assistanceRow.id})`;

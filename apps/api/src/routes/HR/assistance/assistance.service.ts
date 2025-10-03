@@ -53,7 +53,9 @@ export class AssistanceService {
     SELECT id, "areaId", "positionId", ${firstDate} FROM employees where active`;
 
       await sql`INSERT INTO employeeproductivity ("assistanceId")
-    select id from assistance where "mondayDate" = ${firstDate} and (select captured from areas where id = assistance."areaId") = true`;
+      select id from assistance where "mondayDate" = ${firstDate}
+      and (select captured from areas where id = assistance."areaId") = true
+      and (select supervisor from positions where id = assistance."positionId") = false`;
 
       await this.req.record(
         `Generó una semana de asistencia para el ${firstDate}`,
