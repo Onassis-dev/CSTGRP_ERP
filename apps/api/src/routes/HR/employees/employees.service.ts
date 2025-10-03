@@ -152,6 +152,7 @@ export class EmployeesService {
   async editEmployee(body: z.infer<typeof editSchema>, file: File) {
     const [previousObj] =
       await sql`select * from employees where id = ${body.id}`;
+    const [firstDate] = getWeekDays(new Date());
 
     const image = await saveFile(file, 'employees', previousObj.photo);
 
@@ -165,7 +166,6 @@ export class EmployeesService {
       const [{ supervisor }] =
         await sql`select supervisor from positions where id = ${newEmployee.positionId}`;
       if (isCaptured && !supervisor) {
-        const [firstDate] = getWeekDays(new Date());
         const [assistanceRow] =
           await sql`select id from assistance where "mondayDate" = ${firstDate} and "employeeId" = ${newEmployee.id}`;
         if (assistanceRow) {
@@ -178,6 +178,9 @@ export class EmployeesService {
           }
         }
       }
+
+      //Update assistance position
+      await sql`update assistance set "positionId" = ${newEmployee.positionId} where "employeeId" = ${newEmployee.id} and "mondayDate" = ${firstDate}`;
 
       //Create record
       await this.req.record(
