@@ -92,6 +92,7 @@
 
 			comment: selected[dayNumber + 'comment']
 		};
+		noEmpleadoInput.value = selected.noEmpleado;
 	});
 
 	async function handleSubmit(negate: boolean = false) {
@@ -192,7 +193,6 @@
 							}}
 						/>
 						<Input
-							type="number"
 							id="noEmpleado"
 							class="rounded-r-none rounded-t-none border-r-0"
 							onchange={handleNoEmpleado}
@@ -243,7 +243,7 @@
 					)}%</Badge
 				>
 			</form>
-		</DialogBody>peero
+		</DialogBody>
 		<DialogFooter submitFunc={() => handleSubmit()} hideFunc={() => (show = false)} />
 	</DialogContent>
 </Dialog>
