@@ -256,12 +256,8 @@
 						{ responseType: 'arraybuffer' }
 					);
 					if (download) {
-						if (label.name === 'codigo-yamaha') {
-							openLocalFile(result.data, 'jpeg');
-						} else {
-							openLocalFile(result.data, 'jpg');
-						}
-						openLocalFile(result.data, 'jpg');
+						if (label.name === 'codigo-yamaha') openLocalFile(result.data, 'jpeg');
+						else openLocalFile(result.data, 'jpg');
 					} else {
 						window.open(
 							URL.createObjectURL(new Blob([result.data], { type: 'image/jpeg' })),
