@@ -62,6 +62,7 @@
 					<TableHead class="border-l">Area</TableHead>
 					<TableHead class="border-l">Cantidad</TableHead>
 					<TableHead>Fecha</TableHead>
+					<TableHead>Capturado</TableHead>
 					<TableHead class="w-1"></TableHead>
 				</TableHeader>
 				<TableBody>
@@ -89,6 +90,7 @@
 												? row.calidad
 												: row.serigrafia}</TableCell
 							>
+							<TableCell>{formatDate(row.date)}</TableCell>
 							<TableCell>{formatDate(row.created_at)}</TableCell>
 							<TableCell class="flex w-min items-center gap-1 px-1 ">
 								<Button

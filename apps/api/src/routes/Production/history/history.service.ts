@@ -36,7 +36,7 @@ export class HistoryService {
   }
 
   async getMovements(body: z.infer<typeof getMovementsSchema>) {
-    const jobs = await sql`select id, created_at,
+    const jobs = await sql`select id, created_at, date,
       corte, "cortesVarios", produccion, calidad, serigrafia
       from ordermovements where "progressId" = ${body.id} order by created_at desc`;
     return jobs;
