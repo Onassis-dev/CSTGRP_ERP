@@ -20,6 +20,7 @@
 	let incidencesList: any = [];
 	let dateSelected: any = $state(new Date().toISOString().split('T')[0]);
 	let viewComplete = $state(false);
+	let viewPro = $state(false);
 	let weekDays: string[] = $state([]);
 
 	async function getProductivity() {
@@ -92,6 +93,15 @@
 				><BookOpen class=" size-3.5" />Ver todo</Button
 			>
 		{/if}
+		{#if viewPro}
+			<Button class="flex-none" variant="outline" size="action" onclick={() => (viewPro = !viewPro)}
+				>Todos</Button
+			>
+		{:else}
+			<Button class="flex-none" variant="outline" size="action" onclick={() => (viewPro = !viewPro)}
+				>Pros</Button
+			>
+		{/if}
 	{/snippet}
 	{#snippet right()}
 		<Button onclick={() => (show = true)} size="action"><Pen class=" size-3.5" />Capturar</Button>
@@ -100,7 +110,7 @@
 </MenuBar>
 
 <CusTable>
-	{#each Object.keys(separatedProductivity) as areaId, i}
+	{#each Object.keys(separatedProductivity) as areaId}
 		<TableHeader class=" text-md sticky top-0 z-30 text-left uppercase ">
 			<TableHead colspan={100} class="bg-foreground text-background font-semibold"
 				>{areas[areaId]}</TableHead
@@ -118,7 +128,7 @@
 			<TableHeader class="z-20  text-xs uppercase ">
 				<TableHead colspan={4}></TableHead>
 
-				{#each weekDays as day}
+				{#each weekDays}
 					{#if viewComplete}
 						<TableHead></TableHead>
 						<TableHead colspan={3}>Operacion 1</TableHead>
@@ -136,7 +146,7 @@
 			<TableHead rowspan={2} class="w-full">Nombre</TableHead>
 			<TableHead rowspan={2}>Posicion</TableHead>
 
-			{#each weekDays as day}
+			{#each weekDays}
 				{#if viewComplete}
 					<TableHead>Incidencia</TableHead>
 					<TableHead>Codigo</TableHead>
@@ -154,7 +164,7 @@
 			{/each}
 		</TableHeader>
 		<TableBody>
-			{#each separatedProductivity[areaId] as row}
+			{#each viewPro ? separatedProductivity[areaId].filter((row: any) => row.positionId === '98') : separatedProductivity[areaId] as row}
 				<TableRow>
 					<TableCell
 						><Badge
@@ -171,7 +181,7 @@
 						></TableCell
 					>
 
-					{#each weekDays as day, j}
+					{#each weekDays as _, j}
 						{#if viewComplete}
 							<TableCell>{incidences[row['incidenceId' + j] || '']}</TableCell>
 							<TableCell>{row[j + 'code0'] || ''}</TableCell>
