@@ -164,7 +164,7 @@
 			{/each}
 		</TableHeader>
 		<TableBody>
-			{#each viewPro ? separatedProductivity[areaId].filter((row: any) => row.positionId === '98') : separatedProductivity[areaId] as row}
+			{#each viewPro ? separatedProductivity[areaId].filter(({ positionId }: any) => positionId === '98' || positionId === '99' || positionId === '82') : separatedProductivity[areaId] as row}
 				<TableRow>
 					<TableCell
 						><Badge
