@@ -74,6 +74,82 @@ export class JobsService {
     return movements;
   }
 
+  async post(body: z.infer<typeof exportSchema>) {
+    const materials = body.materials.map((item: any) => item.code);
+    if (body.productId) body.part = null;
+
+    const materialRows =
+      await sql`SELECT code FROM materials WHERE code in ${sql(materials)}`;
+    if (materialRows.length !== materials.length)
+      throw new HttpException(
+        'Uno o varios de los materiales incorrectos',
+        400,
+      );
+
+    await sql.begin(async (sql) => {
+      // Add inventory info
+      const [insertedJob] = await sql`Insert into materialie ${sql({
+        jobpo: body.jobpo,
+        programation: body.programation,
+        due: body.due,
+        clientId: body.clientId,
+      })} returning id`;
+
+      for (const material of body.materials) {
+        const [movement] =
+          await sql`insert into materialmovements ("materialId", "movementId", amount, "realAmount", active, "activeDate") values
+         ((select id from materials where code = ${material.code}), ${insertedJob.id} ,${-Math.abs(parseFloat(material.amount))}, ${-Math.abs(parseFloat(material.realAmount))}, ${material.active}, ${material.active ? new Date() : null})
+         returning "materialId"`;
+
+        if (material.active)
+          await updateMaterialAmount(movement.materialId, sql);
+      }
+
+      //If there is a productId, create the movement
+      let productMovement;
+      if (body.productId) {
+        [productMovement] = await sql`insert into materialmovements ${sql({
+          materialId: body.productId,
+          movementId: insertedJob.id,
+          amount: 0,
+          realAmount: 0,
+          active: true,
+          activeDate: new Date(),
+        })} returning id as "movementId"`;
+      }
+
+      // Add production info
+      const [order] = await sql`insert into orders ${sql({
+        areaId: body.areaId,
+        jobId: insertedJob.id,
+        part: body.part,
+        description: body.description,
+        perBox: body.perBox,
+        amount: body.amount,
+        corteTime: body.corteTime,
+        cortesVariosTime: body.cortesVariosTime,
+        produccionTime: body.produccionTime,
+        calidadTime: body.calidadTime,
+        serigrafiaTime: body.serigrafiaTime,
+        operations: body.operations,
+        ...productMovement,
+      })} returning id`;
+
+      // Add destinations info
+      await sql`insert into destinys ${sql(body.destinations, 'so')} on conflict ("so") do nothing`;
+
+      for (const destination of body.destinations) {
+        await sql`insert into order_destiny ("orderId", "destinyId", "amount", "date") values
+         (${order.id}, (select id from destinys where so = ${destination.so}), ${destination.amount}, ${destination.date})`;
+      }
+
+      // Make record
+      await this.req.record(`Registro el job: ${body.jobpo}`, sql);
+    });
+
+    return;
+  }
+
   async update(body: z.infer<typeof updateExportSchema>) {
     const [user] =
       await sql`select permissions from users where id = ${this.req.userId}`;
@@ -135,12 +211,15 @@ export class JobsService {
       await sql`update orders set ${sql({
         areaId: body.areaId,
         part: body.part,
+        description: body.description,
+        perBox: body.perBox,
         amount: body.amount,
         corteTime: body.corteTime,
         cortesVariosTime: body.cortesVariosTime,
         produccionTime: body.produccionTime,
         calidadTime: body.calidadTime,
         serigrafiaTime: body.serigrafiaTime,
+        operations: body.operations,
       })} where "jobId" = ${body.id}`;
 
       // Make record
@@ -148,71 +227,6 @@ export class JobsService {
         `Actualizo la exportacion: ${previousObj?.jobpo}, programacion: ${previousObj?.programation} a ${newObj?.jobpo}, ${newObj?.programation}`,
         sql,
       );
-    });
-
-    return;
-  }
-
-  async post(body: z.infer<typeof exportSchema>) {
-    const materials = body.materials.map((item: any) => item.code);
-    if (body.productId) body.part = null;
-
-    const materialRows =
-      await sql`SELECT code FROM materials WHERE code in ${sql(materials)}`;
-    if (materialRows.length !== materials.length)
-      throw new HttpException(
-        'Uno o varios de los materiales incorrectos',
-        400,
-      );
-
-    await sql.begin(async (sql) => {
-      // Add inventory info
-      const [insertedJob] = await sql`Insert into materialie ${sql({
-        jobpo: body.jobpo,
-        programation: body.programation,
-        due: body.due,
-        clientId: body.clientId,
-      })} returning id`;
-
-      for (const material of body.materials) {
-        const [movement] =
-          await sql`insert into materialmovements ("materialId", "movementId", amount, "realAmount", active, "activeDate") values
-         ((select id from materials where code = ${material.code}), ${insertedJob.id} ,${-Math.abs(parseFloat(material.amount))}, ${-Math.abs(parseFloat(material.realAmount))}, ${material.active}, ${material.active ? new Date() : null})
-         returning "materialId"`;
-
-        if (material.active)
-          await updateMaterialAmount(movement.materialId, sql);
-      }
-
-      //If there is a productId, create the movement
-      let productMovement;
-      if (body.productId) {
-        [productMovement] = await sql`insert into materialmovements ${sql({
-          materialId: body.productId,
-          movementId: insertedJob.id,
-          amount: 0,
-          realAmount: 0,
-          active: true,
-          activeDate: new Date(),
-        })} returning id as "movementId"`;
-      }
-
-      // Add production info
-      await sql`insert into orders ${sql({
-        areaId: body.areaId,
-        jobId: insertedJob.id,
-        part: body.part,
-        amount: body.amount,
-        corteTime: body.corteTime,
-        cortesVariosTime: body.cortesVariosTime,
-        produccionTime: body.produccionTime,
-        calidadTime: body.calidadTime,
-        serigrafiaTime: body.serigrafiaTime,
-        ...productMovement,
-      })}`;
-
-      // Make record
-      await this.req.record(`Registro el job: ${body.jobpo}`, sql);
     });
 
     return;

@@ -93,11 +93,15 @@
 		if (selectedMovement.id) {
 			await api.put('/jobs', {
 				...formData,
+				destinations,
+				operations,
 				materials
 			});
 		} else {
 			await api.post('/jobs', {
 				...formData,
+				destinations,
+				operations,
 				materials
 			});
 		}

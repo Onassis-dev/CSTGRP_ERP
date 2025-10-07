@@ -1,4 +1,5 @@
 import {
+  dateSchema,
   idSchema,
   intSchema,
   numberSchema,
@@ -27,8 +28,10 @@ export const importSchema = z.object({
 
 export const exportSchema = z.object({
   programation: z.string().max(20).min(2),
-  amount: intSchema,
-  part: z.string().nullish(),
+  perBox: intSchema.min(1, 'Numero invalido'),
+  amount: intSchema.min(1, 'Numero invalido'),
+  part: z.string().nullable(),
+  description: z.string().nullable(),
   jobpo: z.string(),
   due: z.string(),
   areaId: idSchema,
@@ -43,6 +46,21 @@ export const exportSchema = z.object({
       }),
     )
     .nonempty(),
+  destinations: z.array(
+    z.object({
+      po: z.string(),
+      so: z.string(),
+      amount: signedNumberSchema,
+      date: dateSchema,
+    }),
+  ),
+  operations: z.array(
+    z.object({
+      code: z.string(),
+      minutes: numberSchema,
+      area: z.string(),
+    }),
+  ),
   corteTime: numberSchema,
   cortesVariosTime: numberSchema,
   produccionTime: numberSchema,

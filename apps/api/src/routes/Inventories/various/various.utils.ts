@@ -28,18 +28,12 @@ export function processImport(text: string) {
     linesArray[
       linesArray.findIndex((line: string) => line.includes('Tracking :')) + 1
     ];
-  let dateParts =
+  const dateStr =
     linesArray[
       linesArray.findIndex((line: string) => line === '(mm/dd/yyyy) :') + 1
-    ].split('/');
+    ];
 
-  if (dateParts.length !== 3) {
-    dateParts =
-      linesArray[
-        linesArray.findIndex((line: string) => line === ':') + 1
-      ].split('/');
-  }
-  const dueDate = [dateParts[2], dateParts[0], dateParts[1]].join('-');
+  const dueDate = convertJobDateToISOString(dateStr);
 
   const materials: Array<object> = [];
   linesArray.forEach((element: string, i: number) => {
@@ -144,14 +138,7 @@ export async function processJob(text: string) {
     linesArray[
       linesArray.findIndex((line: any) => line.includes('Due Date:')) + 1
     ];
-
-  const [month, day, year] = dateStr.split('/');
-  let due: any = new Date();
-
-  due.setFullYear(year);
-  due.setMonth(parseInt(month) - 1);
-  due.setDate(day);
-  due = due.toISOString().split('T')[0];
+  const due = convertJobDateToISOString(dateStr);
 
   // Get destinations
   const destinations = [];
@@ -168,10 +155,10 @@ export async function processJob(text: string) {
         /^\d+$/.test(destinationsLines[i + 1])
       ) {
         destinations.push({
-          date: destinationsLines[i],
+          date: convertJobDateToISOString(destinationsLines[i]),
           so: destinationsLines[i + 1],
           po: destinationsLines[i + 10].replace(/\D/g, ''),
-          amount: destinationsLines[i + 4],
+          amount: destinationsLines[i + 4].replace(',', ''),
         });
       }
     });
@@ -269,4 +256,14 @@ export async function processJob(text: string) {
     destinations,
     perBox,
   };
+}
+
+function convertJobDateToISOString(dateStr: string) {
+  const [month, day, year] = dateStr.split('/');
+  const due: any = new Date();
+
+  due.setFullYear(year);
+  due.setMonth(parseInt(month) - 1);
+  due.setDate(day);
+  return due.toISOString().split('T')[0];
 }
