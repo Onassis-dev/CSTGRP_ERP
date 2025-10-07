@@ -21,7 +21,7 @@
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import MaterialInput from '$lib/components/basic/MaterialInput.svelte';
 	import { Button } from '$lib/components/ui/button';
-	import { Trash } from 'lucide-svelte';
+	import { Trash, Upload } from 'lucide-svelte';
 	import { refetch } from '$lib/utils/query';
 	import Label from '$lib/components/basic/Label.svelte';
 	import Select from '$lib/components/basic/Select.svelte';
@@ -48,6 +48,13 @@
 		code: string;
 		minutes: number;
 		area: string;
+	}
+
+	interface destination {
+		amount: string;
+		date: string;
+		so: string;
+		po: string;
 	}
 
 	const clientsQuery = createQuery({
@@ -78,6 +85,7 @@
 
 	let materials: material[] = $state([]);
 	let operations: operation[] = $state([]);
+	let destinations: destination[] = $state([]);
 	let formData: any = $state({});
 	let files: any = $state();
 
@@ -108,15 +116,18 @@
 		const fileName = fileEntry instanceof File ? fileEntry.name : '';
 		if (fileName?.includes('.pdf')) {
 			result = (await api.post('/inventoryvarious/jobpdf', form)).data;
+			console.log(result);
 			formData = { ...result };
 			materials = result.materials;
 			operations = result.operations;
+			destinations = result.destinations;
 		}
 		if (fileName?.includes('.xlsx')) {
 			result = (await api.post('/inventoryvarious/exportxlsx', form)).data;
 			formData = { ...result };
 			materials = result.materials;
 			operations = result.operations;
+			destinations = result.destinations;
 		}
 		if (!result) showError(null, 'Archivo invalido');
 	}
@@ -137,6 +148,15 @@
 	function deleteOperation(i: number) {
 		operations.splice(i, 1);
 		operations = [...operations];
+	}
+
+	function addDestination() {
+		destinations.push({ so: '', po: '', amount: '', date: '' });
+		destinations = [...destinations];
+	}
+	function deleteDestination(i: number) {
+		destinations.splice(i, 1);
+		destinations = [...destinations];
 	}
 
 	function cleanData() {
@@ -209,47 +229,62 @@
 </script>
 
 <Dialog bind:open={show}>
-	<DialogContent class="min-h-[95%] sm:max-w-5xl">
+	<DialogContent class="min-h-[99%] sm:max-w-5xl">
 		<DialogHeader title={selectedMovement.id ? 'Actualizar job-po' : 'Registrar job-po'} />
-		<DialogBody class="flex flex-col gap-4">
-			<div class="grid w-full gap-4 sm:grid-cols-4">
-				<Label name="Archivo">
-					<FileInput type="file" bind:files />
-				</Label>
+		<DialogBody class="flex flex-col gap-4 overflow-scroll">
+			<div class="grid w-full gap-2 sm:grid-cols-5">
 				<Label name="Programación">
 					<Input bind:value={formData.programation} />
 				</Label>
-				<Label name="Parte">
-					<Input bind:value={formData.part} disabled={!!formData.productId} />
-				</Label>
-				<Label name="Cliente">
-					<Select items={clients} bind:value={formData.clientId} />
-				</Label>
-			</div>
-			<div class="grid w-full gap-4 sm:grid-cols-5">
 				<Label name="Job o PO">
 					<Input disabled={inputDisabled} bind:value={formData.jobpo} />
-				</Label>
-				<Label name="Cantidad">
-					<Input bind:value={formData.amount} />
 				</Label>
 				<Label name="Fecha">
 					<Input type="date" bind:value={formData.due} />
 				</Label>
-				<Label name="Area">
-					<Select items={areasList} bind:value={formData.areaId} />
+				<div class="flex items-end gap-2">
+					<Label name="Cantidad">
+						<Input bind:value={formData.amount} />
+					</Label>
+					<Label name="Pz/Caja">
+						<Input bind:value={formData.perBox} />
+					</Label>
+				</div>
+				<div class="flex items-end gap-2">
+					<Label name="Cliente" class="w-full">
+						<Select items={clients} bind:value={formData.clientId} placeholder="" />
+					</Label>
+					<label>
+						<FileInput type="file" bind:files class="hidden" />
+						<div
+							class="border-input mt-auto flex size-8 cursor-pointer items-center justify-center rounded-sm border"
+						>
+							<Upload class="size-4" />
+						</div>
+					</label>
+				</div>
+
+				<Label name="Parte">
+					<Input bind:value={formData.part} disabled={!!formData.productId} />
 				</Label>
+				<Label name="Descripción" class="col-span-2">
+					<Input bind:value={formData.description} />
+				</Label>
+
+				<Label name="Area">
+					<Select items={areasList} bind:value={formData.areaId} placeholder="" />
+				</Label>
+
 				<Label name="Producto">
 					<Select
 						items={products}
 						bind:value={formData.productId}
 						disabled={!!selectedMovement.id}
 						allowDeselect
+						placeholder=""
 					/>
 				</Label>
-			</div>
 
-			<div class="grid w-full gap-4 sm:grid-cols-5">
 				<Label name="Corte">
 					<Input bind:value={formData.corteTime} disabled={!!operations?.length} />
 				</Label>
@@ -268,9 +303,10 @@
 			</div>
 
 			<Tabs class="w-full" value="materials">
-				<TabsList class="grid w-full grid-cols-2">
+				<TabsList class="grid w-full grid-cols-3">
 					<TabsTrigger value="materials">Materiales</TabsTrigger>
 					<TabsTrigger value="movements">Movimientos</TabsTrigger>
+					<TabsTrigger value="detinations">Destinos</TabsTrigger>
 				</TabsList>
 
 				<TabsContent value="materials" class="mt-4">
@@ -374,6 +410,65 @@
 						</TableBody>
 					</Table>
 					<Button onclick={addOperation} class="mx-auto">Agregar operacion</Button>
+				</TabsContent>
+
+				<TabsContent value="detinations">
+					<Table divClass="h-auto overflow-visible mt-4">
+						<TableHeader class="border-t">
+							<TableHead>SO</TableHead>
+							<TableHead>PO</TableHead>
+							<TableHead>Pz</TableHead>
+							<TableHead>Fecha</TableHead>
+							<TableHead class="w-1 p-0"></TableHead>
+						</TableHeader>
+
+						<TableBody>
+							{#each destinations as destination, i}
+								<TableRow>
+									<TableCell class="border-l p-0 px-[1px]"
+										><Input
+											class="rounded-none border-none !opacity-100"
+											type="text"
+											bind:value={destination.so}
+										/></TableCell
+									>
+									<TableCell class="p-0 px-[1px]"
+										><Input
+											class="rounded-none border-none !opacity-100"
+											type="text"
+											bind:value={destination.po}
+											oninput={() => (destinations = [...destinations])}
+										/></TableCell
+									>
+									<TableCell class="p-0 px-[1px]"
+										><Input
+											class="rounded-none border-none !opacity-100"
+											type="text"
+											bind:value={destination.amount}
+											oninput={() => (destinations = [...destinations])}
+										/></TableCell
+									>
+									<TableCell class="p-0 px-[1px]"
+										><Input
+											class="rounded-none border-none !opacity-100"
+											type="date"
+											bind:value={destination.date}
+											oninput={() => (destinations = [...destinations])}
+										/></TableCell
+									>
+									<TableCell class="flex h-8 justify-center p-0 px-[1px]"
+										><Button
+											onclick={() => deleteDestination(i)}
+											variant="ghost"
+											class="text-destructive-foreground aspect-square p-1"
+											><Trash class="size-5" /></Button
+										></TableCell
+									>
+								</TableRow>
+							{/each}
+						</TableBody>
+					</Table>
+					<Button onclick={addDestination} class="mx-auto">Agregar destino</Button>
 				</TabsContent>
 			</Tabs>
 		</DialogBody>
