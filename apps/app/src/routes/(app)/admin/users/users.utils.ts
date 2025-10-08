@@ -25,7 +25,8 @@ export const baseUser = {
 		prod_calidad: 0,
 		prod_serigrafia: 0,
 		prodmovements: 0,
-		reports: 0
+		reports: 0,
+		quality: 0
 	},
 	assistance_areas: [],
 	prod_areas: [],

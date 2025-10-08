@@ -11,12 +11,6 @@
 	import { Pen } from 'lucide-svelte';
 	import DeletePopUp from '$lib/components/complex/DeletePopUp.svelte';
 	import { showSuccess } from '$lib/utils/showToast';
-	import {
-		DropdownMenu,
-		DropdownMenuContent,
-		DropdownMenuItem,
-		DropdownMenuTrigger
-	} from '$lib/components/ui/dropdown-menu';
 	import { Button } from '$lib/components/ui/button';
 	import ImportMovementsForm from './ImportMovementsForm.svelte';
 	import { preventDefault } from 'svelte/legacy';
@@ -25,21 +19,13 @@
 
 	let show3 = $state(false);
 	let show4 = $state(false);
-	let show5 = $state(false);
 
 	let filters = $state({
-		type: 'both',
 		location: '',
 		code: ''
 	});
 
 	let selectedMovement: any = $state({});
-
-	let options = [
-		{ value: 'both', name: 'Ambos' },
-		{ value: 'imports', name: 'Importaciones' },
-		{ value: 'exports', name: 'Exportaciones' }
-	];
 
 	let locations = [
 		{ value: 'At M&M, In transit', name: 'En transito' },
@@ -66,10 +52,6 @@
 		selectedMovement = movements[i];
 		show3 = true;
 	}
-	function editJobPO(i: number) {
-		selectedMovement = movements[i];
-		show5 = true;
-	}
 
 	async function handleDelete() {
 		await api.delete('/ie/imports/' + selectedMovement.id);
@@ -84,7 +66,6 @@
 	<form
 		class="flex flex-col gap-2 lg:flex-row"
 		onsubmit={preventDefault(() => refetch(['imports']))}
-		action={''}
 	>
 		<Select
 			menu
@@ -117,13 +98,10 @@
 	<TableBody>
 		{#each movements as movement, i}
 			<TableRow>
-				<OptionsCell
-					editFunc={movement.import ? () => editImport(i) : () => editJobPO(i)}
-					deleteFunc={() => deleteIE(i)}
-				/>
-				<TableCell>{movement.import || ''}</TableCell>
-				<TableCell>{movement.location || ''}</TableCell>
-				<TableCell>{formatDate(movement.due) || ''}</TableCell>
+				<OptionsCell editFunc={() => editImport(i)} deleteFunc={() => deleteIE(i)} />
+				<TableCell>{movement.import}</TableCell>
+				<TableCell>{movement.location}</TableCell>
+				<TableCell>{formatDate(movement.due)}</TableCell>
 			</TableRow>
 		{/each}
 	</TableBody>

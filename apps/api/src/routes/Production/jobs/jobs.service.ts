@@ -40,12 +40,22 @@ export class JobsService {
       await sql`select (select code from materials where id = "materialId"), amount, "realAmount", active from materialmovements where "movementId" = ${body.id} and NOT extra
       ${order?.movementId ? sql`and id <> ${order.movementId}` : sql``}`;
 
+    const destinations =
+      await sql`select destinys.id, so, po, amount, date, pallets
+       from order_destiny 
+       join destinys on destinys.id = order_destiny."destinyId"
+       where "orderId" = (select id from orders where "jobId" = ${body.id})`;
+
     return {
       ...order,
       ...data,
       ...productMovement,
       due: data.due.toISOString().split('T')[0],
       materials,
+      destinations: destinations.map((destination) => ({
+        ...destination,
+        date: destination.date.toISOString().split('T')[0],
+      })),
     };
   }
 
@@ -136,11 +146,13 @@ export class JobsService {
       })} returning id`;
 
       // Add destinations info
-      await sql`insert into destinys ${sql(body.destinations, 'so')} on conflict ("so") do nothing`;
+      if (body.destinations.length > 0) {
+        await sql`insert into destinys ${sql(body.destinations, 'so')} on conflict ("so") do nothing`;
 
-      for (const destination of body.destinations) {
-        await sql`insert into order_destiny ("orderId", "destinyId", "amount", "date") values
-         (${order.id}, (select id from destinys where so = ${destination.so}), ${destination.amount}, ${destination.date})`;
+        for (const destination of body.destinations) {
+          await sql`insert into order_destiny ("orderId", "destinyId", "amount", "date", "po") values
+         (${order.id}, (select id from destinys where so = ${destination.so}), ${destination.amount}, ${destination.date}, ${destination.po})`;
+        }
       }
 
       // Make record
@@ -208,7 +220,7 @@ export class JobsService {
 
       // Add production info
       if (!body.part) throw new HttpException('Parte: requerida', 400);
-      await sql`update orders set ${sql({
+      const [order] = await sql`update orders set ${sql({
         areaId: body.areaId,
         part: body.part,
         description: body.description,
@@ -220,7 +232,18 @@ export class JobsService {
         calidadTime: body.calidadTime,
         serigrafiaTime: body.serigrafiaTime,
         operations: body.operations,
-      })} where "jobId" = ${body.id}`;
+      })} where "jobId" = ${body.id} returning id`;
+
+      // Add destinations info
+      if (body.destinations.length > 0) {
+        await sql`insert into destinys ${sql(body.destinations, 'so')} on conflict ("so") do nothing`;
+        await sql`delete from order_destiny where "orderId" = ${order.id}`;
+
+        for (const destination of body.destinations) {
+          await sql`insert into order_destiny ("orderId", "destinyId", "amount", "date", "po") values
+          (${order.id}, (select id from destinys where so = ${destination.so}), ${destination.amount}, ${destination.date}, ${destination.po})`;
+        }
+      }
 
       // Make record
       await this.req.record(

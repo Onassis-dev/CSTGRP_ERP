@@ -30,6 +30,7 @@
 
 	let options = [
 		{ value: 'production', name: 'Producción' },
+		{ value: 'quality', name: 'Calidad' },
 		{ value: 'inventory', name: 'Inventario' },
 		{ value: 'purchases', name: 'Compras' },
 		{ value: 'ie', name: 'Imp-Exp' },

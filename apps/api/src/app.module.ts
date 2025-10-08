@@ -10,6 +10,7 @@ import { PurchasesModule } from './routes/Purchases/purchases.module';
 import { ProductionModule } from './routes/Production/production.module';
 import { ReportsModule } from './routes/Reports/reports.module';
 import { ImportExportModule } from './routes/Import-Export/import-export.module';
+import { QualityModule } from './routes/Quality/quality.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { ImportExportModule } from './routes/Import-Export/import-export.module'
     ProductionModule,
     ReportsModule,
     ImportExportModule,
+    QualityModule,
   ],
 })
 export class AppModule {}

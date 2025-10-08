@@ -77,11 +77,12 @@
 		<OptionsHead />
 		<TableHead colspan={1}>-</TableHead>
 		<TableHead colspan={6}>General</TableHead>
+		<TableHead colspan={1}>Calidad</TableHead>
 		<TableHead colspan={2}>Reportes</TableHead>
 		<TableHead colspan={4}>RRHH</TableHead>
 		<TableHead colspan={7}>Producción</TableHead>
 		<TableHead colspan={5}>Almacen</TableHead>
-		<TableHead colspan={1}>Import-Export</TableHead>
+		<TableHead colspan={2}>Import-Export</TableHead>
 		<TableHead colspan={2}>-</TableHead>
 	</TableHeader>
 	<TableHeader>
@@ -93,6 +94,7 @@
 		<TableHead class="w-[12.5%]">Directorio</TableHead>
 		<TableHead class="w-[12.5%]">Docs</TableHead>
 		<TableHead class="w-[12.5%]">Labels</TableHead>
+		<TableHead class="w-[12.5%]">-</TableHead>
 		<TableHead class="w-[12.5%]">Ordenes</TableHead>
 		<TableHead class="w-[12.5%]">Productividad</TableHead>
 		<TableHead class="w-[12.5%]">Dashboard</TableHead>
@@ -112,6 +114,7 @@
 		<TableHead class="w-[12.5%]">Requisiciones</TableHead>
 		<TableHead class="w-[12.5%]">Peticiones</TableHead>
 		<TableHead class="w-[12.5%]">Importaciones</TableHead>
+		<TableHead class="w-[12.5%]">Exportaciones</TableHead>
 		<TableHead class="w-[12.5%]">Sistemas</TableHead>
 		<TableHead class="w-[12.5%]">Compras</TableHead>
 		<TableHead class="w-[12.5%]">Cliente</TableHead>
@@ -177,6 +180,15 @@
 						color={getBadgeColor(user.permissions.labels)}
 					>
 						{@const SvelteComponent_1 = badgeTexts[user.permissions.labels]}
+						<SvelteComponent_1 class="size-3.5" />
+					</Badge></TableCell
+				>
+				<TableCell class="p-1.5 text-center"
+					><Badge
+						class="flex h-full w-full items-center justify-center p-1"
+						color={getBadgeColor(user.permissions.quality)}
+					>
+						{@const SvelteComponent_1 = badgeTexts[user.permissions.quality]}
 						<SvelteComponent_1 class="size-3.5" />
 					</Badge></TableCell
 				>
@@ -351,6 +363,16 @@
 						color={getBadgeColor(user.permissions.imports)}
 					>
 						{@const SvelteComponent_11 = badgeTexts[user.permissions.imports]}
+						<SvelteComponent_11 class="size-3.5" />
+					</Badge></TableCell
+				>
+
+				<TableCell class="p-1.5 text-center"
+					><Badge
+						class="flex h-full w-full items-center justify-center p-1"
+						color={getBadgeColor(user.permissions.exports)}
+					>
+						{@const SvelteComponent_11 = badgeTexts[user.permissions.exports]}
 						<SvelteComponent_11 class="size-3.5" />
 					</Badge></TableCell
 				>

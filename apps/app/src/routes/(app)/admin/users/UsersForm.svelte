@@ -113,6 +113,13 @@
 			</div>
 
 			<div class={cardClass}>
+				<h3 class="col-span-full w-full pl-0.5 font-semibold">Calidad</h3>
+				<Label name="Perm. Calidad">
+					<Select items={permissions} bind:value={formData.permissions.quality} />
+				</Label>
+			</div>
+
+			<div class={cardClass}>
 				<h3 class="col-span-full w-full pl-0.5 font-semibold">Reportes</h3>
 				<Label name="Perm. ordenes">
 					<Select items={permissions} bind:value={formData.permissions.reports_orders} />
@@ -199,6 +206,9 @@
 						items={[...permissions, { value: 3, name: 'Eliminar y editar', color: 'purple' }]}
 						bind:value={formData.permissions.imports}
 					/>
+				</Label>
+				<Label name="Perm. Exportaciones">
+					<Select items={permissions} bind:value={formData.permissions.exports} />
 				</Label>
 			</div>
 

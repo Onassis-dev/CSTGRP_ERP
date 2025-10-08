@@ -29,8 +29,10 @@ export const permissionsList = {
   reports_areas: permType,
   hr_dashboard: permType,
   imports: permType,
+  exports: permType,
   jobs: permType,
   labels: permType,
+  quality: permType,
 };
 
 export const registerSchema = z.object({

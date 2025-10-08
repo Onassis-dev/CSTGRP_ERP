@@ -23,7 +23,8 @@
 		AlertTriangle,
 		Factory,
 		LineChartIcon,
-		Truck
+		Truck,
+		BadgeCheck
 	} from 'lucide-svelte';
 	import { goto } from '$app/navigation';
 	import { cn } from '$lib/utils';
@@ -149,6 +150,20 @@
 			</Accordion.Item>
 		{/if}
 
+		{#if hasAccess('quality')}
+			<Accordion.Item value="quality" class="border-none">
+				<Accordion.Trigger
+					class="hover:bg-muted  mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
+				>
+					<BadgeCheck class="size-3.5 text-[#5c5e63]" />
+					Calidad
+				</Accordion.Trigger>
+				<Accordion.Content>
+					<Accordion.Option href="/quality/orders" />
+				</Accordion.Content>
+			</Accordion.Item>
+		{/if}
+
 		{#if hasAccess('imports')}
 			<Accordion.Item value="ie" class="border-none">
 				<Accordion.Trigger
@@ -160,6 +175,9 @@
 				<Accordion.Content>
 					{#if hasAccess('imports')}
 						<Accordion.Option href="/ie/imports" />
+					{/if}
+					{#if hasAccess('exports')}
+						<Accordion.Option href="/ie/exports" />
 					{/if}
 				</Accordion.Content>
 			</Accordion.Item>

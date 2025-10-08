@@ -190,6 +190,7 @@ const valueTraduccion = {
   clientId: 'Cliente',
   labels: 'Labels',
   perBox: 'Pz/Caja',
+  destinations: 'Destinos',
 };
 
 export const getTraducction = (value: string | number) => {

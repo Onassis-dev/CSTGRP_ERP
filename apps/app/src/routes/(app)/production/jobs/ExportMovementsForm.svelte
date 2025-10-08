@@ -174,6 +174,8 @@
 	async function getData() {
 		const { data } = await api.get('/jobs/' + selectedMovement.id);
 		materials = data.materials;
+		destinations = data.destinations || [];
+		operations = Array.isArray(data.operations) ? data.operations : [];
 		formData = { ...data };
 		files = null;
 		inputDisabled = false;
@@ -315,7 +317,7 @@
 
 				<TabsContent value="materials" class="mt-4">
 					<Table divClass="h-auto overflow-visible">
-						<TableHeader class="border-t">
+						<TableHeader class="-top-[calc(1rem-1px)] border-t">
 							<TableHead>Codigo</TableHead>
 							<TableHead>Cantidad</TableHead>
 							<TableHead>Real</TableHead>

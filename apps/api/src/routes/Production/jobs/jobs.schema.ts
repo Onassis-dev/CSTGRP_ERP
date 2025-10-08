@@ -48,7 +48,7 @@ export const exportSchema = z.object({
     .nonempty(),
   destinations: z.array(
     z.object({
-      po: z.string(),
+      po: z.string().nullable(),
       so: z.string(),
       amount: signedNumberSchema,
       date: dateSchema,
