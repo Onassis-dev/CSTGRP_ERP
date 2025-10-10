@@ -16,7 +16,7 @@ export class AreasService {
   }
 
   async editArea(body: z.infer<typeof editSchema>) {
-    if (!body.captured) {
+    if (!body.active) {
       const [employee] =
         await sql`select * from employees where "areaId" = ${body.id}`;
       if (employee) {
