@@ -58,6 +58,8 @@
 
 		if (showAll) {
 			usedLabels = Object.keys(labelList) as (keyof typeof labelList)[];
+		} else if (part[0] === 'F' && part.length === 15) {
+			usedLabels = ['codigo-yamaha', 'yamaha', 'cantidad'];
 		} else if (part[0] === 'F') {
 			if (bastones === 2) {
 				usedLabels = [

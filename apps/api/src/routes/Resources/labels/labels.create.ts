@@ -24,12 +24,6 @@ export function createLabel(
   ctx: CanvasRenderingContext2D,
   { info, type }: z.infer<typeof downloadLabelSchema>,
 ) {
-  if (type === 'yamaha') {
-  }
-
-  if (type === 'kawasaki') {
-  }
-
   if (type === 'info') {
     ctx.font = '120px SwissBold';
     const partWidth = ctx.measureText(info.code).width;
