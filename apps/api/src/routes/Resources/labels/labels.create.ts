@@ -73,7 +73,7 @@ export function createLabel(
 
     const y = 130;
 
-    const text = `${info.jobpo}   ${type === 'bastones' ? '' : type === 'bastones-back' ? 'BACK' : 'FRONT'}`;
+    const text = `${info.jobpo}   ${type === 'bastones' ? '' : type === 'bastones-back' ? 'REAR' : 'FRONT'}`;
     ctx.fillText(text, 35, y);
     ctx.fillText(text, 675, y);
   }
