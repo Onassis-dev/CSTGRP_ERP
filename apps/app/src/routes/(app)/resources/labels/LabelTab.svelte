@@ -7,12 +7,14 @@
 	import api from '$lib/utils/server';
 	import { cn } from '$lib/utils';
 	import { openLocalFile } from '$lib/utils/functions';
+	import { Trash } from 'lucide-svelte';
 
 	interface Props {
 		job: any;
+		handleDelete: () => void;
 	}
 
-	let { job = $bindable() }: Props = $props();
+	let { job = $bindable(), handleDelete }: Props = $props();
 
 	let locked = $state(true);
 	let showAll = $state(false);
@@ -182,7 +184,7 @@
 </script>
 
 <Tabs.Content value={job.jobpo} class="space-y-4">
-	<div>
+	<div class="flex gap-1">
 		<Button variant="outline" onclick={() => (locked = !locked)}>
 			{locked ? 'Desbloquear' : 'Bloquear'}
 		</Button>
@@ -191,6 +193,9 @@
 		</Button>
 		<Button variant="outline" onclick={() => (download = !download)}>
 			{download ? 'Ver en Navegador' : 'Ver en PC'}
+		</Button>
+		<Button variant="outline" onclick={handleDelete}>
+			<Trash class="text-red-500" />
 		</Button>
 	</div>
 	<Card>

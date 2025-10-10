@@ -5,6 +5,12 @@
 	import LabelTab from './LabelTab.svelte';
 
 	let jobs: any = $state([]);
+	let selectedJob = $state('');
+
+	function handleDelete(i: number) {
+		jobs = jobs.filter((job: any, index: number) => index !== i);
+		selectedJob = jobs[0].jobpo;
+	}
 </script>
 
 <div class="flex w-full flex-col gap-6 p-6">
@@ -24,12 +30,13 @@
 					} else {
 						jobs = [...jobs, result];
 					}
+					selectedJob = result.jobpo;
 				}
 			}}
 		/>
 	</div>
 
-	<Tabs.Root>
+	<Tabs.Root bind:value={selectedJob}>
 		<Tabs.List class="flex w-full justify-start">
 			{#each jobs as job}
 				<Tabs.Trigger value={job.jobpo}>{job.jobpo}</Tabs.Trigger>
@@ -37,7 +44,7 @@
 		</Tabs.List>
 
 		{#each jobs as _, i}
-			<LabelTab bind:job={jobs[i]} />
+			<LabelTab bind:job={jobs[i]} handleDelete={() => handleDelete(i)} />
 		{/each}
 	</Tabs.Root>
 </div>
