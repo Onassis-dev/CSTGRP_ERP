@@ -280,7 +280,7 @@ export function generateOrder(
       size: 8,
       width: columnsX.total - columnsX.price - 6,
       height: 8,
-      text: `$${formatNumber(product.price, 3)}`,
+      text: `$${formatNumber(product.price, 4)}`,
       font,
       page,
     });
@@ -291,7 +291,7 @@ export function generateOrder(
       size: 8,
       width: rightMargin - columnsX.total - 6,
       height: 8,
-      text: `$${formatNumber(product.total, 3)}`,
+      text: `$${formatNumber(product.total, 4)}`,
       font,
       page,
     });
