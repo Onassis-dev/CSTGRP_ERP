@@ -98,7 +98,16 @@
 		const credential = await api.get('/employees/documents/credential/' + employee.id, {
 			responseType: 'blob'
 		});
-		downloadFile(credential.data, 'jpeg');
+
+		const url = URL.createObjectURL(new Blob([credential.data], { type: 'image/jpeg' }));
+		const a = document.createElement('a');
+		a.href = url;
+
+		a.download = 'cr' + employee.noEmpleado + '.jpg';
+		document.body.appendChild(a);
+		a.click();
+		document.body.removeChild(a);
+		URL.revokeObjectURL(url);
 	}
 
 	async function downloadDoc(url: string, name: string) {
