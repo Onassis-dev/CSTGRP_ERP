@@ -98,7 +98,7 @@
 		const credential = await api.get('/employees/documents/credential/' + employee.id, {
 			responseType: 'blob'
 		});
-		openLocalFile(credential.data, 'jpeg');
+		downloadFile(credential.data, 'jpeg');
 	}
 
 	async function downloadDoc(url: string, name: string) {
