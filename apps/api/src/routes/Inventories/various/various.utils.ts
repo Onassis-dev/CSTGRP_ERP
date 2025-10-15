@@ -158,7 +158,7 @@ export async function processJob(text: string) {
           date: convertJobDateToISOString(destinationsLines[i]),
           so: destinationsLines[i + 1],
           po: destinationsLines[i + 10].replace(/\D/g, ''),
-          amount: destinationsLines[i + 4].replace(',', ''),
+          amount: Number(destinationsLines[i + 4].replace(',', '')).toFixed(0),
         });
       }
     });

@@ -50,7 +50,7 @@ export const exportSchema = z.object({
     z.object({
       po: z.string().nullable(),
       so: z.string(),
-      amount: signedNumberSchema,
+      amount: intSchema.min(1),
       date: dateSchema,
     }),
   ),
