@@ -146,7 +146,7 @@ export async function processJob(text: string) {
   if (startDestinationsIndex !== -1) {
     const destinationsLines = linesArray.slice(
       startDestinationsIndex,
-      startMaterialsIndex,
+      startMaterialsIndex + 3,
     );
 
     destinationsLines.forEach((line: any, i: number) => {
