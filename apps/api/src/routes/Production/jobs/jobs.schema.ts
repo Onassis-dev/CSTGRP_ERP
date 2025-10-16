@@ -7,6 +7,8 @@ import {
 } from 'src/utils/schemas';
 import { z } from 'zod/v4';
 
+const transactionOptions = z.enum(['delete', 'insert']);
+
 export const IEFilterSchema = z.object({
   job: z.string().nullable(),
   programation: z.string().nullable(),
@@ -39,6 +41,8 @@ export const exportSchema = z.object({
   materials: z
     .array(
       z.object({
+        id: z.coerce.number().nullish(),
+        transaction: transactionOptions.nullish(),
         code: z.string(),
         amount: signedNumberSchema,
         realAmount: signedNumberSchema,
@@ -48,6 +52,8 @@ export const exportSchema = z.object({
     .nonempty(),
   destinations: z.array(
     z.object({
+      id: z.coerce.number().nullish(),
+      transaction: transactionOptions.nullish(),
       po: z.string().nullable(),
       so: z.string(),
       amount: intSchema.min(1),

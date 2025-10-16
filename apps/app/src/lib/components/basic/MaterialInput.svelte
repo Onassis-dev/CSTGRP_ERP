@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount, tick } from 'svelte';
+	import { onMount } from 'svelte';
 	import * as Command from '$lib/components/ui/command/index.js';
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import { cn } from '$lib/utils.js';
@@ -10,9 +10,15 @@
 		value: string | undefined;
 		measurement?: string;
 		normal?: boolean;
+		disabled?: boolean;
 	}
 
-	let { value = $bindable(), measurement = $bindable(), normal = false }: Props = $props();
+	let {
+		value = $bindable(),
+		measurement = $bindable(),
+		normal = false,
+		disabled = false
+	}: Props = $props();
 
 	async function getMeasurement() {
 		measurement = (await api.get('/inventoryvarious/measurement?code=' + value)).data;
@@ -50,6 +56,7 @@
 					normal ? '' : 'rounded-none border-none',
 					measurement ? '' : 'bg-destructive text-destructive-foreground'
 				)}
+				{disabled}
 			/>
 		</Popover.Trigger>
 		<Popover.Content

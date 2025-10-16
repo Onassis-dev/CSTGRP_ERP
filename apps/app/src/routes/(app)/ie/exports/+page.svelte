@@ -42,6 +42,11 @@
 		refetch(['exports']);
 		show3 = false;
 	}
+
+	function deleteIE(i: number) {
+		selectedRow = movements[i];
+		show3 = true;
+	}
 </script>
 
 <MenuBar>

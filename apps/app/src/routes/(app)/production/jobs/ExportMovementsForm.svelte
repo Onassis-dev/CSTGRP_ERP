@@ -28,6 +28,7 @@
 	import { untrack } from 'svelte';
 	import { createQuery } from '@tanstack/svelte-query';
 	import { getAreas, getClients, getOptions, getProducts } from '$lib/utils/queries';
+	import { cn } from '$lib/utils';
 
 	interface Props {
 		show: boolean;
@@ -42,6 +43,7 @@
 		realAmount: string;
 		measurement: string;
 		active: boolean;
+		transaction: 'insert' | 'delete';
 	}
 
 	interface operation {
@@ -55,6 +57,7 @@
 		date: string;
 		so: string;
 		po: string;
+		transaction: 'insert' | 'delete';
 	}
 
 	const clientsQuery = createQuery({
@@ -128,12 +131,23 @@
 	}
 
 	function addMaterial() {
-		materials.push({ code: '', measurement: '', amount: '', active: false, realAmount: '' });
+		materials.push({
+			code: '',
+			measurement: '',
+			amount: '',
+			active: false,
+			realAmount: '',
+			transaction: 'insert'
+		});
 		materials = materials;
 	}
 	function deleteMaterial(i: number) {
-		materials.splice(i, 1);
-		materials = materials;
+		if (materials[i].transaction === 'insert') {
+			materials.splice(i, 1);
+			materials = materials;
+		} else {
+			materials[i].transaction = 'delete';
+		}
 	}
 
 	function addOperation() {
@@ -146,12 +160,16 @@
 	}
 
 	function addDestination() {
-		destinations.push({ so: '', po: '', amount: '', date: '' });
+		destinations.push({ so: '', po: '', amount: '', date: '', transaction: 'insert' });
 		destinations = [...destinations];
 	}
 	function deleteDestination(i: number) {
-		destinations.splice(i, 1);
-		destinations = [...destinations];
+		if (destinations[i].transaction === 'insert') {
+			destinations.splice(i, 1);
+			destinations = [...destinations];
+		} else {
+			destinations[i].transaction = 'delete';
+		}
 	}
 	function addBaston() {
 		bastones.push('');
@@ -163,7 +181,16 @@
 	}
 
 	function cleanData() {
-		materials = [{ code: '', measurement: '', amount: '', active: false, realAmount: '' }];
+		materials = [
+			{
+				code: '',
+				measurement: '',
+				amount: '',
+				active: false,
+				realAmount: '',
+				transaction: 'insert'
+			}
+		];
 		operations = [];
 		formData = {};
 		files = null;
@@ -260,9 +287,12 @@
 						<Select items={clients} bind:value={formData.clientId} placeholder="" />
 					</Label>
 					<label>
-						<FileInput type="file" bind:files class="hidden" />
+						<FileInput type="file" bind:files class="hidden" disabled={!!selectedMovement.id} />
 						<div
-							class="border-input mt-auto flex size-8 cursor-pointer items-center justify-center rounded-sm border"
+							class={cn(
+								'border-input mt-auto flex size-8 cursor-pointer items-center justify-center rounded-sm border',
+								selectedMovement.id ? 'opacity-50' : ''
+							)}
 						>
 							<Upload class="size-4" />
 						</div>
@@ -317,7 +347,8 @@
 
 				<TabsContent value="materials" class="mt-4">
 					<Table divClass="h-auto overflow-visible">
-						<TableHeader class="-top-[calc(1rem-1px)] border-t">
+						<TableHeader class="-top-[calc(1rem-1px)]">
+							<TableHead class="w-1 p-0"></TableHead>
 							<TableHead>Codigo</TableHead>
 							<TableHead>Cantidad</TableHead>
 							<TableHead>Real</TableHead>
@@ -327,31 +358,45 @@
 						</TableHeader>
 
 						<TableBody>
-							{#each materials as material, i}
+							{#each materials as _, i}
 								<TableRow>
-									<TableCell class="border-l p-0 px-[1px]"
+									<TableCell
+										class={cn(
+											'w-1 border-l px-[1px]',
+											materials[i].transaction === 'delete' ? 'bg-red-600' : '',
+											materials[i].transaction === 'insert' ? 'bg-green-600' : ''
+										)}
+									/>
+									<TableCell class=" p-0 px-[1px]"
 										><MaterialInput
 											bind:value={materials[i].code}
 											bind:measurement={materials[i].measurement}
+											disabled={materials[i].transaction === 'delete'}
 										/></TableCell
 									>
 									<TableCell class="p-0 px-[1px]"
 										><Input
-											class="rounded-none border-none !opacity-100"
+											class="rounded-none border-none "
 											type="text"
 											bind:value={materials[i].amount}
+											disabled={materials[i].transaction === 'delete'}
 										/></TableCell
 									>
 									<TableCell class="p-0 px-[1px]"
 										><Input
-											class="rounded-none border-none !opacity-100"
+											class="rounded-none border-none "
 											type="text"
 											bind:value={materials[i].realAmount}
+											disabled={materials[i].transaction === 'delete'}
 										/></TableCell
 									>
 									<TableCell class="w-5">{materials[i].measurement}</TableCell>
 									<TableCell class="w-1 p-0 text-center"
-										><Checkbox class="mx-auto" bind:checked={materials[i].active} /></TableCell
+										><Checkbox
+											class="mx-auto"
+											bind:checked={materials[i].active}
+											disabled={materials[i].transaction === 'delete'}
+										/></TableCell
 									>
 									<TableCell class="flex h-8 justify-center p-0 px-[1px]"
 										><Button
@@ -421,6 +466,7 @@
 				<TabsContent value="detinations">
 					<Table divClass="h-auto overflow-visible mt-4">
 						<TableHeader class="border-t">
+							<TableHead class="w-1 p-0"></TableHead>
 							<TableHead>SO</TableHead>
 							<TableHead>PO</TableHead>
 							<TableHead>Pz</TableHead>
@@ -431,6 +477,13 @@
 						<TableBody>
 							{#each destinations as destination, i}
 								<TableRow>
+									<TableCell
+										class={cn(
+											'w-1 border-l px-[1px]',
+											destinations[i].transaction === 'delete' ? 'bg-red-600' : '',
+											destinations[i].transaction === 'insert' ? 'bg-green-600' : ''
+										)}
+									/>
 									<TableCell class="border-l p-0 px-[1px]"
 										><Input
 											class="rounded-none border-none !opacity-100"
