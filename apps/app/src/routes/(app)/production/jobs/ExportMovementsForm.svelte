@@ -86,25 +86,20 @@
 	let materials: material[] = $state([]);
 	let operations: operation[] = $state([]);
 	let destinations: destination[] = $state([]);
+	let bastones: string[] = $state([]);
 	let formData: any = $state({});
 	let files: any = $state();
 
 	async function handleSubmit() {
-		if (selectedMovement.id) {
-			await api.put('/jobs', {
-				...formData,
-				destinations,
-				operations,
-				materials
-			});
-		} else {
-			await api.post('/jobs', {
-				...formData,
-				destinations,
-				operations,
-				materials
-			});
-		}
+		const body = {
+			...formData,
+			destinations,
+			operations,
+			materials,
+			bastones
+		};
+		if (selectedMovement.id) await api.put('/jobs', body);
+		else await api.post('/jobs', body);
 
 		refetch(['jobs']);
 		show = false;
@@ -118,22 +113,18 @@
 		let result;
 		const fileEntry = form.get('file');
 		const fileName = fileEntry instanceof File ? fileEntry.name : '';
-		if (fileName?.includes('.pdf')) {
+
+		if (fileName?.includes('.pdf'))
 			result = (await api.post('/inventoryvarious/jobpdf', form)).data;
-			console.log(result);
-			formData = { ...result };
-			materials = result.materials;
-			operations = result.operations;
-			destinations = result.destinations;
-		}
-		if (fileName?.includes('.xlsx')) {
+		if (fileName?.includes('.xlsx'))
 			result = (await api.post('/inventoryvarious/exportxlsx', form)).data;
-			formData = { ...result };
-			materials = result.materials;
-			operations = result.operations;
-			destinations = result.destinations;
-		}
 		if (!result) showError(null, 'Archivo invalido');
+
+		formData = { ...result };
+		materials = result.materials;
+		operations = result.operations;
+		destinations = result.destinations;
+		bastones = result.bastones;
 	}
 
 	function addMaterial() {
@@ -161,6 +152,14 @@
 	function deleteDestination(i: number) {
 		destinations.splice(i, 1);
 		destinations = [...destinations];
+	}
+	function addBaston() {
+		bastones.push('');
+		bastones = [...bastones];
+	}
+	function deleteBaston(i: number) {
+		bastones.splice(i, 1);
+		bastones = [...bastones];
 	}
 
 	function cleanData() {
@@ -309,10 +308,11 @@
 			</div>
 
 			<Tabs class="w-full" value="materials">
-				<TabsList class="grid w-full grid-cols-3">
+				<TabsList class="grid w-full grid-cols-4">
 					<TabsTrigger value="materials">Materiales</TabsTrigger>
 					<TabsTrigger value="movements">Movimientos</TabsTrigger>
 					<TabsTrigger value="detinations">Destinos</TabsTrigger>
+					<TabsTrigger value="bastones">Bastones</TabsTrigger>
 				</TabsList>
 
 				<TabsContent value="materials" class="mt-4">
@@ -475,6 +475,38 @@
 						</TableBody>
 					</Table>
 					<Button onclick={addDestination} class="mx-auto">Agregar destino</Button>
+				</TabsContent>
+				<TabsContent value="bastones">
+					<Table divClass="h-auto overflow-visible mt-4">
+						<TableHeader class="border-t">
+							<TableHead>Medida</TableHead>
+							<TableHead class="w-1 p-0"></TableHead>
+						</TableHeader>
+
+						<TableBody>
+							{#each bastones as _, i}
+								<TableRow>
+									<TableCell class="border-l p-0 px-[1px]"
+										><Input
+											class=" rounded-none border-none !opacity-100"
+											type="text"
+											bind:value={bastones[i]}
+										/></TableCell
+									>
+
+									<TableCell class="flex h-8  justify-center p-0 px-[1px]"
+										><Button
+											onclick={() => deleteBaston(i)}
+											variant="ghost"
+											class="text-destructive-foreground aspect-square p-1"
+											><Trash class="size-5" /></Button
+										></TableCell
+									>
+								</TableRow>
+							{/each}
+						</TableBody>
+					</Table>
+					<Button onclick={addBaston} class="mx-auto">Agregar baston</Button>
 				</TabsContent>
 			</Tabs>
 		</DialogBody>

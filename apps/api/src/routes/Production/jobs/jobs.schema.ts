@@ -61,6 +61,7 @@ export const exportSchema = z.object({
       area: z.string(),
     }),
   ),
+  bastones: z.array(z.string()).max(2),
   corteTime: numberSchema,
   cortesVariosTime: numberSchema,
   produccionTime: numberSchema,
