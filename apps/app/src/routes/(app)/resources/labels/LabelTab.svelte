@@ -52,7 +52,7 @@
 	let selectedLabels: LabelButton[] = $derived.by(() => {
 		if (!job) return [];
 		const part = job.part;
-		const bastones: number = 0;
+		const bastones: number = job.bastones.length;
 
 		let usedLabels: (keyof typeof labelList)[] = [];
 
@@ -61,30 +61,9 @@
 		} else if (part[0] === 'F' && part.length === 15) {
 			usedLabels = ['codigo-yamaha', 'yamaha', 'cantidad'];
 		} else if (part[0] === 'F') {
-			if (bastones === 2) {
-				usedLabels = [
-					'inspector',
-					'bastones-front',
-					'bastones-back',
-					'codigo-yamaha',
-					'warning',
-					'info',
-					'yamaha',
-					'cantidad'
-				];
-			} else if (bastones === 1) {
-				usedLabels = [
-					'inspector',
-					'bastones',
-					'codigo-yamaha',
-					'warning',
-					'info',
-					'yamaha',
-					'cantidad'
-				];
-			} else {
-				usedLabels = ['inspector', 'codigo-yamaha', 'warning', 'info', 'yamaha', 'cantidad'];
-			}
+			usedLabels = ['inspector', 'codigo-yamaha', 'warning', 'info', 'yamaha', 'cantidad'];
+			if (bastones === 1) usedLabels.push('bastones');
+			if (bastones === 2) usedLabels.push('bastones-back', 'bastones-front');
 		} else if (part[0] === 'P') {
 			usedLabels = ['yamaha', 'cantidad'];
 		} else if (part[0] === '4') {
@@ -222,6 +201,29 @@
 				<div>
 					<p class="text-muted-foreground text-xs">Pz/Caja:</p>
 					<Input bind:value={job.perBox} disabled={locked} />
+				</div>
+				<div>
+					<p class="text-muted-foreground text-xs">Bastones:</p>
+					<Input
+						type="number"
+						min="0"
+						max="2"
+						value={job.bastones.length}
+						oninput={(e) => {
+							const input = e.target as HTMLInputElement;
+							let value = Number(input.value);
+							if (value > 2) {
+								input.value = '2';
+								value = 2;
+							}
+							if (value < 0) {
+								input.value = '0';
+								value = 0;
+							}
+							job.bastones.length = value;
+						}}
+						disabled={locked}
+					/>
 				</div>
 			</div>
 		</CardContent>

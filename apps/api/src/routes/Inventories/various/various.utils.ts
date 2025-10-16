@@ -82,6 +82,7 @@ export async function processJob(text: string) {
   let amount = '';
   let description = '';
   let perBox = 0;
+  const bastones: string[] = [];
 
   const linesArray = text.split(/\s{3,}| {2}/);
 
@@ -210,6 +211,29 @@ export async function processJob(text: string) {
       material.code[0] === 'P' ? 'CSI-' + material.code : material.code;
   });
 
+  // Get bastones
+  materialsLines.forEach((element, i) => {
+    if (element.includes('P60-1005')) {
+      for (let j = i; j < i + 10; j++) {
+        if (materialsLines[j].startsWith('CUT')) {
+          const separatedString = materialsLines[j].split(' ');
+
+          separatedString.forEach((string, k) => {
+            if (string === '@') {
+              if (separatedString[k - 1] === '1') {
+                bastones.push(separatedString[k + 1]);
+              }
+              if (separatedString[k - 1] === '2') {
+                bastones.push(separatedString[k + 1]);
+                bastones.push(separatedString[k + 1]);
+              }
+            }
+          });
+        }
+      }
+    }
+  });
+
   // Get operations
   const operationsLines = linesArray.slice(startOperationsIndex, -1);
   const operations: Array<any> = [];
@@ -255,6 +279,7 @@ export async function processJob(text: string) {
     description,
     destinations,
     perBox,
+    bastones,
   };
 }
 
