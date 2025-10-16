@@ -13,14 +13,18 @@ export class ZodPiPe implements PipeTransform {
   }
 }
 
-function cleanValues(values) {
-  for (const key of Object.keys(values)) {
-    if (values[key] === '') {
-      values[key] = null;
-    } else if (typeof values[key] === 'string') {
-      values[key] = values[key].trim();
-    } else if (typeof values[key] === 'object' && values[key] !== null) {
-      cleanValues(values[key]);
-    }
+function cleanValues(value) {
+  if (typeof value === 'string') {
+    value = value.trim();
+    if (value === '') return null;
+    else return value;
   }
+  if (Array.isArray(value)) return value.map(cleanValues);
+  if (typeof value === 'object' && value !== null) {
+    for (const key of Object.keys(value)) {
+      value[key] = cleanValues(value[key]);
+    }
+    return value;
+  }
+  return value;
 }
