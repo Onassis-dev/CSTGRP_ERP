@@ -132,6 +132,7 @@ export async function openLocalFile(blob: Blob, fileType: 'jpeg' | 'png' | 'jpg'
 		});
 	} catch (err) {
 		console.error('Error al abrir archivo:', err);
+		window.open('https://localhost:55000', '_blank');
 	}
 }
 
