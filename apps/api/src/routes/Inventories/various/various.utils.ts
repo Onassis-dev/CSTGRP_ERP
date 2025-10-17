@@ -216,7 +216,7 @@ export async function processJob(text: string) {
   // Get bastones
   materialsLines.forEach((element, i) => {
     if (element.includes('P60-1005')) {
-      for (let j = i; j < i + 25; j++) {
+      for (let j = i; j < i + 30; j++) {
         if (materialsLines[j].startsWith('CUT')) {
           const separatedString = materialsLines[j].split(' ');
 
@@ -231,6 +231,8 @@ export async function processJob(text: string) {
               }
             }
           });
+
+          break;
         }
       }
     }
