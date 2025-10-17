@@ -18,7 +18,8 @@ export class StatsService {
         DISTINCT(materials.code),
         materials.description,
         materials.measurement, 
-        (materials.amount + materials."leftoverAmount") as balance,
+        materials.amount,
+        materials."leftoverAmount",
         (
           SELECT string_agg("jobpo", ', ') 
           FROM materialmovements 
@@ -26,11 +27,11 @@ export class StatsService {
           WHERE "materialId" = materials.id 
           AND materialmovements.active = false
         ) as jobpo,
-        ABS(ms.total_amount) as amount,
-        ABS(materials.amount + materials."leftoverAmount" + ms.total_amount) as missing
+        ABS(ms.total_amount) as required,
+        ABS(materials.amount + ms.total_amount) as missing
     FROM materials
     JOIN MaterialSum ms ON ms.id = materials.id
-    WHERE materials.amount + materials."leftoverAmount" + ms.total_amount < 0`;
+    WHERE materials.amount  + ms.total_amount < 0`;
 
     const secondMovements = await sql`SELECT 
     code, materialie.jobpo, measurement, description,

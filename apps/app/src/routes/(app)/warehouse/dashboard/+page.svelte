@@ -72,6 +72,7 @@
 					<TableHead class="w-min">Job</TableHead>
 					<TableHead>Requerido</TableHead>
 					<TableHead>Inventario</TableHead>
+					<TableHead>Sobrante</TableHead>
 					<TableHead>Faltante</TableHead>
 					<TableHead class="border-r-0">Medida</TableHead>
 				</TableHeader>
@@ -83,8 +84,9 @@
 								>{row.description || ''}</TableCell
 							>
 							<TableCell class="w-full whitespace-normal">{row.jobpo || ''}</TableCell>
+							<TableCell><Badge color="gray">{row.required || ''}</Badge></TableCell>
 							<TableCell><Badge color="gray">{row.amount || ''}</Badge></TableCell>
-							<TableCell><Badge color="gray">{row.balance || ''}</Badge></TableCell>
+							<TableCell><Badge color="gray">{row.leftoverAmount || ''}</Badge></TableCell>
 							<TableCell><Badge color="red">{row.missing || ''}</Badge></TableCell>
 							<TableCell class="!border-b-0 border-r-0">{row.measurement || ''}</TableCell>
 						</TableRow>
