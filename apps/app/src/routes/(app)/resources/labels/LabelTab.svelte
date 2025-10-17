@@ -181,28 +181,28 @@
 	</div>
 	<Card>
 		<CardContent>
-			<div class="grid grid-cols-2 gap-4">
-				<div>
+			<div class="grid grid-cols-6 gap-4">
+				<div class="col-span-3">
 					<p class="text-muted-foreground text-xs">Job:</p>
 					<Input bind:value={job.jobpo} disabled={locked} />
 				</div>
-				<div>
+				<div class="col-span-3">
 					<p class="text-muted-foreground text-xs">Codigo:</p>
 					<Input bind:value={job.part} disabled={locked} />
 				</div>
-				<div class="col-span-2">
+				<div class="col-span-6">
 					<p class="text-muted-foreground text-xs">Descripción:</p>
 					<Input bind:value={job.description} disabled={locked} />
 				</div>
-				<div>
+				<div class="col-span-2">
 					<p class="text-muted-foreground text-xs">Cantidad:</p>
 					<Input bind:value={job.amount} disabled={locked} />
 				</div>
-				<div>
+				<div class="col-span-2">
 					<p class="text-muted-foreground text-xs">Pz/Caja:</p>
 					<Input bind:value={job.perBox} disabled={locked} />
 				</div>
-				<div>
+				<div class="col-span-2">
 					<p class="text-muted-foreground text-xs">Bastones:</p>
 					<Input
 						type="number"

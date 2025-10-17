@@ -3,6 +3,7 @@
 	import { Input } from '$lib/components/ui/input';
 	import api from '$lib/utils/server';
 	import LabelTab from './LabelTab.svelte';
+	import ScannerReader from './ScannerReader.svelte';
 
 	let jobs: any = $state([]);
 	let selectedJob = $state('');
@@ -14,7 +15,7 @@
 </script>
 
 <div class="flex w-full flex-col gap-6 p-6">
-	<div>
+	<div class="grid grid-cols-[24rem_1fr] gap-4">
 		<Input
 			type="file"
 			accept=".pdf"
@@ -34,6 +35,8 @@
 				}
 			}}
 		/>
+
+		<ScannerReader />
 	</div>
 
 	<Tabs.Root bind:value={selectedJob}>
