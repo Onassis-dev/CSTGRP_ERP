@@ -6,6 +6,7 @@ export const createSchema = z.object({
   color: z.string(),
   active: z.boolean(),
   hourPrice: numberSchema,
+  legalName: z.string(),
 });
 
 export const editSchema = createSchema.extend({

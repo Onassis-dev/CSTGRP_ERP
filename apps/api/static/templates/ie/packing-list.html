@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Packing List</title>
+    <style>
+      body {
+        padding: 0.7in;
+        font-family: Arial, sans-serif;
+        font-size: 11px;
+        line-height: 1.1;
+        height: calc(100lvh - 1.4in);
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+      }
+
+      .header-div {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        gap: 12px;
+      }
+      .header-div-content {
+        display: grid;
+        grid-template-columns: auto auto;
+        gap: 20px;
+      }
+      p {
+        margin: 0;
+      }
+      img {
+        grid-row: 4 / 6;
+      }
+
+      .title {
+        width: 100%;
+        height: 50px;
+        background-color: #252525;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        font-weight: bold;
+        margin-top: 24px;
+        letter-spacing: 5px;
+      }
+
+      .data {
+        display: grid;
+        grid-template-columns: auto auto auto auto auto auto;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        gap: 12px 8px;
+      }
+
+      .separator {
+        height: 24px;
+        width: 100%;
+        background-color: #1f4e78;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      thead {
+        height: 20px;
+        background-color: #252525;
+        color: #fff;
+      }
+      th {
+        text-align: left;
+      }
+
+      tr {
+        height: 24px;
+      }
+
+      tr:nth-child(even) {
+        background-color: #f0f0f0;
+      }
+
+      td {
+        word-break: keep-all;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: min-content;
+      }
+      .description {
+        max-width: 180px;
+      }
+
+      footer {
+        margin-top: auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+      }
+
+      footer .left {
+        display: grid;
+        grid-template-columns: auto 180px;
+        gap: 10px;
+      }
+
+      footer .right {
+        display: grid;
+        grid-template-columns: auto auto;
+        gap: 10px;
+      }
+
+      footer .right p {
+        text-align: right;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header-div">
+      <img
+        src="data:image/png;base64,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"
+        alt="Logo"
+      />
+      <div class="header-div-content">
+        <div style="max-width: 240px">
+          <b>Exported: {{exported.name}}</b>
+          <p>{{exported.direction}}</p>
+          <p>RFC: {{exported.rfc}}</p>
+        </div>
+
+        <div style="max-width: 200px">
+          <b>Sold to: {{soldTo.name}}</b>
+          <p>{{soldTo.direction}}</p>
+          <p>TAX ID: {{soldTo.rfc}}</p>
+        </div>
+
+        <div style="max-width: 240px">
+          <b>Ship to: {{shipTo.name}}</b>
+          <p>{{shipTo.direction}}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="title">PACKING LIST</div>
+
+    <div class="data">
+      <b>Pack Slip:</b>
+      <p>{{packSlip}}</p>
+      <b>Ship Date:</b>
+      <p>{{shipDate}}</p>
+      <b>TRK# :</b>
+      <p>{{trk}}</p>
+      <b>Ship Via:</b>
+      <p>{{shipVia}}</p>
+      <b>B/L No:</b>
+      <p>{{blNo}}</p>
+      <b>PO :</b>
+      <p>{{po}}</p>
+      <b>Consignee :</b>
+      <p>{{consignee}}</p>
+      <b>Invoice :</b>
+      <p>{{invoice}}</p>
+    </div>
+
+    <table>
+      <thead>
+        <th>Part No</th>
+        <th>Job</th>
+        <th>PO</th>
+        <th>Description</th>
+        <th>UMC</th>
+        <th>QTY</th>
+      </thead>
+      <tbody>
+        {{{rows}}}
+      </tbody>
+    </table>
+
+    <footer>
+      <div class="left">
+        <b>Destination:</b>
+        <p>{{destination.name}} <br />{{destination.direction}}</p>
+        <b>Carrier Exp:</b>
+        <p>{{carrierExp}}</p>
+      </div>
+
+      <div class="right">
+        <b>Total QTY:</b>
+        <p>{{totalQty}}</p>
+        <b>Total Box:</b>
+        <p>{{totalBox}}</p>
+        <b>Total Pallet:</b>
+        <p>{{totalPallet}}</p>
+        <b>Total Weight:</b>
+        <p>{{weight}}</p>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -6,7 +6,7 @@
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
 	import OptionsCell from '$lib/components/basic/OptionsCell.svelte';
 	import OptionsHead from '$lib/components/basic/OptionsHead.svelte';
-	import { Pen } from 'lucide-svelte';
+	import { FileDown, Pen } from 'lucide-svelte';
 	import DeletePopUp from '$lib/components/complex/DeletePopUp.svelte';
 	import { showSuccess } from '$lib/utils/showToast';
 	import { Button } from '$lib/components/ui/button';
@@ -14,9 +14,11 @@
 	import { createQuery } from '@tanstack/svelte-query';
 	import { refetch } from '$lib/utils/query';
 	import ExportsCard from './ExportsCard.svelte';
+	import PackingListForm from './PackingListForm.svelte';
 
 	let show3 = $state(false);
 	let show4 = $state(false);
+	let showForm = $state(false);
 
 	let filters = $state({
 		jobpo: ''
@@ -47,6 +49,13 @@
 		selectedRow = movements[i];
 		show3 = true;
 	}
+
+	function downloadPackingList(i: number) {
+		window.open(
+			import.meta.env.VITE_BASEURL + '/ie/packing-list/download?id=' + movements[i]?.id,
+			'_blank'
+		);
+	}
 </script>
 
 <MenuBar>
@@ -75,7 +84,17 @@
 	<TableBody>
 		{#each movements as movement, i}
 			<TableRow>
-				<OptionsCell viewFunc={() => viewExport(i)} deleteFunc={() => deleteIE(i)} />
+				<OptionsCell
+					viewFunc={() => viewExport(i)}
+					deleteFunc={() => deleteIE(i)}
+					extraButtons={[
+						{
+							fn: () => downloadPackingList(i),
+							name: 'Descargar',
+							icon: FileDown
+						}
+					]}
+				/>
 				<TableCell>{movement.so}</TableCell>
 			</TableRow>
 		{/each}
@@ -83,4 +102,5 @@
 </CusTable>
 
 <DeletePopUp bind:show={show3} text="Eliminar destino" deleteFunc={handleDelete} />
-<ExportsCard bind:show={show4} {selectedRow} />
+<ExportsCard bind:show={show4} {selectedRow} bind:showForm />
+<PackingListForm bind:show={showForm} bind:selectedRow />

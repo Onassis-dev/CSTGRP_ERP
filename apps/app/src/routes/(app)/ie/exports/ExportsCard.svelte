@@ -16,13 +16,15 @@
 	} from '$lib/components/ui/table';
 	import api from '$lib/utils/server';
 	import { formatDate } from '$lib/utils/functions';
+	import Button from '$lib/components/ui/button/button.svelte';
 
 	interface Props {
 		show: boolean;
 		selectedRow: any;
+		showForm: boolean;
 	}
 
-	let { show = $bindable(), selectedRow = $bindable() }: Props = $props();
+	let { show = $bindable(), selectedRow = $bindable(), showForm = $bindable() }: Props = $props();
 
 	let data: any[] = $state([]);
 
@@ -68,6 +70,16 @@
 							>
 						</TableRow>
 					{/if}
+
+					<Button
+						onclick={() => {
+							show = false;
+							showForm = true;
+						}}
+						disabled={data.some((row) => !row.pallets)}
+					>
+						Editar packing list
+					</Button>
 				</TableBody>
 			</Table>
 		</DialogBody>

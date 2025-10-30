@@ -48,7 +48,8 @@
 <CusTable>
 	<TableHeader>
 		<OptionsHead />
-		<TableHead class="w-full">Nombre</TableHead>
+		<TableHead>Nombre</TableHead>
+		<TableHead class="w-full">Legal</TableHead>
 		<TableHead>Color</TableHead>
 		<TableHead>$/hora</TableHead>
 		<TableHead>Activo</TableHead>
@@ -58,6 +59,7 @@
 			<TableRow>
 				<OptionsCell editFunc={() => editPosition(i)} deleteFunc={() => deletePosition(i)} />
 				<TableCell>{position.name}</TableCell>
+				<TableCell>{position.legalName}</TableCell>
 				<TableCell><Badge color={position.color}>{position.color}</Badge></TableCell>
 				<TableCell>{position.hourPrice}</TableCell>
 				<TableCell>

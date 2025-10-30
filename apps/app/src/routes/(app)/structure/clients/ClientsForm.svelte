@@ -24,7 +24,8 @@
 		name: '',
 		color: '',
 		active: true,
-		hourPrice: 0
+		hourPrice: 0,
+		legalName: ''
 	});
 
 	function setFormData() {
@@ -78,6 +79,9 @@
 			</Label>
 			<Label name="Activo">
 				<Checkbox name="text" bind:checked={formData.active} />
+			</Label>
+			<Label name="Nombre legal">
+				<Input name="text" bind:value={formData.legalName} />
 			</Label>
 		</DialogBody>
 		<DialogFooter submitFunc={handleSubmit} hideFunc={() => (show = false)} />

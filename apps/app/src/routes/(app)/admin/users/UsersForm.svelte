@@ -210,6 +210,9 @@
 				<Label name="Perm. Exportaciones">
 					<Select items={permissions} bind:value={formData.permissions.exports} />
 				</Label>
+				<Label name="Perm. Opciones">
+					<Select items={permissions} bind:value={formData.permissions.ie_options} />
+				</Label>
 			</div>
 
 			<div class={cardClass}>

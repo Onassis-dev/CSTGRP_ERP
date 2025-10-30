@@ -82,7 +82,7 @@
 		<TableHead colspan={4}>RRHH</TableHead>
 		<TableHead colspan={7}>Producción</TableHead>
 		<TableHead colspan={5}>Almacen</TableHead>
-		<TableHead colspan={2}>Import-Export</TableHead>
+		<TableHead colspan={3}>Import-Export</TableHead>
 		<TableHead colspan={2}>-</TableHead>
 	</TableHeader>
 	<TableHeader>
@@ -115,6 +115,7 @@
 		<TableHead class="w-[12.5%]">Peticiones</TableHead>
 		<TableHead class="w-[12.5%]">Importaciones</TableHead>
 		<TableHead class="w-[12.5%]">Exportaciones</TableHead>
+		<TableHead class="w-[12.5%]">Opciones</TableHead>
 		<TableHead class="w-[12.5%]">Sistemas</TableHead>
 		<TableHead class="w-[12.5%]">Compras</TableHead>
 		<TableHead class="w-[12.5%]">Cliente</TableHead>
@@ -373,6 +374,16 @@
 						color={getBadgeColor(user.permissions.exports)}
 					>
 						{@const SvelteComponent_11 = badgeTexts[user.permissions.exports]}
+						<SvelteComponent_11 class="size-3.5" />
+					</Badge></TableCell
+				>
+
+				<TableCell class="p-1.5 text-center"
+					><Badge
+						class="flex h-full w-full items-center justify-center p-1"
+						color={getBadgeColor(user.permissions.ie_options)}
+					>
+						{@const SvelteComponent_11 = badgeTexts[user.permissions.ie_options]}
 						<SvelteComponent_11 class="size-3.5" />
 					</Badge></TableCell
 				>

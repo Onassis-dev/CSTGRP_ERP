@@ -164,7 +164,7 @@
 			</Accordion.Item>
 		{/if}
 
-		{#if hasAccess('imports')}
+		{#if hasAccess('imports') || hasAccess('exports') || hasAccess('ie_options')}
 			<Accordion.Item value="ie" class="border-none">
 				<Accordion.Trigger
 					class="hover:bg-muted  mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
@@ -178,6 +178,15 @@
 					{/if}
 					{#if hasAccess('exports')}
 						<Accordion.Option href="/ie/exports" />
+					{/if}
+					{#if hasAccess('ie_options')}
+						<Accordion.Option href="/ie/carriers" />
+					{/if}
+					{#if hasAccess('ie_options')}
+						<Accordion.Option href="/ie/destination-directions" />
+					{/if}
+					{#if hasAccess('ie_options')}
+						<Accordion.Option href="/ie/shippers" />
 					{/if}
 				</Accordion.Content>
 			</Accordion.Item>

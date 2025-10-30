@@ -1,15 +1,12 @@
 <script lang="ts">
-	import { preventDefault } from 'svelte/legacy';
 	import Label from '$lib/components/basic/Label.svelte';
 	import Select from '$lib/components/basic/Select.svelte';
-	import { Button } from '$lib/components/ui/button';
 	import {
 		Dialog,
 		DialogBody,
 		DialogContent,
 		DialogFooter,
-		DialogHeader,
-		DialogTitle
+		DialogHeader
 	} from '$lib/components/ui/dialog';
 	import { FileInput, Input } from '$lib/components/ui/input';
 	import api from '$lib/utils/server';
