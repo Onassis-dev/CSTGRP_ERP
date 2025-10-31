@@ -112,7 +112,15 @@ export class PackingListService {
     const [data] = await sql`select * from destinys where id = ${body.id}`;
 
     const browser = await puppeteer.launch({
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      headless: true,
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-accelerated-2d-canvas',
+        '--disable-gpu',
+      ],
+      executablePath: '/usr/bin/google-chrome',
     });
     const page = await browser.newPage();
 
