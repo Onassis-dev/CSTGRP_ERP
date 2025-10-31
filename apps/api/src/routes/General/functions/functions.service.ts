@@ -418,4 +418,44 @@ export class FunctionsService {
 
     return { completed, total: entries.length };
   }
+
+  async zenpet(file: File) {
+    const wb = new ExcelJS.Workbook();
+    await wb.xlsx.load(file.buffer as any);
+
+    const [{ id: prevId }] =
+      await sql`select id from materialie where import = 'zenpet'`;
+    await sql`delete from materialmovements where "movementId" = ${prevId}`;
+    await sql`delete from materialie where id = ${prevId}`;
+    await sql`delete from materials where "clientId" = 12`;
+
+    const [{ id: importId }] =
+      await sql`insert into materialie (import, due) values ('zenpet', '2024-01-01') returning id`;
+
+    await sql.begin(async (sql) => {
+      wb.getWorksheet(1)
+        .getRows(2, 500)
+        .forEach(async (row) => {
+          if (String(row.getCell(2).value).trim().length < 5) return;
+
+          const rowData = {
+            code: String(row.getCell(2).value).trim(),
+            description: String(row.getCell(3).value).trim(),
+            clientId: 12,
+            measurement: (row.getCell(6).value as string)?.trim() || 'EA-',
+            location: (row.getCell(7).value as string)?.trim() || null,
+            product: row.getCell(8).value?.toString().trim() === 'PRODUCTO',
+            minAmount: Number(row.getCell(9).value) || 0,
+          };
+
+          const amount = Number(row.getCell(5).value);
+
+          await sql`insert into materials ${sql(rowData)}`;
+          await sql`insert into materialmovements ("materialId", "movementId", amount, "realAmount", active, "activeDate") values
+            ((select id from materials where code = ${rowData.code}), ${importId}, ${amount}, ${amount}, true, '2024-01-01')`;
+        });
+    });
+
+    return 'done';
+  }
 }
