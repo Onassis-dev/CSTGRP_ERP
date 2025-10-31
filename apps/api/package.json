@@ -111,7 +111,8 @@
       "@nestjs/core",
       "canvas",
       "core-js",
-      "@swc/core"
+      "@swc/core",
+      "puppeteer"
     ]
   }
 }
