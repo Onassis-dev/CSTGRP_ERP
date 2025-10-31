@@ -111,7 +111,9 @@ export class PackingListService {
   async download(body: z.infer<typeof downloadPackingListSchema>) {
     const [data] = await sql`select * from destinys where id = ${body.id}`;
 
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
     const page = await browser.newPage();
 
     const template = await fs.readFile(
