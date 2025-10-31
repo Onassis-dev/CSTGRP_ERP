@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.4
 FROM node:20
 
-# Install LibreOffice, fontconfig, and necessary dependencies
+# Install LibreOffice, Chrome, and necessary dependencies
 RUN --mount=type=cache,target=/var/cache/apt \
     --mount=type=cache,target=/var/lib/apt \
     apt-get update && \
@@ -10,7 +10,20 @@ RUN --mount=type=cache,target=/var/cache/apt \
         fontconfig \
         fonts-dejavu \
         curl \
+        wget \
         gnupg && \
+    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+    sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' && \
+    apt-get update && \
+    apt-get install -y \
+        google-chrome-stable \
+        fonts-ipafont-gothic \
+        fonts-wqy-zenhei \
+        fonts-thai-tlwg \
+        fonts-kacst \
+        fonts-freefont-ttf \
+        libxss1 \
+        --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
 
 # Install pnpm
@@ -27,15 +40,9 @@ COPY package.json ./
 # Install project dependencies
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install
 
-# Install chrome browser for puppeteer
-RUN pnpm dlx puppeteer browsers install chrome
-
 # Copy project source code
 COPY . .
 
 # Build the application
 RUN pnpm run build
 
-# Expose port and run the application
-EXPOSE 3000
-CMD ["node", "dist/main.js"]
