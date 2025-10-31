@@ -41,7 +41,8 @@ export class JobsService {
       await sql`select id, (select code from materials where id = "materialId"), amount, "realAmount", active from materialmovements where "movementId" = ${body.id} and NOT extra
       ${order?.movementId ? sql`and id <> ${order.movementId}` : sql``}`;
 
-    const destinations = await sql`select order_destiny.id, so, po, amount, date
+    const destinations =
+      await sql`select order_destiny.id, so, order_destiny.po, amount, date
        from order_destiny 
        join destinys on destinys.id = order_destiny."destinyId"
        where "orderId" = ${order?.id}`;
