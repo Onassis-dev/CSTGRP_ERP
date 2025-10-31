@@ -19,7 +19,8 @@
       "bcrypt",
       "canvas",
       "core-js",
-      "esbuild"
+      "esbuild",
+      "puppeteer"
     ]
   }
 }
