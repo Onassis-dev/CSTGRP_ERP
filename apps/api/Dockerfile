@@ -1,6 +1,6 @@
 FROM node:20
 
-Install LibreOffice, Chrome, and necessary dependencies
+#Install LibreOffice, Chrome, and necessary dependencies
 RUN --mount=type=cache,target=/var/cache/apt \
     --mount=type=cache,target=/var/lib/apt \
     apt-get update && \
