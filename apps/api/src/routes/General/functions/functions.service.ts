@@ -430,31 +430,32 @@ export class FunctionsService {
     await sql`delete from materials where "clientId" = 12`;
 
     const [{ id: importId }] =
-      await sql`insert into materialie (import, due) values ('zenpet', '2024-01-01') returning id`;
+      await sql`insert into materialie (import, due ,location) values ('zenpet', '2024-01-01', 'At CST, Qtys verified') returning id`;
 
-    await sql.begin(async (sql) => {
-      wb.getWorksheet(1)
-        .getRows(2, 500)
-        .forEach(async (row) => {
-          if (String(row.getCell(2).value).trim().length < 5) return;
+    wb.getWorksheet(1)
+      .getRows(5, 500)
+      .forEach(async (row) => {
+        if (String(row.getCell(2).value).trim().length < 5) return;
 
-          const rowData = {
-            code: String(row.getCell(2).value).trim(),
-            description: String(row.getCell(3).value).trim(),
-            clientId: 12,
-            measurement: (row.getCell(6).value as string)?.trim() || 'EA-',
-            location: (row.getCell(7).value as string)?.trim() || null,
-            product: row.getCell(8).value?.toString().trim() === 'PRODUCTO',
-            minAmount: Number(row.getCell(9).value) || 0,
-          };
+        const rowData = {
+          code: String(row.getCell(2).value).trim(),
+          description: String(row.getCell(3).value).trim(),
+          clientId: 12,
+          measurement: (row.getCell(6).value as string)?.trim() || 'EA-',
+          location: (row.getCell(7).value as string)?.trim() || null,
+          product: row.getCell(8).value?.toString().trim() === 'PRODUCTO',
+          minAmount: Number(row.getCell(9).value) || 0,
+        };
 
-          const amount = Number(row.getCell(5).value);
+        const amount = Number(row.getCell(5).value);
 
-          await sql`insert into materials ${sql(rowData)}`;
-          await sql`insert into materialmovements ("materialId", "movementId", amount, "realAmount", active, "activeDate") values
-            ((select id from materials where code = ${rowData.code}), ${importId}, ${amount}, ${amount}, true, '2024-01-01')`;
-        });
-    });
+        const [{ id: materialId }] =
+          await sql`insert into materials ${sql(rowData)} returning id`;
+        await sql`insert into materialmovements ("materialId", "movementId", amount, "realAmount", active, "activeDate") values
+            (${materialId}, ${importId}, ${amount}, ${amount}, true, '2024-01-01')`;
+        await updateMaterialAmount(materialId);
+        console.log('hola');
+      });
 
     return 'done';
   }
