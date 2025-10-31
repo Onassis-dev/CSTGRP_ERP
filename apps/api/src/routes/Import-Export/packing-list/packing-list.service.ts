@@ -106,7 +106,6 @@ export class PackingListService {
 
   async download(body: z.infer<typeof downloadPackingListSchema>) {
     const [data] = await sql`select * from destinys where id = ${body.id}`;
-    console.log(data);
 
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
@@ -129,12 +128,14 @@ export class PackingListService {
     const templateData = {
       ...data,
       shipDate: format(data.shipDate, 'MM-dd-yyyy'),
-      rows: data.orders?.reduce((acc, order) => {
+      rows: data.orders?.reduce((acc, order, i) => {
+        if (i > 50) return acc;
         return (
           acc +
           `
             <tr>
               <td>${order.part}</td>
+              <td>${Math.ceil(order.amount / order.perBox)}</td>
               <td>${order.jobpo}</td>
               <td>${order.po}</td>
               <td class="description">${order.description}</td>
@@ -149,19 +150,27 @@ export class PackingListService {
         0,
       ),
       pallets: data.orders?.reduce((acc, order) => acc + order.pallets, 0),
+      type: 'FINISHED GOODS',
     };
 
     await page.setContent(Mustache.render(template, templateData));
 
     const pdf = await page.pdf({
       format: 'letter',
-      margin: {
-        top: '0px',
-        right: '0px',
-        bottom: '0px',
-        left: '0px',
-      },
       printBackground: true,
+      margin: {
+        top: '0.7in',
+        right: '0.7in',
+        bottom: '0.7in',
+        left: '0.7in',
+      },
+      displayHeaderFooter: true,
+      headerTemplate: '<span></span>',
+      footerTemplate: `
+    <div style="font-size:11px; width:calc(100% - 0.7in); text-align:right; color:#555;">
+      Page <span class="pageNumber"></span> of <span class="totalPages"></span>
+    </div>
+  `,
     });
 
     await browser.close();

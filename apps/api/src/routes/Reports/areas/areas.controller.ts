@@ -2,7 +2,7 @@ import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { AreasService } from './areas.service';
-import { getAreasSchema } from './areas.schema';
+import { getAreasSchema, getDayDataSchema } from './areas.schema';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 
 @ApiTags('Reports Orders')
@@ -14,5 +14,10 @@ export class AreasController {
   @Get()
   getAreas(@Query(new ZodPiPe(getAreasSchema)) query) {
     return this.areasService.getAreas(query);
+  }
+
+  @Get('day')
+  getDayData(@Query(new ZodPiPe(getDayDataSchema)) query) {
+    return this.areasService.getDayData(query);
   }
 }

@@ -32,10 +32,10 @@
 				...formData,
 				id: parseInt(formData.id || '')
 			});
-			showSuccess('Embarcador editado');
+			showSuccess('Transporte editado');
 		} else {
 			await api.post('/ie/shippers', formData);
-			showSuccess('Embarcador registrado');
+			showSuccess('Transporte registrado');
 		}
 		refetch(['shippers']);
 		show = false;
@@ -52,7 +52,7 @@
 <Dialog bind:open={show}>
 	<DialogContent>
 		<DialogHeader
-			title={selectedShipper.id ? `Editar ${selectedShipper.name}` : 'Registrar embarcador'}
+			title={selectedShipper.id ? `Editar ${selectedShipper.name}` : 'Registrar Transporte'}
 		/>
 		<DialogBody>
 			<Label name="Nombre">

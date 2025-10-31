@@ -9,6 +9,7 @@
 	import { refetch } from '$lib/utils/query';
 	import { ExpandIcon, ShrinkIcon, UserIcon } from 'lucide-svelte';
 	import { Button } from '$lib/components/ui/button';
+	import ProdPopover from './ProdPopover.svelte';
 
 	let filters = $state({
 		date: new Date().toISOString().split('T')[0]
@@ -105,33 +106,24 @@
 		{#each $orders?.data as row}
 			<TableRow>
 				<TableCell>{row.name || ''}</TableCell>
-				<TableCell class={row.mondayAvg >= 1 ? 'bg-green-100' : ''}
-					>{formatAvg(row.mondayAvg)}</TableCell
-				>
+
+				<ProdPopover productivity={row.mondayAvg} date={filters.date} day={0} areaId={row.id} />
 				{#if showComplete}
 					<TableCell class="bg-gray-50">{(row.mondayMinutes / 570).toFixed(2) || ''}</TableCell>
 				{/if}
-				<TableCell class={row.tuesdayAvg >= 1 ? 'bg-green-100' : ''}
-					>{formatAvg(row.tuesdayAvg)}</TableCell
-				>
+				<ProdPopover productivity={row.tuesdayAvg} date={filters.date} day={1} areaId={row.id} />
 				{#if showComplete}
 					<TableCell class="bg-gray-50">{(row.tuesdayMinutes / 570).toFixed(2) || ''}</TableCell>
 				{/if}
-				<TableCell class={row.wednesdayAvg >= 1 ? 'bg-green-100' : ''}
-					>{formatAvg(row.wednesdayAvg)}</TableCell
-				>
+				<ProdPopover productivity={row.wednesdayAvg} date={filters.date} day={2} areaId={row.id} />
 				{#if showComplete}
 					<TableCell class="bg-gray-50">{(row.wednesdayMinutes / 570).toFixed(2) || ''}</TableCell>
 				{/if}
-				<TableCell class={row.thursdayAvg >= 1 ? 'bg-green-100' : ''}
-					>{formatAvg(row.thursdayAvg)}</TableCell
-				>
+				<ProdPopover productivity={row.thursdayAvg} date={filters.date} day={3} areaId={row.id} />
 				{#if showComplete}
 					<TableCell class="bg-gray-50">{(row.thursdayMinutes / 570).toFixed(2) || ''}</TableCell>
 				{/if}
-				<TableCell class={row.fridayAvg >= 1 ? 'bg-green-100' : ''}
-					>{formatAvg(row.fridayAvg)}</TableCell
-				>
+				<ProdPopover productivity={row.fridayAvg} date={filters.date} day={4} areaId={row.id} />
 				{#if showComplete}
 					<TableCell class="bg-gray-50">{(row.fridayMinutes / 570).toFixed(2) || ''}</TableCell>
 				{/if}

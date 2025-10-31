@@ -6,11 +6,10 @@
     <title>Packing List</title>
     <style>
       body {
-        padding: 0.7in;
         font-family: Arial, sans-serif;
         font-size: 11px;
         line-height: 1.1;
-        height: calc(100lvh - 1.4in);
+        height: 100vh;
         display: flex;
         flex-direction: column;
         margin: 0;
@@ -99,6 +98,7 @@
         display: flex;
         justify-content: space-between;
         align-items: end;
+        padding-top: 32px;
       }
 
       footer .left {
@@ -115,6 +115,10 @@
 
       footer .right p {
         text-align: right;
+      }
+
+      .type {
+        grid-column: span 2 / span 2;
       }
     </style>
   </head>
@@ -163,11 +167,14 @@
       <p>{{consignee}}</p>
       <b>Invoice :</b>
       <p>{{invoice}}</p>
+      <b class="type">{{type}}</b>
+      <!-- <b class="title-2">MATERIAL RETURN</b> -->
     </div>
 
     <table>
       <thead>
         <th>Part No</th>
+        <th>Box</th>
         <th>Job</th>
         <th>PO</th>
         <th>Description</th>

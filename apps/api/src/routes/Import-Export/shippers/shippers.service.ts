@@ -27,7 +27,7 @@ export class ShippersService {
   async update(body: z.infer<typeof editShipperSchema>) {
     await sql.begin(async (sql) => {
       await sql`update "shippers" set ${sql(body)} where id = ${body.id}`;
-      await this.req.record(`Actualizo el embarcador ${body.name}`, sql);
+      await this.req.record(`Actualizo el Transporte ${body.name}`, sql);
     });
     return;
   }
@@ -35,7 +35,7 @@ export class ShippersService {
   async post(body: z.infer<typeof createShipperSchema>) {
     await sql.begin(async (sql) => {
       await sql`insert into "shippers" ${sql(body)}`;
-      await this.req.record(`Registro el embarcador ${body.name}`, sql);
+      await this.req.record(`Registro el Transporte ${body.name}`, sql);
     });
     return;
   }
@@ -44,7 +44,7 @@ export class ShippersService {
     await sql.begin(async (sql) => {
       const [deleted] =
         await sql`delete from "shippers" where id = ${body.id} returning name`;
-      await this.req.record(`Elimino el embarcador ${deleted.name}`, sql);
+      await this.req.record(`Elimino el Transporte ${deleted.name}`, sql);
     });
     return;
   }

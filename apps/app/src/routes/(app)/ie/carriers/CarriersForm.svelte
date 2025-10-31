@@ -32,10 +32,10 @@
 				...formData,
 				id: parseInt(formData.id || '')
 			});
-			showSuccess('Transportista editado');
+			showSuccess('Metodo de envio editado');
 		} else {
 			await api.post('/ie/carriers', formData);
-			showSuccess('Transportista registrado');
+			showSuccess('Metodo de envio registrado');
 		}
 		refetch(['carriers']);
 		show = false;
@@ -52,7 +52,7 @@
 <Dialog bind:open={show}>
 	<DialogContent>
 		<DialogHeader
-			title={selectedCarrier.id ? `Editar ${selectedCarrier.name}` : 'Registrar transportista'}
+			title={selectedCarrier.id ? `Editar ${selectedCarrier.name}` : 'Registrar Metodo de envio'}
 		/>
 		<DialogBody>
 			<Label name="Nombre">

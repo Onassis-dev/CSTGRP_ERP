@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import sql from 'src/utils/db';
 import { z } from 'zod/v4';
-import { getAreasSchema } from './areas.schema';
+import { getAreasSchema, getDayDataSchema } from './areas.schema';
 import { ContextProvider } from 'src/interceptors/context.provider';
 import { getWeekDays } from 'src/utils/functions';
 
@@ -89,6 +89,37 @@ export class AreasService {
     });
 
     return result;
+  }
+
+  async getDayData(body: z.infer<typeof getDayDataSchema>) {
+    const [mondayDate] = getWeekDays(body.date);
+    const date = addDays(mondayDate, body.day);
+
+    const [day] = await sql`
+      SELECT 
+      SUM(
+        CASE 
+          WHEN (s."areaId" = a.id AND ${sql('areaId' + body.day)} IS NULL) OR ${sql('areaId' + body.day)} = a.id
+          THEN COALESCE(s.${sql('hours' + body.day)},0) ELSE 0
+        END
+      ) AS "minutes"
+    FROM assistance s
+    JOIN areas a ON s."areaId" = a.id
+    JOIN positions p ON (s."positionId" = p.id)
+    WHERE s."mondayDate" = ${mondayDate}
+      AND s."areaId" = ${body.areaId}
+      AND p.supervisor = false
+    GROUP BY a.id;`;
+
+    const produced = await sql`
+    select ordermovements.produccion, materialie.jobpo, (ordermovements.produccion * ("produccionTime" / amount)) as "workedMinutes"
+    from ordermovements
+    join orders on orders.id = ordermovements."progressId"
+    join materialie on materialie.id = orders."jobId"
+    where "areaId" = ${body.areaId} and "date" = ${date} 
+    and ordermovements."produccion" is not null`;
+
+    return { date, produced, minutes: day?.minutes };
   }
 }
 

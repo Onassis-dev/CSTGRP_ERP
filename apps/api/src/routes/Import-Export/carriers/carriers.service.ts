@@ -27,7 +27,7 @@ export class CarriersService {
   async update(body: z.infer<typeof editCarrierSchema>) {
     await sql.begin(async (sql) => {
       await sql`update carriers set ${sql(body)} where id = ${body.id}`;
-      await this.req.record(`Actualizo el transportista ${body.name}`, sql);
+      await this.req.record(`Actualizo el Metodo de envio ${body.name}`, sql);
     });
     return;
   }
@@ -35,7 +35,7 @@ export class CarriersService {
   async post(body: z.infer<typeof createCarrierSchema>) {
     await sql.begin(async (sql) => {
       await sql`insert into carriers ${sql(body)}`;
-      await this.req.record(`Registro el transportista ${body.name}`, sql);
+      await this.req.record(`Registro el Metodo de envio ${body.name}`, sql);
     });
     return;
   }
@@ -44,7 +44,7 @@ export class CarriersService {
     await sql.begin(async (sql) => {
       const [deleted] =
         await sql`delete from carriers where id = ${body.id} returning name`;
-      await this.req.record(`Elimino el transportista ${deleted.name}`, sql);
+      await this.req.record(`Elimino el Metodo de envio ${deleted.name}`, sql);
     });
     return;
   }

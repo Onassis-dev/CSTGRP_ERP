@@ -47,7 +47,7 @@
 	async function handleDelete() {
 		await api.delete('/ie/shippers/' + selectedShipper.id);
 		selectedShipper = {};
-		showSuccess('Embarcador eliminado');
+		showSuccess('Transporte eliminado');
 		refetch(['shippers']);
 		show3 = false;
 	}
@@ -74,7 +74,7 @@
 <CusTable>
 	<TableHeader>
 		<OptionsHead />
-		<TableHead class="w-full">Embarcador</TableHead>
+		<TableHead class="w-full">Transporte</TableHead>
 	</TableHeader>
 	<TableBody>
 		{#each shippers as shipper, i}
@@ -86,5 +86,5 @@
 	</TableBody>
 </CusTable>
 
-<DeletePopUp bind:show={show3} text="Eliminar embarcador" deleteFunc={handleDelete} />
+<DeletePopUp bind:show={show3} text="Eliminar Transporte" deleteFunc={handleDelete} />
 <ShippersForm bind:show={show4} {selectedShipper} />
