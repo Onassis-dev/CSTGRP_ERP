@@ -87,13 +87,15 @@
 				<OptionsCell
 					viewFunc={() => viewExport(i)}
 					deleteFunc={() => deleteIE(i)}
-					extraButtons={[
-						{
-							fn: () => downloadPackingList(i),
-							name: 'Descargar',
-							icon: FileDown
-						}
-					]}
+					extraButtons={movement.exported
+						? [
+								{
+									fn: () => downloadPackingList(i),
+									name: 'Descargar',
+									icon: FileDown
+								}
+							]
+						: undefined}
 				/>
 				<TableCell>{movement.so}</TableCell>
 			</TableRow>

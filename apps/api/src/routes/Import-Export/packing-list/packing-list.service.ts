@@ -24,8 +24,10 @@ export class PackingListService {
       await sql`select id as value, name as name from shippers order by name`;
     const destinations =
       await sql`select id as value, name as name from "destinationDirections" order by name`;
+    const clients =
+      await sql`select id as value, "legalName" as name from clients order by name`;
 
-    return { carriers, shippers, destinations };
+    return { carriers, shippers, destinations, clients };
   }
 
   async getData(body: z.infer<typeof idObjectSchema>) {
@@ -61,6 +63,7 @@ export class PackingListService {
       COALESCE(order_destiny.po, '') as po,
       COALESCE(order_destiny.pallets, 0) as pallets,
       COALESCE(orders.description, '') as description,
+      orders."perBox",
       'EA' as umc
   
       from order_destiny
@@ -68,12 +71,27 @@ export class PackingListService {
       left join materialie on materialie.id = orders."jobId"
       where order_destiny."destinyId" = ${body.id}`;
 
+      const [shipper] =
+        await sql`select name from shippers where id = ${body.shipVia}`;
+      const [consignee] =
+        await sql`select "legalName" from clients where id = ${body.consignee}`;
+      const [destination] =
+        await sql`select name, direction from "destinationDirections" where id = ${body.destination}`;
+      const [carrier] =
+        await sql`select name from carriers where id = ${body.carrierExp}`;
+
       const packingData = {
         ...body,
+
         exported: headerData.find((item) => item.key === 'ie_exported')?.data,
         soldTo: headerData.find((item) => item.key === 'ie_sold_to')?.data,
         shipTo: headerData.find((item) => item.key === 'ie_ship_to')?.data,
         orders: orders,
+
+        shipVia: shipper.name,
+        consignee: consignee.legalName,
+        destination: destination,
+        carrierExp: carrier.name,
       };
 
       await sql`update destinys set ${sql(packingData)} where id = ${body.id}`;
@@ -125,6 +143,12 @@ export class PackingListService {
             </tr>`
         );
       }, ''),
+      totalAmount: data.orders?.reduce((acc, order) => acc + order.amount, 0),
+      boxes: data.orders?.reduce(
+        (acc, order) => acc + Math.ceil(order.amount / order.perBox),
+        0,
+      ),
+      pallets: data.orders?.reduce((acc, order) => acc + order.pallets, 0),
     };
 
     await page.setContent(Mustache.render(template, templateData));

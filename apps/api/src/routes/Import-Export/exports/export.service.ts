@@ -10,7 +10,7 @@ export class ExportService {
   constructor(private readonly context: ContextProvider) {}
 
   async findAll(filter: z.infer<typeof getExportSchema>) {
-    return sql`select destinys.so, destinys.id
+    return sql`select destinys.so, destinys.id, (destinys.exported IS NOT NULL) as exported
     from destinys 
     left join order_destiny on order_destiny."destinyId" = destinys.id
     left join orders on orders.id = order_destiny."orderId" 
