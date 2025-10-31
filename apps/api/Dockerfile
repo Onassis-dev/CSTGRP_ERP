@@ -27,6 +27,9 @@ COPY package.json ./
 # Install project dependencies
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install
 
+# Install chrome browser for puppeteer
+RUN pnpm dlx puppeteer browsers install chrome
+
 # Copy project source code
 COPY . .
 
