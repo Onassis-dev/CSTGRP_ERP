@@ -186,6 +186,9 @@
 						<Accordion.Option href="/ie/destination-directions" />
 					{/if}
 					{#if hasAccess('ie_options')}
+						<Accordion.Option href="/ie/ship-to" />
+					{/if}
+					{#if hasAccess('ie_options')}
 						<Accordion.Option href="/ie/shippers" />
 					{/if}
 				</Accordion.Content>

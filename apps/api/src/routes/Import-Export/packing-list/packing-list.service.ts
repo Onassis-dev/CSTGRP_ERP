@@ -19,15 +19,17 @@ export class PackingListService {
 
   async getOptions() {
     const carriers =
-      await sql`select id as value, name as name from carriers order by name`;
+      await sql`select id as value, name from carriers order by name`;
     const shippers =
-      await sql`select id as value, name as name from shippers order by name`;
+      await sql`select id as value, name from shippers order by name`;
     const destinations =
-      await sql`select id as value, name as name from "destinationDirections" order by name`;
+      await sql`select id as value, name from "destinationDirections" order by name`;
     const clients =
       await sql`select id as value, "legalName" as name from clients order by name`;
+    const shipTo =
+      await sql`select id as value, name from "shipTo" order by name`;
 
-    return { carriers, shippers, destinations, clients };
+    return { carriers, shippers, destinations, clients, shipTo };
   }
 
   async getData(body: z.infer<typeof idObjectSchema>) {
@@ -79,19 +81,21 @@ export class PackingListService {
         await sql`select name, direction from "destinationDirections" where id = ${body.destination}`;
       const [carrier] =
         await sql`select name from carriers where id = ${body.carrierExp}`;
+      const [shipTo] =
+        await sql`select name, direction from "shipTo" where id = ${body.shipTo}`;
 
       const packingData = {
         ...body,
 
         exported: headerData.find((item) => item.key === 'ie_exported')?.data,
         soldTo: headerData.find((item) => item.key === 'ie_sold_to')?.data,
-        shipTo: headerData.find((item) => item.key === 'ie_ship_to')?.data,
         orders: orders,
 
         shipVia: shipper.name,
         consignee: consignee.legalName,
         destination: destination,
         carrierExp: carrier.name,
+        shipTo: shipTo,
       };
 
       await sql`update destinys set ${sql(packingData)} where id = ${body.id}`;

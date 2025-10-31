@@ -14,6 +14,7 @@ export const editPackingListSchema = z.object({
   weight: z.string(),
   destination: idSchema,
   carrierExp: idSchema,
+  shipTo: idSchema,
 });
 
 export const downloadPackingListSchema = z.object({

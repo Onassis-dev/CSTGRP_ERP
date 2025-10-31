@@ -13,6 +13,7 @@
 	import { showSuccess } from '$lib/utils/showToast';
 	import Select from '$lib/components/basic/Select.svelte';
 	import { format } from 'date-fns';
+	import { refetch } from '$lib/utils/query';
 
 	interface Props {
 		show: boolean;
@@ -31,6 +32,7 @@
 
 		const result = (await api.get('/ie/packing-list/data?id=' + selectedRow.id)).data;
 		orders = result.orders;
+		console.log(result.data);
 		data = {
 			...result.data,
 			shipDate: format(result.data.shipDate, 'yyyy-MM-dd'),
@@ -39,10 +41,11 @@
 			destination: options.destinations.find(
 				(item: any) => item.name === result.data.destination?.name
 			)?.value,
+			shipTo: !data.exported
+				? 1
+				: options.shipTo.find((item: any) => item.name === result.data.destination?.name)?.value,
 			carrierExp: options.carriers.find((item: any) => item.name === result.data.carrierExp)?.value
 		};
-
-		console.log(data);
 	}
 
 	$effect(() => {
@@ -55,6 +58,7 @@
 		});
 		showSuccess('Packing list actualizado');
 		show = false;
+		refetch(['exports']);
 	}
 </script>
 
@@ -66,7 +70,7 @@
 			</DialogTitle>
 		</DialogHeader>
 		<DialogBody grid="2">
-			<Label name="Pack Slip" class="col-span-2">
+			<Label name="Pack Slip">
 				<Input bind:value={data.packSlip} />
 			</Label>
 			<Label name="Ship Via">
@@ -98,6 +102,9 @@
 			</Label>
 			<Label name="Carrier Exp">
 				<Select items={options.carriers} bind:value={data.carrierExp} />
+			</Label>
+			<Label name="Ship To">
+				<Select items={options.shipTo} bind:value={data.shipTo} />
 			</Label>
 		</DialogBody>
 		<DialogFooter submitFunc={handleSubmit} hideFunc={() => (show = false)} />
