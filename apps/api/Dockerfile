@@ -62,3 +62,6 @@ COPY . .
 # Build the application
 RUN pnpm run build
 
+# Expose port and run the application
+EXPOSE 3000
+CMD ["node", "dist/main.js"]
