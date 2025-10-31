@@ -41,7 +41,7 @@
 					<div class="font-bold">Fecha:</div>
 					<div class="font-bold">Minutos:</div>
 					<div>{formatDate(data.date)}</div>
-					<div>{data.minutes}</div>
+					<div>{data.minutes} ({(data.minutes / 60).toFixed(2)}h)</div>
 				</div>
 
 				<div class="mt-2 grid grid-cols-3 gap-2 border-t pt-2 text-sm">
@@ -62,6 +62,13 @@
 						{data.produced
 							.reduce((acc: number, order: any) => acc + Number(order.workedMinutes), 0)
 							.toFixed(2)}
+
+						({(
+							data.produced.reduce(
+								(acc: number, order: any) => acc + Number(order.workedMinutes),
+								0
+							) / 60
+						).toFixed(2)}h)
 					</p>
 				</div>
 			{:else}
