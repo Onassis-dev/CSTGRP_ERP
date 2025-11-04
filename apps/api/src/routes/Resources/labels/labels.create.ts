@@ -569,7 +569,7 @@ export function createLabel(
 
   if (type === 'codigo-chaparral') {
     const x = [125, 0, 0, 670, 0, 660, 140];
-    const y = [120, 210, 370, 120, 220, 480, 480];
+    const y = [120, 210, 370, 120, 215, 480, 480];
     const height = 520;
     const adjustments = [0, 0, 0];
 
@@ -590,8 +590,8 @@ export function createLabel(
       const barcodeCanvas = createCanvas(0, 0);
       JsBarcode(barcodeCanvas, info.code.replace(/-/g, ''), {
         format: 'CODE39',
-        width: 2,
-        height: 80,
+        width: 3,
+        height: 95,
         displayValue: false,
       });
       const barcodeX = (ctx.canvas.width - barcodeCanvas.width) / 2;
