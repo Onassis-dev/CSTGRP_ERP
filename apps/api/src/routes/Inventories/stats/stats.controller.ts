@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, Header, UseGuards } from '@nestjs/common';
 import { StatsService } from './stats.service';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
@@ -17,5 +17,15 @@ export class StatsController {
   @Get('outofstock')
   outOfStock() {
     return this.statsService.getOutOfStock();
+  }
+
+  @Get('export')
+  @Header('Content-Disposition', 'attachment; filename=Reporte.xlsx')
+  @Header(
+    'Content-Type',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  )
+  exportReport() {
+    return this.statsService.exportReport();
   }
 }

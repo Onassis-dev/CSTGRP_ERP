@@ -15,29 +15,11 @@
 	import MenuBar from '$lib/components/basic/MenuBar.svelte';
 	import DashboardBody from '$lib/components/basic/DashboardBody.svelte';
 	import { createQuery } from '@tanstack/svelte-query';
-
-	let selectedDate = $state(new Date().toISOString().split('T')[0]);
-
-	let textDate = $derived(
-		['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'][getDayNumber(selectedDate)] +
-			' ' +
-			selectedDate.split('-')[2] +
-			' de ' +
-			[
-				'Enero',
-				'Febrero',
-				'Marzo',
-				'Abril',
-				'Mayo',
-				'Junio',
-				'Julio',
-				'Agosto',
-				'Septiembre',
-				'Octubre',
-				'Noviembre',
-				'Diciembre'
-			][parseInt(selectedDate.split('-')[1]) - 1]
-	);
+	import { downloadFile } from '$lib/utils/files';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import { format } from 'date-fns';
+	import { es } from 'date-fns/locale';
+	import { FileDown } from 'lucide-svelte';
 
 	const stockWarningsQuery = createQuery({
 		queryKey: ['stockwarnings'],
@@ -51,11 +33,16 @@
 </script>
 
 <MenuBar>
-	{#snippet left()}
-		<Input menu class="w-fit" type="date" bind:value={selectedDate}></Input>
-	{/snippet}
 	{#snippet right()}
-		<Input menu class="w-fit font-semibold" value={textDate}></Input>
+		<Button
+			onclick={() =>
+				downloadFile({
+					url: '/inventorystats/export',
+					name: `Inventario ${format(new Date(), 'dd/MM/yyyy', { locale: es })}.xlsx`
+				})}
+			variant="outline"
+			size="icon"><FileDown class="size-3.5" /></Button
+		>
 	{/snippet}
 </MenuBar>
 

@@ -590,8 +590,9 @@ export function createLabel(
       const barcodeCanvas = createCanvas(0, 0);
       JsBarcode(barcodeCanvas, info.code.replace(/-/g, ''), {
         format: 'CODE39',
-        width: 2.5,
-        height: 120,
+        width: 4,
+        height: 110,
+
         displayValue: false,
       });
       const barcodeX = (ctx.canvas.width - barcodeCanvas.width) / 2;

@@ -1,3 +1,4 @@
+import exceljs from 'exceljs';
 import { Injectable } from '@nestjs/common';
 import sql from 'src/utils/db';
 
@@ -60,5 +61,45 @@ export class StatsService {
     const materials =
       await sql`select code, amount, description, "minAmount" , measurement from materials where amount <= "minAmount" and "minAmount" > 0 order by code desc`;
     return materials;
+  }
+
+  async exportReport() {
+    const workbook = new exceljs.Workbook();
+    const worksheet = workbook.addWorksheet('Faltantes');
+    const worksheet2 = workbook.addWorksheet('Minimos');
+
+    const outOfStock = await this.getOutOfStock();
+    const warnings = await this.getMaterialWarnings();
+
+    worksheet.columns = [
+      { header: 'Codigo', key: 'code', width: 15 },
+      { header: 'Descripcion', key: 'description', width: 15 },
+      { header: 'Job', key: 'jobpo', width: 15 },
+      { header: 'Requerido', key: 'required', width: 15 },
+      { header: 'Inventario', key: 'amount', width: 15 },
+      { header: 'Sobrante en area', key: 'leftoverAmount', width: 15 },
+      { header: 'Faltante', key: 'missing', width: 15 },
+      { header: 'Medida', key: 'measurement', width: 15 },
+    ];
+
+    worksheet2.columns = [
+      { header: 'Codigo', key: 'code', width: 15 },
+      { header: 'Cantidad', key: 'amount', width: 15 },
+      { header: 'Minimo', key: 'minAmount', width: 15 },
+      { header: 'Medida', key: 'measurement', width: 15 },
+    ];
+
+    worksheet.addRows(outOfStock);
+    worksheet2.addRows(warnings);
+
+    worksheet.getRow(1).eachCell((cell) => {
+      cell.style = { font: { bold: true } };
+    });
+
+    worksheet2.getRow(1).eachCell((cell) => {
+      cell.style = { font: { bold: true } };
+    });
+
+    return workbook.xlsx.writeBuffer();
   }
 }
