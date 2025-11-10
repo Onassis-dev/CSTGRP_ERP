@@ -13,6 +13,7 @@ import {
 import { z } from 'zod/v4';
 import sql from 'src/utils/db';
 import { getTijuanaDate, getWeekDays } from 'src/utils/functions';
+import { addDays } from 'date-fns';
 import exceljs from 'exceljs';
 import { saveFile } from 'src/utils/storage';
 import { createRecord } from './employees.utils';
@@ -355,6 +356,59 @@ export class EmployeesService {
     });
 
     worksheet.addRows(rows);
+
+    worksheet.getRow(1).eachCell((cell) => {
+      cell.style = { font: { bold: true } };
+    });
+
+    return workbook.xlsx.writeBuffer();
+  }
+
+  async exportIncidences(body: z.infer<typeof getEmployeeSchema>) {
+    const workbook = new exceljs.Workbook();
+    const worksheet = workbook.addWorksheet('Incidencias');
+
+    const rows = await sql`SELECT "mondayDate",
+    "incidenceId0",
+    "incidenceId1",
+    "incidenceId2",
+    "incidenceId3",
+    "incidenceId4",
+    (SELECT name FROM incidences WHERE id = "incidenceId0") AS "incidence0",
+    (SELECT name FROM incidences WHERE id = "incidenceId1") AS "incidence1",
+    (SELECT name FROM incidences WHERE id = "incidenceId2") AS "incidence2",
+    (SELECT name FROM incidences WHERE id = "incidenceId3") AS "incidence3",
+    (SELECT name FROM incidences WHERE id = "incidenceId4") AS "incidence4"
+    FROM assistance
+    WHERE "employeeId" = ${body.id}
+    AND "mondayDate" > now() - interval '370 days'
+    ORDER BY "mondayDate" desc`;
+
+    const incidences = [];
+
+    rows.forEach((row) => {
+      const date = new Date(row.mondayDate);
+      if (row.incidenceId0 !== '1' && row.incidenceId0 !== null)
+        incidences.push({ date, incidence: row.incidence0 });
+      if (row.incidenceId1 !== '1' && row.incidenceId1 !== null)
+        incidences.push({ date: addDays(date, 1), incidence: row.incidence1 });
+      if (row.incidenceId2 !== '1' && row.incidenceId2 !== null)
+        incidences.push({ date: addDays(date, 2), incidence: row.incidence2 });
+      if (row.incidenceId3 !== '1' && row.incidenceId3 !== null)
+        incidences.push({ date: addDays(date, 3), incidence: row.incidence3 });
+      if (row.incidenceId4 !== '1' && row.incidenceId4 !== null)
+        incidences.push({ date: addDays(date, 4), incidence: row.incidence4 });
+    });
+
+    worksheet.columns = convertTableToExcel({
+      rows: incidences,
+      customRows: [
+        { width: 10, key: 'date', header: 'Fecha' },
+        { width: 40, key: 'incidence', header: 'Incidencia' },
+      ],
+    });
+
+    worksheet.addRows(incidences);
 
     worksheet.getRow(1).eachCell((cell) => {
       cell.style = { font: { bold: true } };

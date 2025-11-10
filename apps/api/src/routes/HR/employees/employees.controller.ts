@@ -48,6 +48,11 @@ export class EmployeesController {
     return this.employeesService.getAssistance(params);
   }
 
+  @Get('export-incidences/:id')
+  exportIncidences(@Param(new ZodPiPe(getEmployeeSchema)) params) {
+    return this.employeesService.exportIncidences(params);
+  }
+
   @Get('productivity/:id')
   getProductivity(@Param(new ZodPiPe(getEmployeeSchema)) params) {
     return this.employeesService.getProductivity(params);

@@ -6,6 +6,9 @@
 	import { formatDate } from '$lib/utils/functions';
 	import api from '$lib/utils/server';
 	import AssistanceCube from './AssistanceCube.svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import { FileDown } from 'lucide-svelte';
+	import { downloadFile } from '$lib/utils/files';
 
 	interface Props {
 		employee: any;
@@ -133,3 +136,15 @@
 		stepSize={20}
 	/>
 </div>
+
+<Button
+	onclick={() => {
+		downloadFile({
+			url: '/employees/export-incidences/' + employee.id,
+			name: 'Incidencias-' + employee.noEmpleado + '.xlsx'
+		});
+	}}
+>
+	<FileDown class="size-3.5" />
+	Exportar incidencias
+</Button>
