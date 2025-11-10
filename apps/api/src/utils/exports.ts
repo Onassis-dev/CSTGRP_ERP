@@ -1,9 +1,10 @@
+import { Column } from 'exceljs';
 import { getTraducction } from './traduction';
 
 interface ConvertTableToExcelProps {
   rows: any[];
   width?: number;
-  customRows?: { width: number; key: string; header: string }[];
+  customRows?: Array<Partial<Column>>;
 }
 
 export const convertTableToExcel = ({

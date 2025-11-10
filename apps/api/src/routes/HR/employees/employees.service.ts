@@ -294,7 +294,7 @@ export class EmployeesService {
 
     const rows =
       await sql`select employees.*, employees.active::integer as active, positions.name as position, areas.name as area,
-      round((${getTijuanaDate()} - "admissionDate")::numeric(10,2) / 365::numeric(10,2),2) as seniority
+      (${getTijuanaDate()} - "admissionDate")::float / 365::float as seniority
     from employees
     join areas on areas.id = employees."areaId"
     join positions on positions.id = employees."positionId"
@@ -316,10 +316,14 @@ export class EmployeesService {
         { width: 20, key: 'maternalLastName', header: 'Apellido Materno' },
         { width: 20, key: 'position', header: 'Puesto' },
         { width: 20, key: 'area', header: 'Área' },
+        { width: 16, key: 'seniority', header: 'Antigüedad' },
       ],
     });
 
     worksheet.addRows(rows);
+
+    const seniorityColumn = worksheet.getColumn('seniority');
+    seniorityColumn.eachCell((cell) => (cell.numFmt = '0.00'));
 
     worksheet.getRow(1).eachCell((cell) => {
       cell.style = { font: { bold: true } };
