@@ -12,7 +12,7 @@ import {
 } from './employees.schema';
 import { z } from 'zod/v4';
 import sql from 'src/utils/db';
-import { getWeekDays } from 'src/utils/functions';
+import { getTijuanaDate, getWeekDays } from 'src/utils/functions';
 import exceljs from 'exceljs';
 import { saveFile } from 'src/utils/storage';
 import { createRecord } from './employees.utils';
@@ -294,7 +294,7 @@ export class EmployeesService {
 
     const rows =
       await sql`select employees.*, employees.active::integer as active, positions.name as position, areas.name as area,
-      round((now()::date - "admissionDate")::numeric(10,2) / 365::numeric(10,2),2) as seniority
+      round((${getTijuanaDate()} - "admissionDate")::numeric(10,2) / 365::numeric(10,2),2) as seniority
     from employees
     join areas on areas.id = employees."areaId"
     join positions on positions.id = employees."positionId"

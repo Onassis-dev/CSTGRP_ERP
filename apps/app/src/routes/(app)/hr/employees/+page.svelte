@@ -32,6 +32,8 @@
 	import { downloadFile } from '$lib/utils/files';
 	import { getAreas, getOptions, getPositions } from '$lib/utils/queries';
 	import OptionsHead from '$lib/components/basic/OptionsHead.svelte';
+	import { format } from 'date-fns';
+	import { es } from 'date-fns/locale';
 
 	let show1: boolean = $state(false);
 	let show2: boolean = $state(false);
@@ -86,7 +88,7 @@
 		const url = mode === 'full' ? '/employees/export' : '/employees/export-basic';
 		downloadFile({
 			url,
-			name: 'Empleados.xlsx'
+			name: `Empleados ${format(new Date(), 'dd-MM-yyyy', { locale: es })}.xlsx`
 		});
 	}
 
