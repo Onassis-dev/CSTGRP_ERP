@@ -293,10 +293,17 @@ export class EmployeesService {
     const worksheet = workbook.addWorksheet('Empleados');
 
     const rows =
-      await sql`select employees.*, employees.active::integer as active, positions.name as position, areas.name as area from employees
+      await sql`select employees.*, employees.active::integer as active, positions.name as position, areas.name as area,
+      round((now()::date - "admissionDate")::numeric(10,2) / 365::numeric(10,2),2) as seniority
+    from employees
     join areas on areas.id = employees."areaId"
     join positions on positions.id = employees."positionId"
     order by employees.active DESC, "noEmpleado" DESC`;
+
+    rows.forEach((row) => {
+      if (row.photo) delete row.photo;
+      if (row.cim) delete row.cim;
+    });
 
     worksheet.columns = convertTableToExcel({
       rows,

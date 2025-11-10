@@ -20,7 +20,6 @@
 	import { format } from 'date-fns';
 	import { es } from 'date-fns/locale';
 	import { FileDown } from 'lucide-svelte';
-
 	const stockWarningsQuery = createQuery({
 		queryKey: ['stockwarnings'],
 		queryFn: async () => (await api.get('/inventorystats/stockwarnings')).data

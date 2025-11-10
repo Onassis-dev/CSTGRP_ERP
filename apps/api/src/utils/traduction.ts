@@ -191,6 +191,7 @@ const valueTraduccion = {
   labels: 'Labels',
   perBox: 'Pz/Caja',
   destinations: 'Destinos',
+  seniority: 'Antigüedad',
 };
 
 export const getTraducction = (value: string | number) => {
