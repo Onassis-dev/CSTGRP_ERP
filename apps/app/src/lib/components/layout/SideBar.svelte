@@ -159,7 +159,8 @@
 					Calidad
 				</Accordion.Trigger>
 				<Accordion.Content>
-					<Accordion.Option href="/quality/orders" />
+					<Accordion.Option href="/quality/liberation" />
+					<Accordion.Option href="/quality/export" />
 				</Accordion.Content>
 			</Accordion.Item>
 		{/if}

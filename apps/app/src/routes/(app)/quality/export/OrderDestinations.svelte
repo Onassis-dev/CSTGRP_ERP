@@ -18,10 +18,9 @@
 	import { formatDate } from '$lib/utils/functions';
 	import Label from '$lib/components/basic/Label.svelte';
 	import Input from '$lib/components/ui/input/input.svelte';
-	import { Check } from 'lucide-svelte';
+	import { SaveIcon } from 'lucide-svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { showError, showSuccess } from '$lib/utils/showToast';
-
 	interface Props {
 		show: boolean;
 		selectedRow: any;
@@ -86,7 +85,7 @@
 									<Input class="rounded-none border-none" maxlength={3} bind:value={row.pallets} />
 
 									<Button
-										class="mx-1 aspect-square size-7 p-0.5"
+										class="aspect-square size-8 p-0"
 										onclick={async () => {
 											if (!row.pallets) return showError(null, 'Numero invalido');
 											await api.put('/quality/orders/destinations', {
@@ -96,7 +95,7 @@
 											showSuccess('Pallets actualizados');
 										}}
 									>
-										<Check class="size-4" />
+										<SaveIcon class="size-4" />
 									</Button>
 								</div>
 							</TableCell>
