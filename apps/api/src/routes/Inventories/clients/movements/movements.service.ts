@@ -57,12 +57,9 @@ export class MovementsService {
         materialmovements.id DESC;`;
 
     //TODO: Fix this to be in sql
-    const sixMonthsAgo = new Date();
-    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+    const startDate = new Date('2025-03-01'); // Juan said
 
-    const result = movements.filter(
-      (movement) => movement?.due >= sixMonthsAgo,
-    );
+    const result = movements.filter((movement) => movement?.due >= startDate);
     return result;
   }
 
