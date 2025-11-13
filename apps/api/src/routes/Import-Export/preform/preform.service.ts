@@ -4,17 +4,14 @@ import { Injectable } from '@nestjs/common';
 import { ContextProvider } from 'src/interceptors/context.provider';
 import sql from 'src/utils/db';
 import { z } from 'zod/v4';
-import {
-  downloadPackingListSchema,
-  editPackingListSchema,
-} from './packing-list.schema';
+import { downloadPreformSchema, editPreformSchema } from './preform.schema';
 import path from 'path';
 import { promises as fs } from 'fs';
 import { idObjectSchema } from 'src/utils/schemas';
 import { format } from 'date-fns';
 
 @Injectable()
-export class PackingListService {
+export class PreformService {
   constructor(private readonly req: ContextProvider) {}
 
   async getOptions() {
@@ -51,7 +48,7 @@ export class PackingListService {
     return { orders, data };
   }
 
-  async update(body: z.infer<typeof editPackingListSchema>) {
+  async update(body: z.infer<typeof editPreformSchema>) {
     await sql.begin(async (sql) => {
       const [previousData] =
         await sql`select so from destinys where id = ${body.id}`;
@@ -101,14 +98,14 @@ export class PackingListService {
       await sql`update destinys set ${sql(packingData)} where id = ${body.id}`;
 
       await this.req.record(
-        `Actualizo la informacion del packing list ${previousData.so}`,
+        `Actualizo la informacion del preform ${previousData.so}`,
         sql,
       );
     });
     return;
   }
 
-  async download(body: z.infer<typeof downloadPackingListSchema>) {
+  async download(body: z.infer<typeof downloadPreformSchema>) {
     const [data] = await sql`select * from destinys where id = ${body.id}`;
 
     const browser = await puppeteer.launch({
@@ -137,7 +134,7 @@ export class PackingListService {
         'static',
         'templates',
         'ie',
-        'packing-list.html',
+        'preform.html',
       ),
       'utf-8',
     );

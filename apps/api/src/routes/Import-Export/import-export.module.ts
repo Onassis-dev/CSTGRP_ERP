@@ -6,6 +6,7 @@ import { DestinationDirectionsModule } from './destination-directions/destinatio
 import { ShipToModule } from './ship-to/ship-to.module';
 import { ShippersModule } from './shippers/shippers.module';
 import { PackingListModule } from './packing-list/packing-list.module';
+import { PreformModule } from './preform/preform.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { PackingListModule } from './packing-list/packing-list.module';
     ShipToModule,
     ShippersModule,
     PackingListModule,
+    PreformModule,
   ],
 })
 export class ImportExportModule {}

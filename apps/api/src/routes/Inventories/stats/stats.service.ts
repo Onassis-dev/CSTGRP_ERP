@@ -29,10 +29,10 @@ export class StatsService {
           AND materialmovements.active = false
         ) as jobpo,
         ABS(ms.total_amount) as required,
-        ABS(materials.amount + ms.total_amount) as missing
+        ABS(materials.total + ms.total_amount) as missing
     FROM materials
     JOIN MaterialSum ms ON ms.id = materials.id
-    WHERE materials.amount  + ms.total_amount < 0`;
+    WHERE materials.total  + ms.total_amount < 0`;
 
     const secondMovements = await sql`SELECT 
     code, materialie.jobpo, measurement, description,
@@ -55,6 +55,39 @@ export class StatsService {
         )`;
 
     return [...movements, {}, ...secondMovements];
+  }
+
+  async getOutOfStockWithoutLeftover() {
+    const movements = await sql`WITH MaterialSum AS (
+    SELECT 
+        materials.id,
+        SUM(materialmovements.amount) as total_amount
+    FROM materialmovements
+    JOIN materials ON materials.id = materialmovements."materialId"
+    WHERE materialmovements.active = false
+    GROUP BY materials.id
+    )   
+
+    SELECT 
+        DISTINCT(materials.code),
+        materials.description,
+        materials.measurement, 
+        materials.amount,
+        materials."leftoverAmount",
+        (
+          SELECT string_agg("jobpo", ', ') 
+          FROM materialmovements 
+          JOIN materialie ON materialie.id = materialmovements."movementId" 
+          WHERE "materialId" = materials.id 
+          AND materialmovements.active = false
+        ) as jobpo,
+        ABS(ms.total_amount) as required,
+        ABS(materials.amount + ms.total_amount) as missing
+    FROM materials
+    JOIN MaterialSum ms ON ms.id = materials.id
+    WHERE materials.amount  + ms.total_amount < 0`;
+
+    return movements;
   }
 
   async getMaterialWarnings() {

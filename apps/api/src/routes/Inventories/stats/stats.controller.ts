@@ -19,6 +19,11 @@ export class StatsController {
     return this.statsService.getOutOfStock();
   }
 
+  @Get('outofstockwithoutleftover')
+  outOfStockWithoutLeftover() {
+    return this.statsService.getOutOfStockWithoutLeftover();
+  }
+
   @Get('export')
   @Header('Content-Disposition', 'attachment; filename=Reporte.xlsx')
   @Header(

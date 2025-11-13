@@ -105,9 +105,6 @@
 					{#if hasAccess('prod_produccion')}
 						<Accordion.Option href="/production/produccion" />
 					{/if}
-					{#if hasAccess('prod_calidad')}
-						<Accordion.Option href="/production/calidad" />
-					{/if}
 					{#if hasAccess('prod_serigrafia')}
 						<Accordion.Option href="/production/serigrafia" />
 					{/if}

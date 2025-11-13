@@ -3,6 +3,8 @@ FROM node:20
 #Install LibreOffice, Chrome, and necessary dependencies
 RUN --mount=type=cache,target=/var/cache/apt \
     --mount=type=cache,target=/var/lib/apt \
+    wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+    echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google.list && \
     apt-get update && \
     apt-get install -y \
         libreoffice \
@@ -10,20 +12,12 @@ RUN --mount=type=cache,target=/var/cache/apt \
         fonts-dejavu \
         curl \
         wget \
-        gnupg && \
-    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
-    sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' && \
-    apt-get update && \
-    apt-get install -y \
+        gnupg \
         google-chrome-stable \
-        fonts-ipafont-gothic \
-        fonts-wqy-zenhei \
-        fonts-thai-tlwg \
-        fonts-kacst \
-        fonts-freefont-ttf \
         libxss1 \
         --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
+
 
 # Install pnpm
 ENV PNPM_HOME="/pnpm"
