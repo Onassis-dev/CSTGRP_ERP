@@ -137,7 +137,8 @@
 
 	const iva = [
 		{ value: '16', name: '16%' },
-		{ value: '8', name: '8%' }
+		{ value: '8', name: '8%' },
+		{ value: '0', name: '0%' }
 	];
 
 	const total: string = $derived(
