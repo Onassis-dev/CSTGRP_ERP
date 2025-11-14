@@ -189,6 +189,9 @@
 					{#if hasAccess('ie_options')}
 						<Accordion.Option href="/ie/shippers" />
 					{/if}
+					{#if hasAccess('ie_options')}
+						<Accordion.Option href="/ie/preforms" />
+					{/if}
 				</Accordion.Content>
 			</Accordion.Item>
 		{/if}

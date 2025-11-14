@@ -28,6 +28,11 @@ export class VariousController {
     return this.variousService.getMaterials();
   }
 
+  @Get('clients-legal')
+  getClientsLegal() {
+    return this.variousService.getClientsLegal();
+  }
+
   @Get('clients')
   getClients() {
     return this.variousService.getClients();

@@ -184,8 +184,13 @@ export class PackingListService {
       displayHeaderFooter: true,
       headerTemplate: '<span></span>',
       footerTemplate: `
-    <div style="font-size:11px; width:calc(100% - 0.7in); text-align:right; color:#555;">
-      Page <span class="pageNumber"></span> of <span class="totalPages"></span>
+  <div style="font-size:11px; width:100%; padding: 0 0.7in; color:#555; display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        CST GROUP INC
+      </div>
+      <div style="text-align:right;">
+        Page <span class="pageNumber"></span> of <span class="totalPages"></span>
+      </div>
     </div>
   `,
     });

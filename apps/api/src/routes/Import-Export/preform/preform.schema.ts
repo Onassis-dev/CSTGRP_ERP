@@ -1,22 +1,76 @@
-import { idSchema } from 'src/utils/schemas';
+import {
+  dateSchema,
+  idSchema,
+  intSchema,
+  numberSchema,
+  priceSchema,
+} from 'src/utils/schemas';
 import { z } from 'zod/v4';
 
-export const editPreformSchema = z.object({
-  id: idSchema,
-  packSlip: z.string(),
-  shipVia: idSchema,
-  consignee: idSchema,
-  shipDate: z.string(),
-  blNo: z.string(),
-  trk: z.string(),
-  po: z.string(),
-  invoice: z.string(),
-  weight: z.string(),
-  destination: idSchema,
-  carrierExp: idSchema,
-  shipTo: idSchema,
+export const createPreformSchema = z.object({
+  noFactura: z.string(),
+  date: dateSchema,
+  regimen: z.string(),
+  pedimento: z.string().nullish(),
+  exchangeRate: priceSchema,
+  comments: z.string().nullish(),
+
+  exteriorData: z.array(
+    z.object({
+      name: z.string(),
+      amount: numberSchema.nullable(),
+    }),
+  ),
+
+  mexData: z.array(
+    z.object({
+      name: z.string(),
+      amount: numberSchema.nullable(),
+    }),
+  ),
+
+  usData: z.array(
+    z.object({
+      name: z.string(),
+      amount: numberSchema,
+    }),
+  ),
+
+  almacenData: z.array(
+    z.object({
+      name: z.string(),
+      price: numberSchema,
+      amount: intSchema,
+    }),
+  ),
+
+  extraData: z.array(
+    z.object({
+      name: z.string(),
+      amount: numberSchema.nullable(),
+    }),
+  ),
+
+  clientsData: z.array(
+    z.object({
+      client: z.string(),
+      entrada: z.string().nullable(),
+      bultos: intSchema,
+      unidad: z.string(),
+      dias: intSchema,
+      orden: z.string(),
+    }),
+  ),
+
+  unityOptions: z.array(
+    z.object({
+      name: z.string(),
+      inOut: numberSchema,
+      almacenaje: numberSchema,
+    }),
+  ),
 });
 
-export const downloadPreformSchema = z.object({
+export const editPreformSchema = createPreformSchema.extend({
   id: idSchema,
 });

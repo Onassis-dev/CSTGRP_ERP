@@ -90,7 +90,8 @@ export const traductions: Record<string, Traduction> = {
 	shippers: { text: 'Transporte', icon: FileText },
 	'ship-to': { text: 'Ship to', icon: FileText },
 	export: { text: 'Exportar', icon: FileDown },
-	liberation: { text: 'Liberación', icon: FileText }
+	liberation: { text: 'Liberación', icon: FileText },
+	preforms: { text: 'Preformas', icon: FileText }
 };
 
 export function capitalize(string: string) {

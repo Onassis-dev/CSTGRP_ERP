@@ -24,6 +24,12 @@ export class VariousService {
     return rows;
   }
 
+  async getClientsLegal() {
+    const rows =
+      await sql`select "legalName" as value, "name", color from clients where active`;
+    return rows;
+  }
+
   async getAreas() {
     const rows =
       await sql`select id as value, name, color, type, active from areas`;
