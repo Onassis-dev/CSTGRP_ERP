@@ -1,9 +1,10 @@
-import { Controller, Get, Header, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { InventoryService } from './inventory.service';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import { idObjectSchema } from 'src/utils/schemas';
+import { exportHistorySchema } from './inventory.schema';
 
 @ApiTags('Inventory')
 @Controller('inventory')
@@ -32,12 +33,12 @@ export class InventoryController {
   }
 
   @Get('export')
-  @Header('Content-Disposition', 'attachment; filename=Inventario.xlsx')
-  @Header(
-    'Content-Type',
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  )
   export() {
     return this.inventoryService.export();
+  }
+
+  @Get('export-history')
+  exportHistory(@Query(new ZodPiPe(exportHistorySchema)) query) {
+    return this.inventoryService.exportHistory(query);
   }
 }

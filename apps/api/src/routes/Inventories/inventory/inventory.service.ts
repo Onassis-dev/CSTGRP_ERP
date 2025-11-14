@@ -3,6 +3,7 @@ import sql from 'src/utils/db';
 import exceljs from 'exceljs';
 import { idObjectSchema } from 'src/utils/schemas';
 import { z } from 'zod/v4';
+import { exportHistorySchema } from './inventory.schema';
 
 @Injectable()
 export class InventoryService {
@@ -164,6 +165,32 @@ export class InventoryService {
     ];
 
     worksheet.addRows(results);
+
+    worksheet.getRow(1).eachCell((cell) => {
+      cell.style = { font: { bold: true } };
+    });
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    return buffer;
+  }
+
+  async exportHistory(body: z.infer<typeof exportHistorySchema>) {
+    const workbook = new exceljs.Workbook();
+    const worksheet = workbook.addWorksheet('Historial-inventario');
+
+    const rows =
+      await sql`select materials.code, SUM(materialmovements.amount * -1) as amount
+    from materialmovements
+    join materials on materials.id = materialmovements."materialId"
+    where "activeDate" >= ${body.startDate} and "activeDate" <= ${body.endDate} and materialmovements.amount < 0
+    group by code `;
+
+    worksheet.columns = [
+      { header: 'Material', key: 'code', width: 35 },
+      { header: 'Cantidad gastada', key: 'amount', width: 25 },
+    ];
+
+    worksheet.addRows(rows);
 
     worksheet.getRow(1).eachCell((cell) => {
       cell.style = { font: { bold: true } };

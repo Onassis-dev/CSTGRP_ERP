@@ -1,4 +1,10 @@
 <script lang="ts">
+	import {
+		DropdownMenu,
+		DropdownMenuContent,
+		DropdownMenuItem,
+		DropdownMenuTrigger
+	} from '$lib/components/ui/dropdown-menu';
 	import CusTable from '$lib/components/basic/CusTable.svelte';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
@@ -20,11 +26,13 @@
 	import { downloadFile } from '$lib/utils/files';
 	import OptionsHead from '$lib/components/basic/OptionsHead.svelte';
 	import Select from '$lib/components/basic/Select.svelte';
+	import ExportHistoryForm from './ExportHistoryForm.svelte';
 
 	let show = $state(false);
 	let show1 = $state(false);
 	let show2 = $state(false);
 	let show3 = $state(false);
+	let showHistory = $state(false);
 
 	let selectedMaterial: any = $state({
 		code: '',
@@ -131,15 +139,22 @@
 		<Select placeholder="Cliente" menu items={types} bind:value={filters.product} class="w-40" />
 	{/snippet}
 	{#snippet right()}
-		<Button
-			onclick={() =>
-				downloadFile({
-					url: '/inventory/export',
-					name: `Inventario ${format(new Date(), 'dd/MM/yyyy HH:mm', { locale: es })}.xlsx`
-				})}
-			variant="outline"
-			size="icon"><FileDown class="size-3.5" /></Button
-		>
+		<DropdownMenu>
+			<DropdownMenuTrigger class="h-7">
+				<Button size="icon" variant="outline"><FileDown class="size-3.5" /></Button>
+				<DropdownMenuContent align="end">
+					<DropdownMenuItem
+						onclick={() =>
+							downloadFile({
+								url: '/inventory/export',
+								name: `Inventario ${format(new Date(), 'dd/MM/yyyy HH:mm', { locale: es })}.xlsx`
+							})}>Inventario</DropdownMenuItem
+					>
+					<DropdownMenuItem onclick={() => (showHistory = true)}>Historial</DropdownMenuItem>
+				</DropdownMenuContent>
+			</DropdownMenuTrigger>
+		</DropdownMenu>
+
 		<Button onclick={createMaterial} size="action"
 			><PlusCircle class=" size-3.5" />Añadir Material</Button
 		>
@@ -204,3 +219,4 @@
 <MaterialComparisonCard bind:show={show3} bind:selectedMaterial />
 <MaterialsForm bind:show={show1} bind:selectedMaterial />
 <DeletePopUp bind:show={show2} text="Eliminar material" deleteFunc={handleDelete} />
+<ExportHistoryForm bind:show={showHistory} />
