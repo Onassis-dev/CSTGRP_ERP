@@ -84,10 +84,10 @@
 	async function handleSubmit() {
 		if (selectedRow.id) {
 			await api.put('/ie/preforms', formData);
-			showSuccess('Factura actualizada');
+			showSuccess('Proforma actualizada');
 		} else {
 			await api.post('/ie/preforms', formData);
-			showSuccess('Factura registrada');
+			showSuccess('Proforma registrada');
 		}
 
 		refetch(['preforms']);
@@ -137,7 +137,7 @@
 <Dialog bind:open={show}>
 	<DialogContent class="sm:max-w-6xl">
 		<DialogHeader
-			title={selectedRow.id ? `Editar ${selectedRow.noFactura}` : 'Registrar Factura'}
+			title={selectedRow.id ? `Editar ${selectedRow.noFactura}` : 'Registrar Proforma'}
 		/>
 		<DialogBody>
 			<div
@@ -319,7 +319,7 @@
 				</TableBody>
 			</Table>
 
-			<Button onclick={addRow} class="mb-6">Agregar material</Button>
+			<Button onclick={addRow} class="mb-6">Agregar Entrada</Button>
 
 			<div
 				class="border-primary/20 relative mb-6 grid w-full gap-x-4 gap-y-2 rounded-md border p-4"

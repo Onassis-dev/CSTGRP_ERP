@@ -14,6 +14,7 @@
 	import { createQuery } from '@tanstack/svelte-query';
 	import { refetch } from '$lib/utils/query';
 	import PreformsForm from './PreformsForm.svelte';
+	import { formatDate } from '$lib/utils/functions';
 
 	let showDelete = $state(false);
 	let showForm = $state(false);
@@ -33,7 +34,7 @@
 	async function handleDelete() {
 		await api.delete('/ie/preforms/' + selectedRow.id);
 		selectedRow = {};
-		showSuccess('Preforma eliminada');
+		showSuccess('Proforma eliminada');
 		refetch(['preforms']);
 		showDelete = false;
 	}
@@ -94,11 +95,11 @@
 					]}
 				/>
 				<TableCell>{preform.noFactura}</TableCell>
-				<TableCell>{preform.date}</TableCell>
+				<TableCell>{formatDate(preform.date)}</TableCell>
 			</TableRow>
 		{/each}
 	</TableBody>
 </CusTable>
 
-<DeletePopUp bind:show={showDelete} text="Eliminar preforma" deleteFunc={handleDelete} />
+<DeletePopUp bind:show={showDelete} text="Eliminar proforma" deleteFunc={handleDelete} />
 <PreformsForm bind:show={showForm} bind:selectedRow />
