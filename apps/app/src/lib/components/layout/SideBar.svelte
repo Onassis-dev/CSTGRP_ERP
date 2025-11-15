@@ -87,7 +87,7 @@
 			</Accordion.Item>
 		{/if}
 
-		{#if hasAccess('prod_corte') || hasAccess('prod_cortesVarios') || hasAccess('prod_produccion') || hasAccess('prod_calidad') || hasAccess('prod_serigrafia') || hasAccess('jobs')}
+		{#if hasAccess('prod_corte') || hasAccess('prod_cortesVarios') || hasAccess('prod_produccion') || hasAccess('prod_serigrafia') || hasAccess('jobs')}
 			<Accordion.Item value="production" class="border-none">
 				<Accordion.Trigger
 					class="hover:bg-muted  mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
