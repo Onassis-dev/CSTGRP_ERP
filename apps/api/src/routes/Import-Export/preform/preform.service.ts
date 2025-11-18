@@ -181,20 +181,19 @@ export class PreformService {
         .map(
           ({ client, data, total }) => `
         <thead>
-          <th colspan="7">
-            CLIENTE: ${client}
-          <th>
+          <th colspan="7">CLIENTE: ${client}</th>
+          <th>USD</th>
         </thead>
         <tbody>
           <tr class="subheader">
-            <td>Entrada</td>
-            <td class="centered-cell">Bultos</td>
-            <td>Unidad</td>
-            <td>In/Out</td>
-            <td class="centered-cell">Dias</td>
-            <td>Almacenaje</td>
-            <td>Orden</td>
-            <td>USD</td>
+            <td>ENTRADA</td>
+            <td class="centered-cell">BULTOS</td>
+            <td>UNIDAD</td>
+            <td>IN/OUT</td>
+            <td class="centered-cell">DIAS</td>
+            <td>ALMACENAJE</td>
+            <td>ORDEN DE COMPRA</td>
+            <td></td>
           </tr>
           ${data
             .map(
