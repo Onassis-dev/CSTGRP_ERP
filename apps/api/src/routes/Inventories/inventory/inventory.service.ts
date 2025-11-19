@@ -24,7 +24,8 @@ export class InventoryService {
         materialmovements."realAmount",
         materialmovements.active,
         SUM(materialmovements."realAmount") OVER (ORDER BY materialmovements."activeDate" ASC, materialmovements.id ASC) AS balance,
-        SUM(materialmovements."amount") OVER (ORDER BY materialmovements."activeDate" ASC, materialmovements.id ASC) AS "totalBalance"
+        SUM(materialmovements."amount") OVER (ORDER BY materialmovements."activeDate" ASC, materialmovements.id ASC) AS "totalBalance",
+        SUM(materialmovements."amount" - materialmovements."realAmount") OVER (ORDER BY materialmovements."activeDate" ASC, materialmovements.id ASC) AS "leftoverAmount"
         FROM
             materialmovements
         JOIN
@@ -60,6 +61,7 @@ export class InventoryService {
       { header: 'Cantidad Real', key: 'realAmount', width: 15 },
       { header: 'Fecha', key: 'activeDate', width: 15 },
       { header: 'Balance', key: 'balance', width: 15 },
+      { header: 'Sobrante', key: 'leftoverAmount', width: 15 },
       { header: 'Total Balance', key: 'totalBalance', width: 15 },
     ];
 

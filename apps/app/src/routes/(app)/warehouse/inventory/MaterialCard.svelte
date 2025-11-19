@@ -18,13 +18,15 @@
 	import { formatDate, getImage } from '$lib/utils/functions';
 	import api from '$lib/utils/server';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import { Download } from 'lucide-svelte';
+	import { Eye, Download, EyeOff } from 'lucide-svelte';
 	import { downloadFile } from '$lib/utils/files';
 
 	interface Props {
 		show: boolean;
 		selectedMaterial: any;
 	}
+
+	let showLeftover = $state(false);
 
 	let { show = $bindable(), selectedMaterial = $bindable() }: Props = $props();
 
@@ -71,7 +73,24 @@
 					<TableHead>Cantidad Job</TableHead>
 					<TableHead>Cantidad real</TableHead>
 					<TableHead>Fecha</TableHead>
-					<TableHead>Balance</TableHead>
+					<TableHead>
+						<div class="flex items-center justify-between">
+							Balance <Button
+								variant="outline"
+								size="icon"
+								onclick={() => (showLeftover = !showLeftover)}
+							>
+								{#if showLeftover}
+									<EyeOff />
+								{:else}
+									<Eye />
+								{/if}
+							</Button>
+						</div>
+					</TableHead>
+					{#if showLeftover}
+						<TableHead>Sobrante</TableHead>
+					{/if}
 					<TableHead>Balance total</TableHead>
 				</TableHeader>
 				<TableBody>
@@ -94,6 +113,9 @@
 								><Badge color={parseFloat(row.balance) > 0 ? 'green' : 'red'}>{row.balance}</Badge
 								></TableCell
 							>
+							{#if showLeftover}
+								<TableCell><Badge color="gray">{row.leftoverAmount}</Badge></TableCell>
+							{/if}
 							<TableCell
 								><Badge color={parseFloat(row.balance) > 0 ? 'green' : 'red'}
 									>{row.totalBalance}</Badge
