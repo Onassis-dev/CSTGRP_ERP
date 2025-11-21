@@ -41,4 +41,9 @@ export class InventoryController {
   exportHistory(@Query(new ZodPiPe(exportHistorySchema)) query) {
     return this.inventoryService.exportHistory(query);
   }
+
+  @Get('recalculate')
+  recalculate() {
+    return this.inventoryService.recalculate();
+  }
 }

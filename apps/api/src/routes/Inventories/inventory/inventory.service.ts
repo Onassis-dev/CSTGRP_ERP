@@ -4,6 +4,7 @@ import exceljs from 'exceljs';
 import { idObjectSchema } from 'src/utils/schemas';
 import { z } from 'zod/v4';
 import { exportHistorySchema } from './inventory.schema';
+import { updateMaterialAmount } from 'src/utils/functions';
 
 @Injectable()
 export class InventoryService {
@@ -200,5 +201,12 @@ export class InventoryService {
 
     const buffer = await workbook.xlsx.writeBuffer();
     return buffer;
+  }
+
+  async recalculate() {
+    const materials = await sql`select id from materials`;
+    for (const material of materials) {
+      await updateMaterialAmount(material.id);
+    }
   }
 }

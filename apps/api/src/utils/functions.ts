@@ -80,40 +80,15 @@ export async function updateMaterialAmount(id, dbInstance?: any) {
         AND materials.id = ${id}
     ),
 
-    "leftoverAmount" = (
-      ( 
+    "leftoverAmount" = ( 
         SELECT COALESCE(SUM(materialmovements."realAmount" - materialmovements.amount), 0) AS balance
         FROM materialmovements 
           JOIN materials ON materials.id = materialmovements."materialId"
           JOIN materialie ON materialie.id = materialmovements."movementId"
         WHERE materialmovements.active = true
-          AND (materialie.location IS NULL OR materialie.location = 'At CST, Qtys verified')
-          AND materialmovements.extra = false
+          AND (materialie.location IS NULL OR materialie.location = 'At CST, Qtys verified' or materialie.import = 'Retorno')
           AND materials.id = ${id}
-      ) 
-        +
-      ( 
-        SELECT COALESCE(SUM(materialmovements.amount), 0) AS balance
-        FROM materialmovements 
-          JOIN materials ON materials.id = materialmovements."materialId"
-          JOIN materialie ON materialie.id = materialmovements."movementId"
-        WHERE materialmovements.active = true
-          AND materialmovements.extra = true
-          AND materialie.id = (select id from materialie where import = 'Retorno')
-          AND materials.id = ${id}
-      )
-        -
-      ( 
-        SELECT COALESCE(SUM(materialmovements.amount - materialmovements."realAmount"), 0) AS balance
-        FROM materialmovements 
-          JOIN materials ON materials.id = materialmovements."materialId"
-          JOIN materialie ON materialie.id = materialmovements."movementId"
-        WHERE materialmovements.active = true
-          AND materialmovements.extra = true
-          AND materialmovements.amount < 0
-          AND materials.id = ${id}
-      )
-    ) * -1,
+      ) * -1,
 
     "pendingAmount" = (
     SELECT COALESCE(SUM(materialmovements."amount"), 0) AS balance
