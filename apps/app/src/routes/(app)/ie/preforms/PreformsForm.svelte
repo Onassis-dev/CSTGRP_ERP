@@ -58,8 +58,8 @@
 		],
 		usData: [],
 		almacenData: [
-			{ name: 'REGISTRO POR CAMION', amount: 0, price: '40' },
-			{ name: 'REVISION DE MERCANCIAS', amount: 0, price: '10' }
+			{ name: 'REGISTRO POR CAMION', amount: 0, price: '10' },
+			{ name: 'REVISION DE MERCANCIAS', amount: 0, price: '40' }
 		],
 		extraData: [
 			{ name: 'SELLO C-TPAT', amount: '' },
@@ -223,12 +223,16 @@
 				<div class="bg-background absolute -top-5 left-8 my-2 px-2 font-semibold">
 					ENTRADAS DE ALMACEN US
 				</div>
-				{#each formData.almacenData as item}
-					<Label name={item.name} class="flex">
+				<div class="grid grid-cols-[10rem_10rem_10rem] items-center gap-2">
+					<div></div>
+					<div class="text-xs text-[#5c5e63]">CANTIDAD</div>
+					<div class="text-xs text-[#5c5e63]">COSTO</div>
+					{#each formData.almacenData as item}
+						<div class="text-xs">{item.name}</div>
 						<Input bind:value={item.amount} />
 						<Input bind:value={item.price} />
-					</Label>
-				{/each}
+					{/each}
+				</div>
 			</div>
 
 			<div
@@ -326,12 +330,12 @@
 			>
 				<div class="bg-background absolute -top-5 left-8 my-2 px-2 font-semibold">FIJOS</div>
 
-				<div class="grid grid-cols-[6rem_10rem_10rem] gap-x-2">
+				<div class="grid grid-cols-[5rem_10rem_10rem] items-center gap-2">
 					<div></div>
-					<div>In/Out</div>
-					<div>Almacenaje</div>
+					<div class="text-xs text-[#5c5e63]">In/Out</div>
+					<div class="text-xs text-[#5c5e63]">Almacenaje</div>
 					{#each formData.unityOptions as option}
-						<p>{option.name}</p>
+						<p class="text-xs">{option.name}</p>
 						<Input bind:value={option.inOut} />
 						<Input bind:value={option.almacenaje} />
 					{/each}
