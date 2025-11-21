@@ -57,10 +57,7 @@
 			{ name: 'DIGITALIZACION', amount: '' }
 		],
 		usData: [],
-		almacenData: [
-			{ name: 'REGISTRO POR CAMION', amount: 0, price: '10' },
-			{ name: 'REVISION DE MERCANCIAS', amount: 0, price: '40' }
-		],
+		almacenData: [],
 		extraData: [
 			{ name: 'SELLO C-TPAT', amount: '' },
 			{ name: 'MANIOBRAS', amount: '' },
@@ -182,11 +179,20 @@
 							formData.usData = [];
 							if (formData.regimen === 'IN Importación') {
 								formData.usData = [{ name: 'SHIPPER AMERICANO', amount: '' }];
+								formData.almacenData = [
+									{ name: 'REGISTRO POR CAMION', amount: 0, price: '10' },
+									{ name: 'REVISION DE MERCANCIAS', amount: 0, price: '40' },
+									{ name: 'PALLET SIN TRATAR', amount: 0, price: '40' }
+								];
 							}
 							if (formData.regimen === 'RT Exportación') {
 								formData.usData = [
 									{ name: 'E-MANIFEST', amount: '' },
 									{ name: 'DUTY HTS', amount: '' }
+								];
+								formData.almacenData = [
+									{ name: 'REGISTRO POR CAMION', amount: 0, price: '10' },
+									{ name: 'REVISION DE MERCANCIAS', amount: 0, price: '40' }
 								];
 							}
 						}}
