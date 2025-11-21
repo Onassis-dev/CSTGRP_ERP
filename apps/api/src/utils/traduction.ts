@@ -192,6 +192,18 @@ const valueTraduccion = {
   perBox: 'Pz/Caja',
   destinations: 'Destinos',
   seniority: 'Antigüedad',
+  usData: 'GASTOS AGENCIA ADUANAL US',
+  almacenData: 'ENTRADAS DE ALMACEN',
+  extraData: 'GASTOS EXTRA',
+  clientsData: 'CLIENTES',
+  unityOptions: 'FIJOS',
+  inOut: 'In/Out',
+  almacenaje: 'Almacenaje',
+  noFactura: 'No. de Factura',
+  regimen: 'Regimen',
+  pedimento: 'Pedimento',
+  exteriorData: 'GASTOS ADUANALES AL COMERCIO EXTERIOR',
+  mexData: 'GASTOS AGENCIA ADUANAL MEX',
 };
 
 export const getTraducction = (value: string | number) => {
