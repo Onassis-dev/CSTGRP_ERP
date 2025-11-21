@@ -132,6 +132,27 @@
 		{ value: 'IN Importación', name: 'Import', color: 'blue' },
 		{ value: 'RT Exportación', name: 'Export', color: 'red' }
 	];
+
+	const filledFields = [
+		'VALIDACION ELECTRONICA',
+		'VENTANILLA UNICA',
+		'PREVALIDACION',
+		'HONORARIOS AGENCIA ADUANAL',
+		'HOJA ADICIONAL',
+		'PRV',
+		'IVA/PRV'
+	];
+
+	const isFilled = (name?: string | boolean) => {
+		const emptyClass = 'bg-red-50';
+		if (typeof name === 'string') {
+			return filledFields.includes(name) ? '' : emptyClass;
+		}
+		if (typeof name === 'boolean') {
+			return name ? '' : emptyClass;
+		}
+		return emptyClass;
+	};
 </script>
 
 <Dialog bind:open={show}>
@@ -147,13 +168,14 @@
 					Datos Generales
 				</div>
 				<Label name="Factura">
-					<Input bind:value={formData.noFactura} />
+					<Input bind:value={formData.noFactura} class={isFilled()} />
 				</Label>
 				<Label name="Fecha">
-					<Input type="date" bind:value={formData.date} />
+					<Input type="date" bind:value={formData.date} class={isFilled()} />
 				</Label>
 				<Label name="Regimen">
 					<Select
+						class={isFilled()}
 						items={regimens}
 						bind:value={formData.regimen}
 						onValueChange={(v) => {
@@ -171,10 +193,10 @@
 					/>
 				</Label>
 				<Label name="Pedimento">
-					<Input bind:value={formData.pedimento} />
+					<Input bind:value={formData.pedimento} class={isFilled()} />
 				</Label>
 				<Label name="Tipo de cambio">
-					<Input bind:value={formData.exchangeRate} />
+					<Input bind:value={formData.exchangeRate} class={isFilled()} />
 				</Label>
 			</div>
 
@@ -186,7 +208,7 @@
 				</div>
 				{#each formData.exteriorData as item}
 					<Label name={item.name}>
-						<Input bind:value={item.amount} />
+						<Input bind:value={item.amount} class={isFilled(item.name)} />
 					</Label>
 				{/each}
 			</div>
@@ -199,7 +221,7 @@
 				</div>
 				{#each formData.mexData as item}
 					<Label name={item.name}>
-						<Input bind:value={item.amount} />
+						<Input bind:value={item.amount} class={isFilled(item.name)} />
 					</Label>
 				{/each}
 			</div>
@@ -212,7 +234,7 @@
 				</div>
 				{#each formData.usData as item}
 					<Label name={item.name}>
-						<Input bind:value={item.amount} />
+						<Input bind:value={item.amount} class={isFilled()} />
 					</Label>
 				{/each}
 			</div>
@@ -229,8 +251,8 @@
 					<div class="text-xs text-[#5c5e63]">COSTO</div>
 					{#each formData.almacenData as item}
 						<div class="text-xs">{item.name}</div>
-						<Input bind:value={item.amount} />
-						<Input bind:value={item.price} />
+						<Input bind:value={item.amount} class={isFilled()} />
+						<Input bind:value={item.price} class={isFilled(true)} />
 					{/each}
 				</div>
 			</div>
@@ -242,7 +264,7 @@
 
 				{#each formData.extraData as item}
 					<Label name={item.name}>
-						<Input bind:value={item.amount} />
+						<Input bind:value={item.amount} class={isFilled()} />
 					</Label>
 				{/each}
 			</div>
@@ -336,8 +358,8 @@
 					<div class="text-xs text-[#5c5e63]">Almacenaje</div>
 					{#each formData.unityOptions as option}
 						<p class="text-xs">{option.name}</p>
-						<Input bind:value={option.inOut} />
-						<Input bind:value={option.almacenaje} />
+						<Input bind:value={option.inOut} class={isFilled(true)} />
+						<Input bind:value={option.almacenaje} class={isFilled(true)} />
 					{/each}
 				</div>
 			</div>
