@@ -143,7 +143,6 @@ export class JobsService {
         produccionTime: body.produccionTime,
         calidadTime: body.calidadTime,
         serigrafiaTime: body.serigrafiaTime,
-        operations: body.operations,
         ...productMovement,
       })} returning id`;
 
@@ -253,7 +252,6 @@ export class JobsService {
         produccionTime: body.produccionTime,
         calidadTime: body.calidadTime,
         serigrafiaTime: body.serigrafiaTime,
-        operations: body.operations,
       })} where "jobId" = ${body.id} returning id`;
 
       // Update Destinations
