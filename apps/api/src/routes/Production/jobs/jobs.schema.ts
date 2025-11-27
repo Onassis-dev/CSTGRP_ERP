@@ -62,6 +62,8 @@ export const exportSchema = z.object({
   ),
   operations: z.array(
     z.object({
+      id: z.coerce.number().nullish(),
+      transaction: transactionOptions.nullish(),
       code: z.string(),
       minutes: numberSchema,
       area: z.string(),

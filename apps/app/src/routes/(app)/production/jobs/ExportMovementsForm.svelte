@@ -50,6 +50,7 @@
 		code: string;
 		minutes: number;
 		area: string;
+		transaction: 'insert' | 'delete';
 	}
 
 	interface destination {
@@ -125,7 +126,9 @@
 
 		formData = { ...result };
 		materials = result.materials;
-		operations = result.operations;
+		operations =
+			result.operations?.map((op: any) => ({ ...op, transaction: op.transaction || 'insert' })) ||
+			[];
 		destinations = result.destinations;
 		bastones = result.bastones;
 	}
@@ -151,12 +154,17 @@
 	}
 
 	function addOperation() {
-		operations.push({ code: '', minutes: 0, area: '' });
+		operations.push({ code: '', minutes: 0, area: '', transaction: 'insert' });
 		operations = [...operations];
 	}
 	function deleteOperation(i: number) {
-		operations.splice(i, 1);
-		operations = [...operations];
+		if (operations[i].transaction === 'insert') {
+			operations.splice(i, 1);
+			operations = [...operations];
+		} else {
+			operations[i].transaction = 'delete';
+			operations = [...operations];
+		}
 	}
 
 	function addDestination() {
@@ -201,7 +209,7 @@
 		const { data } = await api.get('/jobs/' + selectedMovement.id);
 		materials = data.materials;
 		destinations = data.destinations || [];
-		operations = Array.isArray(data.operations) ? data.operations : [];
+		operations = data.operations || [];
 		formData = { ...data };
 		files = null;
 		inputDisabled = false;
@@ -228,31 +236,36 @@
 			if (!operations?.length) return;
 			formData.corteTime = operations
 				.reduce((acc, operation) => {
-					if (operation.area === 'corte') acc += Number(operation.minutes);
+					if (operation.area === 'corte' && operation.transaction !== 'delete')
+						acc += Number(operation.minutes);
 					return acc;
 				}, 0)
 				.toFixed(2);
 			formData.cortesVariosTime = operations
 				.reduce((acc, operation) => {
-					if (operation.area === 'cortesVarios') acc += Number(operation.minutes);
+					if (operation.area === 'cortesVarios' && operation.transaction !== 'delete')
+						acc += Number(operation.minutes);
 					return acc;
 				}, 0)
 				.toFixed(2);
 			formData.produccionTime = operations
 				.reduce((acc, operation) => {
-					if (operation.area === 'produccion') acc += Number(operation.minutes);
+					if (operation.area === 'produccion' && operation.transaction !== 'delete')
+						acc += Number(operation.minutes);
 					return acc;
 				}, 0)
 				.toFixed(2);
 			formData.calidadTime = operations
 				.reduce((acc, operation) => {
-					if (operation.area === 'calidad') acc += Number(operation.minutes);
+					if (operation.area === 'calidad' && operation.transaction !== 'delete')
+						acc += Number(operation.minutes);
 					return acc;
 				}, 0)
 				.toFixed(2);
 			formData.serigrafiaTime = operations
 				.reduce((acc, operation) => {
-					if (operation.area === 'serigrafia') acc += Number(operation.minutes);
+					if (operation.area === 'serigrafia' && operation.transaction !== 'delete')
+						acc += Number(operation.minutes);
 					return acc;
 				}, 0)
 				.toFixed(2);
@@ -340,7 +353,7 @@
 			<Tabs class="w-full" value="materials">
 				<TabsList class="grid w-full grid-cols-4">
 					<TabsTrigger value="materials">Materiales</TabsTrigger>
-					<TabsTrigger value="movements">Movimientos</TabsTrigger>
+					<TabsTrigger value="operations">Operaciones</TabsTrigger>
 					<TabsTrigger value="detinations">Destinos</TabsTrigger>
 					<TabsTrigger value="bastones">Bastones</TabsTrigger>
 				</TabsList>
@@ -412,9 +425,10 @@
 					</Table>
 					<Button onclick={addMaterial} class="mx-auto">Agregar material</Button>
 				</TabsContent>
-				<TabsContent value="movements">
+				<TabsContent value="operations">
 					<Table divClass="h-auto overflow-visible mt-4">
 						<TableHeader class="border-t">
+							<TableHead class="w-1 p-0"></TableHead>
 							<TableHead>Codigo</TableHead>
 							<TableHead>Minutos</TableHead>
 							<TableHead>Area</TableHead>
@@ -424,11 +438,19 @@
 						<TableBody>
 							{#each operations as operation, i}
 								<TableRow>
+									<TableCell
+										class={cn(
+											'w-1 border-l px-[1px]',
+											operations[i].transaction === 'delete' ? 'bg-red-600' : '',
+											operations[i].transaction === 'insert' ? 'bg-green-600' : ''
+										)}
+									/>
 									<TableCell class="border-l p-0 px-[1px]"
 										><Input
 											class="rounded-none border-none !opacity-100"
 											type="text"
 											bind:value={operation.code}
+											disabled={operations[i].transaction === 'delete'}
 										/></TableCell
 									>
 									<TableCell class="p-0 px-[1px]"
@@ -437,6 +459,7 @@
 											type="text"
 											bind:value={operation.minutes}
 											oninput={() => (operations = [...operations])}
+											disabled={operations[i].transaction === 'delete'}
 										/></TableCell
 									>
 									<TableCell class="w-32 p-0 px-[1px]"
@@ -446,6 +469,7 @@
 											items={areas}
 											bind:value={operation.area}
 											onValueChange={() => (operations = [...operations])}
+											disabled={operations[i].transaction === 'delete'}
 										/></TableCell
 									>
 									<TableCell class="flex h-8 justify-center p-0 px-[1px]"

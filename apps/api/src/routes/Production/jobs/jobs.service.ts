@@ -45,7 +45,10 @@ export class JobsService {
       await sql`select order_destiny.id, so, order_destiny.po, amount, date
        from order_destiny 
        join destinys on destinys.id = order_destiny."destinyId"
-       where "orderId" = ${order?.id}`;
+       where "orderId" = ${order?.id || null}`;
+
+    const operations =
+      await sql`select id, code, minutes, area from operations where "orderId" = ${order?.id || null}`;
 
     return {
       ...order,
@@ -53,6 +56,7 @@ export class JobsService {
       ...productMovement,
       due: data.due.toISOString().split('T')[0],
       materials,
+      operations,
       destinations: destinations.map((destination) => ({
         ...destination,
         date: destination.date.toISOString().split('T')[0],
@@ -155,6 +159,16 @@ export class JobsService {
          (${order.id}, (select id from destinys where so = ${destination.so}), ${destination.amount}, ${destination.date}, ${destination.po})`;
         }
       }
+
+      // Add operations info
+      await sql`insert into operations ${sql(
+        body.operations.map((operation) => ({
+          orderId: order.id,
+          code: operation.code,
+          minutes: operation.minutes,
+          area: operation.area,
+        })),
+      )}`;
 
       // Make record
       await this.req.record(`Registro el job: ${body.jobpo}`, sql);
@@ -268,6 +282,23 @@ export class JobsService {
             await sql`update order_destiny set "amount" = ${destination.amount}, "date" = ${destination.date}, "po" = ${destination.po}, "destinyId" = (select id from destinys where so = ${destination.so})
              where id = ${destination.id}`;
           }
+        }
+      }
+
+      // Update operations
+      for (const operation of body.operations) {
+        if (operation.transaction === 'delete') {
+          // Delete
+          await sql`delete from operations where id = ${operation.id || ''}`;
+        } else if (operation.transaction === 'insert') {
+          // Insert
+          delete operation.transaction;
+          delete operation.id;
+          await sql`insert into operations ${sql({ ...operation, orderId: order.id })}`;
+        } else if (!operation.transaction) {
+          // Update
+          delete operation.transaction;
+          await sql`update operations set ${sql(operation)} where id = ${operation.id} `;
         }
       }
 

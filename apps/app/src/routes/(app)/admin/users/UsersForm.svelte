@@ -230,6 +230,13 @@
 			</div>
 
 			<div class={cardClass}>
+				<h3 class="col-span-full w-full pl-0.5 font-semibold">Progreso</h3>
+				<Label name="Perm. Progreso">
+					<Select items={permissions} bind:value={formData.permissions.progress} />
+				</Label>
+			</div>
+
+			<div class={cardClass}>
 				<h3 class="col-span-full w-full pl-0.5 font-semibold">Extras</h3>
 				<Label name="Asistencia">
 					<SelectBasic.Root

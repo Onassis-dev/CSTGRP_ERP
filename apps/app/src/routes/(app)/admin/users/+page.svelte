@@ -118,6 +118,7 @@
 		<TableHead class="w-[12.5%]">Opciones</TableHead>
 		<TableHead class="w-[12.5%]">Sistemas</TableHead>
 		<TableHead class="w-[12.5%]">Compras</TableHead>
+		<TableHead class="w-[12.5%]">Progreso</TableHead>
 		<TableHead class="w-[12.5%]">Cliente</TableHead>
 		<TableHead class="w-[12.5%]">Block</TableHead>
 	</TableHeader>
@@ -403,6 +404,15 @@
 						color={getBadgeColor(user.permissions.purchases)}
 					>
 						{@const SvelteComponent_11 = badgeTexts[user.permissions.purchases]}
+						<SvelteComponent_11 class="size-3.5" />
+					</Badge></TableCell
+				>
+				<TableCell class="p-1.5 text-center"
+					><Badge
+						class="flex h-full w-full items-center justify-center p-1"
+						color={getBadgeColor(user.permissions.progress)}
+					>
+						{@const SvelteComponent_11 = badgeTexts[user.permissions.progress]}
 						<SvelteComponent_11 class="size-3.5" />
 					</Badge></TableCell
 				>

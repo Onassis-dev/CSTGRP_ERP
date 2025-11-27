@@ -19,6 +19,7 @@ export const permissionsList = {
   directory: permType,
   docs: permType,
   purchases: permType,
+  progress: permType,
   prod_corte: permType,
   prod_cortesVarios: permType,
   prod_produccion: permType,
