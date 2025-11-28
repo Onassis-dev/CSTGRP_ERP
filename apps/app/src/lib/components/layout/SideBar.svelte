@@ -24,7 +24,8 @@
 		Factory,
 		LineChartIcon,
 		Truck,
-		BadgeCheck
+		BadgeCheck,
+		Ruler
 	} from 'lucide-svelte';
 	import { goto } from '$app/navigation';
 	import { cn } from '$lib/utils';
@@ -114,6 +115,21 @@
 					{#if hasAccess('jobs')}
 						<Accordion.Option href="/production/jobs" />
 					{/if}
+				</Accordion.Content>
+			</Accordion.Item>
+		{/if}
+
+		{#if hasAccess('progress')}
+			<Accordion.Item value="progress" class="border-none">
+				<Accordion.Trigger
+					class="hover:bg-muted  mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
+				>
+					<Ruler class="size-3.5 text-[#5c5e63]" />
+					Progreso
+				</Accordion.Trigger>
+				<Accordion.Content>
+					<Accordion.Option href="/progress/dashboard" />
+					<Accordion.Option href="/progress/orders" />
 				</Accordion.Content>
 			</Accordion.Item>
 		{/if}

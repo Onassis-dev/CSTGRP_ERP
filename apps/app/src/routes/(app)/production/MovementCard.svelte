@@ -28,7 +28,7 @@
 	let movements: any[] = $state([]);
 
 	async function fetchData() {
-		movements = (await api.get('/progress/history', { params: { id: selectedOrder.id, area } }))
+		movements = (await api.get('/progress/records', { params: { id: selectedOrder.id, area } }))
 			.data;
 	}
 

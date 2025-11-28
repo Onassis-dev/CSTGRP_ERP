@@ -20,7 +20,7 @@ export class ProgressController {
     return this.progressService.getOrders(query);
   }
 
-  @Get('history')
+  @Get('records')
   getOrderHistory(@Query(new ZodPiPe(getHistorySchema)) query) {
     return this.progressService.getOrderHistory(query);
   }

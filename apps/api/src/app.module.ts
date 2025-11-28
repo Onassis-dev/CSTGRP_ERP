@@ -11,6 +11,7 @@ import { ProductionModule } from './routes/Production/production.module';
 import { ReportsModule } from './routes/Reports/reports.module';
 import { ImportExportModule } from './routes/Import-Export/import-export.module';
 import { QualityModule } from './routes/Quality/quality.module';
+import { ProgressModule } from './routes/Progress/progress.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { QualityModule } from './routes/Quality/quality.module';
     PurchasesModule,
     ProductionModule,
     ReportsModule,
+    ProgressModule,
     ImportExportModule,
     QualityModule,
   ],
