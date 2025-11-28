@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import sql from 'src/utils/db';
 import { z } from 'zod/v4';
-import { getAreasSchema, getDayDataSchema } from './areas.schema';
+import {
+  editCommentSchema,
+  getAreasSchema,
+  getDayDataSchema,
+} from './areas.schema';
 import { ContextProvider } from 'src/interceptors/context.provider';
 import { getWeekDays } from 'src/utils/functions';
 
@@ -119,7 +123,24 @@ export class AreasService {
     where "areaId" = ${body.areaId} and "date" = ${date} 
     and ordermovements."produccion" is not null`;
 
-    return { date, produced, minutes: day?.minutes };
+    const [commentRow] =
+      await sql`select * from prod_comments where "areaId" = ${body.areaId} and "date" = ${date}`;
+
+    return {
+      date,
+      produced,
+      minutes: day?.minutes,
+      comment: commentRow?.text || '',
+    };
+  }
+
+  async editComment(body: z.infer<typeof editCommentSchema>) {
+    await sql`
+    INSERT INTO prod_comments ("date", "areaId", "text")
+    VALUES (${body.date}, ${body.areaId}, ${body.text})
+    ON CONFLICT ("areaId", "date") DO UPDATE SET
+      "text" = EXCLUDED."text";`;
+    return;
   }
 }
 

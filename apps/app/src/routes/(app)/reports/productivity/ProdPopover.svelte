@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Popover, PopoverContent, PopoverTrigger } from '$lib/components/ui/popover';
 	import TableCell from '$lib/components/ui/table/table-cell.svelte';
+	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
 	import { cn } from '$lib/utils';
 	import { formatDate } from '$lib/utils/functions';
 	import api from '$lib/utils/server';
@@ -22,7 +23,6 @@
 
 	async function getData() {
 		data = (await api.get(`/reports/areas/day?date=${date}&day=${day}&areaId=${areaId}`)).data;
-		console.log(data);
 	}
 
 	$effect(() => {
@@ -35,7 +35,7 @@
 		<PopoverTrigger class="h-full w-full px-3">
 			{formatAvg(productivity)}
 		</PopoverTrigger>
-		<PopoverContent>
+		<PopoverContent class="w-80">
 			{#if data}
 				<div class="grid grid-cols-2 gap-2 text-sm">
 					<div class="font-bold">Fecha:</div>
@@ -70,6 +70,17 @@
 							) / 60
 						).toFixed(2)}h)
 					</p>
+					<Textarea
+						class="col-span-full"
+						bind:value={data.comment}
+						onblur={() => {
+							api.post('/reports/areas/comment', {
+								date: data.date,
+								text: data.comment,
+								areaId: areaId
+							});
+						}}
+					/>
 				</div>
 			{:else}
 				<Loader2 class="h-4 w-4 animate-spin" />

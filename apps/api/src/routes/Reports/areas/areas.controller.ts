@@ -1,8 +1,12 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { AreasService } from './areas.service';
-import { getAreasSchema, getDayDataSchema } from './areas.schema';
+import {
+  editCommentSchema,
+  getAreasSchema,
+  getDayDataSchema,
+} from './areas.schema';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 
 @ApiTags('Reports Orders')
@@ -19,5 +23,10 @@ export class AreasController {
   @Get('day')
   getDayData(@Query(new ZodPiPe(getDayDataSchema)) query) {
     return this.areasService.getDayData(query);
+  }
+
+  @Post('comment')
+  editComment(@Body(new ZodPiPe(editCommentSchema)) body) {
+    return this.areasService.editComment(body);
   }
 }
