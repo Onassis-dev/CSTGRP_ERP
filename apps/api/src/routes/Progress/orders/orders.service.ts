@@ -25,7 +25,7 @@ export class OrdersService {
       ${body.jobpo ? sql`materialie.jobpo LIKE ${'%' + body.jobpo + '%'}` : sql`TRUE`} AND
       ${body.programation ? sql`materialie.programation LIKE ${'%' + body.programation + '%'}` : sql`TRUE`} AND
       ${body.clientId ? sql`materialie."clientId" = ${body.clientId}` : sql`TRUE`} AND
-      ${body.status === 'completed' ? sql`NOT` : sql``}
+      ${body.status === 'completed' ? sql`` : sql`NOT`}
        (
         NOT EXISTS (SELECT 1 FROM operations WHERE "orderId" = orders.id)
         OR
