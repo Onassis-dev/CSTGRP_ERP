@@ -8,6 +8,7 @@
 		DialogHeader
 	} from '$lib/components/ui/dialog';
 	import Input from '$lib/components/ui/input/input.svelte';
+	import { refetch } from '$lib/utils/query';
 
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
@@ -33,6 +34,7 @@
 			added: formData.added,
 			date: formData.date
 		});
+		refetch(['progress-orders']);
 		reload();
 		show = false;
 		showSuccess('Progreso capturado');

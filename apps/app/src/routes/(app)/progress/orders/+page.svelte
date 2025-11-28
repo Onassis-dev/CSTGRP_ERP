@@ -81,6 +81,7 @@
 		<TableHead class="w-[25%]">Job</TableHead>
 		<TableHead class="w-[100%]">Parte</TableHead>
 		<TableHead class="w-[100%]">Tiempo prod</TableHead>
+		<TableHead class="w-[100%]">Restante</TableHead>
 		<TableHead class="w-[100%]">Due Date</TableHead>
 		<TableHead class="w-[25%]">Cliente</TableHead>
 	</TableHeader>
@@ -111,6 +112,7 @@
 				<TableCell>{row.jobpo}</TableCell>
 				<TableCell>{row.part}</TableCell>
 				<TableCell>{row.time}</TableCell>
+				<TableCell>{row.missing ? Number(Math.abs(row.missing)).toFixed(2) : ''}</TableCell>
 				<TableCell>{formatDate(row.due)}</TableCell>
 				<TableCell>
 					<Badge color={$clients?.data?.[row.clientId]?.color}

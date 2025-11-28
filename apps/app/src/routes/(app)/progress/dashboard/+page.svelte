@@ -18,10 +18,10 @@
 	let showComplete = $state(false);
 
 	const orders = createQuery({
-		queryKey: ['reports-areas'],
+		queryKey: ['progress-orders-report'],
 		queryFn: async () =>
 			(
-				await api.get(`/reports/areas`, {
+				await api.get(`/progress/orders/report`, {
 					params: filters
 				})
 			).data
@@ -29,7 +29,7 @@
 
 	$effect(() => {
 		({ ...filters });
-		refetch(['reports-areas']);
+		refetch(['progress-orders-report']);
 	});
 
 	function formatAvg(avg: number) {
