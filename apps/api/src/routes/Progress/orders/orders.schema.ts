@@ -5,6 +5,7 @@ export const getOrdersSchema = z.object({
   jobpo: z.string().nullable(),
   programation: z.string().nullable(),
   clientId: idSchema.nullable(),
+  status: z.string().nullable(),
 });
 
 export const checkOrderSchema = z.object({

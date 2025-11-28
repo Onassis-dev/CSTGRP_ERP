@@ -22,10 +22,16 @@
 	let showForm = $state(false);
 	let showHistory = $state(false);
 
+	const statuses = [
+		{ name: 'Completado', value: 'completed', color: 'green' },
+		{ name: 'Pendiente', value: 'pending', color: 'yellow' }
+	];
+
 	let filters = $state({
 		programation: '',
 		jobpo: '',
-		clientId: ''
+		clientId: '',
+		status: 'pending'
 	});
 
 	const orders = createQuery({
@@ -70,6 +76,7 @@
 			allowDeselect
 			class="w-40"
 		/>
+		<Select menu items={statuses} bind:value={filters.status} class="min-w-36 max-w-36" />
 	</div>
 </MenuBar>
 

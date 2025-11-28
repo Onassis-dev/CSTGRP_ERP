@@ -24,7 +24,17 @@ export class OrdersService {
     WHERE
       ${body.jobpo ? sql`materialie.jobpo LIKE ${'%' + body.jobpo + '%'}` : sql`TRUE`} AND
       ${body.programation ? sql`materialie.programation LIKE ${'%' + body.programation + '%'}` : sql`TRUE`} AND
-      ${body.clientId ? sql`materialie."clientId" = ${body.clientId}` : sql`TRUE`}
+      ${body.clientId ? sql`materialie."clientId" = ${body.clientId}` : sql`TRUE`} AND
+      ${body.status === 'completed' ? sql`NOT` : sql``}
+       (
+        NOT EXISTS (SELECT 1 FROM operations WHERE "orderId" = orders.id)
+        OR
+        NOT EXISTS (
+          SELECT 1 FROM operations 
+          WHERE "orderId" = orders.id 
+          AND progress != orders.amount
+        )
+      )
     order by materialie."due" desc, materialie.jobpo desc limit 150
     `;
     return orders;
