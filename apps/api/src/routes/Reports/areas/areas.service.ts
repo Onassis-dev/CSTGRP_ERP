@@ -137,7 +137,7 @@ export class AreasService {
   async editComment(body: z.infer<typeof editCommentSchema>) {
     await sql`
     INSERT INTO prod_comments ("date", "areaId", "text")
-    VALUES (${body.date}, ${body.areaId}, ${body.text})
+    VALUES (${body.date}, ${body.areaId}, ${body.text || ''})
     ON CONFLICT ("areaId", "date") DO UPDATE SET
       "text" = EXCLUDED."text";`;
     return;

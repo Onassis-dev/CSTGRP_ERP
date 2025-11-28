@@ -14,5 +14,5 @@ export const getDayDataSchema = z.object({
 export const editCommentSchema = z.object({
   date: dateSchema,
   areaId: idSchema,
-  text: z.string(),
+  text: z.string().nullish(),
 });
