@@ -70,7 +70,7 @@
 	</a>
 
 	<Accordion.Root class="px-2 pt-2" type="single">
-		{#if hasAccess('reports_orders') || hasAccess('reports_areas')}
+		{#if hasAccess('reports_orders') || hasAccess('reports_areas') || hasAccess('reports_history')}
 			<Accordion.Item value="reports" class="border-none">
 				<Accordion.Trigger
 					class="hover:bg-muted  mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
@@ -84,6 +84,9 @@
 					{/if}
 					{#if hasAccess('reports_areas')}
 						<Accordion.Option href="/reports/productivity" />
+					{/if}
+					{#if hasAccess('reports_history')}
+						<Accordion.Option href="/reports/history" />
 					{/if}
 				</Accordion.Content>
 			</Accordion.Item>

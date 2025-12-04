@@ -28,6 +28,7 @@ export const permissionsList = {
   prodmovements: permType,
   reports_orders: permType,
   reports_areas: permType,
+  reports_history: permType,
   hr_dashboard: permType,
   imports: permType,
   exports: permType,

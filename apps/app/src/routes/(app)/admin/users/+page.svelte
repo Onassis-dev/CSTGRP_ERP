@@ -78,7 +78,7 @@
 		<TableHead colspan={1}>-</TableHead>
 		<TableHead colspan={6}>General</TableHead>
 		<TableHead colspan={1}>Calidad</TableHead>
-		<TableHead colspan={2}>Reportes</TableHead>
+		<TableHead colspan={3}>Reportes</TableHead>
 		<TableHead colspan={4}>RRHH</TableHead>
 		<TableHead colspan={7}>Producción</TableHead>
 		<TableHead colspan={5}>Almacen</TableHead>
@@ -97,6 +97,7 @@
 		<TableHead class="w-[12.5%]">-</TableHead>
 		<TableHead class="w-[12.5%]">Ordenes</TableHead>
 		<TableHead class="w-[12.5%]">Productividad</TableHead>
+		<TableHead class="w-[12.5%]">Historial</TableHead>
 		<TableHead class="w-[12.5%]">Dashboard</TableHead>
 		<TableHead class="w-[12.5%]">Empleados</TableHead>
 		<TableHead class="w-[12.5%]">Asistencia</TableHead>
@@ -210,6 +211,15 @@
 						color={getBadgeColor(user.permissions.reports_areas)}
 					>
 						{@const SvelteComponent_2 = badgeTexts[user.permissions.reports_areas]}
+						<SvelteComponent_2 class="size-3.5" />
+					</Badge></TableCell
+				>
+				<TableCell class="p-1.5 text-center"
+					><Badge
+						class="flex h-full w-full items-center justify-center p-1"
+						color={getBadgeColor(user.permissions.reports_history)}
+					>
+						{@const SvelteComponent_2 = badgeTexts[user.permissions.reports_history]}
 						<SvelteComponent_2 class="size-3.5" />
 					</Badge></TableCell
 				>

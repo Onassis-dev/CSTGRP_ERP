@@ -127,6 +127,9 @@
 				<Label name="Perm. productividad">
 					<Select items={permissions} bind:value={formData.permissions.reports_areas} />
 				</Label>
+				<Label name="Perm. Historial">
+					<Select items={permissions} bind:value={formData.permissions.reports_history} />
+				</Label>
 			</div>
 
 			<div class={cardClass}>
