@@ -12,6 +12,7 @@ import { ReportsModule } from './routes/Reports/reports.module';
 import { ImportExportModule } from './routes/Import-Export/import-export.module';
 import { QualityModule } from './routes/Quality/quality.module';
 import { ProgressModule } from './routes/Progress/progress.module';
+import { MaintenanceModule } from './routes/Maintenance/maintenance.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ProgressModule } from './routes/Progress/progress.module';
     ProgressModule,
     ImportExportModule,
     QualityModule,
+    MaintenanceModule,
   ],
 })
 export class AppModule {}

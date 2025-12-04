@@ -25,7 +25,8 @@
 		LineChartIcon,
 		Truck,
 		BadgeCheck,
-		Ruler
+		Ruler,
+		Wrench
 	} from 'lucide-svelte';
 	import { goto } from '$app/navigation';
 	import { cn } from '$lib/utils';
@@ -225,6 +226,19 @@
 					<Accordion.Option href="/purchases/products" />
 					<Accordion.Option href="/purchases/suppliers" />
 					<Accordion.Option href="/purchases/orders" />
+				</Accordion.Content>
+			</Accordion.Item>
+		{/if}
+		{#if hasAccess('maintenance')}
+			<Accordion.Item value="maintenance" class="border-none">
+				<Accordion.Trigger
+					class="hover:bg-muted  mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
+				>
+					<Wrench class="size-3.5 text-[#5c5e63]" />
+					Mantenimiento
+				</Accordion.Trigger>
+				<Accordion.Content>
+					<Accordion.Option href="/maintenance/machines" />
 				</Accordion.Content>
 			</Accordion.Item>
 		{/if}

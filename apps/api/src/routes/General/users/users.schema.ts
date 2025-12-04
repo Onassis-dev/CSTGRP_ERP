@@ -35,6 +35,7 @@ export const permissionsList = {
   labels: permType,
   quality: permType,
   ie_options: permType,
+  maintenance: permType,
 };
 
 export const registerSchema = z.object({

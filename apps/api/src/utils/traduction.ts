@@ -204,6 +204,10 @@ const valueTraduccion = {
   pedimento: 'Pedimento',
   exteriorData: 'GASTOS ADUANALES AL COMERCIO EXTERIOR',
   mexData: 'GASTOS AGENCIA ADUANAL MEX',
+  machines: 'Máquinas',
+  pediment: 'Pedimento',
+  inactive: 'Inactivo',
+  publicId: 'ID',
 };
 
 export const getTraducction = (value: string | number) => {
