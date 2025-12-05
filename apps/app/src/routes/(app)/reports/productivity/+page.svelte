@@ -37,10 +37,16 @@
 	}
 
 	function calculateWeekAvg(row: any) {
-		const days = [row.mondayAvg, row.tuesdayAvg, row.wednesdayAvg, row.thursdayAvg, row.fridayAvg];
-		const nonZeroDays = days.filter((day) => day !== null);
+		const days = [
+			{ avg: row.mondayAvg, minutes: row.mondayMinutes },
+			{ avg: row.tuesdayAvg, minutes: row.tuesdayMinutes },
+			{ avg: row.wednesdayAvg, minutes: row.wednesdayMinutes },
+			{ avg: row.thursdayAvg, minutes: row.thursdayMinutes },
+			{ avg: row.fridayAvg, minutes: row.fridayMinutes }
+		];
+		const nonZeroDays = days.filter((day) => Number(day?.minutes));
 
-		const sum = nonZeroDays?.reduce((acc, day) => acc + day, 0);
+		const sum = nonZeroDays?.reduce((acc, day) => acc + day.avg, 0);
 		return sum / nonZeroDays?.length;
 	}
 
