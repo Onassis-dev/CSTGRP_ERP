@@ -19,7 +19,7 @@
 					<CardTitle>{area}</CardTitle>
 				</CardHeader>
 				<CardContent chart class="h-72">
-					<BarChart label={area} {data} color="green" minValue={0}></BarChart>
+					<BarChart stepSize={20} label={area} {data} color="green" minValue={0}></BarChart>
 				</CardContent>
 			</Card>
 		{/each}

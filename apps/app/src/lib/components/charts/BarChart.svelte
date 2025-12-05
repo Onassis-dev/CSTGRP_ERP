@@ -88,7 +88,12 @@
 							display: true,
 							minRotation: 90,
 							callback: function (v) {
-								return this.getLabelForValue(String(v))?.split(' ')[1]?.slice(0, 3);
+								return this.getLabelForValue(Number(v))?.split(' ')[1]?.slice(0, 3);
+							},
+							color: '#6b7280',
+							font: {
+								size: 12,
+								family: 'Inter'
 							}
 						}
 					},
@@ -96,7 +101,11 @@
 						suggestedMax: maxValue ? maxValue + 1 : null,
 						suggestedMin: minValue,
 						grid: {
-							color: '#eee',
+							color: (c) => {
+								if (c.tick.value === 100) return colors['green'].foreground;
+								else if (c.tick.value === 60) return colors['orange'].foreground;
+								else return '#eee';
+							},
 							drawTicks: false
 						},
 						border: {
@@ -104,7 +113,10 @@
 						},
 						ticks: {
 							stepSize: stepSize,
-							color: '#6b7280',
+							color: (c) => {
+								if (c.tick.value === 100) return '#ef4444';
+								else return '#6b7280';
+							},
 							callback: (value) => value + '%',
 							font: {
 								size: 12,

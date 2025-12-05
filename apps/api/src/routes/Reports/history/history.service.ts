@@ -10,7 +10,6 @@ export class HistoryService {
   constructor(private readonly req: ContextProvider) {}
 
   async get() {
-    // const [mondayDate] = getWeekDays(new Date().toISOString().split('T')[0]);
     const today = new Date().toISOString().split('T')[0];
     let weeks = [];
 
