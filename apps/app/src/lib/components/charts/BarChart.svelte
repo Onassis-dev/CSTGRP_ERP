@@ -87,7 +87,9 @@
 							display: true,
 							minRotation: 90,
 							callback: function (v) {
-								return this.getLabelForValue(Number(v))?.split(' ')[1]?.slice(0, 3);
+								const text = this.getLabelForValue(Number(v))?.split(' ')[1]?.slice(0, 3);
+								if (text === 'LUN') return '--LUN';
+								else return text;
 							},
 							color: '#6b7280',
 							font: {
