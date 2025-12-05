@@ -226,6 +226,17 @@
 					/>
 				</div>
 			</div>
+			<Button
+				class="mt-4"
+				disabled={locked}
+				variant="outline"
+				onclick={() =>
+					job.destinations.push({
+						so: '',
+						po: '',
+						amount: job.amount
+					})}>Agregar destino</Button
+			>
 		</CardContent>
 	</Card>
 
@@ -239,6 +250,14 @@
 				<Input bind:value={destination.so} disabled={locked} />
 				<p class="text-muted-foreground text-xs">Qty:</p>
 				<Input bind:value={destination.amount} disabled={locked} />
+				<Button
+					disabled={locked}
+					variant="outline"
+					onclick={() => {
+						job.destinations.splice(i, 1);
+						job.destinations = [...job.destinations];
+					}}>Eliminar</Button
+				>
 			</Card>
 		{/each}
 	</div>
