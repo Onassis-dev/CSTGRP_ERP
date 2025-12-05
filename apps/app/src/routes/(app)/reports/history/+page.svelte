@@ -2,14 +2,24 @@
 	import BarChart from '$lib/components/charts/BarChart.svelte';
 	import { CardHeader, CardTitle, CardContent, Card } from '$lib/components/ui/card';
 	import api from '$lib/utils/server';
-	let values: { area: string; data: { value: number; name: string }[] }[] | null = $state(null);
+	import MenuBar from '$lib/components/basic/MenuBar.svelte';
+	import { Input } from '$lib/components/ui/input';
 
-	async function fetchData() {
-		values = (await api.get('/reports/history')).data;
+	let values: { area: string; data: { value: number; name: string }[] }[] | null = $state(null);
+	let date = $state(new Date().toISOString().split('T')[0]);
+
+	async function fetchData(date: string) {
+		values = (await api.get('/reports/history', { params: { date } })).data;
 	}
 
-	fetchData();
+	$effect(() => {
+		fetchData(date);
+	});
 </script>
+
+<MenuBar>
+	<Input menu type="date" bind:value={date} />
+</MenuBar>
 
 <div class="space-y-4 p-8">
 	{#if values}

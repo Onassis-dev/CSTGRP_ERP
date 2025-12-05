@@ -4,17 +4,18 @@ import { ContextProvider } from 'src/interceptors/context.provider';
 import { getWeekDays } from 'src/utils/functions';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { getHistorySchema } from './history.schema';
+import { z } from 'zod/v4';
 
 @Injectable()
 export class HistoryService {
   constructor(private readonly req: ContextProvider) {}
 
-  async get() {
-    const today = new Date().toISOString().split('T')[0];
+  async get(body: z.infer<typeof getHistorySchema>) {
     let weeks = [];
 
     for (let i = 0; i < 10; i++) {
-      const [mondayDate] = getWeekDays(removeDays(today, 7 * i));
+      const [mondayDate] = getWeekDays(removeDays(body.date, 7 * i));
       weeks.push(mondayDate);
     }
 

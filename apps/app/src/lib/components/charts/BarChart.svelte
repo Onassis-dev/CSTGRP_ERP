@@ -113,10 +113,6 @@
 						},
 						ticks: {
 							stepSize: stepSize,
-							color: (c) => {
-								if (c.tick.value === 100) return '#ef4444';
-								else return '#6b7280';
-							},
 							callback: (value) => value + '%',
 							font: {
 								size: 12,
