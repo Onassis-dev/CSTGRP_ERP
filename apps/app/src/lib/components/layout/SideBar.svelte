@@ -241,6 +241,7 @@
 					Mantenimiento
 				</Accordion.Trigger>
 				<Accordion.Content>
+					<Accordion.Option href="/maintenance/dashboard" />
 					<Accordion.Option href="/maintenance/machines" />
 				</Accordion.Content>
 			</Accordion.Item>

@@ -28,7 +28,7 @@
 	let formData: any = $state();
 
 	function setFormData() {
-		formData = { ...selectedDevice };
+		formData = { ...selectedDevice, date: selectedDevice.date?.split('T')[0] };
 	}
 
 	async function handleSubmit() {
