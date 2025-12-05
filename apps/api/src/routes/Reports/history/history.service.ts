@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import sql from 'src/utils/db';
 import { ContextProvider } from 'src/interceptors/context.provider';
 import { getWeekDays } from 'src/utils/functions';
+import { format } from 'date-fns';
 
 @Injectable()
 export class HistoryService {
@@ -88,22 +89,25 @@ export class HistoryService {
         select SUM(ordermovements.produccion * ("produccionTime" / amount)) as prod from ordermovements join orders on orders.id = ordermovements."progressId" where "areaId" = ${area.id} and "date" = ${addDays(mondayDate, 4)} and ordermovements."produccion" is not null`;
 
         area.data = [
-          { value: mondayProd / area.mondayMinutes, name: mondayDate },
           {
-            value: tuesdayProd / area.tuesdayMinutes,
-            name: addDays(mondayDate, 1),
+            value: ((mondayProd / area.mondayMinutes) * 100).toFixed(2),
+            name: format(mondayDate, 'dd/MM/yyyy'),
           },
           {
-            value: wednesdayProd / area.wednesdayMinutes,
-            name: addDays(mondayDate, 2),
+            value: ((tuesdayProd / area.tuesdayMinutes) * 100).toFixed(2),
+            name: format(addDays(mondayDate, 1), 'dd/MM/yyyy'),
           },
           {
-            value: thursdayProd / area.thursdayMinutes,
-            name: addDays(mondayDate, 3),
+            value: ((wednesdayProd / area.wednesdayMinutes) * 100).toFixed(2),
+            name: format(addDays(mondayDate, 2), 'dd/MM/yyyy'),
           },
           {
-            value: fridayProd / area.fridayMinutes,
-            name: addDays(mondayDate, 4),
+            value: ((thursdayProd / area.thursdayMinutes) * 100).toFixed(2),
+            name: format(addDays(mondayDate, 3), 'dd/MM/yyyy'),
+          },
+          {
+            value: ((fridayProd / area.fridayMinutes) * 100).toFixed(2),
+            name: format(addDays(mondayDate, 4), 'dd/MM/yyyy'),
           },
         ];
       }
