@@ -3,6 +3,7 @@ import sql from 'src/utils/db';
 import { ContextProvider } from 'src/interceptors/context.provider';
 import { getWeekDays } from 'src/utils/functions';
 import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 @Injectable()
 export class HistoryService {
@@ -91,23 +92,23 @@ export class HistoryService {
         area.data = [
           {
             value: ((mondayProd / area.mondayMinutes) * 100).toFixed(2),
-            name: format(mondayDate, 'dd/MM/yyyy'),
+            name: formatDate(mondayDate),
           },
           {
             value: ((tuesdayProd / area.tuesdayMinutes) * 100).toFixed(2),
-            name: format(addDays(mondayDate, 1), 'dd/MM/yyyy'),
+            name: formatDate(addDays(mondayDate, 1)),
           },
           {
             value: ((wednesdayProd / area.wednesdayMinutes) * 100).toFixed(2),
-            name: format(addDays(mondayDate, 2), 'dd/MM/yyyy'),
+            name: formatDate(addDays(mondayDate, 2)),
           },
           {
             value: ((thursdayProd / area.thursdayMinutes) * 100).toFixed(2),
-            name: format(addDays(mondayDate, 3), 'dd/MM/yyyy'),
+            name: formatDate(addDays(mondayDate, 3)),
           },
           {
             value: ((fridayProd / area.fridayMinutes) * 100).toFixed(2),
-            name: format(addDays(mondayDate, 4), 'dd/MM/yyyy'),
+            name: formatDate(addDays(mondayDate, 4)),
           },
         ];
       }
@@ -144,4 +145,8 @@ function removeDays(dateStr: string, days: number): string {
   const date = new Date(dateStr);
   date.setDate(date.getDate() - days);
   return date.toISOString().slice(0, 10);
+}
+
+function formatDate(dateStr: string): string {
+  return format(new Date(dateStr), 'dd/MM EEEE', { locale: es }).toUpperCase();
 }

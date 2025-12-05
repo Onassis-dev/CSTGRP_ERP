@@ -85,7 +85,11 @@
 							display: false
 						},
 						ticks: {
-							display: false
+							display: true,
+							minRotation: 90,
+							callback: function (v) {
+								return this.getLabelForValue(String(v))?.split(' ')[1]?.slice(0, 3);
+							}
 						}
 					},
 					y: {
@@ -101,6 +105,7 @@
 						ticks: {
 							stepSize: stepSize,
 							color: '#6b7280',
+							callback: (value) => value + '%',
 							font: {
 								size: 12,
 								family: 'Inter'
