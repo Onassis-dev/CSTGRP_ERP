@@ -175,6 +175,16 @@
 		<Button variant="outline" onclick={() => (download = !download)}>
 			{download ? 'Ver en Navegador' : 'Ver en PC'}
 		</Button>
+		<Button
+			disabled={locked}
+			variant="outline"
+			onclick={() =>
+				job.destinations.push({
+					so: '',
+					po: '',
+					amount: job.amount
+				})}>Agregar destino</Button
+		>
 		<Button variant="outline" onclick={handleDelete}>
 			<Trash class="text-red-500" />
 		</Button>
@@ -226,17 +236,6 @@
 					/>
 				</div>
 			</div>
-			<Button
-				class="mt-4"
-				disabled={locked}
-				variant="outline"
-				onclick={() =>
-					job.destinations.push({
-						so: '',
-						po: '',
-						amount: job.amount
-					})}>Agregar destino</Button
-			>
 		</CardContent>
 	</Card>
 

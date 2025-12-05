@@ -14,7 +14,7 @@
 	}
 </script>
 
-<div class="flex w-full flex-col gap-6 p-6">
+<div class="flex w-full flex-col gap-6 p-6" style="--border: 220 20% 50%; --input: 220 20% 50%;">
 	<div class="grid grid-cols-[24rem_1fr] gap-4">
 		<Input
 			type="file"
