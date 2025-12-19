@@ -47,7 +47,8 @@ export class MovementsService {
       ${body.programation ? sql`jobs.programation = ${body.programation}` : sql`TRUE`} AND
       ${body.code ? sql`materials.code LIKE ${'%' + body.code + '%'}` : sql`TRUE`} AND
       ${body.req ? sql`(select STRING_AGG(folio::TEXT, ', ') from requisitions where jobs LIKE CONCAT('%', jobs.ref, ',%') and jobs.ref is not null and requisitions."materialId" = materials.id) = ${body.req}` : sql`TRUE`} AND
-      ${body.checked !== null ? sql`materialmovements.active = ${body.checked === 'true'}` : sql`TRUE`}
+      ${body.checked !== null ? sql`materialmovements.active = ${body.checked === 'true'}` : sql`TRUE`} AND
+      ${body.type !== null ? sql`materialmovements.type = ${body.type}` : sql`TRUE`}
       ORDER BY materialmovements.active, COALESCE(jobs.due, imports.due, materialmovements."activeDate") DESC, materialmovements.id DESC
       LIMIT 150`;
     return movements;
@@ -55,9 +56,9 @@ export class MovementsService {
 
   async updateRealAmount(body: z.infer<typeof updateAmountSchema>) {
     const [movement] =
-      await sql`select "materialId", active, id, amount, "jobId" from materialmovements where id = ${body.id}`;
+      await sql`select "materialId", active, extra, id, amount, "jobId" from materialmovements where id = ${body.id}`;
 
-    if (!movement.jobId)
+    if (!movement.jobId || movement.extra)
       throw new HttpException('Este movimiento no se puede editar', 400);
 
     if (movement.active)
@@ -72,9 +73,9 @@ export class MovementsService {
     const maintainDate = user.permissions.materialmovements >= 3;
 
     const [movement] =
-      await sql`select active, (select code from materials where id = "materialId"), (select ref from jobs where id = "jobId"), "jobId" from materialmovements where id = ${body.id}`;
+      await sql`select extra, active, (select code from materials where id = "materialId"), (select ref from jobs where id = "jobId"), "jobId" from materialmovements where id = ${body.id}`;
 
-    if (!movement.jobId)
+    if (!movement.jobId || movement.extra)
       throw new HttpException('Este movimiento no se puede editar', 400);
 
     await sql.begin(async (sql) => {

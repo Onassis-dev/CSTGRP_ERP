@@ -10,6 +10,7 @@ export const movementsFilterSchema = z.object({
   jobpo: z.string().nullable(),
   checked: z.string().nullable(),
   req: z.string().nullable(),
+  type: z.string().nullable(),
 });
 
 export const updateAmountSchema = z.object({
