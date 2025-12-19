@@ -97,7 +97,7 @@
 		{#each $orders?.data as row, i}
 			<TableRow>
 				<TableCell>{row.programation}</TableCell>
-				<TableCell>{row.jobpo}</TableCell>
+				<TableCell>{row.ref}</TableCell>
 				<TableCell>{row.part}</TableCell>
 				<TableCell>{row.time}</TableCell>
 				<TableCell>${formatNumber(row.price)}</TableCell>
