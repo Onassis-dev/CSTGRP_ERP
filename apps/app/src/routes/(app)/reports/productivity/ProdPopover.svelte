@@ -49,7 +49,7 @@
 					<p class="font-bold">Pzs</p>
 					<p class="font-bold">Min</p>
 					{#each data.produced as order}
-						<p>{order.jobpo}</p>
+						<p>{order.ref}</p>
 						<p>{order.produccion}</p>
 						<p>{Number(order.workedMinutes).toFixed(2)}</p>
 					{/each}

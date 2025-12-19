@@ -49,7 +49,7 @@
 			if (!selectedDevice.id) {
 				formData = {
 					...formData,
-					folio: data.folio,
+					ref: data.ref,
 					issuer: data.issuer
 				};
 			}
@@ -164,7 +164,7 @@
 						<Input name="text" bind:value={formData.issuer} readonly />
 					</Label>
 					<Label name="Folio">
-						<Input name="text" bind:value={formData.folio} readonly />
+						<Input name="text" bind:value={formData.ref} readonly />
 					</Label>
 					<Label name="Empresa">
 						<Select items={businesses} bind:value={formData.business} />

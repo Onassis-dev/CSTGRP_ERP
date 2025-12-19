@@ -54,7 +54,7 @@
 				<TableBody>
 					{#each movements as row}
 						<TableRow>
-							<TableCell class="border-l">{row.jobpo}</TableCell>
+							<TableCell class="border-l">{row.ref}</TableCell>
 							<TableCell>{row.programation}</TableCell>
 							<TableCell><Badge color={'gray'}>{row.amount}</Badge></TableCell>
 							<TableCell

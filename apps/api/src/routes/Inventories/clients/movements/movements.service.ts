@@ -15,46 +15,50 @@ export class MovementsService {
 
     const movements = await sql`SELECT 
         materialmovements."activeDate" as due,
-        materialie.import,
-        materialie.programation,
-        materialie.jobpo,
-        (
-            SELECT SUM(amount) 
-            FROM materialmovements AS m
-            WHERE m."materialId" = materialmovements."materialId" AND m."movementId" = materialmovements."movementId" AND m.extra = false
-        ) AS "amount",
-        (
-            SELECT SUM(amount) 
-            FROM materialmovements AS m
-            WHERE m."materialId" = materialmovements."materialId" AND m."movementId" = materialmovements."movementId"
-        ) AS "realAmount",
-        SUM((
-            SELECT SUM(amount) 
-            FROM materialmovements AS m
-            WHERE m."materialId" = materialmovements."materialId" AND m."movementId" = materialmovements."movementId"
+        materialmovements."jobId",
+          COALESCE(
+            jobs.ref, 
+            imports.ref, 
+            CASE materialmovements.type
+              WHEN 'scrap' THEN 'SCRAP'
+              WHEN 'consumable' THEN 'CONSUMABLE'
+              ELSE ''
+            END
+          ) as ref,
+          materialmovements.amount,
+          (CASE
+            WHEN materialmovements."jobId" IS NULL THEN NULL
+            ELSE(
+              SELECT SUM(amount) 
+              FROM materialmovements AS m
+              WHERE m."materialId" = materialmovements."materialId" AND m."jobId" = materialmovements."jobId" AND m.extra = true
+              )
+            END
+          ) AS "extraAmount",
+        SUM((CASE
+            WHEN materialmovements."jobId" IS NULL THEN materialmovements.amount
+            ELSE(
+              SELECT SUM(amount)
+              FROM materialmovements AS m
+              WHERE m."materialId" = materialmovements."materialId" AND m."jobId" = materialmovements."jobId"
+            )
+            END
         )) OVER (ORDER BY materialmovements."activeDate" ASC, materialmovements.id ASC) AS balance
-    FROM
-        materialmovements
-    JOIN
-        materials ON materials.id = materialmovements."materialId"
-    JOIN
-        materialie ON materialie.id = materialmovements."movementId"
-    WHERE
-        materials.id = ${body.id}
-        AND materialmovements.id IN (
-            SELECT MAX(id)
-            FROM materialmovements
-            WHERE
-                "materialId" = ${body.id}
-                AND materials."clientId" = ${clientId}
-                AND active = true
-            GROUP BY "movementId"
-        )
+         
+    FROM materialmovements
+    JOIN materials ON materials.id = materialmovements."materialId"
+    LEFT JOIN jobs ON jobs.id = materialmovements."jobId"
+    LEFT JOIN imports ON imports.id = materialmovements."importId"
+
+        WHERE materials.id = ${body.id}
+        AND (materialmovements.active = true OR imports.location <> 'At CST, Qtys verified')
+        AND materialmovements.extra = false
+        AND (materialmovements.type IS NULL OR materialmovements.type <> 'return')
         AND materials."clientId" = ${clientId}
 
     ORDER BY
         materialmovements."activeDate" DESC,
-        materialmovements.id DESC;`;
+        materialmovements.id DESC`;
 
     //TODO: Fix this to be in sql
     const startDate = new Date('2025-03-01'); // Juan said
@@ -155,21 +159,21 @@ export class MovementsService {
     (
         SELECT SUM(amount) 
         FROM materialmovements AS m
-        WHERE m."materialId" = materialmovements."materialId" AND m."movementId" = materialmovements."movementId"
+        WHERE m."materialId" = materialmovements."materialId" AND m."jobId" = materialmovements."jobId"
     ) AS "realAmount"
         FROM
         materialmovements
     JOIN
         materials ON materials.id = materialmovements."materialId"
     JOIN
-        materialie ON materialie.id = materialmovements."movementId"
+        jobs ON jobs.id = materialmovements."jobId"
     WHERE
-        materialmovements."movementId" = ${body.id} 
+        materialmovements."jobId" = ${body.id} 
         AND materialmovements.active IS true
         AND materials."clientId" = ${clientId}
         AND materialmovements.extra = false
     ORDER BY
-        materialie.due DESC;`;
+        jobs.due DESC;`;
 
     return movements;
   }
@@ -178,11 +182,11 @@ export class MovementsService {
     const clientId = await getClientId(this.req.userId);
 
     const movements = await sql`
-      SELECT jobpo, created_at, due, id
-      FROM materialie
+      SELECT id, ref, created_at, due
+      FROM jobs
       WHERE "clientId" = ${clientId}
-        ${body.code ? sql`AND ("jobpo" ILIKE ${'%' + body.code + '%'})` : sql``}
-      ORDER BY due DESC, created_at DESC, jobpo DESC limit 200`;
+        ${body.code ? sql`AND (ref ILIKE ${'%' + body.code + '%'})` : sql``}
+      ORDER BY due DESC, created_at DESC, ref DESC limit 200`;
     return movements;
   }
 }

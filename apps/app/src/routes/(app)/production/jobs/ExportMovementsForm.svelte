@@ -282,7 +282,7 @@
 					<Input bind:value={formData.programation} />
 				</Label>
 				<Label name="Job o PO">
-					<Input disabled={inputDisabled} bind:value={formData.jobpo} />
+					<Input disabled={inputDisabled} bind:value={formData.ref} />
 				</Label>
 				<Label name="Fecha">
 					<Input type="date" bind:value={formData.due} />

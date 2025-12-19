@@ -64,7 +64,7 @@
 		form.append('file', files[0]);
 
 		const result = (await api.post('/inventoryvarious/importpdf', form)).data;
-		formData.import = result.importNum;
+		formData.ref = result.ref;
 		formData.due = result.dueDate;
 		materials = result.materials;
 	}
@@ -89,7 +89,7 @@
 		cleanData();
 		const { data } = await api.get('/ie/imports/' + selectedMovement.id);
 		materials = data.materials;
-		formData = { id: data.id, import: data.import, location: data.location, due: data.due };
+		formData = { id: data.id, ref: data.ref, location: data.location, due: data.due };
 		files = null;
 		inputDisabled = false;
 	}
@@ -123,7 +123,7 @@
 		<DialogBody>
 			<div class="grid w-full gap-4 sm:grid-cols-3">
 				<Label name="Importacion">
-					<Input disabled={inputDisabled} name="text" bind:value={formData.import} />
+					<Input disabled={inputDisabled} name="text" bind:value={formData.ref} />
 				</Label>
 				<Label name="Ubicacion">
 					<Select items={options} bind:value={formData.location} />

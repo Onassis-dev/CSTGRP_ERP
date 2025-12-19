@@ -35,15 +35,14 @@ export class PackingListService {
   async getData(body: z.infer<typeof idObjectSchema>) {
     const orders = await sql`select 
     order_destiny.id,
-    materialie.jobpo,
-    orders.part,
+    jobs.ref,
+    jobs.part,
     order_destiny.amount,
     order_destiny.date,
     order_destiny.pallets
 
     from order_destiny
-    left join orders on orders.id = order_destiny."orderId" 
-    left join materialie on materialie.id = orders."jobId"
+    left join jobs on jobs.id = order_destiny."orderId" 
     where order_destiny."destinyId" = ${body.id}`;
 
     const [data] = await sql`select * from destinys where id = ${body.id}`;
@@ -59,18 +58,17 @@ export class PackingListService {
       const headerData = await sql`select key, data from docs_data`;
 
       const orders = await sql`select 
-      COALESCE(materialie.jobpo, '') as jobpo,
-      COALESCE(orders.part, '') as part,
+      COALESCE(jobs.ref, '') as ref,
+      COALESCE(jobs.part, '') as part,
       COALESCE(order_destiny.amount, 0) as amount,
       COALESCE(order_destiny.po, '') as po,
       COALESCE(order_destiny.pallets, 0) as pallets,
-      COALESCE(orders.description, '') as description,
-      orders."perBox",
+      COALESCE(jobs.description, '') as description,
+      jobs."perBox",
       'EA' as umc
   
       from order_destiny
-      left join orders on orders.id = order_destiny."orderId" 
-      left join materialie on materialie.id = orders."jobId"
+      left join jobs on jobs.id = order_destiny."orderId" 
       where order_destiny."destinyId" = ${body.id}`;
 
       const [shipper] =
@@ -153,7 +151,7 @@ export class PackingListService {
             <tr>
               <td>${order.part}</td>
               <td>${Math.ceil(order.amount / order.perBox)}</td>
-              <td>${order.jobpo}</td>
+              <td>${order.ref}</td>
               <td>${order.po}</td>
               <td class="description">${order.description}</td>
               <td>${order.umc}</td>

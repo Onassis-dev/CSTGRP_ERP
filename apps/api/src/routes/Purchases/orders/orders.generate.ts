@@ -71,7 +71,7 @@ export function generateOrder(
 
   fillBox({
     ...rightProps,
-    text: 'No. Orden: ' + data.folio,
+    text: 'No. Orden: ' + data.ref,
     y: 730 - 1 * 12,
   });
 

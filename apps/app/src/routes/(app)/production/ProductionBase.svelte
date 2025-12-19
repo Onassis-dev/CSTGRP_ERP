@@ -97,7 +97,7 @@
 						}
 					]}
 				/>
-				<TableCell>{device.jobpo}</TableCell>
+				<TableCell>{device.ref}</TableCell>
 				<TableCell>{device.programation}</TableCell>
 				<TableCell>{device.part}</TableCell>
 				<TableCell>{device[area]}</TableCell>

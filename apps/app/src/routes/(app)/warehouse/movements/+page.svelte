@@ -56,16 +56,12 @@
 	}
 
 	async function checkMovement() {
-		try {
-			const result = await api.put('/materialmovements/activate', {
-				id: $movements.data[movementI].id
-			});
-			showSuccess(result.data ? 'Check eliminado' : 'Material surtido');
-			show2 = false;
-			refetch(['material-movements']);
-		} catch (err: any) {
-			if (err.response.status !== 400) throw err;
-		}
+		const result = await api.put('/materialmovements/activate', {
+			id: $movements.data[movementI].id
+		});
+		showSuccess(result.data ? 'Check eliminado' : 'Material surtido');
+		show2 = false;
+		refetch(['material-movements']);
 	}
 
 	async function changeAmount(id: string, amount: string) {
@@ -105,9 +101,8 @@
 
 <CusTable>
 	<TableHeader>
-		<TableHead>Importacion</TableHead>
-		<TableHead>Programacion</TableHead>
 		<TableHead>Job-PO</TableHead>
+		<TableHead>Programacion</TableHead>
 		<TableHead>Req</TableHead>
 		<TableHead>Codigo</TableHead>
 		<TableHead>Descripcion</TableHead>
@@ -122,9 +117,8 @@
 	<TableBody>
 		{#each $movements.data as movement, i}
 			<TableRow>
-				<TableCell>{movement.import || ''}</TableCell>
+				<TableCell>{(movement.ref || '') + (movement.extra ? ' -R' : '')}</TableCell>
 				<TableCell>{movement.programation || ''}</TableCell>
-				<TableCell>{(movement.jobpo || '') + (movement.extra ? ' -R' : '')}</TableCell>
 				<TableCell>{movement.req || ''}</TableCell>
 				<TableCell>{movement.code}</TableCell>
 				<TableCell

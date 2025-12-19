@@ -60,18 +60,18 @@ export class AreasService {
 
     for (const area of areas) {
       const [{ prod: mondayProd }] = await sql`
-        select SUM(ordermovements.produccion * ("produccionTime" / amount)) as prod from ordermovements join orders on orders.id = ordermovements."progressId" where "areaId" = ${area.id} and "date" = ${mondayDate} and ordermovements."produccion" is not null`;
+        select SUM(ordermovements.produccion * ("produccionTime" / amount)) as prod from ordermovements join jobs on jobs.id = ordermovements."progressId" where "areaId" = ${area.id} and "date" = ${mondayDate} and ordermovements."produccion" is not null`;
       const [{ prod: tuesdayProd }] = await sql`
-        select SUM(ordermovements.produccion * ("produccionTime" / amount)) as prod from ordermovements join orders on orders.id = ordermovements."progressId" where "areaId" = ${area.id} and "date" = ${addDays(mondayDate, 1)} and ordermovements."produccion" is not null`;
+        select SUM(ordermovements.produccion * ("produccionTime" / amount)) as prod from ordermovements join jobs on jobs.id = ordermovements."progressId" where "areaId" = ${area.id} and "date" = ${addDays(mondayDate, 1)} and ordermovements."produccion" is not null`;
 
       const [{ prod: wednesdayProd }] = await sql`
-        select SUM(ordermovements.produccion * ("produccionTime" / amount)) as prod from ordermovements join orders on orders.id = ordermovements."progressId" where "areaId" = ${area.id} and "date" = ${addDays(mondayDate, 2)} and ordermovements."produccion" is not null`;
+        select SUM(ordermovements.produccion * ("produccionTime" / amount)) as prod from ordermovements join jobs on jobs.id = ordermovements."progressId" where "areaId" = ${area.id} and "date" = ${addDays(mondayDate, 2)} and ordermovements."produccion" is not null`;
 
       const [{ prod: thursdayProd }] = await sql`
-        select SUM(ordermovements.produccion * ("produccionTime" / amount)) as prod from ordermovements join orders on orders.id = ordermovements."progressId" where "areaId" = ${area.id} and "date" = ${addDays(mondayDate, 3)} and ordermovements."produccion" is not null`;
+        select SUM(ordermovements.produccion * ("produccionTime" / amount)) as prod from ordermovements join jobs on jobs.id = ordermovements."progressId" where "areaId" = ${area.id} and "date" = ${addDays(mondayDate, 3)} and ordermovements."produccion" is not null`;
 
       const [{ prod: fridayProd }] = await sql`
-        select SUM(ordermovements.produccion * ("produccionTime" / amount)) as prod from ordermovements join orders on orders.id = ordermovements."progressId" where "areaId" = ${area.id} and "date" = ${addDays(mondayDate, 4)} and ordermovements."produccion" is not null`;
+        select SUM(ordermovements.produccion * ("produccionTime" / amount)) as prod from ordermovements join jobs on jobs.id = ordermovements."progressId" where "areaId" = ${area.id} and "date" = ${addDays(mondayDate, 4)} and ordermovements."produccion" is not null`;
 
       area.mondayAvg = mondayProd / area.mondayMinutes;
       area.tuesdayAvg = tuesdayProd / area.tuesdayMinutes;
@@ -116,10 +116,9 @@ export class AreasService {
     GROUP BY a.id;`;
 
     const produced = await sql`
-    select ordermovements.produccion, materialie.jobpo, (ordermovements.produccion * ("produccionTime" / amount)) as "workedMinutes"
+    select ordermovements.produccion, jobs.ref, (ordermovements.produccion * ("produccionTime" / amount)) as "workedMinutes"
     from ordermovements
-    join orders on orders.id = ordermovements."progressId"
-    join materialie on materialie.id = orders."jobId"
+      join jobs on jobs.id = ordermovements."progressId"
     where "areaId" = ${body.areaId} and "date" = ${date} 
     and ordermovements."produccion" is not null`;
 

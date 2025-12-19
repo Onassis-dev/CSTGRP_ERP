@@ -569,9 +569,9 @@ export function createLabel(
 
   if (type === 'codigo-chaparral') {
     const x = [125, 0, 0, 670, 0, 660, 140];
-    const y = [120, 210, 385, 120, 215, 480, 480];
+    const y = [110, 200, 375, 110, 205, 470, 470];
     const height = 520;
-    const adjustments = [0, 0, 0];
+    const adjustments = [0, 10, 10];
 
     for (let i = 0; i < 3; i++) {
       const verticalOffset = height * i + adjustments[i];

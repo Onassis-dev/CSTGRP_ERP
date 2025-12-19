@@ -17,9 +17,17 @@ export class InventoryService {
   async getMaterialMovements(body: z.infer<typeof idObjectSchema>) {
     const movements = await sql`SELECT
         materialmovements."activeDate",
-        materialie.programation,
-        materialie.jobpo,
-        materialie.import,
+        jobs.programation,
+        COALESCE(
+          jobs.ref, 
+          imports.ref, 
+          CASE materialmovements.type
+            WHEN 'return' THEN 'RETORNO'
+            WHEN 'scrap' THEN 'SCRAP'
+            WHEN 'consumable' THEN 'INSUMO'
+            ELSE ''
+          END
+          ) as ref,
         materialmovements.amount,
         materialmovements.extra,
         materialmovements."realAmount",
@@ -27,16 +35,15 @@ export class InventoryService {
         SUM(materialmovements."realAmount") OVER (ORDER BY materialmovements."activeDate" ASC, materialmovements.id ASC) AS balance,
         SUM(materialmovements."amount") OVER (ORDER BY materialmovements."activeDate" ASC, materialmovements.id ASC) AS "totalBalance",
         SUM(materialmovements."amount" - materialmovements."realAmount") OVER (ORDER BY materialmovements."activeDate" ASC, materialmovements.id ASC) AS "leftoverAmount"
-        FROM
-            materialmovements
-        JOIN
-            materials ON materials.id = materialmovements."materialId"
-        JOIN
-            materialie ON materialie.id = materialmovements."movementId"
+
+        FROM materialmovements
+        JOIN materials ON materials.id = materialmovements."materialId"
+        LEFT JOIN jobs ON jobs.id = materialmovements."jobId"
+        LEFT JOIN imports ON imports.id = materialmovements."importId"
+
         WHERE
             materials.id = ${body.id} 
-            AND  materialmovements.active is true
-            AND (materialie.location IS NULL OR materialie.location = 'At CST, Qtys verified')
+            AND materialmovements.active is true
         ORDER BY
             materialmovements."activeDate" DESC,
             materialmovements.id DESC
@@ -78,24 +85,23 @@ export class InventoryService {
   async getMaterialComparison(body: z.infer<typeof idObjectSchema>) {
     const movements = await sql`SELECT
     materialmovements."activeDate" as due,
-    materialie.programation,
-    materialie.jobpo,
+    programation,
+    ref,
     materialmovements.amount,
     (
         SELECT SUM(amount) 
         FROM materialmovements AS m
-        WHERE m."materialId" = materialmovements."materialId" AND m."movementId" = materialmovements."movementId"
+        WHERE m."materialId" = materialmovements."materialId" AND m."jobId" = materialmovements."jobId"
     ) AS "realAmount"
         FROM
         materialmovements
     JOIN
         materials ON materials.id = materialmovements."materialId"
     JOIN
-        materialie ON materialie.id = materialmovements."movementId"
+        jobs ON jobs.id = materialmovements."jobId"
     WHERE
         materials.id = ${body.id} 
         AND materialmovements.active IS true
-        AND materialie.jobpo IS NOT NULL
         AND materialmovements.extra = false
     ORDER BY
         materialmovements."activeDate" DESC,

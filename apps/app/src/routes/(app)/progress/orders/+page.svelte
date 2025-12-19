@@ -116,10 +116,10 @@
 					]}
 				/>
 				<TableCell>{row.programation}</TableCell>
-				<TableCell>{row.jobpo}</TableCell>
+				<TableCell>{row.ref}</TableCell>
 				<TableCell>{row.part}</TableCell>
 				<TableCell>{row.time}</TableCell>
-				<TableCell>{row.missing ? Number(Math.abs(row.missing)).toFixed(2) : ''}</TableCell>
+				<TableCell>{row.missing ? Number(Math.abs(row.missing)).toFixed(2) : '0.00'}</TableCell>
 				<TableCell>{formatDate(row.due)}</TableCell>
 				<TableCell>
 					<Badge color={$clients?.data?.[row.clientId]?.color}
@@ -132,5 +132,4 @@
 </CusTable>
 
 <ProgressForm bind:show={showForm} selectedOrder={selectedRow} />
-<!-- <ProgressHistory bind:show={showHistory} selectedOrder={selectedRow} /> -->
 <HistoryCard bind:show={showHistory} selectedOrder={selectedRow} />

@@ -16,43 +16,41 @@ export class JobsService {
 
   async get(body: z.infer<typeof IEFilterSchema>) {
     const movements = await sql`
-      SELECT *
-      FROM materialie
-      WHERE 
-      "jobpo" IS NOT NULL
-      ${body.job ? sql`AND "jobpo" ILIKE ${'%' + body.job + '%'} ` : sql``}
+      SELECT id, ref, programation, due
+      FROM jobs
+      WHERE TRUE 
+      ${body.job ? sql`AND ref ILIKE ${'%' + body.job + '%'} ` : sql``}
       ${
         body.programation
           ? sql`AND "programation" = ${body.programation}`
           : sql``
       }
-      ORDER BY due DESC, jobpo DESC limit 150`;
+      ORDER BY due DESC, ref DESC limit 150`;
 
     return movements;
   }
 
   async getOne(body: z.infer<typeof idObjectSchema>) {
-    const [data] = await sql`select * from materialie where id = ${body.id}`;
-    const [order] = await sql`select * from orders where "jobId" = ${body.id}`;
+    const [data] = await sql`select * from jobs where id = ${body.id}`;
     const [productMovement] =
-      await sql`select "materialId" as "productId" from materialmovements where "id" = ${order?.movementId || null}`;
+      await sql`select "materialId" as "productId" from materialmovements where "id" = ${data?.movementId || null}`;
 
     const materials =
-      await sql`select id, (select code from materials where id = "materialId"), amount, "realAmount", active from materialmovements where "movementId" = ${body.id} and NOT extra
-      ${order?.movementId ? sql`and id <> ${order.movementId}` : sql``}`;
+      await sql`select id, (select code from materials where id = "materialId"), amount, "realAmount", active from materialmovements where "jobId" = ${body.id} and NOT extra
+      ${data?.movementId ? sql`and id <> ${data.movementId}` : sql``}`;
 
     const destinations =
       await sql`select order_destiny.id, so, order_destiny.po, amount, date
        from order_destiny 
        join destinys on destinys.id = order_destiny."destinyId"
-       where "orderId" = ${order?.id || null}`;
+       where "orderId" = ${data?.id || null}`;
 
     const operations =
-      await sql`select id, code, minutes, area from operations where "orderId" = ${order?.id || null}`;
+      await sql`select id, code, minutes, area from operations where "orderId" = ${data?.id || null}`;
 
     return {
-      ...order,
       ...data,
+      clientId: String(data.clientId),
       ...productMovement,
       due: data.due.toISOString().split('T')[0],
       materials,
@@ -72,16 +70,16 @@ export class JobsService {
     (
         SELECT SUM(amount) 
         FROM materialmovements AS m
-        WHERE m."materialId" = materialmovements."materialId" AND m."movementId" = materialmovements."movementId"
+        WHERE m."materialId" = materialmovements."materialId" AND m."jobId" = materialmovements."jobId"
     ) AS "realAmount"
         FROM
         materialmovements
     JOIN
         materials ON materials.id = materialmovements."materialId"
     JOIN
-        materialie ON materialie.id = materialmovements."movementId"
+        jobs ON jobs.id = materialmovements."jobId"
     WHERE
-        materialmovements."movementId" = ${body.id} AND materialmovements.active IS true
+        materialmovements."jobId" = ${body.id} AND materialmovements.active IS true
         AND materialmovements.extra = false
     ORDER BY
         materialmovements.id DESC;`;
@@ -102,18 +100,29 @@ export class JobsService {
       );
 
     await sql.begin(async (sql) => {
-      // Add inventory info
-      const [insertedJob] = await sql`Insert into materialie ${sql({
-        jobpo: body.jobpo,
+      // Add job info
+      const [insertedJob] = await sql`Insert into jobs ${sql({
+        ref: body.ref,
         programation: body.programation,
         due: body.due,
         clientId: body.clientId,
+        areaId: body.areaId,
+        part: body.part,
+        description: body.description,
+        perBox: body.perBox,
+        bastones: body.bastones,
+        amount: body.amount,
+        corteTime: body.corteTime,
+        cortesVariosTime: body.cortesVariosTime,
+        produccionTime: body.produccionTime,
+        calidadTime: body.calidadTime,
+        serigrafiaTime: body.serigrafiaTime,
       })} returning id`;
 
       for (const material of body.materials) {
         const [movement] =
-          await sql`insert into materialmovements ("materialId", "movementId", amount, "realAmount", active, "activeDate") values
-         ((select id from materials where code = ${material.code}), ${insertedJob.id} ,${-Math.abs(parseFloat(material.amount))}, ${-Math.abs(parseFloat(material.realAmount))}, ${material.active}, ${material.active ? new Date() : null})
+          await sql`insert into materialmovements ("materialId", "jobId", amount, "realAmount", active, "activeDate") values
+         ((select id from materials where code = ${material.code}), ${insertedJob.id} ,${-Math.abs(Number(material.amount))}, ${-Math.abs(Number(material.realAmount))}, ${material.active}, ${material.active ? new Date() : null})
          returning "materialId"`;
 
         if (material.active)
@@ -125,30 +134,15 @@ export class JobsService {
       if (body.productId) {
         [productMovement] = await sql`insert into materialmovements ${sql({
           materialId: body.productId,
-          movementId: insertedJob.id,
+          jobId: insertedJob.id,
           amount: 0,
           realAmount: 0,
           active: true,
           activeDate: new Date(),
-        })} returning id as "movementId"`;
-      }
+        })} returning id`;
 
-      // Add production info
-      const [order] = await sql`insert into orders ${sql({
-        areaId: body.areaId,
-        jobId: insertedJob.id,
-        part: body.part,
-        description: body.description,
-        perBox: body.perBox,
-        bastones: body.bastones,
-        amount: body.amount,
-        corteTime: body.corteTime,
-        cortesVariosTime: body.cortesVariosTime,
-        produccionTime: body.produccionTime,
-        calidadTime: body.calidadTime,
-        serigrafiaTime: body.serigrafiaTime,
-        ...productMovement,
-      })} returning id`;
+        await sql`update jobs set "movementId" = ${productMovement.id} where id = ${insertedJob.id}`;
+      }
 
       // Add destinations info
       if (body.destinations.length > 0) {
@@ -156,14 +150,14 @@ export class JobsService {
 
         for (const destination of body.destinations) {
           await sql`insert into order_destiny ("orderId", "destinyId", "amount", "date", "po") values
-         (${order.id}, (select id from destinys where so = ${destination.so}), ${destination.amount}, ${destination.date}, ${destination.po})`;
+         (${insertedJob.id}, (select id from destinys where so = ${destination.so}), ${destination.amount}, ${destination.date}, ${destination.po})`;
         }
       }
 
       // Add operations info
       await sql`insert into operations ${sql(
         body.operations.map((operation) => ({
-          orderId: order.id,
+          orderId: insertedJob.id,
           code: operation.code,
           minutes: operation.minutes,
           area: operation.area,
@@ -171,7 +165,7 @@ export class JobsService {
       )}`;
 
       // Make record
-      await this.req.record(`Registro el job: ${body.jobpo}`, sql);
+      await this.req.record(`Registro el job: ${body.ref}`, sql);
     });
 
     return;
@@ -184,7 +178,7 @@ export class JobsService {
 
     const materials: {
       materialId: number;
-      movementId: number;
+      jobId: number;
       amount: number;
       realAmount: number;
       active: boolean;
@@ -200,7 +194,7 @@ export class JobsService {
 
       materials.push({
         materialId: material.id,
-        movementId: body.id,
+        jobId: body.id,
         amount: -Math.abs(parseFloat(movement.amount)),
         realAmount: -Math.abs(parseFloat(movement.realAmount)),
         active: movement.active,
@@ -211,18 +205,26 @@ export class JobsService {
 
     await sql.begin(async (sql) => {
       // Update Job
-      const previousJob = (
-        await sql`select jobpo, programation from materialie where id = ${body.id}`
-      )[0];
+      const [previousJob] =
+        await sql`select ref, programation from jobs where id = ${body.id}`;
 
-      const newJob = (
-        await sql`update materialie set ${sql({
-          due: body.due,
-          jobpo: body.jobpo,
-          programation: body.programation,
-          clientId: body.clientId,
-        })} where id = ${body.id} returning jobpo, programation`
-      )[0];
+      const [newJob] = await sql`update jobs set ${sql({
+        due: body.due,
+        ref: body.ref,
+        programation: body.programation,
+        clientId: body.clientId,
+        areaId: body.areaId,
+        part: body.part,
+        description: body.description,
+        perBox: body.perBox,
+        bastones: body.bastones,
+        amount: body.amount,
+        corteTime: body.corteTime,
+        cortesVariosTime: body.cortesVariosTime,
+        produccionTime: body.produccionTime,
+        calidadTime: body.calidadTime,
+        serigrafiaTime: body.serigrafiaTime,
+      })} where id = ${body.id} returning id, ref, programation, part`;
 
       // Update Materials
       for (const material of materials) {
@@ -252,22 +254,6 @@ export class JobsService {
         await updateMaterialAmount(material.materialId, sql);
       }
 
-      // Update Order
-      if (!body.part) throw new HttpException('Parte: requerida', 400);
-      const [order] = await sql`update orders set ${sql({
-        areaId: body.areaId,
-        part: body.part,
-        description: body.description,
-        perBox: body.perBox,
-        bastones: body.bastones,
-        amount: body.amount,
-        corteTime: body.corteTime,
-        cortesVariosTime: body.cortesVariosTime,
-        produccionTime: body.produccionTime,
-        calidadTime: body.calidadTime,
-        serigrafiaTime: body.serigrafiaTime,
-      })} where "jobId" = ${body.id} returning id`;
-
       // Update Destinations
       if (body.destinations.length > 0) {
         await sql`insert into destinys ${sql(body.destinations, 'so')} on conflict ("so") do nothing`;
@@ -277,7 +263,7 @@ export class JobsService {
             await sql`delete from order_destiny where id = ${destination.id}`;
           } else if (destination.transaction === 'insert') {
             await sql`insert into order_destiny ("orderId", "destinyId", "amount", "date", "po") values
-          (${order.id}, (select id from destinys where so = ${destination.so}), ${destination.amount}, ${destination.date}, ${destination.po})`;
+          (${newJob.id}, (select id from destinys where so = ${destination.so}), ${destination.amount}, ${destination.date}, ${destination.po})`;
           } else if (!destination.transaction) {
             await sql`update order_destiny set "amount" = ${destination.amount}, "date" = ${destination.date}, "po" = ${destination.po}, "destinyId" = (select id from destinys where so = ${destination.so})
              where id = ${destination.id}`;
@@ -294,7 +280,7 @@ export class JobsService {
           // Insert
           delete operation.transaction;
           delete operation.id;
-          await sql`insert into operations ${sql({ ...operation, orderId: order.id })}`;
+          await sql`insert into operations ${sql({ ...operation, orderId: newJob.id })}`;
         } else if (!operation.transaction) {
           // Update
           delete operation.transaction;
@@ -304,7 +290,7 @@ export class JobsService {
 
       // Make record
       await this.req.record(
-        `Actualizo la exportacion: ${previousJob?.jobpo}, programacion: ${previousJob?.programation} a ${newJob?.jobpo}, ${newJob?.programation}`,
+        `Actualizo la exportacion: ${previousJob?.ref}, programacion: ${previousJob?.programation} a ${newJob?.ref}, ${newJob?.programation}`,
         sql,
       );
     });
@@ -318,18 +304,18 @@ export class JobsService {
     if (user.permissions.jobs < 3) throw new HttpException('', 403);
 
     const movements =
-      await sql`select "materialId" from materialmovements where "movementId" = ${body.id}`;
+      await sql`select "materialId" from materialmovements where "jobId" = ${body.id}`;
 
     await sql.begin(async (sql) => {
       const deleted = (
-        await sql`delete from materialie where id = ${body.id} and jobpo is not null returning jobpo`
+        await sql`delete from jobs where id = ${body.id} returning ref`
       )[0];
 
       for (const movement of movements) {
         await updateMaterialAmount(movement.materialId, sql);
       }
 
-      await this.req.record(`Elimino el job ${deleted?.jobpo}`, sql);
+      await this.req.record(`Elimino el job ${deleted?.ref}`, sql);
     });
 
     return;

@@ -74,7 +74,7 @@
 						show = true;
 					}}
 				/>
-				<TableCell>{order.jobpo}</TableCell>
+				<TableCell>{order.ref}</TableCell>
 				<TableCell>{order.programation}</TableCell>
 				<TableCell>{order.part}</TableCell>
 				<TableCell>{order.amount}</TableCell>

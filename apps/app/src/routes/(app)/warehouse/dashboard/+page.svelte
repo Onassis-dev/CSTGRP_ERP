@@ -74,7 +74,7 @@
 							<TableCell class="whitespace-hidden max-w-64 overflow-hidden text-ellipsis"
 								>{row.description || ''}</TableCell
 							>
-							<TableCell class="w-full whitespace-normal">{row.jobpo || ''}</TableCell>
+							<TableCell class="w-full whitespace-normal">{row.ref || ''}</TableCell>
 							<TableCell><Badge color="gray">{row.required || ''}</Badge></TableCell>
 							<TableCell><Badge color="gray">{row.amount || ''}</Badge></TableCell>
 							<TableCell><Badge color="gray">{row.leftoverAmount || ''}</Badge></TableCell>
@@ -137,7 +137,7 @@
 							<TableCell class="whitespace-hidden max-w-64 overflow-hidden text-ellipsis"
 								>{row.description || ''}</TableCell
 							>
-							<TableCell class="w-full whitespace-normal">{row.jobpo || ''}</TableCell>
+							<TableCell class="w-full whitespace-normal">{row.ref || ''}</TableCell>
 							<TableCell><Badge color="gray">{row.required || ''}</Badge></TableCell>
 							<TableCell><Badge color="gray">{row.amount || ''}</Badge></TableCell>
 							<TableCell><Badge color="gray">{row.leftoverAmount || ''}</Badge></TableCell>

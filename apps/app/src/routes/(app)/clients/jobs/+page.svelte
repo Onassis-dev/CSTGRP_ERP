@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { preventDefault } from 'svelte/legacy';
-
 	import CusTable from '$lib/components/basic/CusTable.svelte';
 	import { Input } from '$lib/components/ui/input';
 	import { TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
@@ -52,12 +51,8 @@
 	<TableBody>
 		{#each $jobs?.data as movement, i}
 			<TableRow>
-				<OptionsCell
-					extraButtons={movement.jobpo
-						? [{ fn: () => compareJob(i), name: 'COMPARE', icon: Ruler }]
-						: []}
-				/>
-				<TableCell>{movement.jobpo}</TableCell>
+				<OptionsCell extraButtons={[{ fn: () => compareJob(i), name: 'COMPARE', icon: Ruler }]} />
+				<TableCell>{movement.ref}</TableCell>
 				<TableCell>{formatDate(movement.due)}</TableCell>
 				<TableCell>{formatDate(movement.created_at)}</TableCell>
 			</TableRow>

@@ -164,7 +164,7 @@
 	});
 </script>
 
-<Tabs.Content value={job.jobpo} class="space-y-4">
+<Tabs.Content value={job.ref} class="space-y-4">
 	<div class="flex gap-1">
 		<Button variant="outline" onclick={() => (locked = !locked)}>
 			{locked ? 'Desbloquear' : 'Bloquear'}
@@ -194,7 +194,7 @@
 			<div class="grid grid-cols-6 gap-4">
 				<div class="col-span-3">
 					<p class="text-muted-foreground text-xs">Job:</p>
-					<Input bind:value={job.jobpo} disabled={locked} />
+					<Input bind:value={job.ref} disabled={locked} />
 				</div>
 				<div class="col-span-3">
 					<p class="text-muted-foreground text-xs">Codigo:</p>
@@ -273,7 +273,7 @@
 							info: {
 								code: job.part,
 								description: job.description,
-								jobpo: job.jobpo,
+								jobpo: job.ref,
 								date: job.due,
 								po: label.po,
 								so: label.so,

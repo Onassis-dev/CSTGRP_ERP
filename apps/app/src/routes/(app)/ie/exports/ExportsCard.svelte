@@ -56,7 +56,7 @@
 				<TableBody>
 					{#each data as row}
 						<TableRow>
-							<TableCell class="border-l">{row.jobpo}</TableCell>
+							<TableCell class="border-l">{row.ref}</TableCell>
 							<TableCell class="border-l">{row.part}</TableCell>
 							<TableCell class="border-l">{row.amount}</TableCell>
 							<TableCell class="border-l">{row.pallets}</TableCell>

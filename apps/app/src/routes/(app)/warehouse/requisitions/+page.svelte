@@ -114,7 +114,7 @@
 					]}
 				/>
 				<TableCell>{movement.programation || ''}</TableCell>
-				<TableCell>{(movement.jobpo || '') + (movement.extra ? ' -R' : '')}</TableCell>
+				<TableCell>{movement.ref || ''}</TableCell>
 				<TableCell>{movement.code}</TableCell>
 				<TableCell class="w-full min-w-24 max-w-1 overflow-hidden text-ellipsis"
 					>{movement.description}</TableCell

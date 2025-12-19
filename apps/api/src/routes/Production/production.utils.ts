@@ -11,7 +11,7 @@ export const areaSchema = z.enum(
 export const updateOrderAmounts = async (id: number, sql2: postgres.Sql) => {
   const db = sql2;
 
-  const [row] = await db`UPDATE orders SET 
+  const [row] = await db`UPDATE jobs SET 
   "corte" = COALESCE((SELECT SUM("corte") FROM ordermovements WHERE "progressId" = ${id}), 0),
   "cortesVarios" = COALESCE((SELECT SUM("cortesVarios") FROM ordermovements WHERE "progressId" = ${id}), 0),
   "produccion" = COALESCE((SELECT SUM("produccion") FROM ordermovements WHERE "progressId" = ${id}), 0),
@@ -36,9 +36,9 @@ WHERE id = ${id} returning *`;
   }
 
   const [updatedMovement] = await db`update materialmovements set 
-    "amount" = (select calidad from orders where id = ${id}),
-    "realAmount" = (select calidad from orders where id = ${id})
-    where id = (select "movementId" from orders where id = ${id}) returning "materialId"`;
+    "amount" = (select calidad from jobs where id = ${id}),
+    "realAmount" = (select calidad from jobs where id = ${id})
+    where id = (select "movementId" from jobs where id = ${id}) returning "materialId"`;
 
   if (updatedMovement)
     await updateMaterialAmount(updatedMovement.materialId, db);

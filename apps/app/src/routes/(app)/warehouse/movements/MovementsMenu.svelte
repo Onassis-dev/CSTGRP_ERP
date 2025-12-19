@@ -28,7 +28,7 @@
 		await api.post(`/materialmovements/${selected}`, formData);
 		refetch(['material-movements']);
 		show = false;
-		showSuccess(`Salida Registrada`);
+		showSuccess(`Movimiento registrado`);
 	}
 </script>
 
@@ -36,18 +36,19 @@
 	<DialogContent class="max-w-lg">
 		<DialogHeader>
 			<Tabs.Root bind:value={selected} class="w-full">
-				<Tabs.List class="grid w-full grid-cols-4">
+				<Tabs.List class="grid w-full grid-cols-5">
 					<Tabs.Trigger value="reposition">Reposicion</Tabs.Trigger>
-					<Tabs.Trigger value="scrap">Scrap</Tabs.Trigger>
-					<Tabs.Trigger value="return">Retorno</Tabs.Trigger>
+					<Tabs.Trigger value="leftover">Sobrante</Tabs.Trigger>
 					<Tabs.Trigger value="supplies">Insumos</Tabs.Trigger>
+					<Tabs.Trigger value="return">Retorno</Tabs.Trigger>
+					<Tabs.Trigger value="scrap">Scrap</Tabs.Trigger>
 				</Tabs.List>
 			</Tabs.Root>
 		</DialogHeader>
 
 		<DialogBody>
 			<div class="grid w-full gap-4">
-				{#if selected === 'reposition' || selected === 'return'}
+				{#if selected === 'reposition' || selected === 'leftover'}
 					<Label name="Job - PO">
 						<Input bind:value={formData.job} />
 					</Label>

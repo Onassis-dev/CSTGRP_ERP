@@ -7,7 +7,7 @@ export const IEFilterSchema = z.object({
 });
 
 export const importSchema = z.object({
-  import: z.string(),
+  ref: z.string(),
   due: z.string(),
   location: z.string(),
   materials: z

@@ -14,13 +14,14 @@ export class OrdersService {
 
   async findAllOrders(query: z.infer<typeof orderFilterSchema>) {
     const orders = await sql`
-      SELECT orders.id, orders.part, orders.amount, materialie.jobpo, materialie.programation, materialie.due FROM orders 
-      JOIN materialie ON materialie.id = orders."jobId"
+      SELECT id, part, amount, ref, programation, due FROM jobs 
       WHERE
-        ${query.jobpo ? sql`materialie.jobpo LIKE ${'%' + query.jobpo + '%'}` : sql`TRUE`} AND
-        ${query.programation ? sql`materialie.programation LIKE ${'%' + query.programation + '%'}` : sql`TRUE`} AND
-        ${query.part ? sql`orders.part LIKE ${'%' + query.part + '%'}` : sql`TRUE`}
-      ORDER BY id DESC
+        ${query.jobpo ? sql`ref LIKE ${'%' + query.jobpo + '%'}` : sql`TRUE`} AND
+        ${query.programation ? sql`programation LIKE ${'%' + query.programation + '%'}` : sql`TRUE`} AND
+        ${query.part ? sql`part LIKE ${'%' + query.part + '%'}` : sql`TRUE`} AND
+        part is not null
+      ORDER BY due DESC, id DESC
+      LIMIT 150
     `;
     return orders;
   }
@@ -39,14 +40,8 @@ export class OrdersService {
       ORDER BY order_destiny.date DESC, order_destiny.id DESC
     `;
 
-    const [order] = await sql`SELECT 
-    materialie.jobpo,
-    materialie.programation,
-    orders.part,
-    orders.amount,
-    materialie.due,
-    orders."perBox"
-    FROM orders join materialie on materialie.id = orders."jobId" WHERE orders.id = ${query.id}`;
+    const [order] =
+      await sql`SELECT ref, programation, part, amount, due, "perBox" FROM jobs WHERE id = ${query.id}`;
 
     return {
       ...order,

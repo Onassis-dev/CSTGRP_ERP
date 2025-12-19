@@ -50,7 +50,7 @@
 
 		<DialogBody grid="2">
 			<Label name="Job/PO">
-				<Input bind:value={formData.jobpo} disabled />
+				<Input bind:value={formData.ref} disabled />
 			</Label>
 			<Label name="Parte">
 				<Input bind:value={formData.part} disabled />

@@ -22,12 +22,12 @@ export class StatsService {
         materials.amount,
         materials."leftoverAmount",
         (
-          SELECT string_agg("jobpo", ', ') 
+          SELECT string_agg("ref", ', ') 
           FROM materialmovements 
-          JOIN materialie ON materialie.id = materialmovements."movementId" 
+          JOIN jobs ON jobs.id = materialmovements."jobId" 
           WHERE "materialId" = materials.id 
           AND materialmovements.active = false
-        ) as jobpo,
+        ) as ref,
         ABS(ms.total_amount) as required,
         ABS(materials.total + ms.total_amount) as missing
     FROM materials
@@ -35,10 +35,10 @@ export class StatsService {
     WHERE materials.total  + ms.total_amount < 0`;
 
     const secondMovements = await sql`SELECT 
-    code, materialie.jobpo, measurement, description,
+    code, ref, measurement, materials.description,
     (materials.amount + materials."leftoverAmount") AS missing
     FROM materialmovements JOIN materials ON materials.id = materialmovements."materialId"
-    JOIN materialie ON materialie.id = materialmovements."movementId"
+    JOIN jobs ON jobs.id = materialmovements."jobId"
     WHERE 
         (materials.amount + materials."leftoverAmount") < 0
         AND materialmovements.id = (
@@ -75,12 +75,12 @@ export class StatsService {
         materials.amount,
         materials."leftoverAmount",
         (
-          SELECT string_agg("jobpo", ', ') 
+          SELECT string_agg("ref", ', ') 
           FROM materialmovements 
-          JOIN materialie ON materialie.id = materialmovements."movementId" 
+          JOIN jobs ON jobs.id = materialmovements."jobId" 
           WHERE "materialId" = materials.id 
           AND materialmovements.active = false
-        ) as jobpo,
+        ) as ref,
         ABS(ms.total_amount) as required,
         ABS(materials.amount + ms.total_amount) as missing
     FROM materials
@@ -107,7 +107,7 @@ export class StatsService {
     worksheet.columns = [
       { header: 'Codigo', key: 'code', width: 15 },
       { header: 'Descripcion', key: 'description', width: 15 },
-      { header: 'Job', key: 'jobpo', width: 15 },
+      { header: 'Job', key: 'ref', width: 15 },
       { header: 'Requerido', key: 'required', width: 15 },
       { header: 'Inventario', key: 'amount', width: 15 },
       { header: 'Sobrante en area', key: 'leftoverAmount', width: 15 },

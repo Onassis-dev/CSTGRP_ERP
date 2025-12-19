@@ -36,7 +36,7 @@
 	}
 
 	function duplicateDevice(i: number) {
-		selectedDevice = { ...$computers?.data?.[i], folio: '', id: null };
+		selectedDevice = { ...$computers?.data?.[i], ref: '', id: null };
 		show = true;
 	}
 
@@ -86,7 +86,7 @@
 							fn: () => {
 								downloadFile({
 									url: '/purchases/orders/download/' + device.id,
-									name: 'oc-' + device.folio + '.pdf'
+									name: 'oc-' + device.ref + '.pdf'
 								});
 							},
 							name: 'Descargar',
@@ -101,7 +101,7 @@
 						}
 					]}
 				/>
-				<TableCell>{device.folio || ''}</TableCell>
+				<TableCell>{device.ref || ''}</TableCell>
 				<TableCell>{device.supplier || ''}</TableCell>
 				<TableCell>{device.net || ''}</TableCell>
 				<TableCell>{device.tax || ''}</TableCell>

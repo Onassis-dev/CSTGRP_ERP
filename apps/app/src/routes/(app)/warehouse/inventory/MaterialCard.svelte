@@ -67,9 +67,8 @@
 
 			<Table>
 				<TableHeader class="sticky top-0 border-t">
-					<TableHead class="border-l">job</TableHead>
+					<TableHead class="border-l">Ref</TableHead>
 					<TableHead>Programacion</TableHead>
-					<TableHead>Importacion</TableHead>
 					<TableHead>Cantidad Job</TableHead>
 					<TableHead>Cantidad real</TableHead>
 					<TableHead>Fecha</TableHead>
@@ -96,9 +95,8 @@
 				<TableBody>
 					{#each movements as row}
 						<TableRow>
-							<TableCell class="border-l">{(row.jobpo || '') + (row.extra ? ' -R' : '')}</TableCell>
+							<TableCell class="border-l">{(row.ref || '') + (row.extra ? ' -R' : '')}</TableCell>
 							<TableCell>{row.programation || ''}</TableCell>
-							<TableCell>{row.import || ''}</TableCell>
 							<TableCell
 								><Badge color={parseFloat(row.amount) > 0 ? 'green' : 'red'}>{row.amount}</Badge
 								></TableCell

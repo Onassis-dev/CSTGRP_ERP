@@ -71,33 +71,29 @@ export async function updateMaterialAmount(id, dbInstance?: any) {
     UPDATE materials
 
     SET amount = (
-      SELECT COALESCE(SUM(materialmovements."realAmount"), 0) AS balance
+      SELECT COALESCE(SUM(materialmovements."realAmount"), 0)
       FROM materialmovements 
         JOIN materials ON materials.id = materialmovements."materialId"
-        JOIN materialie ON materialie.id = materialmovements."movementId"
       WHERE materialmovements.active = true
-        AND (materialie.location IS NULL OR materialie.location = 'At CST, Qtys verified' or materialie.import = 'Retorno')
         AND materials.id = ${id}
     ),
 
     "leftoverAmount" = ( 
-        SELECT COALESCE(SUM(materialmovements."realAmount" - materialmovements.amount), 0) AS balance
+        SELECT COALESCE(SUM(materialmovements."realAmount" - materialmovements.amount), 0)
         FROM materialmovements 
           JOIN materials ON materials.id = materialmovements."materialId"
-          JOIN materialie ON materialie.id = materialmovements."movementId"
         WHERE materialmovements.active = true
-          AND (materialie.location IS NULL OR materialie.location = 'At CST, Qtys verified' or materialie.import = 'Retorno')
           AND materials.id = ${id}
       ) * -1,
 
     "pendingAmount" = (
-    SELECT COALESCE(SUM(materialmovements."amount"), 0) AS balance
+    SELECT COALESCE(SUM(materialmovements."amount"), 0)
       FROM materialmovements 
         JOIN materials ON materials.id = materialmovements."materialId"
-        JOIN materialie ON materialie.id = materialmovements."movementId"
-      WHERE materialmovements.active = true
-        AND (materialie.location IS NOT NULL AND materialie.location <> 'At CST, Qtys verified')
-        AND materials.id = ${id}
+        JOIN imports ON imports.id = materialmovements."importId"
+      WHERE imports.location <> 'At CST, Qtys verified'
+      AND materialmovements.active = false
+      AND materials.id = ${id}
     )
 
     WHERE id = ${id} 

@@ -19,45 +19,43 @@ export class RequisitionsService {
 
   async getMovements(body: z.infer<typeof movementsFilterSchema>) {
     const movements = await sql`SELECT
-      materials.code, materials.description, materials.measurement, materials."clientId", materials."leftoverAmount", materials.amount as inventory, materialmovements.amount, materialmovements."realAmount", materialie.due, materialie.jobpo, materialie.programation
+      materials.code, materials.description, materials.measurement, materials."clientId", materials."leftoverAmount", materials.amount as inventory, materialmovements.amount, materialmovements."realAmount", jobs.due, jobs.ref, jobs.programation
       FROM materialmovements
       JOIN materials on materials.id = materialmovements."materialId"
-      JOIN materialie on materialie.id = materialmovements."movementId"
-      JOIN orders on orders."jobId" = materialie.id
+      JOIN jobs on jobs.id = materialmovements."jobId"
       WHERE
       NOT materialmovements.active AND
       NOT materialmovements.extra AND
-      (select STRING_AGG(folio::text, ', ') from requisitions where jobs LIKE CONCAT('%', materialie.jobpo, '%') and materialie.jobpo is not null and requisitions."materialId" = materials.id limit 1) is null AND
-      ${body.jobpo ? sql`materialie.jobpo = ${body.jobpo}` : sql`TRUE`} AND
-      ${body.programation ? sql`materialie.programation = ${body.programation}` : sql`TRUE`} AND
+      (select STRING_AGG(folio::text, ', ') from requisitions where jobs LIKE CONCAT('%', jobs.ref, '%') and requisitions."materialId" = materials.id limit 1) is null AND
+      ${body.jobpo ? sql`jobs.ref = ${body.jobpo}` : sql`TRUE`} AND
+      ${body.programation ? sql`jobs.programation = ${body.programation}` : sql`TRUE`} AND
       ${body.code ? sql`materials.code LIKE ${'%' + body.code + '%'}` : sql`TRUE`} AND
-      orders."areaId" IN (SELECT unnest(prod_areas) FROM users WHERE id = ${this.req.userId})
-      ORDER BY materialie.due DESC, materialie.jobpo DESC, materials.code DESC, materialmovements.amount DESC, materialmovements.id DESC
+      jobs."areaId" IN (SELECT unnest(prod_areas) FROM users WHERE id = ${this.req.userId})
+      ORDER BY jobs.due DESC, jobs.ref DESC, materials.code DESC, materialmovements.amount DESC, materialmovements.id DESC
       LIMIT 300`;
     return movements;
   }
 
   async getPendingJobs(body: z.infer<typeof jobsSchema>) {
     const movements = await sql`SELECT
-      -materialmovements.amount as amount, materialie.due, materialie.jobpo, materialie.programation, materialmovements.id, false as selected
+      -materialmovements.amount as amount, jobs.due, jobs.ref, jobs.programation, materialmovements.id, false as selected
       FROM materialmovements
       JOIN materials on materials.id = materialmovements."materialId"
-      JOIN materialie on materialie.id = materialmovements."movementId"
-      JOIN orders on orders."jobId" = materialie.id
+      JOIN jobs on jobs.id = materialmovements."jobId"
       WHERE
       materials.code = ${body.code} AND  
-      orders."areaId" IN (SELECT unnest(prod_areas) FROM users WHERE id = ${this.req.userId}) AND
-      (select folio from requisitions where jobs LIKE CONCAT('%', materialie.jobpo, '%') and materialie.jobpo is not null and requisitions."materialId" = materials.id limit 1) is null AND
+      jobs."areaId" IN (SELECT unnest(prod_areas) FROM users WHERE id = ${this.req.userId}) AND
+      (select folio from requisitions where jobs LIKE CONCAT('%', jobs.ref, '%') and requisitions."materialId" = materials.id limit 1) is null AND
       NOT materialmovements.active AND
       NOT materialmovements.extra
-      ORDER BY materialie.due DESC, materialie.jobpo DESC LIMIT 20`;
+      ORDER BY jobs.due DESC, jobs.ref DESC LIMIT 20`;
     return movements;
   }
 
   async createRequisition(body: z.infer<typeof requisitionSchema>) {
     const [data] =
-      await sql`SELECT COALESCE(STRING_AGG((SELECT jobpo FROM materialie WHERE id = "movementId"), ', ') || ',', '') as jobs,
-        BOOL_OR((select folio from requisitions where jobs LIKE CONCAT('%', (select jobpo from materialie where id = materialmovements."movementId"), '%') and (select jobpo from materialie where id = materialmovements."movementId") is not null and requisitions."materialId" = (select "materialId" from materialmovements where id IN ${sql(body.jobIds)} limit 1)) is not null) as req,
+      await sql`SELECT COALESCE(STRING_AGG((SELECT ref FROM jobs WHERE id = "jobId"), ', ') || ',', '') as jobs,
+        BOOL_OR((select folio from requisitions where jobs LIKE CONCAT('%', (select ref from jobs where id = materialmovements."jobId"), '%') and requisitions."materialId" = (select "materialId" from materialmovements where id IN ${sql(body.jobIds)} limit 1)) is not null) as req,
         BOOL_OR(active) as active, SUM(amount) as necessary
         FROM materialmovements WHERE id IN ${sql(body.jobIds)}`;
 
@@ -89,7 +87,7 @@ export class RequisitionsService {
       return inserted;
     });
 
-    return this.petitionsService.download({ id: inserted.id });
+    return inserted;
   }
 
   async createSupplyRequisition(body: z.infer<typeof suppliesSchema>) {
@@ -126,16 +124,16 @@ export class RequisitionsService {
     const worksheet = workbook.addWorksheet('Inventario');
 
     const results = await sql`SELECT
-      materials.code, materials.description, materials.measurement, materials."clientId", materials."leftoverAmount", materials.amount as inventory, materialmovements.amount, materialmovements."realAmount", materialmovements.id, materialie.due, materialie.jobpo, materialie.programation
+      materials.code, materials.description, materials.measurement, materials."clientId", materials."leftoverAmount", materials.amount as inventory, materialmovements.amount, materialmovements."realAmount", materialmovements.id, jobs.due, jobs.ref, jobs.programation
       FROM materialmovements
       JOIN materials on materials.id = materialmovements."materialId"
-      JOIN materialie on materialie.id = materialmovements."movementId"
+      JOIN jobs on jobs.id = materialmovements."jobId"
       WHERE materialmovements.active = false
-      ORDER BY materialie.due DESC, materialie.jobpo DESC, materials.code DESC, materialmovements.amount DESC, materialmovements.id DESC`;
+      ORDER BY jobs.due DESC, jobs.ref DESC, materials.code DESC, materialmovements.amount DESC, materialmovements.id DESC`;
 
     worksheet.columns = [
       { header: 'Programacion', key: 'programation', width: 16 },
-      { header: 'Job', key: 'jobpo', width: 12 },
+      { header: 'Job', key: 'ref', width: 12 },
       { header: 'Material', key: 'code', width: 22 },
       { header: 'Descripcion', key: 'description', width: 22 },
       { header: 'Cantidad', key: 'amount', width: 15 },

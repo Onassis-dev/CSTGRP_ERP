@@ -99,7 +99,7 @@
 		{#each movements as movement, i}
 			<TableRow>
 				<OptionsCell editFunc={() => editImport(i)} deleteFunc={() => deleteIE(i)} />
-				<TableCell>{movement.import}</TableCell>
+				<TableCell>{movement.ref}</TableCell>
 				<TableCell>{movement.location}</TableCell>
 				<TableCell>{formatDate(movement.due)}</TableCell>
 			</TableRow>

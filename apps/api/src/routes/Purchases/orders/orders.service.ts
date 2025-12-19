@@ -21,9 +21,9 @@ export class OrdersService {
   async findAllOrders(body: z.infer<typeof searchSchema>) {
     const orders =
       await sql`Select *, (select name from purchasesuppliers where id = purchaseorders."supplierId") as supplier from purchaseorders
-      ${body.name ? sql`WHERE folio::text ILIKE ${'%' + body.name + '%'}` : sql``}
+      ${body.name ? sql`WHERE ref::text ILIKE ${'%' + body.name + '%'}` : sql``}
       ${body.name ? sql`OR (select name from purchasesuppliers where id = purchaseorders."supplierId") ILIKE ${'%' + body.name + '%'}` : sql``}
-      order by folio desc limit 150`;
+      order by ref desc limit 150`;
     return orders;
   }
 
@@ -35,15 +35,14 @@ export class OrdersService {
       return material;
     });
 
-    const [lastOrder] =
-      await sql`select max(folio) as folio from purchaseorders`;
+    const [lastOrder] = await sql`select max(ref) as ref from purchaseorders`;
 
     const [supplier] =
       await sql`select * from purchasesuppliers where id = ${body.supplierId}`;
 
     await sql.begin(async (sql) => {
       await sql`insert into purchaseorders ${sql({
-        folio: lastOrder.folio + 1,
+        ref: lastOrder.ref + 1,
         issuer: body.issuer,
         supplierId: body.supplierId,
         currency: body.currency,
@@ -54,7 +53,7 @@ export class OrdersService {
         products: JSON.stringify(products),
         supplier: JSON.stringify(supplier),
       })}`;
-      await this.req.record(`Creo la orden ${lastOrder.folio + 1}`, sql);
+      await this.req.record(`Creo la orden ${lastOrder.ref + 1}`, sql);
     });
   }
 
@@ -99,7 +98,7 @@ export class OrdersService {
     await sql.begin(async (sql) => {
       const [row] =
         await sql`delete from purchaseorders where id = ${body.id} returning *`;
-      await this.req.record(`Borro la orden ${row.folio}`, sql);
+      await this.req.record(`Borro la orden ${row.ref}`, sql);
     });
   }
 
@@ -108,13 +107,12 @@ export class OrdersService {
       await sql`select id as value, name from purchasesuppliers order by name`;
     const [issuer] =
       await sql`select username as value from users where id = ${this.req.userId}`;
-    const [folio] =
-      await sql`select max(folio) + 1 as value from purchaseorders`;
+    const [ref] = await sql`select max(ref) + 1 as value from purchaseorders`;
 
     return {
       suppliers,
       issuer: issuer.value || 'Sin usuario',
-      folio: folio.value || 1,
+      ref: ref.value || 1,
     };
   }
 
@@ -176,8 +174,6 @@ export class OrdersService {
 
     const bold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
     const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-
-    // markPage(page);
 
     generateOrder(page, font, bold, order, logo);
 

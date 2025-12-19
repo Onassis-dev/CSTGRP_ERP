@@ -24,7 +24,7 @@ export async function processPDF(pdfFile: File) {
 
 export function processImport(text: string) {
   const linesArray: string[] = text.split(/\s{3,}| {2}/);
-  const importNum =
+  const ref =
     linesArray[
       linesArray.findIndex((line: string) => line.includes('Tracking :')) + 1
     ];
@@ -73,11 +73,11 @@ export function processImport(text: string) {
     throw new Error('Sin materiales');
   }
 
-  return { dueDate, importNum, materials };
+  return { dueDate, ref, materials };
 }
 
 export async function processJob(text: string) {
-  let jobpo = '';
+  let ref = '';
   let part = '';
   let amount = '';
   let description = '';
@@ -102,7 +102,7 @@ export async function processJob(text: string) {
   );
 
   // Get general info
-  jobpo =
+  ref =
     linesArray[linesArray.findIndex((line: any) => line.includes('Job:')) + 1];
 
   part = linesArray[linesArray.findIndex((line: any) => line === 'Part:') + 1];
@@ -276,7 +276,7 @@ export async function processJob(text: string) {
 
   return {
     materials,
-    jobpo,
+    ref,
     due,
     part,
     amount,

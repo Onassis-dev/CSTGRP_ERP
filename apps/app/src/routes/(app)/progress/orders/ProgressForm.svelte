@@ -37,16 +37,18 @@
 	$effect(() => {
 		if (selectedOrder.id) fetchData();
 	});
+
+	$inspect(selectedOrder);
 </script>
 
 <Dialog bind:open={show}>
 	<DialogContent>
-		<DialogHeader title={`${data?.jobpo} (${data?.amount}pz)`} />
+		<DialogHeader title={`${data?.ref} (${data?.amount}pz)`} />
 
 		<DialogBody>
 			<Table>
 				<TableHeader class="border-t">
-					<TableHead>Codigo</TableHead>
+					<TableHead class="border-l">Codigo</TableHead>
 					<TableHead>Progreso</TableHead>
 					<TableHead class="w-1"></TableHead>
 				</TableHeader>

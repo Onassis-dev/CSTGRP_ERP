@@ -12,10 +12,10 @@ export class HistoryService {
 
   async get(body: z.infer<typeof idObjectSchema>) {
     const movements =
-      await sql`select progressmovements.*, operations.code, orders.part 
+      await sql`select progressmovements.*, operations.code, jobs.part 
       from progressmovements 
       join operations on progressmovements."operationId" = operations.id 
-      join orders on orders.id = operations."orderId"
+      join jobs on jobs.id = operations."orderId"
     where "orderId" = ${body.id} order by progressmovements.date desc`;
     return movements;
   }

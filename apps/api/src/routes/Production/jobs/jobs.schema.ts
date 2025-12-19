@@ -34,7 +34,7 @@ export const exportSchema = z.object({
   amount: intSchema.min(1, 'Numero invalido'),
   part: z.string().nullable(),
   description: z.string().nullable(),
-  jobpo: z.string(),
+  ref: z.string(),
   due: z.string(),
   areaId: idSchema,
   clientId: idSchema,

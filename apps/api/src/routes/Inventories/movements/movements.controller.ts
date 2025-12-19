@@ -12,6 +12,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import {
+  leftoverSchema,
   movementsFilterSchema,
   repositionSchema,
   returnSchema,
@@ -50,6 +51,11 @@ export class MovementsController {
   @Post('reposition')
   postReposition(@Body(new ZodPiPe(repositionSchema)) body) {
     return this.movementsService.postReposition(body);
+  }
+
+  @Post('leftover')
+  postLeftover(@Body(new ZodPiPe(leftoverSchema)) body) {
+    return this.movementsService.postLeftover(body);
   }
 
   @Post('return')

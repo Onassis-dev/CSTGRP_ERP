@@ -25,13 +25,13 @@
 				if (file) {
 					form.append('file', file);
 					const result = (await api.post('/resources/labels/get-job', form)).data;
-					const existingJob = jobs.find((job: any) => job.jobpo === result.jobpo);
+					const existingJob = jobs.find((job: any) => job.ref === result.ref);
 					if (existingJob) {
-						jobs = jobs.map((job: any) => (job.jobpo === result.jobpo ? result : job));
+						jobs = jobs.map((job: any) => (job.ref === result.ref ? result : job));
 					} else {
 						jobs = [...jobs, result];
 					}
-					selectedJob = result.jobpo;
+					selectedJob = result.ref;
 				}
 			}}
 		/>
@@ -42,7 +42,7 @@
 	<Tabs.Root bind:value={selectedJob}>
 		<Tabs.List class="flex w-full justify-start">
 			{#each jobs as job}
-				<Tabs.Trigger value={job.jobpo}>{job.jobpo}</Tabs.Trigger>
+				<Tabs.Trigger value={job.ref}>{job.ref}</Tabs.Trigger>
 			{/each}
 		</Tabs.List>
 

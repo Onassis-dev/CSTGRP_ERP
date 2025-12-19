@@ -60,14 +60,12 @@
 	});
 
 	async function handleSubmit() {
-		await api.post(
-			'requisitions',
-			{
-				...formData,
-				jobIds: jobs.filter((v) => v.selected).map((v) => v.id)
-			},
-			{ responseType: 'arraybuffer' }
-		);
+		const { data } = await api.post('requisitions', {
+			...formData,
+			jobIds: jobs.filter((v) => v.selected).map((v) => v.id)
+		});
+
+		window.open(`${import.meta.env.VITE_BASEURL}/petitions/download/${data?.id}`, '_blank');
 
 		refetch(['requisitions']);
 		showSuccess('Requisicion registrada');
@@ -128,7 +126,7 @@
 					{#each jobs as row, i}
 						<TableRow>
 							<TableCell class="border-l">{row.programation}</TableCell>
-							<TableCell>{row.jobpo}</TableCell>
+							<TableCell>{row.ref}</TableCell>
 							<TableCell>{formatDate(row.due)}</TableCell>
 							<TableCell>{row.amount}</TableCell>
 							<TableCell class="w-min max-w-2">

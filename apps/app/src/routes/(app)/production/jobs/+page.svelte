@@ -106,7 +106,7 @@
 					deleteFunc={() => deleteIE(i)}
 					extraButtons={[{ fn: () => compareJob(i), name: 'Comparar', icon: Ruler }]}
 				/>
-				<TableCell>{movement.jobpo || ''}</TableCell>
+				<TableCell>{movement.ref || ''}</TableCell>
 				<TableCell>{movement.programation || ''}</TableCell>
 				<TableCell>{formatDate(movement.due) || ''}</TableCell>
 			</TableRow>

@@ -50,7 +50,7 @@
 		});
 
 		show = false;
-		showSuccess(`Requisicion Registrada`);
+		showSuccess('Requisicion registrada');
 	}
 
 	const areasQuery = createQuery({

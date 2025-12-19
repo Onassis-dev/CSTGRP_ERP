@@ -51,7 +51,7 @@
 	<DialogContent class="min-h-[90%]">
 		<DialogHeader>
 			<DialogTitle>
-				{selectedOrder?.jobpo}
+				{selectedOrder?.ref}
 			</DialogTitle>
 		</DialogHeader>
 		<DialogBody class="h-full max-w-full">

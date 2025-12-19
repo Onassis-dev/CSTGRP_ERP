@@ -17,19 +17,19 @@ export class ProgressService {
   async getOrders(body: z.infer<typeof getProgressSchema>) {
     await validatePerm(body.area, this.req.userId, 1);
 
-    const jobs = await sql`select materialie.*, orders.*,
+    const jobs = await sql`select *,
        CASE 
-         WHEN ${getTijuanaDate()} >= materialie."due" - INTERVAL '2 days' AND ${getTijuanaDate()} <= materialie."due" THEN 1
-         WHEN ${getTijuanaDate()} > materialie."due" THEN 2
+         WHEN ${getTijuanaDate()} >= due - INTERVAL '2 days' AND ${getTijuanaDate()} <= due THEN 1
+         WHEN ${getTijuanaDate()} > due THEN 2
          ELSE 0
        END as "state"
-       from orders join materialie on orders."jobId" = materialie.id 
+       from jobs
        where ${sql(`${body.area}Time`)} <> 0
-       ${body.completed ? sql`AND (orders.completed = true OR ${sql('orders.' + body.area)} = orders.amount)` : sql`AND orders.completed = false AND ${sql('orders.' + body.area)} < orders.amount`}
-       ${body.job ? sql`AND materialie.jobpo LIKE ${'%' + body.job + '%'}` : sql``}
-       ${body.programation ? sql`AND materialie.programation LIKE ${'%' + body.programation + '%'}` : sql``}
-       AND orders."areaId" IN (SELECT unnest(prod_areas) FROM users WHERE id = ${this.req.userId})
-       order by materialie.jobpo desc limit 150`;
+       ${body.completed ? sql`AND (jobs.completed = true OR ${sql('jobs.' + body.area)} = jobs.amount)` : sql`AND jobs.completed = false AND ${sql('jobs.' + body.area)} < jobs.amount`}
+       ${body.job ? sql`AND jobs.ref LIKE ${'%' + body.job + '%'}` : sql``}
+       ${body.programation ? sql`AND jobs.programation LIKE ${'%' + body.programation + '%'}` : sql``}
+       AND jobs."areaId" IN (SELECT unnest(prod_areas) FROM users WHERE id = ${this.req.userId})
+       order by jobs.ref desc limit 150`;
 
     return jobs;
   }
@@ -47,8 +47,8 @@ export class ProgressService {
 
     await sql.begin(async (sql) => {
       const [order] = await sql`select SUM(${sql(body.area)})::integer as done,
-         (select amount from orders where id = ${body.orderId}),
-         (select jobpo from materialie where id = (select "jobId" from orders where id = ${body.orderId}))
+         (select amount from jobs where id = ${body.orderId}),
+         (select ref from jobs where id = ${body.orderId})
           from ordermovements where "progressId" = ${body.orderId}`;
 
       if (order.done + body.amount > order.amount)

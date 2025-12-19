@@ -56,6 +56,7 @@
 					normal ? '' : 'rounded-none border-none',
 					measurement ? '' : 'bg-destructive text-destructive-foreground'
 				)}
+				autocomplete="off"
 				{disabled}
 			/>
 		</Popover.Trigger>

@@ -1,6 +1,8 @@
 import { idSchema, numberSchema, signedNumberSchema } from 'src/utils/schemas';
 import { z } from 'zod/v4';
 
+const absoluteNumberSchema = numberSchema.transform((v) => Math.abs(Number(v)));
+
 export const movementsFilterSchema = z.object({
   code: z.string().nullable(),
   import: z.string().nullable(),
@@ -17,22 +19,27 @@ export const updateAmountSchema = z.object({
 
 export const scrapSchema = z.object({
   code: z.string(),
-  amount: numberSchema,
+  amount: absoluteNumberSchema,
 });
 
 export const suppliesSchema = z.object({
   code: z.string(),
-  amount: numberSchema,
+  amount: absoluteNumberSchema,
 });
 
 export const repositionSchema = z.object({
   code: z.string(),
-  amount: numberSchema,
+  amount: absoluteNumberSchema,
   job: z.string(),
 });
 
 export const returnSchema = z.object({
   code: z.string(),
-  amount: numberSchema,
-  job: z.string().nullish(),
+  amount: absoluteNumberSchema,
+});
+
+export const leftoverSchema = z.object({
+  code: z.string(),
+  amount: absoluteNumberSchema,
+  job: z.string(),
 });

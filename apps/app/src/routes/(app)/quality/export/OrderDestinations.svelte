@@ -43,7 +43,7 @@
 	<DialogContent class="min-h-[50%] sm:max-w-2xl">
 		<DialogHeader>
 			<DialogTitle>
-				{data?.jobpo}
+				{data?.ref}
 			</DialogTitle>
 		</DialogHeader>
 		<DialogBody class="h-full max-w-full">
@@ -52,7 +52,7 @@
 					<Input readonly value={data?.programation ?? ''} />
 				</Label>
 				<Label name="Job PO">
-					<Input readonly value={data?.jobpo ?? ''} />
+					<Input readonly value={data?.ref ?? ''} />
 				</Label>
 				<Label name="Parte">
 					<Input readonly value={data?.part ?? ''} />
