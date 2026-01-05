@@ -64,7 +64,7 @@ export class MovementsService {
     if (movement.active)
       throw new HttpException('Este movimiento ya se surtio', 400);
 
-    await sql`update materialmovements set "realAmount" = ${movement.amount >= 0 ? parseFloat(body.newAmount) : -parseFloat(body.newAmount)} where id = ${body.id}`;
+    await sql`update materialmovements set "realAmount" = ${movement.amount >= 0 ? body.newAmount : -body.newAmount} where id = ${body.id}`;
   }
 
   async activateMovement(body: z.infer<typeof idObjectSchema>) {

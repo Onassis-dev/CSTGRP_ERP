@@ -1,4 +1,4 @@
-import { idSchema, numberSchema, signedNumberSchema } from 'src/utils/schemas';
+import { idSchema, numberSchema } from 'src/utils/schemas';
 import { z } from 'zod/v4';
 
 const absoluteNumberSchema = numberSchema.transform((v) => Math.abs(Number(v)));
@@ -15,7 +15,7 @@ export const movementsFilterSchema = z.object({
 
 export const updateAmountSchema = z.object({
   id: idSchema,
-  newAmount: signedNumberSchema,
+  newAmount: absoluteNumberSchema,
 });
 
 export const scrapSchema = z.object({
