@@ -10,6 +10,7 @@ import {
   scrapSchema,
   suppliesSchema,
   updateAmountSchema,
+  updateMovementDateSchema,
 } from './movements.schema';
 import { updateMaterialAmount } from 'src/utils/functions';
 import exceljs from 'exceljs';
@@ -23,7 +24,9 @@ export class MovementsService {
   async getMovements(body: z.infer<typeof movementsFilterSchema>) {
     const movements = await sql`SELECT
         materials.code, materials.description, materials.measurement, materials."clientId", materials."leftoverAmount", materials.amount as inventory,
-        materialmovements.active, materialmovements.amount, materialmovements."realAmount", materialmovements.id, materialmovements.extra,
+        materialmovements.active, materialmovements.amount, materialmovements."realAmount", 
+        materialmovements.id, materialmovements.extra, materialmovements.type, materialmovements."jobId",
+        materialmovements."activeDate",
         jobs.programation,
         COALESCE(
           jobs.ref, 
@@ -70,10 +73,6 @@ export class MovementsService {
   }
 
   async activateMovement(body: z.infer<typeof idObjectSchema>) {
-    const [user] =
-      await sql`select permissions from users where id = ${this.req.userId}`;
-    const maintainDate = user.permissions.materialmovements >= 3;
-
     const [movement] =
       await sql`select extra, active, (select code from materials where id = "materialId"), (select ref from jobs where id = "jobId"), "jobId" from materialmovements where id = ${body.id}`;
 
@@ -82,7 +81,7 @@ export class MovementsService {
 
     await sql.begin(async (sql) => {
       const [result] =
-        await sql`UPDATE materialmovements SET active = ${!movement.active}, "activeDate" = ${movement.active ? (maintainDate ? sql`"activeDate"` : null) : sql`COALESCE("activeDate", ${new Date()})`} WHERE id = ${body.id} returning "materialId", "realAmount"`;
+        await sql`UPDATE materialmovements SET active = ${!movement.active}, "activeDate" = ${movement.active ? null : new Date()} WHERE id = ${body.id} returning "materialId", "realAmount"`;
 
       await updateMaterialAmount(result.materialId, sql);
 
@@ -261,6 +260,48 @@ export class MovementsService {
       if (err.column_name === 'materialId')
         throw new HttpException(`El material ${body.code} no existe.`, 400);
     }
+  }
+
+  async deleteMovement(body: z.infer<typeof idObjectSchema>) {
+    const [user] =
+      await sql`select permissions from users where id = ${this.req.userId}`;
+    if (user.permissions.materialmovements < 3)
+      throw new HttpException('', 403);
+
+    await sql.begin(async (sql) => {
+      const [movement] =
+        await sql`delete from materialmovements where id = ${body.id} and type is not null returning "materialId", (select code from materials where id = "materialId"), type`;
+      if (!movement)
+        throw new HttpException('Este movimiento no se puede eliminar', 400);
+
+      await updateMaterialAmount(movement.materialId, sql);
+
+      await this.req.record(
+        `Elimino movimiento de tipo: (${movement.type}) de ${movement.code}`,
+        sql,
+      );
+    });
+  }
+
+  async updateMovementDate(body: z.infer<typeof updateMovementDateSchema>) {
+    const [user] =
+      await sql`select permissions from users where id = ${this.req.userId}`;
+    if (user.permissions.materialmovements < 3)
+      throw new HttpException('', 403);
+
+    await sql.begin(async (sql) => {
+      const [movement] = await sql`
+        update materialmovements set "activeDate" = ${body.date}
+        where id = ${body.id} and (type is not null or "jobId" is not null)
+        returning (select code from materials where id = "materialId")`;
+      if (!movement)
+        throw new HttpException('Este movimiento no se puede actualizar', 400);
+
+      await this.req.record(
+        `Actualizo la fecha de un movimiento de ${movement.code}`,
+        sql,
+      );
+    });
   }
 
   async exportPending() {

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Post,
   Put,
@@ -20,6 +21,7 @@ import {
   scrapSchema,
   suppliesSchema,
   updateAmountSchema,
+  updateMovementDateSchema,
 } from './movements.schema';
 import { idObjectSchema } from 'src/utils/schemas';
 
@@ -77,5 +79,15 @@ export class MovementsController {
   @Put('realamount')
   udpateRealAmount(@Body(new ZodPiPe(updateAmountSchema)) body) {
     return this.movementsService.updateRealAmount(body);
+  }
+
+  @Put('date')
+  updateMovementDate(@Body(new ZodPiPe(updateMovementDateSchema)) body) {
+    return this.movementsService.updateMovementDate(body);
+  }
+
+  @Delete('')
+  deleteMovement(@Body(new ZodPiPe(idObjectSchema)) body) {
+    return this.movementsService.deleteMovement(body);
   }
 }

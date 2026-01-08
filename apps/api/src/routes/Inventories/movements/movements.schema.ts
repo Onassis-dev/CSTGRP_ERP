@@ -1,4 +1,9 @@
-import { idSchema, numberSchema, signedNumberSchema } from 'src/utils/schemas';
+import {
+  dateSchema,
+  idSchema,
+  numberSchema,
+  signedNumberSchema,
+} from 'src/utils/schemas';
 import { z } from 'zod/v4';
 
 const absoluteNumberSchema = numberSchema.transform((v) => Math.abs(Number(v)));
@@ -51,4 +56,9 @@ export const leftoverSchema = z.object({
 export const adjustmentSchema = z.object({
   code: z.string(),
   amount: signedNumberSchema,
+});
+
+export const updateMovementDateSchema = z.object({
+  id: idSchema,
+  date: dateSchema,
 });

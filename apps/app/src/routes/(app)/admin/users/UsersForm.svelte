@@ -187,7 +187,7 @@
 				</Label>
 				<Label name="Perm. Movimientos">
 					<Select
-						items={[...permissions, { value: 3, name: 'Mantener fechas', color: 'purple' }]}
+						items={[...permissions, { value: 3, name: 'Editar y eliminar', color: 'purple' }]}
 						bind:value={formData.permissions.materialmovements}
 					/>
 				</Label>

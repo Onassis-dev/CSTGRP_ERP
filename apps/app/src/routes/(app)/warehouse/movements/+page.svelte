@@ -19,9 +19,13 @@
 	import { getClients } from '$lib/utils/queries';
 	import { downloadFile } from '$lib/utils/files';
 	import DeletePopUp from '$lib/components/complex/DeletePopUp.svelte';
+	import { userData } from '$lib/utils/store';
+	import MovementsForm from './MovementsForm.svelte';
 
 	let show2 = $state(false);
 	let show3 = $state(false);
+	let show4 = $state(false);
+	let selectedMovement: any = $state();
 	let movementI = $state(0);
 	let previousAmount = $state('');
 
@@ -139,7 +143,21 @@
 	<TableBody>
 		{#each $movements.data as movement, i}
 			<TableRow>
-				<TableCell>{(movement.ref || '') + (movement.extra ? ' -R' : '')}</TableCell>
+				<TableCell
+					>{(movement.ref || '') + (movement.extra ? ' -R' : '')}
+
+					{#if $userData?.permissions.materialmovements >= 3 && (movement.type || movement.jobId)}
+						<Button
+							size="icon"
+							variant="outline"
+							class="ml-1"
+							onclick={() => {
+								selectedMovement = movement;
+								show4 = true;
+							}}><Pen class="size-3.5" /></Button
+						>
+					{/if}
+				</TableCell>
 				<TableCell>{movement.programation || ''}</TableCell>
 				<TableCell>{movement.req || ''}</TableCell>
 				<TableCell>{movement.code}</TableCell>
@@ -201,3 +219,4 @@
 	warning={true}
 />
 <MovementsMenu bind:show={show3} />
+<MovementsForm bind:show={show4} {selectedMovement} />
