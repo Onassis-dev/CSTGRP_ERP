@@ -1,7 +1,5 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
 	import Label from '$lib/components/basic/Label.svelte';
-	import MaterialInput from '$lib/components/basic/MaterialInput.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import {
 		Dialog,
@@ -28,7 +26,10 @@
 	let showDelete = $state(false);
 
 	$effect(() => {
-		formData = { date: selectedMovement?.activeDate?.split('T')[0] || '', id: selectedMovement.id };
+		formData = {
+			date: selectedMovement?.activeDate?.split('T')[0] || '',
+			id: selectedMovement?.id
+		};
 	});
 
 	async function submit() {
@@ -46,22 +47,22 @@
 
 		<DialogBody grid="1">
 			<Label name="Ref">
-				<Input bind:value={selectedMovement.ref} disabled />
+				<Input value={selectedMovement?.ref} disabled />
 			</Label>
 
 			<Label name="Codigo">
-				<Input bind:value={selectedMovement.code} disabled />
+				<Input value={selectedMovement?.code} disabled />
 			</Label>
 
 			<Label name="Cantidad">
-				<Input bind:value={selectedMovement.amount} disabled />
+				<Input value={selectedMovement?.amount} disabled />
 			</Label>
 
 			<Label name="Fecha">
 				<Input type="date" bind:value={formData.date} />
 			</Label>
 
-			{#if selectedMovement.type}
+			{#if selectedMovement?.type}
 				<Button
 					variant="outline"
 					onclick={() => {
@@ -80,7 +81,7 @@
 	bind:show={showDelete}
 	text="Eliminar movimiento"
 	deleteFunc={async () => {
-		await api.delete(`/materialmovements`, { data: { id: selectedMovement.id } });
+		await api.delete(`/materialmovements`, { data: { id: selectedMovement?.id } });
 		refetch(['material-movements']);
 		showDelete = false;
 		showSuccess('Movimiento eliminado');
