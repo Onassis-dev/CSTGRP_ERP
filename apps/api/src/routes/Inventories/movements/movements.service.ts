@@ -2,6 +2,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { z } from 'zod/v4';
 import sql from 'src/utils/db';
 import {
+  adjustmentSchema,
   leftoverSchema,
   movementsFilterSchema,
   repositionSchema,
@@ -31,6 +32,7 @@ export class MovementsService {
             WHEN 'return' THEN 'RETORNO'
             WHEN 'scrap' THEN 'SCRAP'
             WHEN 'consumable' THEN 'INSUMO'
+            WHEN 'adjustment' THEN 'AJUSTE'
             ELSE ''
           END
         ) as ref,
@@ -43,7 +45,7 @@ export class MovementsService {
       
       WHERE
       ${body.jobpo ? sql`jobs.ref = ${body.jobpo}` : sql`TRUE`} AND
-      ${body.import ? sql`imports.ref = ${body.import}` : sql`TRUE`} AND
+      ${body.import ? sql`imports.ref LIKE ${'%' + body.import + '%'}` : sql`TRUE`} AND
       ${body.programation ? sql`jobs.programation = ${body.programation}` : sql`TRUE`} AND
       ${body.code ? sql`materials.code LIKE ${'%' + body.code + '%'}` : sql`TRUE`} AND
       ${body.req ? sql`(select STRING_AGG(folio::TEXT, ', ') from requisitions where jobs LIKE CONCAT('%', jobs.ref, ',%') and jobs.ref is not null and requisitions."materialId" = materials.id) = ${body.req}` : sql`TRUE`} AND
@@ -227,6 +229,37 @@ export class MovementsService {
       if (err.column_name === 'jobId')
         throw new HttpException(`El job ${body.job} no existe.`, 400);
       throw err;
+    }
+  }
+
+  async postAdjustment(body: z.infer<typeof adjustmentSchema>) {
+    const [user] =
+      await sql`select permissions from users where id = ${this.req.userId}`;
+    if (user.permissions.material_adjustments < 2)
+      throw new HttpException('', 403);
+
+    try {
+      await sql.begin(async (sql) => {
+        const [movement] =
+          await sql`insert into materialmovements ("materialId", type, amount, "realAmount", active, "activeDate", extra) values
+            ((select id from materials where code = ${body.code}),
+            'adjustment',
+            ${body.amount},
+            ${body.amount},
+            true,
+            ${new Date()},
+            false) returning "materialId"`;
+
+        await updateMaterialAmount(movement.materialId, sql);
+
+        await this.req.record(
+          `Retiro ${body.amount} de scrap de ${body.code}`,
+          sql,
+        );
+      });
+    } catch (err) {
+      if (err.column_name === 'materialId')
+        throw new HttpException(`El material ${body.code} no existe.`, 400);
     }
   }
 

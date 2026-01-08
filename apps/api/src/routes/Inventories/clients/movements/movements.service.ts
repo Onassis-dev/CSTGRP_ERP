@@ -22,6 +22,7 @@ export class MovementsService {
             CASE materialmovements.type
               WHEN 'scrap' THEN 'SCRAP'
               WHEN 'consumable' THEN 'CONSUMABLE'
+              WHEN 'adjustment' THEN 'ADJUSTMENT'
               ELSE ''
             END
           ) as ref,

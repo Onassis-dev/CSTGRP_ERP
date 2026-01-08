@@ -28,7 +28,8 @@ export const baseUser = {
 		reports: 0,
 		quality: 0,
 		progress: 0,
-		maintenance: 0
+		maintenance: 0,
+		material_adjustments: 0
 	},
 	assistance_areas: [],
 	prod_areas: [],

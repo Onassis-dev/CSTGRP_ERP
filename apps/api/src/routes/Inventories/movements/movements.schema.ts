@@ -47,3 +47,8 @@ export const leftoverSchema = z.object({
   amount: absoluteNumberSchema,
   job: z.string(),
 });
+
+export const adjustmentSchema = z.object({
+  code: z.string(),
+  amount: signedNumberSchema,
+});

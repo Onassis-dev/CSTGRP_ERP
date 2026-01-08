@@ -10,6 +10,8 @@
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
 	import { refetch } from '$lib/utils/query';
+	import { userData } from '$lib/utils/store';
+	import { cn } from '$lib/utils';
 
 	interface Props {
 		show: boolean;
@@ -36,12 +38,20 @@
 	<DialogContent class="max-w-lg">
 		<DialogHeader>
 			<Tabs.Root bind:value={selected} class="w-full">
-				<Tabs.List class="grid w-full grid-cols-5">
+				<Tabs.List
+					class={cn(
+						'grid w-full',
+						$userData?.permissions.material_adjustments >= 2 ? 'grid-cols-6' : 'grid-cols-5'
+					)}
+				>
 					<Tabs.Trigger value="reposition">Reposicion</Tabs.Trigger>
 					<Tabs.Trigger value="leftover">Sobrante</Tabs.Trigger>
 					<Tabs.Trigger value="supplies">Insumos</Tabs.Trigger>
 					<Tabs.Trigger value="return">Retorno</Tabs.Trigger>
 					<Tabs.Trigger value="scrap">Scrap</Tabs.Trigger>
+					{#if $userData?.permissions.material_adjustments >= 2}
+						<Tabs.Trigger value="adjustment">Ajuste</Tabs.Trigger>
+					{/if}
 				</Tabs.List>
 			</Tabs.Root>
 		</DialogHeader>

@@ -25,6 +25,7 @@ export class InventoryService {
             WHEN 'return' THEN 'RETORNO'
             WHEN 'scrap' THEN 'SCRAP'
             WHEN 'consumable' THEN 'INSUMO'
+            WHEN 'adjustment' THEN 'AJUSTE'
             ELSE ''
           END
           ) as ref,

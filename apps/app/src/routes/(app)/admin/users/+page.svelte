@@ -81,7 +81,7 @@
 		<TableHead colspan={3}>Reportes</TableHead>
 		<TableHead colspan={4}>RRHH</TableHead>
 		<TableHead colspan={7}>Producción</TableHead>
-		<TableHead colspan={5}>Almacen</TableHead>
+		<TableHead colspan={6}>Almacen</TableHead>
 		<TableHead colspan={3}>Import-Export</TableHead>
 		<TableHead colspan={2}>-</TableHead>
 	</TableHeader>
@@ -114,6 +114,7 @@
 		<TableHead class="w-[12.5%]">Movimientos</TableHead>
 		<TableHead class="w-[12.5%]">Requisiciones</TableHead>
 		<TableHead class="w-[12.5%]">Peticiones</TableHead>
+		<TableHead class="w-[12.5%]">Ajustes</TableHead>
 		<TableHead class="w-[12.5%]">Importaciones</TableHead>
 		<TableHead class="w-[12.5%]">Exportaciones</TableHead>
 		<TableHead class="w-[12.5%]">Opciones</TableHead>
@@ -370,6 +371,15 @@
 					</Badge></TableCell
 				>
 
+				<TableCell class="p-1.5 text-center"
+					><Badge
+						class="flex h-full w-full items-center justify-center p-1"
+						color={getBadgeColor(user.permissions.material_adjustments)}
+					>
+						{@const SvelteComponent_11 = badgeTexts[user.permissions.material_adjustments]}
+						<SvelteComponent_11 class="size-3.5" />
+					</Badge></TableCell
+				>
 				<TableCell class="p-1.5 text-center"
 					><Badge
 						class="flex h-full w-full items-center justify-center p-1"

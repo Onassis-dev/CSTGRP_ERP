@@ -37,15 +37,16 @@
 
 	let checkStatus = [
 		{ value: '', name: 'Sin filtro' },
-		{ value: 'true', name: 'Surtido' },
-		{ value: 'false', name: 'No surtido' }
+		{ value: 'true', name: 'Surtido', color: 'red' },
+		{ value: 'false', name: 'No surtido', color: 'red' }
 	];
 
 	let types = [
 		{ value: '', name: 'Sin tipo' },
-		{ value: 'return', name: 'Retorno' },
-		{ value: 'scrap', name: 'Scrap' },
-		{ value: 'consumable', name: 'Insumo' }
+		{ value: 'return', name: 'Retorno', color: 'red' },
+		{ value: 'scrap', name: 'Scrap', color: 'red' },
+		{ value: 'consumable', name: 'Insumo', color: 'red' },
+		{ value: 'adjustment', name: 'Ajuste', color: 'red' }
 	];
 
 	const movements = createQuery({
@@ -89,8 +90,20 @@
 		<Input menu bind:value={filters.jobpo} placeholder="Job" class="max-w-32" />
 		<Input menu bind:value={filters.code} placeholder="Material" class="max-w-32" />
 		<Input menu bind:value={filters.req} placeholder="Req" class="max-w-32" />
-		<Select menu items={checkStatus} bind:value={filters.checked} class="min-w-32 max-w-32" />
-		<Select menu items={types} bind:value={filters.type} class="min-w-32 max-w-32" />
+		<Select
+			menu
+			items={checkStatus}
+			bind:value={filters.checked}
+			class="min-w-32 max-w-32"
+			onValueChange={() => refetch(['material-movements'])}
+		/>
+		<Select
+			menu
+			items={types}
+			bind:value={filters.type}
+			class="min-w-32 max-w-32"
+			onValueChange={() => refetch(['material-movements'])}
+		/>
 		<Button type="submit" variant="outline" size="icon"><Search class="size-3.5" /></Button>
 	</form>
 	{#snippet right()}
@@ -110,7 +123,7 @@
 
 <CusTable>
 	<TableHeader>
-		<TableHead>Job-PO</TableHead>
+		<TableHead>Ref</TableHead>
 		<TableHead>Programacion</TableHead>
 		<TableHead>Req</TableHead>
 		<TableHead>Codigo</TableHead>

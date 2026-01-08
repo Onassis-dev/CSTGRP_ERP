@@ -12,6 +12,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import {
+  adjustmentSchema,
   leftoverSchema,
   movementsFilterSchema,
   repositionSchema,
@@ -61,6 +62,11 @@ export class MovementsController {
   @Post('return')
   postReturn(@Body(new ZodPiPe(returnSchema)) body) {
     return this.movementsService.postReturn(body);
+  }
+
+  @Post('adjustment')
+  postAdjustment(@Body(new ZodPiPe(adjustmentSchema)) body) {
+    return this.movementsService.postAdjustment(body);
   }
 
   @Put('activate')

@@ -200,6 +200,9 @@
 				<Label name="Perm. Peticiones">
 					<Select items={permissions} bind:value={formData.permissions.petitions} />
 				</Label>
+				<Label name="Perm. Ajustes">
+					<Select items={permissions} bind:value={formData.permissions.material_adjustments} />
+				</Label>
 			</div>
 
 			<div class={cardClass}>
