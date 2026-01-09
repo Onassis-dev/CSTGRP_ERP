@@ -210,6 +210,7 @@ const valueTraduccion = {
   publicId: 'ID',
   requested: 'Solicitado',
   ref: 'Referencia',
+  operations: 'Operaciones',
 };
 
 export const getTraducction = (value: string | number) => {

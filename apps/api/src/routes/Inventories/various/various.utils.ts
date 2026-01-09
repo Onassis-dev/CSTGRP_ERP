@@ -246,7 +246,7 @@ export async function processJob(text: string) {
     if (text.includes('CrewSize')) {
       for (let j = i; j < i + 200; j++) {
         if (/^(\d+,)*\d+\.\d{5}$/.test(operationsLines[j])) {
-          let crewSize = 1;
+          let crewSize = NaN;
           for (let k = j; k < j + 10; k++) {
             if (
               /^\d{1,2}\/\d{1,2}\/\d{4}\s\d+\.\d{2}$/.test(operationsLines[k])
