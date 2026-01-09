@@ -18,7 +18,8 @@
 	let pallets = $state<{ shares: string }[]>([{ shares: '' }, { shares: '' }, { shares: '' }]);
 	let integers = $state('0');
 
-	function smartRound(n: number) {
+	function smartRound(n: number | null) {
+		if (n === null) return '';
 		if (Number.isInteger(n)) return n;
 		return Math.round(n * 10000) / 10000;
 	}

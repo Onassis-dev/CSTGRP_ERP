@@ -88,6 +88,9 @@
 									<Button
 										class="aspect-square size-8 p-0"
 										onclick={async () => {
+											if (!row.pallets && row.pallets !== 0)
+												return showError(null, 'Numero invalido');
+
 											await api.put('/quality/orders/destinations', {
 												id: row.id,
 												pallets: row.pallets
