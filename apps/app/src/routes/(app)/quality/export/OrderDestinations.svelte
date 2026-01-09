@@ -21,6 +21,7 @@
 	import { SaveIcon } from 'lucide-svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { showError, showSuccess } from '$lib/utils/showToast';
+	import FractionInput from './FractionInput.svelte';
 	interface Props {
 		show: boolean;
 		selectedRow: any;
@@ -82,12 +83,11 @@
 							<TableCell>{formatDate(row.date)}</TableCell>
 							<TableCell class="w-24 p-0">
 								<div class="flex items-center">
-									<Input class="rounded-none border-none" maxlength={3} bind:value={row.pallets} />
+									<FractionInput bind:value={row.pallets} />
 
 									<Button
 										class="aspect-square size-8 p-0"
 										onclick={async () => {
-											if (!row.pallets) return showError(null, 'Numero invalido');
 											await api.put('/quality/orders/destinations', {
 												id: row.id,
 												pallets: row.pallets

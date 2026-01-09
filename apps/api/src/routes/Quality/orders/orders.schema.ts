@@ -1,5 +1,5 @@
 import { z } from 'zod/v4';
-import { idSchema, intSchema } from 'src/utils/schemas';
+import { idSchema } from 'src/utils/schemas';
 
 export const orderFilterSchema = z.object({
   jobpo: z.string().nullable(),
@@ -13,5 +13,5 @@ export const getDestinationsSchema = z.object({
 
 export const updateDestinationPalletsSchema = z.object({
   id: idSchema,
-  pallets: intSchema.min(1, 'Numero invalido'),
+  pallets: z.coerce.number().min(0, 'Numero invalido'),
 });
