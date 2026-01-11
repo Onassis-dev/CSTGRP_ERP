@@ -103,15 +103,16 @@ export class AreasService {
       SELECT 
       SUM(
         CASE 
-          WHEN (s."areaId" = a.id AND ${sql('areaId' + body.day)} IS NULL) OR ${sql('areaId' + body.day)} = a.id
-          THEN COALESCE(s.${sql('hours' + body.day)},0) ELSE 0
+          WHEN (s."areaId" = a.id AND s.${sql('areaId' + body.day)} IS NULL) OR s.${sql('areaId' + body.day)} = a.id
+          THEN COALESCE(s.${sql('hours' + body.day)}, 0) 
+          ELSE 0
         END
       ) AS "minutes"
     FROM assistance s
-    JOIN areas a ON s."areaId" = a.id
+    JOIN areas a ON TRUE
     JOIN positions p ON (s."positionId" = p.id)
     WHERE s."mondayDate" = ${mondayDate}
-      AND s."areaId" = ${body.areaId}
+      AND a.id = ${body.areaId}
       AND p.supervisor = false
     GROUP BY a.id;`;
 
