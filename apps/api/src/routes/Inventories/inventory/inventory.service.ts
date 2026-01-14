@@ -123,16 +123,16 @@ export class InventoryService {
 
     const results = await Promise.all(
       rows.map(async (row) => {
-        const movements = await sql`SELECT jobpo FROM materialmovements
-          JOIN materialie ON materialie.id = materialmovements."movementId"
+        const movements = await sql`SELECT ref FROM materialmovements
+          JOIN jobs ON jobs.id = materialmovements."jobId"
           WHERE materialmovements.active = true
-          AND materialie.jobpo IS NOT NULL
+          AND jobs.ref IS NOT NULL
           AND materialmovements."materialId" = ${row.id}
-          ORDER BY materialmovements."activeDate" DESC, materialie.id DESC
+          ORDER BY materialmovements."activeDate" DESC, jobs.id DESC
           LIMIT 25`;
 
         for (let i = 0; i < 25; i++) {
-          row['job' + i] = movements[i]?.jobpo;
+          row['job' + i] = movements[i]?.ref;
         }
 
         return row;
