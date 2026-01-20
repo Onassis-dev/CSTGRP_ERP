@@ -251,7 +251,7 @@ export function createLabel(
   if (type === 'yamaha-info') {
     const x = [175, 480];
     const baseY = 265;
-    const adjustments = [0, 0, 12, 11, 14];
+    const adjustments = [-24, 0, 12, 11, 14];
 
     ctx.font = '40px SwissBold';
     ctx.fillStyle = '#000000';
