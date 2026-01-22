@@ -51,16 +51,30 @@ export const createPreformSchema = z.object({
     }),
   ),
 
-  clientsData: z.array(
-    z.object({
-      client: z.string(),
-      entrada: z.string().nullable(),
-      bultos: intSchema,
-      unidad: z.string(),
-      dias: intSchema,
-      orden: z.string(),
-    }),
-  ),
+  clientsData: z
+    .array(
+      z.object({
+        client: z.string(),
+        entrada: z.string().nullable(),
+        bultos: intSchema,
+        unidad: z.string(),
+        dias: intSchema,
+        orden: z.string(),
+      }),
+    )
+    .transform((obj) =>
+      obj.sort((a, b) => {
+        const unidadCompare = b.unidad.localeCompare(a.unidad);
+        if (unidadCompare !== 0) return unidadCompare;
+
+        const bultosCompare = b.bultos - a.bultos;
+        if (bultosCompare !== 0) return bultosCompare;
+
+        const entradaA = a.entrada ?? '';
+        const entradaB = b.entrada ?? '';
+        return entradaA.localeCompare(entradaB);
+      }),
+    ),
 
   unityOptions: z.array(
     z.object({
