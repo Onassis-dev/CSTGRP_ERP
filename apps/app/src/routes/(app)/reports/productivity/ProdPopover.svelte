@@ -50,13 +50,13 @@
 					<p class="font-bold">Min</p>
 					{#each data.produced as order}
 						<p>{order.ref}</p>
-						<p>{order.produccion}</p>
+						<p>{order.prod}</p>
 						<p>{Number(order.workedMinutes).toFixed(2)}</p>
 					{/each}
 					<div class="col-span-3 border-t pt-2"></div>
 					<p class="font-bold">Total</p>
 					<p class="font-bold">
-						{data.produced.reduce((acc: number, order: any) => acc + order.produccion, 0)}
+						{data.produced.reduce((acc: number, order: any) => acc + order.prod, 0)}
 					</p>
 					<p class="font-bold">
 						{data.produced

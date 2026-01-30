@@ -20,6 +20,11 @@ export class AreasController {
     return this.areasService.getAreas(query);
   }
 
+  @Get('other-processes')
+  getOtherProcesses(@Query(new ZodPiPe(getAreasSchema)) query) {
+    return this.areasService.getOtherProcesses(query);
+  }
+
   @Get('day')
   getDayData(@Query(new ZodPiPe(getDayDataSchema)) query) {
     return this.areasService.getDayData(query);

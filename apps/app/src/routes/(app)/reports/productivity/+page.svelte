@@ -27,9 +27,20 @@
 			).data
 	});
 
+	const otherProcesses = createQuery({
+		queryKey: ['reports-areas-other-processes'],
+		queryFn: async () =>
+			(
+				await api.get(`/reports/areas/other-processes`, {
+					params: filters
+				})
+			).data
+	});
+
 	$effect(() => {
 		({ ...filters });
 		refetch(['reports-areas']);
+		refetch(['reports-areas-other-processes']);
 	});
 
 	function formatAvg(avg: number) {
@@ -144,5 +155,36 @@
 			<TableCell>Total:</TableCell>
 			<TableCell class={totalAvg >= 1 ? 'bg-green-100' : ''}>{formatAvg(totalAvg)}</TableCell>
 		</TableRow>
+		<TableRow />
+		{#each $otherProcesses?.data as row}
+			<TableRow>
+				<TableCell>{row.name || ''}</TableCell>
+
+				<ProdPopover productivity={row.mondayAvg} date={filters.date} day={0} areaId={row.id} />
+				{#if showComplete}
+					<TableCell class="bg-gray-50">{(row.mondayMinutes / 570).toFixed(2) || ''}</TableCell>
+				{/if}
+				<ProdPopover productivity={row.tuesdayAvg} date={filters.date} day={1} areaId={row.id} />
+				{#if showComplete}
+					<TableCell class="bg-gray-50">{(row.tuesdayMinutes / 570).toFixed(2) || ''}</TableCell>
+				{/if}
+				<ProdPopover productivity={row.wednesdayAvg} date={filters.date} day={2} areaId={row.id} />
+				{#if showComplete}
+					<TableCell class="bg-gray-50">{(row.wednesdayMinutes / 570).toFixed(2) || ''}</TableCell>
+				{/if}
+				<ProdPopover productivity={row.thursdayAvg} date={filters.date} day={3} areaId={row.id} />
+				{#if showComplete}
+					<TableCell class="bg-gray-50">{(row.thursdayMinutes / 570).toFixed(2) || ''}</TableCell>
+				{/if}
+				<ProdPopover productivity={row.fridayAvg} date={filters.date} day={4} areaId={row.id} />
+				{#if showComplete}
+					<TableCell class="bg-gray-50">{(row.fridayMinutes / 570).toFixed(2) || ''}</TableCell>
+				{/if}
+				<TableCell class={calculateWeekAvg(row) >= 1 ? 'bg-green-100' : ''}
+					>{formatAvg(calculateWeekAvg(row))}</TableCell
+				>
+				<TableCell></TableCell>
+			</TableRow>
+		{/each}
 	</TableBody>
 </CusTable>

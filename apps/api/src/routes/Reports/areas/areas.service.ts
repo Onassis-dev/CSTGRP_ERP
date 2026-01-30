@@ -63,13 +63,10 @@ export class AreasService {
         select SUM(ordermovements.produccion * ("produccionTime" / amount)) as prod from ordermovements join jobs on jobs.id = ordermovements."progressId" where "areaId" = ${area.id} and "date" = ${mondayDate} and ordermovements."produccion" is not null`;
       const [{ prod: tuesdayProd }] = await sql`
         select SUM(ordermovements.produccion * ("produccionTime" / amount)) as prod from ordermovements join jobs on jobs.id = ordermovements."progressId" where "areaId" = ${area.id} and "date" = ${addDays(mondayDate, 1)} and ordermovements."produccion" is not null`;
-
       const [{ prod: wednesdayProd }] = await sql`
         select SUM(ordermovements.produccion * ("produccionTime" / amount)) as prod from ordermovements join jobs on jobs.id = ordermovements."progressId" where "areaId" = ${area.id} and "date" = ${addDays(mondayDate, 2)} and ordermovements."produccion" is not null`;
-
       const [{ prod: thursdayProd }] = await sql`
         select SUM(ordermovements.produccion * ("produccionTime" / amount)) as prod from ordermovements join jobs on jobs.id = ordermovements."progressId" where "areaId" = ${area.id} and "date" = ${addDays(mondayDate, 3)} and ordermovements."produccion" is not null`;
-
       const [{ prod: fridayProd }] = await sql`
         select SUM(ordermovements.produccion * ("produccionTime" / amount)) as prod from ordermovements join jobs on jobs.id = ordermovements."progressId" where "areaId" = ${area.id} and "date" = ${addDays(mondayDate, 4)} and ordermovements."produccion" is not null`;
 
@@ -95,6 +92,83 @@ export class AreasService {
     return result;
   }
 
+  async getOtherProcesses(body: z.infer<typeof getAreasSchema>) {
+    const [mondayDate] = getWeekDays(body.date);
+
+    const areas: any[] = await sql`
+    SELECT 
+      a.id,
+      a.name,
+      SUM(
+        CASE 
+          WHEN (s."areaId" = a.id AND s."areaId0" IS NULL) OR s."areaId0" = a.id
+          THEN COALESCE(s.hours0,0) ELSE 0
+        END
+      ) AS "mondayMinutes",
+      SUM(
+        CASE 
+          WHEN (s."areaId" = a.id AND s."areaId1" IS NULL) OR s."areaId1" = a.id
+          THEN COALESCE(s.hours1,0) ELSE 0
+        END
+      ) AS "tuesdayMinutes",
+      SUM(
+        CASE 
+          WHEN (s."areaId" = a.id AND s."areaId2" IS NULL) OR s."areaId2" = a.id
+          THEN COALESCE(s.hours2,0) ELSE 0
+        END
+      ) AS "wednesdayMinutes",
+      SUM(
+        CASE 
+          WHEN (s."areaId" = a.id AND s."areaId3" IS NULL) OR s."areaId3" = a.id
+          THEN COALESCE(s.hours3,0) ELSE 0
+        END
+      ) AS "thursdayMinutes",
+      SUM(
+        CASE 
+          WHEN (s."areaId" = a.id AND s."areaId4" IS NULL) OR s."areaId4" = a.id
+          THEN COALESCE(s.hours4,0) ELSE 0
+        END
+      ) AS "fridayMinutes"
+    FROM assistance s
+    JOIN areas a ON TRUE
+    JOIN positions p ON (s."positionId" = p.id)
+    WHERE s."mondayDate" = ${mondayDate}
+      AND p.supervisor = false
+      AND (a.name = 'CORTE' OR a.name = 'SERIGRAFIA')
+    GROUP BY a.id, a.name;
+`;
+
+    for (const area of areas) {
+      const process = area.name.toLowerCase();
+      console.log(mondayDate);
+
+      const [{ prod: mondayProd }] = await sql`
+        select SUM(ordermovements.${sql(process)} * (${sql(process + 'Time')} / amount)) as prod from ordermovements join jobs on jobs.id = ordermovements."progressId" where "date" = ${mondayDate} and ordermovements.${sql(process)} is not null`;
+      const [{ prod: tuesdayProd }] = await sql`
+        select SUM(ordermovements.${sql(process)} * (${sql(process + 'Time')} / amount)) as prod from ordermovements join jobs on jobs.id = ordermovements."progressId" where "date" = ${addDays(mondayDate, 1)} and ordermovements.${sql(process)} is not null`;
+      const [{ prod: wednesdayProd }] = await sql`
+        select SUM(ordermovements.${sql(process)} * (${sql(process + 'Time')} / amount)) as prod from ordermovements join jobs on jobs.id = ordermovements."progressId" where "date" = ${addDays(mondayDate, 2)} and ordermovements.${sql(process)} is not null`;
+      const [{ prod: thursdayProd }] = await sql`
+        select SUM(ordermovements.${sql(process)} * (${sql(process + 'Time')} / amount)) as prod from ordermovements join jobs on jobs.id = ordermovements."progressId" where "date" = ${addDays(mondayDate, 3)} and ordermovements.${sql(process)} is not null`;
+      const [{ prod: fridayProd }] = await sql`
+        select SUM(ordermovements.${sql(process)} * (${sql(process + 'Time')} / amount)) as prod from ordermovements join jobs on jobs.id = ordermovements."progressId" where "date" = ${addDays(mondayDate, 4)} and ordermovements.${sql(process)} is not null`;
+
+      console.log('mondayProd: ', mondayProd);
+      console.log('tuesdayProd: ', tuesdayProd);
+      console.log('wednesdayProd: ', wednesdayProd);
+      console.log('thursdayProd: ', thursdayProd);
+      console.log('fridayProd: ', fridayProd);
+
+      area.mondayAvg = mondayProd / area.mondayMinutes;
+      area.tuesdayAvg = tuesdayProd / area.tuesdayMinutes;
+      area.wednesdayAvg = wednesdayProd / area.wednesdayMinutes;
+      area.thursdayAvg = thursdayProd / area.thursdayMinutes;
+      area.fridayAvg = fridayProd / area.fridayMinutes;
+    }
+
+    return areas;
+  }
+
   async getDayData(body: z.infer<typeof getDayDataSchema>) {
     const [mondayDate] = getWeekDays(body.date);
     const date = addDays(mondayDate, body.day);
@@ -107,7 +181,8 @@ export class AreasService {
           THEN COALESCE(s.${sql('hours' + body.day)}, 0) 
           ELSE 0
         END
-      ) AS "minutes"
+      ) AS "minutes",
+      a.name as "areaName"
     FROM assistance s
     JOIN areas a ON TRUE
     JOIN positions p ON (s."positionId" = p.id)
@@ -116,12 +191,29 @@ export class AreasService {
       AND p.supervisor = false
     GROUP BY a.id;`;
 
-    const produced = await sql`
-    select ordermovements.produccion, jobs.ref, (ordermovements.produccion * ("produccionTime" / amount)) as "workedMinutes"
-    from ordermovements
+    let produced: any[] = [];
+    if (day?.areaName === 'CORTE') {
+      produced = await sql`
+      select ordermovements.corte as prod, jobs.ref, (ordermovements.corte * ("corteTime" / amount)) as "workedMinutes"
+      from ordermovements
+        join jobs on jobs.id = ordermovements."progressId"
+      where "date" = ${date} 
+      and ordermovements."corte" is not null`;
+    } else if (day?.areaName === 'SERIGRAFIA') {
+      produced = await sql`
+      select ordermovements.serigrafia as prod, jobs.ref, (ordermovements.serigrafia * ("serigrafiaTime" / amount)) as "workedMinutes"
+      from ordermovements
+        join jobs on jobs.id = ordermovements."progressId"
+      where "date" = ${date} 
+      and ordermovements."serigrafia" is not null`;
+    } else {
+      produced = await sql`
+      select ordermovements.produccion as prod, jobs.ref, (ordermovements.produccion * ("produccionTime" / amount)) as "workedMinutes"
+      from ordermovements
       join jobs on jobs.id = ordermovements."progressId"
-    where "areaId" = ${body.areaId} and "date" = ${date} 
-    and ordermovements."produccion" is not null`;
+      where "areaId" = ${body.areaId} and "date" = ${date} 
+      and ordermovements."produccion" is not null`;
+    }
 
     const [commentRow] =
       await sql`select * from prod_comments where "areaId" = ${body.areaId} and "date" = ${date}`;
