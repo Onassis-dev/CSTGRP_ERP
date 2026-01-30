@@ -6,6 +6,8 @@
 	import api from '$lib/utils/server';
 	import { Loader2 } from 'lucide-svelte';
 	import { quitReasons, quitStatus, salaryReasons } from './employees.options';
+	import { showSuccess } from '$lib/utils/showToast';
+	import { Textarea } from '$lib/components/ui/textarea';
 
 	interface Props {
 		id: string;
@@ -15,68 +17,68 @@
 	let { id = $bindable(), open = $bindable() }: Props = $props();
 
 	const properties = {
-		id: { label: 'ID', type: 'text' },
-		noEmpleado: { label: 'Número de empleado', type: 'text' },
-		nss: { label: 'NSS', type: 'text' },
-		curp: { label: 'CURP', type: 'text' },
-		rfc: { label: 'RFC', type: 'text' },
-		blood: { label: 'Tipo de sangre', type: 'text' },
-		account: { label: 'Cuenta bancaria', type: 'text' },
-		emergencyContact: { label: 'Contacto de emergencia', type: 'text' },
-		emergencyRelationship: { label: 'Parentesco de emergencia', type: 'text' },
-		positionId: { label: 'ID de puesto', type: 'text' },
-		admissionDate: { label: 'Fecha de ingreso', type: 'date' },
 		active: { label: 'Activo', type: 'checkbox' },
-		emergencyNumber: { label: 'Tel. de emergencia', type: 'text' },
-		areaId: { label: 'ID de área', type: 'text' },
-		quitDate: { label: 'Fecha de baja', type: 'date' },
-		bornLocation: { label: 'Lugar de nacimiento', type: 'text' },
-		genre: { label: 'Género', type: 'select' },
-		sons: { label: 'Número de hijos', type: 'number' },
-		clinicNo: { label: 'Número de clínica', type: 'text' },
-		email: { label: 'Correo electrónico', type: 'email' },
-		number: { label: 'Número telefónico', type: 'text' },
-		direction: { label: 'Dirección', type: 'textarea' },
-		bank: { label: 'Banco', type: 'text' },
-		infonavitNo: { label: 'Número INFONAVIT', type: 'text' },
-		infonavitFee: { label: 'Cuota INFONAVIT', type: 'number' },
-		infonavitDiscount: { label: 'Descuento INFONAVIT', type: 'number' },
-		positionType: { label: 'Tipo de puesto', type: 'text' },
-		cim: { label: 'CIM', type: 'text' },
-		shift: { label: 'Turno', type: 'text' },
-		nominaSalary: { label: 'Salario nómina', type: 'number' },
-		immsSalary: { label: 'Salario IMSS', type: 'number' },
-		newSalary: { label: 'Nuevo salario', type: 'number' },
-		salaryReason: { label: 'Motivo', type: 'select', options: salaryReasons },
-		reasonComment: { label: 'Comentario del motivo', type: 'textarea' },
-		petitioner: { label: 'Solicitante', type: 'text' },
-		comments: { label: 'Comentarios', type: 'textarea' },
-		name: { label: 'Nombre', type: 'text' },
-		paternalLastName: { label: 'Apellido paterno', type: 'text' },
 		maternalLastName: { label: 'Apellido materno', type: 'text' },
-		nationality: { label: 'Nacionalidad', type: 'text' },
-		civilStatus: { label: 'Estado civil', type: 'select' },
-		bornDate: { label: 'Fecha de nacimiento', type: 'date' },
-		studies: { label: 'Estudios', type: 'text' },
-		quitReason: { label: 'Motivo de baja', type: 'select', options: quitReasons },
-		quitStatus: { label: 'Estatus de baja', type: 'select', options: quitStatus },
-		quitNotes: { label: 'Notas de baja', type: 'textarea' },
-		vacations: { label: 'Vacaciones', type: 'text' },
-		photo: { label: 'Foto', type: 'image' },
-		bcpet: { label: 'BCPET', type: 'date' },
-		route: { label: 'Ruta', type: 'text' },
-		contract: { label: 'Contrato', type: 'text' },
-		department: { label: 'Departamento', type: 'text' },
-		boss: { label: 'Jefe directo', type: 'text' },
-		resignationDate: { label: 'Fecha de renuncia', type: 'date' },
-		lastDay: { label: 'Último día', type: 'date' },
+		paternalLastName: { label: 'Apellido paterno', type: 'text' },
 		area: { label: 'Área', type: 'text' },
-		position: { label: 'Puesto', type: 'text' },
-		type: { label: 'Tipo de cambio', type: 'text' },
+		bank: { label: 'Banco', type: 'text' },
+		bcpet: { label: 'BCPET', type: 'date' },
+		cim: { label: 'CIM', type: 'text' },
+		reasonComment: { label: 'Comentario del motivo', type: 'textarea' },
+		comments: { label: 'Comentarios', type: 'textarea' },
+		emergencyContact: { label: 'Contacto de emergencia', type: 'text' },
+		contract: { label: 'Contrato', type: 'text' },
+		email: { label: 'Correo electrónico', type: 'text' },
+		account: { label: 'Cuenta bancaria', type: 'text' },
+		infonavitFee: { label: 'Cuota INFONAVIT', type: 'number' },
+		curp: { label: 'CURP', type: 'text' },
+		department: { label: 'Departamento', type: 'text' },
+		infonavitDiscount: { label: 'Descuento INFONAVIT', type: 'number' },
+		direction: { label: 'Dirección', type: 'textarea' },
+		civilStatus: { label: 'Estado civil', type: 'select' },
+		quitStatus: { label: 'Estatus de baja', type: 'select', options: quitStatus },
+		studies: { label: 'Estudios', type: 'text' },
 		changeDate: { label: 'Fecha', type: 'date' },
-		oldSalary: { label: 'Salario anterior', type: 'number' },
+		quitDate: { label: 'Fecha de baja', type: 'date' },
+		admissionDate: { label: 'Fecha de ingreso', type: 'date' },
+		bornDate: { label: 'Fecha de nacimiento', type: 'date' },
+		resignationDate: { label: 'Fecha de renuncia', type: 'date' },
+		formatDate: { label: 'Fecha del formato', type: 'date' },
+		photo: { label: 'Foto', type: 'image' },
+		genre: { label: 'Género', type: 'select' },
+		id: { label: 'ID', type: 'text' },
+		areaId: { label: 'ID de área', type: 'text' },
+		positionId: { label: 'ID de puesto', type: 'text' },
+		boss: { label: 'Jefe directo', type: 'text' },
+		bornLocation: { label: 'Lugar de nacimiento', type: 'text' },
+		salaryReason: { label: 'Motivo', type: 'select', options: salaryReasons },
+		quitReason: { label: 'Motivo de baja', type: 'select', options: quitReasons },
+		nationality: { label: 'Nacionalidad', type: 'text' },
+		name: { label: 'Nombre', type: 'text' },
+		quitNotes: { label: 'Notas de baja', type: 'textarea' },
+		nss: { label: 'NSS', type: 'text' },
+		newSalary: { label: 'Nuevo salario', type: 'number' },
+		clinicNo: { label: 'Número de clínica', type: 'text' },
+		noEmpleado: { label: 'Número de empleado', type: 'text' },
+		sons: { label: 'Número de hijos', type: 'number' },
 		fonacotNo: { label: 'Número FONACOT', type: 'text' },
-		formatDate: { label: 'Fecha del formato', type: 'date' }
+		infonavitNo: { label: 'Número INFONAVIT', type: 'text' },
+		number: { label: 'Número telefónico', type: 'text' },
+		emergencyRelationship: { label: 'Parentesco de emergencia', type: 'text' },
+		position: { label: 'Puesto', type: 'text' },
+		rfc: { label: 'RFC', type: 'text' },
+		route: { label: 'Ruta', type: 'text' },
+		oldSalary: { label: 'Salario anterior', type: 'number' },
+		immsSalary: { label: 'Salario IMSS', type: 'number' },
+		nominaSalary: { label: 'Salario nómina', type: 'number' },
+		petitioner: { label: 'Solicitante', type: 'text' },
+		emergencyNumber: { label: 'Tel. de emergencia', type: 'text' },
+		type: { label: 'Tipo de cambio', type: 'text' },
+		positionType: { label: 'Tipo de puesto', type: 'text' },
+		blood: { label: 'Tipo de sangre', type: 'text' },
+		shift: { label: 'Turno', type: 'text' },
+		lastDay: { label: 'Último día', type: 'date' },
+		vacations: { label: 'Vacaciones', type: 'text' }
 	};
 
 	let selectedProperty = $state('');
@@ -104,7 +106,7 @@
 				[selectedProperty]: value
 			}
 		});
-		open = false;
+		showSuccess('Actualizado');
 	}
 
 	$effect(() => {
@@ -209,6 +211,9 @@
 				{#if selectedProperty}
 					{#if availableProperties[selectedProperty as keyof typeof availableProperties].type === 'text'}
 						<Input class="mt-2" bind:value={formData[selectedProperty]} />
+					{/if}
+					{#if availableProperties[selectedProperty as keyof typeof availableProperties].type === 'textarea'}
+						<Textarea class="mt-2" bind:value={formData[selectedProperty]} />
 					{/if}
 					{#if availableProperties[selectedProperty as keyof typeof availableProperties].type === 'date'}
 						<Input type="date" class="mt-2" bind:value={formData[selectedProperty]} />

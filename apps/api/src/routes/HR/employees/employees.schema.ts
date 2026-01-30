@@ -90,6 +90,19 @@ export const reactivateSchema = z.object({
   areaId: idSchema,
   positionId: idSchema,
   formatDate: dateSchema,
+  email: z.email(),
+  number: z
+    .string()
+    .refine((v) => phoneRegex.test(v.replaceAll(' ', '')))
+    .transform((v) => v.replaceAll(' ', '')),
+  account: z.string().regex(accountRegex).nullish(),
+  nominaSalary: numberSchema,
+  boss: z.string().nullish(),
+  direction: z.string(),
+  civilStatus: z.string(),
+  emergencyContact: z.string(),
+  emergencyRelationship: z.string(),
+  emergencyNumber: z.string(),
 });
 
 export const quitSchema = z.object({

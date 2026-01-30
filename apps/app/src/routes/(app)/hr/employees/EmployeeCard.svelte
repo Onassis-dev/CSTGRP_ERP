@@ -28,6 +28,7 @@
 	import EmployeeStats from './EmployeeStats.svelte';
 	import EmployeeEvaluations from './EmployeeEvaluations.svelte';
 	import { refetch } from '$lib/utils/query';
+	import { civilStatus } from './employees.options';
 
 	interface Props {
 		show?: boolean;
@@ -70,17 +71,6 @@
 		{ value: 'F', name: 'Femenino' },
 		{ value: 'M', name: 'Masculino' },
 		{ value: 'O', name: 'Otro' }
-	];
-
-	const civilStatus = [
-		{ value: 'Casado(a)', name: 'Casado(a)' },
-		{ value: 'Soltero(a)', name: 'Soltero(a)' },
-		{ value: 'Divorciado(a)', name: 'Divorciado(a)' },
-		{ value: 'Viudo(a)', name: 'Viudo(a)' },
-		{ value: 'Separado(a)', name: 'Separado(a)' },
-		{ value: 'Concubinato', name: 'Concubinato' },
-		{ value: 'Unión Libre', name: 'Unión Libre' },
-		{ value: 'Sociedad de Convivencia', name: 'Sociedad de Convivencia' }
 	];
 
 	const routes = [

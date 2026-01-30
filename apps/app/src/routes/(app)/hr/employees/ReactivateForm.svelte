@@ -1,14 +1,20 @@
 <script lang="ts">
 	import Select from '$lib/components/basic/Select.svelte';
 	import { Button } from '$lib/components/ui/button';
-	import { Dialog, DialogBody } from '$lib/components/ui/dialog';
-	import DialogContent from '$lib/components/ui/dialog/dialog-content.svelte';
-	import { Input } from '$lib/components/ui/input';
+	import {
+		Dialog,
+		DialogBody,
+		DialogFooter,
+		DialogHeader,
+		DialogContent
+	} from '$lib/components/ui/dialog';
+	import Input from '$lib/components/ui/input/input.svelte';
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
 	import { refetch } from '$lib/utils/query';
-	import { UserPlus } from 'lucide-svelte';
-	import { onMount } from 'svelte';
+	import { onMount, untrack } from 'svelte';
+	import Label from '$lib/components/basic/Label.svelte';
+	import { civilStatus } from './employees.options';
 
 	interface Props {
 		show?: boolean;
@@ -28,15 +34,33 @@
 	let formData: any = $state({
 		id: selectedEmployee.id,
 		admissionDate: new Date().toISOString().split('T')[0],
-		formatDate: new Date().toISOString().split('T')[0]
+		formatDate: new Date().toISOString().split('T')[0],
+		areaId: '',
+		positionId: '',
+		email: '',
+		number: '',
+		account: '',
+		nominaSalary: '',
+		boss: '',
+		direction: '',
+		civilStatus: '',
+		emergencyContact: '',
+		emergencyRelationship: '',
+		emergencyNumber: ''
 	});
+
+	async function setFormData() {
+		let [employeeData] = (await api.get(`/employees/${selectedEmployee.id}`)).data;
+		formData = { ...formData, ...employeeData };
+	}
 
 	async function handleSubmmit() {
 		await api.put('/employees/reactivate', {
 			...formData,
 			id: parseInt(selectedEmployee.id || '0'),
 			positionId: parseInt(formData.positionId || '0'),
-			areaId: parseInt(formData.areaId || '0')
+			areaId: parseInt(formData.areaId || '0'),
+			nominaSalary: parseFloat(formData.nominaSalary || '0')
 		});
 
 		show = false;
@@ -45,8 +69,18 @@
 			id: '',
 			admissionDate: '',
 			formatDate: '',
+			areaId: '',
 			positionId: '',
-			areaId: ''
+			email: '',
+			number: '',
+			account: '',
+			nominaSalary: '',
+			boss: '',
+			direction: '',
+			civilStatus: '',
+			emergencyContact: '',
+			emergencyRelationship: '',
+			emergencyNumber: ''
 		};
 	}
 
@@ -55,44 +89,61 @@
 		refetch(['employees']);
 		fetchOptions();
 	});
+
+	$effect(() => {
+		if (selectedEmployee) untrack(() => setFormData());
+	});
 </script>
 
 <Dialog bind:open={show}>
 	<DialogContent>
-		<DialogBody>
-			<div class="text-center">
-				<UserPlus class="mx-auto mb-2 h-16 w-16 text-gray-400 dark:text-gray-200" />
-				<h3 class=" text-lg font-normal text-gray-500 dark:text-gray-400">Recontratar a:</h3>
-				<h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-					{selectedEmployee.name} - {selectedEmployee.noEmpleado}
-				</h3>
-			</div>
-			<form class="flex flex-col space-y-6" action="#">
-				<b class="space-y-2">
-					<span>Fecha del formato</span>
-					<Input type="date" bind:value={formData.formatDate} />
-				</b>
-				<b class="space-y-2">
-					<span>Fecha de Alta</span>
-					<Input type="date" bind:value={formData.admissionDate} />
-				</b>
-				<b class="space-y-2">
-					<span>Area</span>
-					<Select items={areas} bind:value={formData.areaId} placeholder="Elige una opcion" />
-				</b>
-				<b class="space-y-2">
-					<span>Posicion</span>
-					<Select
-						items={positions}
-						bind:value={formData.positionId}
-						placeholder="Elige una opcion"
-					/>
-				</b>
-				<div class="text-center">
-					<Button onclick={handleSubmmit} class="me-2">Recontratar</Button>
-					<Button onclick={() => (show = false)} variant="outline">Cancelar</Button>
-				</div>
-			</form>
+		<DialogHeader title="Recontratar a: {selectedEmployee.name} - {selectedEmployee.noEmpleado}" />
+		<DialogBody grid="2">
+			<Label name="Fecha del formato">
+				<Input type="date" bind:value={formData.formatDate} />
+			</Label>
+			<Label name="Fecha de Alta">
+				<Input type="date" bind:value={formData.admissionDate} />
+			</Label>
+			<Label name="Area">
+				<Select items={areas} bind:value={formData.areaId} placeholder="Elige una opcion" />
+			</Label>
+			<Label name="Posicion">
+				<Select items={positions} bind:value={formData.positionId} placeholder="Elige una opcion" />
+			</Label>
+			<Label name="Email">
+				<Input type="email" bind:value={formData.email} />
+			</Label>
+			<Label name="Telefono">
+				<Input bind:value={formData.number} />
+			</Label>
+			<Label name="Cuenta bancaria">
+				<Input bind:value={formData.account} />
+			</Label>
+			<Label name="Salario nomina">
+				<Input type="number" bind:value={formData.nominaSalary} />
+			</Label>
+			<Label name="Jefe">
+				<Input bind:value={formData.boss} />
+			</Label>
+			<Label name="Direccion">
+				<Input bind:value={formData.direction} />
+			</Label>
+			<Label name="Estado civil">
+				<Select items={civilStatus} bind:value={formData.civilStatus} />
+			</Label>
+			<Label name="Contacto de emergencia">
+				<Input bind:value={formData.emergencyContact} />
+			</Label>
+			<Label name="Parentesco de emergencia">
+				<Input bind:value={formData.emergencyRelationship} />
+			</Label>
+			<Label name="Telefono de emergencia">
+				<Input bind:value={formData.emergencyNumber} />
+			</Label>
 		</DialogBody>
+		<DialogFooter hideFunc={() => (show = false)}>
+			<Button onclick={handleSubmmit}>Recontratar</Button>
+		</DialogFooter>
 	</DialogContent>
 </Dialog>
