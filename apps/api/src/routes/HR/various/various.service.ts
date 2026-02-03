@@ -4,6 +4,9 @@ import { createCanvas, loadImage, registerFont } from 'canvas';
 import path from 'path';
 import { formatDate } from 'src/utils/functions';
 import { ContextProvider } from 'src/interceptors/context.provider';
+import puppeteer from 'puppeteer';
+import Mustache from 'mustache';
+import { promises as fs } from 'fs';
 
 @Injectable()
 export class VariousService {
@@ -148,5 +151,102 @@ export class VariousService {
     const buffer = canvas.toBuffer('image/jpeg');
 
     return buffer;
+  }
+
+  async generateBirthdaysList(query) {
+    const rows =
+      await sql`SELECT "noEmpleado", photo, CONCAT(name, ' ', "paternalLastName", ' ', "maternalLastName") as name, "bornDate" from employees where active = true and extract(month from "bornDate") = extract(month from ${query.date}::DATE)`;
+
+    const storageDir = path.resolve(
+      __dirname,
+      '..',
+      '..',
+      '..',
+      '..',
+      'storage',
+    );
+
+    const placeholderSvg =
+      '<svg class="photo-placeholder" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>';
+
+    const rowsHtml = await Promise.all(
+      rows.map(async (row) => {
+        let photoHtml = placeholderSvg;
+        if (row.photo) {
+          try {
+            const photoPath = path.join(storageDir, row.photo);
+            const buf = await fs.readFile(photoPath);
+            const base64 = buf.toString('base64');
+            const mime =
+              path.extname(row.photo).toLowerCase() === '.png'
+                ? 'image/png'
+                : 'image/jpeg';
+            photoHtml = `<img src="data:${mime};base64,${base64}" alt="" />`;
+          } catch {
+            // keep placeholder if file missing
+          }
+        }
+        const bornDateStr = row.bornDate
+          ? formatDate(row.bornDate.toISOString())
+          : '';
+        return `
+  <div class="row">
+    <div class="photo-wrap">${photoHtml}</div>
+    <div class="info">
+      <p class="name">${row.name ?? ''}</p>
+      <p class="date">${bornDateStr}</p>
+    </div>
+  </div>`;
+      }),
+    );
+
+    const template = await fs.readFile(
+      path.resolve(
+        __dirname,
+        '..',
+        '..',
+        '..',
+        '..',
+        'static',
+        'templates',
+        'hr',
+        'birthdays.html',
+      ),
+      'utf-8',
+    );
+
+    const templateData = { rows: rowsHtml.join('') };
+    const html = Mustache.render(template, templateData);
+
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-accelerated-2d-canvas',
+        '--disable-gpu',
+      ],
+      executablePath:
+        process.env.NODE_ENV === 'production'
+          ? '/usr/bin/google-chrome'
+          : undefined,
+    });
+    const page = await browser.newPage();
+    await page.setContent(html);
+
+    const pdf = await page.pdf({
+      format: 'letter',
+      printBackground: true,
+      margin: {
+        top: '0.7in',
+        right: '0.7in',
+        bottom: '0.7in',
+        left: '0.7in',
+      },
+    });
+
+    await browser.close();
+    return pdf;
   }
 }

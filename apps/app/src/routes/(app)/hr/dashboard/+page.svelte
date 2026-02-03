@@ -198,7 +198,17 @@
 
 	<Card class="col-span-3 w-full max-w-full">
 		<CardHeader>
-			<CardTitle>Cumpleaños del mes</CardTitle>
+			<CardTitle class="flex justify-between">
+				Cumpleaños del mes
+
+				<a
+					target="_blank"
+					href={`${import.meta.env.VITE_BASEURL}/hrvarious/birthdays?date=${selectedDate}`}
+					class="p-1"
+				>
+					<Download class="size-3.5" />
+				</a>
+			</CardTitle>
 		</CardHeader>
 		<CardContent class="max-h-[calc(100%-1.5rem)] px-0" chart>
 			<div class="grid max-h-full grid-cols-[auto_1fr_auto] gap-4 overflow-auto px-4">

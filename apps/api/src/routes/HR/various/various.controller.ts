@@ -1,4 +1,4 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Header, Query, UseGuards } from '@nestjs/common';
 import { VariousService } from './various.service';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
@@ -32,5 +32,12 @@ export class VariousController {
   @Get('birthdayphoto')
   getBorthdayPhoto(@Query() query) {
     return this.employeesService.generateImage(query);
+  }
+
+  @Get('birthdays')
+  @Header('Content-Type', 'application/pdf')
+  @Header('Content-Disposition', 'inline; filename="cumpleanos-del-mes.pdf"')
+  getBirthdaysPdf(@Query() query: { date: string }) {
+    return this.employeesService.generateBirthdaysList(query);
   }
 }
