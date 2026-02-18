@@ -88,12 +88,21 @@ export async function processJob(text: string) {
 
   // Debugging;
   // linesArray.forEach((line, i) => {
-  //   if (i < 1000) console.log(line);
+  //   if (i < 500) console.log(line);
   // });
 
-  const startMaterialsIndex = linesArray.findIndex((line: any) =>
+  let startMaterialsIndex = linesArray.findIndex((line: any) =>
     line.includes('RAW MATERIAL COMPONENTS:'),
   );
+  if (startMaterialsIndex === -1)
+    startMaterialsIndex = linesArray.findIndex((line: any) =>
+      line.includes('Qty Per'),
+    );
+  if (startMaterialsIndex === -1)
+    startMaterialsIndex = linesArray.findIndex((line: any) =>
+      line.includes('****RESEARCH JOB****'),
+    );
+
   const startOperationsIndex = linesArray.findIndex((line: any) =>
     line.includes('OPERATIONS'),
   );
@@ -176,7 +185,12 @@ export async function processJob(text: string) {
   let materialNumber = 0;
   materialsLines.forEach((element: any, i: number) => {
     // Materiales
-    if (/^\d{2,3}$/.test(element) && Number(element) > Number(materialNumber)) {
+    if (
+      /^\d{2,3}$/.test(element) &&
+      Number(element) > Number(materialNumber) &&
+      Number(element) < Number(materialNumber + 21)
+    ) {
+      console.log(materialNumber);
       materialNumber = parseInt(element);
       const excludedValues = ['PATTERN', 'SAMPLE', 'IS', 'FREIGHT', 'SCRN'];
       if (
