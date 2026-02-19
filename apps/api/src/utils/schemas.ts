@@ -4,7 +4,6 @@ export const rfcRegex =
   /^([A-ZÑ\x26]{4}([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|1[0-9]|2[0-9]|3[0-1])[A-ZÑ|\d]{3})$/; // homoclave requerida
 export const curpRegex =
   /^([A-Z][AEIOUX][A-ZÑ]{2}\d{2}(0[1-9]|1[0-2])(0[1-9]|1[0-9]|2[0-9]|3[0-1])[HMX](AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[BCDFGHJKLMNPQRSTVWXYZÑ]{3}[A-ZÑ\d])(\d)$/;
-export const bloodRegex = /^(A|B|AB|O)[+-]$/;
 export const nssRegex = /^[0-9]{11}$/;
 export const infonavitRegex = /^[0-9]{10}$/;
 export const accountRegex = /^[0-9]{10}$/;
