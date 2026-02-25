@@ -94,6 +94,7 @@
 			<Table>
 				<TableHeader class="sticky top-0 border-t">
 					<TableHead>Codigo</TableHead>
+					<TableHead>Descripcion</TableHead>
 					<TableHead>Cantidad</TableHead>
 					<TableHead>Minimo</TableHead>
 					<TableHead>Medida</TableHead>
@@ -102,6 +103,9 @@
 					{#each $stockWarningsQuery?.data as row}
 						<TableRow>
 							<TableCell class="border-l">{row.code}</TableCell>
+							<TableCell class="whitespace-hidden max-w-64 overflow-hidden text-ellipsis"
+								>{row.description}</TableCell
+							>
 							<TableCell
 								><Badge color={row.amount <= 0 ? 'red' : 'yellow'}>{row.amount || ''}</Badge
 								></TableCell
