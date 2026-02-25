@@ -34,7 +34,10 @@
 	const products = [
 		{ name: 'Cono', value: 'cono' },
 		{ name: 'Collar', value: 'collar' },
-		{ name: 'Tick Tornado', value: 'tick-tornado' }
+		{ name: 'Tick Tornado', value: 'tick-tornado' },
+		{ name: 'Zendog', value: 'zendog' },
+		{ name: 'Buddy', value: 'buddy' },
+		{ name: 'Eclear', value: 'eclear' }
 	];
 
 	const sizes: Record<string, { name: string; value: string }[]> = {
@@ -57,6 +60,25 @@
 			{ name: '192', value: '192' },
 			{ name: '192 bilingue', value: '192b' },
 			{ name: '216', value: '216' }
+		],
+		eclear: [
+			{ name: 'XXL', value: 'xxl' },
+			{ name: 'XL', value: 'xl' },
+			{ name: 'L', value: 'l' },
+			{ name: 'M', value: 'm' },
+			{ name: 'S', value: 's' }
+		],
+		zendog: [
+			{ name: 'XXL', value: 'xxl' },
+			{ name: 'XL', value: 'xl' },
+			{ name: 'L', value: 'l' },
+			{ name: 'M', value: 'm' },
+			{ name: 'S', value: 's' },
+			{ name: 'XS', value: 'xs' }
+		],
+		buddy: [
+			{ name: 'L/XL', value: 'l-xl' },
+			{ name: 'M/L', value: 'm-l' }
 		]
 	};
 

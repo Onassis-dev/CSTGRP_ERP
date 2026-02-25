@@ -46,7 +46,7 @@ export class ToolsService {
 
     const getNumberXPosition = (i: number) => 180 + (i % 2) * 300;
     const getDateXPosition = (i: number) => 225 + (i % 2) * 300;
-    const getYPosition = (i: number) => 630 - (Math.floor(i / 2) % 10) * 144;
+    const getYPosition = (i: number) => 633 - (Math.floor(i / 2) % 10) * 144;
 
     const pages = await pdfDoc.getPages();
 
