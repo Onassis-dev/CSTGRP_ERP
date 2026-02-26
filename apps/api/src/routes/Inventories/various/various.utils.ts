@@ -42,10 +42,7 @@ export function processImport(text: string) {
       if (code.endsWith('-CA')) {
         code += linesArray[i + 2].replaceAll(' ', '');
       }
-      if (code.substring(0, 4) !== 'CSI-') return;
-      if (code.includes('ZEN')) return;
-      if (code.includes('EAL-')) return;
-      if (code.includes('ZP-')) return;
+      if (!/^[A-Z]{3}-.{1,15}$/.test(code)) return;
       if (code.length === 13 && code[12] === 'F') return;
       if (code.length === 15 && code[14] === 'M') return;
 
