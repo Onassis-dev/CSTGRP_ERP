@@ -48,7 +48,7 @@ export class RequisitionsService {
       (select folio from requisitions where jobs LIKE CONCAT('%', jobs.ref, '%') and requisitions."materialId" = materials.id limit 1) is null AND
       NOT materialmovements.active AND
       NOT materialmovements.extra
-      ORDER BY jobs.due DESC, jobs.ref DESC LIMIT 20`;
+      ORDER BY jobs.due DESC, jobs.ref DESC`;
     return movements;
   }
 
