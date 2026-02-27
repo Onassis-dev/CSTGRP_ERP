@@ -91,6 +91,7 @@
 	let operations: operation[] = $state([]);
 	let destinations: destination[] = $state([]);
 	let bastones: string[] = $state([]);
+	let jobs: string[] = $state([]);
 	let formData: any = $state({});
 	let files: any = $state();
 
@@ -100,7 +101,8 @@
 			destinations,
 			operations,
 			materials,
-			bastones
+			bastones,
+			jobs
 		};
 		if (selectedMovement.id) await api.put('/jobs', body);
 		else await api.post('/jobs', body);
@@ -125,6 +127,7 @@
 		if (!result) showError(null, 'Archivo invalido');
 
 		formData = { ...result };
+		jobs = result.jobs;
 		materials = result.materials;
 		operations =
 			result.operations?.map((op: any) => ({ ...op, transaction: op.transaction || 'insert' })) ||
@@ -187,6 +190,14 @@
 		bastones.splice(i, 1);
 		bastones = [...bastones];
 	}
+	function addJob() {
+		jobs.push('');
+		jobs = [...jobs];
+	}
+	function deleteJob(i: number) {
+		jobs.splice(i, 1);
+		jobs = [...jobs];
+	}
 
 	function cleanData() {
 		materials = [
@@ -200,9 +211,9 @@
 			}
 		];
 		operations = [];
+		jobs = [];
 		formData = {};
 		files = null;
-		inputDisabled = false;
 	}
 
 	async function getData() {
@@ -212,13 +223,8 @@
 		operations = data.operations || [];
 		formData = { ...data };
 		files = null;
-		inputDisabled = false;
 	}
 
-	let inputDisabled = $state(false);
-	$effect(() => {
-		inputDisabled = !!files;
-	});
 	$effect(() => {
 		if (files) processPDF();
 	});
@@ -282,7 +288,7 @@
 					<Input bind:value={formData.programation} />
 				</Label>
 				<Label name="Job o PO">
-					<Input disabled={inputDisabled} bind:value={formData.ref} />
+					<Input disabled={!selectedMovement.id} bind:value={formData.ref} />
 				</Label>
 				<Label name="Fecha">
 					<Input type="date" bind:value={formData.due} />
@@ -299,11 +305,12 @@
 					<Label name="Cliente" class="w-full">
 						<Select items={clients} bind:value={formData.clientId} placeholder="" />
 					</Label>
+
 					<label>
 						<FileInput type="file" bind:files class="hidden" disabled={!!selectedMovement.id} />
 						<div
 							class={cn(
-								'border-input mt-auto flex size-8 cursor-pointer items-center justify-center rounded-sm border',
+								'mt-auto flex size-8 cursor-pointer items-center justify-center rounded-sm border border-input',
 								selectedMovement.id ? 'opacity-50' : ''
 							)}
 						>
@@ -318,11 +325,9 @@
 				<Label name="Descripción" class="col-span-2">
 					<Input bind:value={formData.description} />
 				</Label>
-
 				<Label name="Area">
 					<Select items={areasList} bind:value={formData.areaId} placeholder="" />
 				</Label>
-
 				<Label name="Producto">
 					<Select
 						items={products}
@@ -351,11 +356,12 @@
 			</div>
 
 			<Tabs class="w-full" value="materials">
-				<TabsList class="grid w-full grid-cols-4">
+				<TabsList class="grid w-full grid-cols-5">
 					<TabsTrigger value="materials">Materiales</TabsTrigger>
 					<TabsTrigger value="operations">Operaciones</TabsTrigger>
 					<TabsTrigger value="detinations">Destinos</TabsTrigger>
 					<TabsTrigger value="bastones">Bastones</TabsTrigger>
+					<TabsTrigger value="jobs">Jobs</TabsTrigger>
 				</TabsList>
 
 				<TabsContent value="materials" class="mt-4">
@@ -415,7 +421,7 @@
 										><Button
 											onclick={() => deleteMaterial(i)}
 											variant="ghost"
-											class="text-destructive-foreground aspect-square p-1"
+											class="aspect-square p-1 text-destructive-foreground"
 											><Trash class="size-5" /></Button
 										></TableCell
 									>
@@ -476,7 +482,7 @@
 										><Button
 											onclick={() => deleteOperation(i)}
 											variant="ghost"
-											class="text-destructive-foreground aspect-square p-1"
+											class="aspect-square p-1 text-destructive-foreground"
 											><Trash class="size-5" /></Button
 										></TableCell
 									>
@@ -543,7 +549,7 @@
 										><Button
 											onclick={() => deleteDestination(i)}
 											variant="ghost"
-											class="text-destructive-foreground aspect-square p-1"
+											class="aspect-square p-1 text-destructive-foreground"
 											><Trash class="size-5" /></Button
 										></TableCell
 									>
@@ -575,7 +581,7 @@
 										><Button
 											onclick={() => deleteBaston(i)}
 											variant="ghost"
-											class="text-destructive-foreground aspect-square p-1"
+											class="aspect-square p-1 text-destructive-foreground"
 											><Trash class="size-5" /></Button
 										></TableCell
 									>
@@ -584,6 +590,40 @@
 						</TableBody>
 					</Table>
 					<Button onclick={addBaston} class="mx-auto">Agregar baston</Button>
+				</TabsContent>
+				<TabsContent value="jobs">
+					<Table divClass="h-auto overflow-visible mt-4">
+						<TableHeader class="border-t">
+							<TableHead>Medida</TableHead>
+							<TableHead class="w-1 p-0"></TableHead>
+						</TableHeader>
+
+						<TableBody>
+							{#each jobs as _, i}
+								<TableRow>
+									<TableCell class="border-l p-0 px-[1px]"
+										><Input
+											class=" rounded-none border-none !opacity-100"
+											type="text"
+											bind:value={jobs[i]}
+										/></TableCell
+									>
+
+									<TableCell class="flex h-8  justify-center p-0 px-[1px]"
+										><Button
+											onclick={() => deleteJob(i)}
+											variant="ghost"
+											class="aspect-square p-1 text-destructive-foreground"
+											><Trash class="size-5" /></Button
+										></TableCell
+									>
+								</TableRow>
+							{/each}
+						</TableBody>
+					</Table>
+					<Button onclick={addJob} class="mx-auto" disabled={!!selectedMovement.id}
+						>Agregar job</Button
+					>
 				</TabsContent>
 			</Tabs>
 		</DialogBody>

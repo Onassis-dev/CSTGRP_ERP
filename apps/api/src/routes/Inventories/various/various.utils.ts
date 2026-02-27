@@ -42,7 +42,7 @@ export function processImport(text: string) {
       if (code.endsWith('-CA')) {
         code += linesArray[i + 2].replaceAll(' ', '');
       }
-      if (!/^[A-Z]{3}-.{1,15}$/.test(code)) return;
+      if (!/^[A-Z]{3}-.{1,30}$/.test(code)) return;
       if (code.length === 13 && code[12] === 'F') return;
       if (code.length === 15 && code[14] === 'M') return;
 
@@ -74,7 +74,7 @@ export function processImport(text: string) {
 }
 
 export async function processJob(text: string) {
-  let ref = '';
+  const jobs = [];
   let part = '';
   let amount = '';
   let description = '';
@@ -108,8 +108,9 @@ export async function processJob(text: string) {
   );
 
   // Get general info
-  ref =
-    linesArray[linesArray.findIndex((line: any) => line.includes('Job:')) + 1];
+  jobs.push(
+    linesArray[linesArray.findIndex((line: any) => line.includes('Job:')) + 1],
+  );
 
   part = linesArray[linesArray.findIndex((line: any) => line === 'Part:') + 1];
 
@@ -287,7 +288,7 @@ export async function processJob(text: string) {
 
   return {
     materials,
-    ref,
+    jobs,
     due,
     part,
     amount,

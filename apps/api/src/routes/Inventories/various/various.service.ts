@@ -68,20 +68,28 @@ export class VariousService {
     if (!file.buffer) throw new HttpException('sin archivo', 400);
     try {
       const wb = new exceljs.Workbook();
-      await wb.xlsx.load(file.buffer);
+      await wb.xlsx.load(file.buffer as any);
 
       const ws = wb.getWorksheet(1);
 
       const part = ws.getCell(4, 5).value;
-      const jobpo = ws.getCell(6, 5).value;
+      const description = String(ws.getCell(5, 5).value);
+      const jobs = String(ws.getCell(6, 5).value)
+        .split(',')
+        .map((job) => job.trim())
+        .filter((job) => job);
       const amount = ws.getCell(7, 5).value;
+      const client = String(ws.getCell(8, 5).value);
       let due = ws.getCell(9, 5).value;
+      const programation = String(ws.getCell(10, 5).value);
+      const area = String(ws.getCell(11, 5).value);
 
       const corteTime = ws.getCell(4, 7).value;
       const serigrafiaTime = ws.getCell(5, 7).value;
       const cortesVariosTime = ws.getCell(6, 7).value;
       const produccionTime = ws.getCell(7, 7).value;
       const calidadTime = ws.getCell(8, 7).value;
+      const perBox = ws.getCell(10, 7).value;
 
       if (due instanceof Date) {
         due = due.toISOString().split('T')[0];
@@ -90,7 +98,7 @@ export class VariousService {
       }
 
       const materials = ws
-        .getRows(12, 100)
+        .getRows(14, 200)
         .map((row) => {
           let amount = row.getCell(8).value;
           if (typeof amount === 'object') amount = (amount as any)?.result;
@@ -109,8 +117,24 @@ export class VariousService {
         })
         .filter((item) => item.code);
 
+      const [clientRow] = await sql`
+        select id
+        from clients
+        where regexp_replace(upper(trim(name)), '[^A-Z0-9]', '', 'g') =
+          regexp_replace(upper(trim(${client})), '[^A-Z0-9]', '', 'g')
+      `;
+      const [areaRow] = await sql`
+        select id
+        from areas
+        where regexp_replace(upper(trim(name)), '[^A-Z0-9]', '', 'g') =
+          regexp_replace(upper(trim(${area})), '[^A-Z0-9]', '', 'g')
+      `;
+
       return {
-        jobpo,
+        jobs,
+        description,
+        programation,
+        perBox,
         due,
         materials,
         part,
@@ -120,6 +144,11 @@ export class VariousService {
         cortesVariosTime,
         produccionTime,
         calidadTime,
+        clientId: clientRow?.id || null,
+        areaId: areaRow?.id || null,
+        bastones: [],
+        operations: [],
+        destinations: [],
       };
     } catch (err) {
       console.log(err);

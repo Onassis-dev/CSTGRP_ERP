@@ -34,7 +34,7 @@ export const exportSchema = z.object({
   amount: intSchema.min(1, 'Numero invalido'),
   part: z.string().nullable(),
   description: z.string().nullable(),
-  ref: z.string(),
+  jobs: z.array(z.string()).nonempty('Al menos un job es requerido.'),
   due: z.string(),
   areaId: idSchema,
   clientId: idSchema,
@@ -81,7 +81,9 @@ export const exportSchema = z.object({
 export const updateExportSchema = exportSchema
   .extend({
     id: idSchema,
+    ref: z.string(),
   })
   .omit({
     productId: true,
+    jobs: true,
   });

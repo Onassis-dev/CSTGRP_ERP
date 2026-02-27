@@ -100,72 +100,76 @@ export class JobsService {
       );
 
     await sql.begin(async (sql) => {
-      // Add job info
-      const [insertedJob] = await sql`Insert into jobs ${sql({
-        ref: body.ref,
-        programation: body.programation,
-        due: body.due,
-        clientId: body.clientId,
-        areaId: body.areaId,
-        part: body.part,
-        description: body.description,
-        perBox: body.perBox,
-        bastones: body.bastones,
-        amount: body.amount,
-        corteTime: body.corteTime,
-        cortesVariosTime: body.cortesVariosTime,
-        produccionTime: body.produccionTime,
-        calidadTime: body.calidadTime,
-        serigrafiaTime: body.serigrafiaTime,
-      })} returning id`;
+      for (const ref of body.jobs) {
+        const [insertedJob] = await sql`Insert into jobs ${sql({
+          ref: ref,
+          programation: body.programation,
+          due: body.due,
+          clientId: body.clientId,
+          areaId: body.areaId,
+          part: body.part,
+          description: body.description,
+          perBox: body.perBox,
+          bastones: body.bastones,
+          amount: body.amount,
+          corteTime: body.corteTime,
+          cortesVariosTime: body.cortesVariosTime,
+          produccionTime: body.produccionTime,
+          calidadTime: body.calidadTime,
+          serigrafiaTime: body.serigrafiaTime,
+        })} returning id`;
 
-      for (const material of body.materials) {
-        const [movement] =
-          await sql`insert into materialmovements ("materialId", "jobId", amount, "realAmount", active, "activeDate") values
+        for (const material of body.materials) {
+          const [movement] =
+            await sql`insert into materialmovements ("materialId", "jobId", amount, "realAmount", active, "activeDate") values
          ((select id from materials where code = ${material.code}), ${insertedJob.id} ,${-Math.abs(Number(material.amount))}, ${-Math.abs(Number(material.realAmount))}, ${material.active}, ${material.active ? new Date() : null})
          returning "materialId"`;
 
-        if (material.active)
-          await updateMaterialAmount(movement.materialId, sql);
-      }
-
-      //If there is a productId, create the movement
-      let productMovement;
-      if (body.productId) {
-        [productMovement] = await sql`insert into materialmovements ${sql({
-          materialId: body.productId,
-          jobId: insertedJob.id,
-          amount: 0,
-          realAmount: 0,
-          active: true,
-          activeDate: new Date(),
-        })} returning id`;
-
-        await sql`update jobs set "movementId" = ${productMovement.id} where id = ${insertedJob.id}`;
-      }
-
-      // Add destinations info
-      if (body.destinations.length > 0) {
-        await sql`insert into destinys ${sql(body.destinations, 'so')} on conflict ("so") do nothing`;
-
-        for (const destination of body.destinations) {
-          await sql`insert into order_destiny ("orderId", "destinyId", "amount", "date", "po") values
-         (${insertedJob.id}, (select id from destinys where so = ${destination.so}), ${destination.amount}, ${destination.date}, ${destination.po})`;
+          if (material.active)
+            await updateMaterialAmount(movement.materialId, sql);
         }
+
+        //If there is a productId, create the movement
+        let productMovement;
+        if (body.productId) {
+          [productMovement] = await sql`insert into materialmovements ${sql({
+            materialId: body.productId,
+            jobId: insertedJob.id,
+            amount: 0,
+            realAmount: 0,
+            active: true,
+            activeDate: new Date(),
+          })} returning id`;
+
+          await sql`update jobs set "movementId" = ${productMovement.id} where id = ${insertedJob.id}`;
+        }
+
+        // Add destinations info
+        if (body.destinations.length) {
+          await sql`insert into destinys ${sql(body.destinations, 'so')} on conflict ("so") do nothing`;
+
+          for (const destination of body.destinations) {
+            await sql`insert into order_destiny ("orderId", "destinyId", "amount", "date", "po") values
+         (${insertedJob.id}, (select id from destinys where so = ${destination.so}), ${destination.amount}, ${destination.date}, ${destination.po})`;
+          }
+        }
+
+        // Add operations info
+
+        if (body.operations.length) {
+          await sql`insert into operations ${sql(
+            body.operations.map((operation) => ({
+              orderId: insertedJob.id,
+              code: operation.code,
+              minutes: operation.minutes,
+              area: operation.area,
+            })),
+          )}`;
+        }
+
+        // Make record
+        await this.req.record(`Registro el job: ${ref}`, sql);
       }
-
-      // Add operations info
-      await sql`insert into operations ${sql(
-        body.operations.map((operation) => ({
-          orderId: insertedJob.id,
-          code: operation.code,
-          minutes: operation.minutes,
-          area: operation.area,
-        })),
-      )}`;
-
-      // Make record
-      await this.req.record(`Registro el job: ${body.ref}`, sql);
     });
 
     return;
