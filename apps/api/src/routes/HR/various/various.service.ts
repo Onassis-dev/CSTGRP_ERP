@@ -7,6 +7,8 @@ import { ContextProvider } from 'src/interceptors/context.provider';
 import puppeteer from 'puppeteer';
 import Mustache from 'mustache';
 import { promises as fs } from 'fs';
+import { PDFDocument, StandardFonts } from 'pdf-lib';
+import { fillBox } from 'src/utils/pdf';
 
 @Injectable()
 export class VariousService {
@@ -248,5 +250,70 @@ export class VariousService {
 
     await browser.close();
     return pdf;
+  }
+
+  async generateEmployeesNamesPdf() {
+    const templatePath = path.resolve(
+      __dirname,
+      '..',
+      '..',
+      '..',
+      '..',
+      'static',
+      'templates',
+      'uline',
+      'S-5042.pdf',
+    );
+
+    const employees =
+      await sql`select CONCAT(name, ' ', "paternalLastName", ' ', "maternalLastName") as name from employees where active = true order by "noEmpleado" desc`;
+
+    const template = await fs.readFile(templatePath);
+    const pdfDoc = await PDFDocument.load(template);
+    const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+    const pageCount = Math.ceil(employees.length / 30);
+
+    for (let i = 0; i < pageCount - 1; i++) {
+      const copiedPage = await pdfDoc.copyPages(pdfDoc, [0]);
+      await pdfDoc.addPage(copiedPage[0]);
+    }
+
+    const pages = await pdfDoc.getPages();
+
+    let y = 690;
+    let x = 20;
+
+    let i = 1;
+    let pageNo = 0;
+    for (const employee of employees) {
+      fillBox({
+        page: pages[pageNo],
+        font,
+        text: employee.name,
+        size: 15,
+        x: x,
+        y: y,
+        width: 160,
+        height: 60,
+        align: 'center',
+      });
+
+      x += 200;
+      if (i % 3 === 0) {
+        x = 20;
+        y -= 72;
+      }
+      if (i % 30 === 0) {
+        pageNo++;
+        y = 690;
+        x = 20;
+      }
+
+      i++;
+    }
+
+    const pdfBytes = await pdfDoc.save();
+    return pdfBytes;
   }
 }

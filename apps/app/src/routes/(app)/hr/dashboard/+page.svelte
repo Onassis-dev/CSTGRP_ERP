@@ -132,7 +132,7 @@
 				<Input
 					onblur={updateTemplate}
 					bind:value={employeeTemplate}
-					class="text-muted-foreground border-none p-0"
+					class="border-none p-0 text-muted-foreground"
 				/>
 			</div>
 			<Progress value={(activeEmployees / employeeTemplate) * 100} />
@@ -221,7 +221,7 @@
 					/>
 					<div>
 						<p class="text-sm font-medium">{row.name}</p>
-						<p class="text-muted-foreground text-xs">{formatDate(row.bornDate)}</p>
+						<p class="text-xs text-muted-foreground">{formatDate(row.bornDate)}</p>
 					</div>
 					<div class="p-0">
 						<Button size="icon" variant="ghost" onclick={() => getBirthdayPhoto(row.noEmpleado)}>
@@ -248,7 +248,7 @@
 					/>
 					<div>
 						<p class="text-sm font-medium">{row.name}</p>
-						<p class="text-muted-foreground text-xs">{formatDate(row.next_renewal_date)}</p>
+						<p class="text-xs text-muted-foreground">{formatDate(row.next_renewal_date)}</p>
 					</div>
 					<div class="p-0 text-sm">
 						{contractTypes[row.contract + 1]}
@@ -282,6 +282,21 @@
 				placeholder="Selecciona un area"
 				class="mt-2"
 			/>
+		</CardContent>
+	</Card>
+
+	<Card class="col-span-3 w-full max-w-full">
+		<CardHeader>
+			<CardTitle>Utilidades</CardTitle>
+		</CardHeader>
+
+		<CardContent chart class="flex flex-col">
+			<Button
+				variant="outline"
+				onclick={() =>
+					window.open(`${import.meta.env.VITE_BASEURL}/hrvarious/employeesnamespdf`, '_blank')}
+				>Etiquetas de nombres</Button
+			>
 		</CardContent>
 	</Card>
 </DashboardBody>

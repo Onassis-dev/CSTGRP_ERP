@@ -40,4 +40,11 @@ export class VariousController {
   getBirthdaysPdf(@Query() query: { date: string }) {
     return this.employeesService.generateBirthdaysList(query);
   }
+
+  @Get('employeesnamespdf')
+  @Header('Content-Type', 'application/pdf')
+  @Header('Content-Disposition', 'inline; filename="empleados.pdf"')
+  getEmployeesPdf() {
+    return this.employeesService.generateEmployeesNamesPdf();
+  }
 }
