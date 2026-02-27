@@ -266,7 +266,7 @@ export class VariousService {
     );
 
     const employees =
-      await sql`select CONCAT(name, ' ', "paternalLastName", ' ', "maternalLastName") as name from employees where active = true order by "noEmpleado" desc`;
+      await sql`select CONCAT(name, ' ', "paternalLastName", ' ', "maternalLastName") as name, "noEmpleado" from employees where active = true order by "noEmpleado" desc`;
 
     const template = await fs.readFile(templatePath);
     const pdfDoc = await PDFDocument.load(template);
@@ -290,12 +290,23 @@ export class VariousService {
       fillBox({
         page: pages[pageNo],
         font,
+        text: employee.noEmpleado,
+        size: 14,
+        x: x,
+        y: y + 40,
+        width: 160,
+        height: 20,
+        align: 'center',
+      });
+      fillBox({
+        page: pages[pageNo],
+        font,
         text: employee.name,
-        size: 15,
+        size: 14,
         x: x,
         y: y,
         width: 160,
-        height: 60,
+        height: 40,
         align: 'center',
       });
 
