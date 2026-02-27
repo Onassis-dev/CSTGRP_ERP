@@ -1,6 +1,6 @@
 import { promises as fs } from 'fs';
 import { format, toZonedTime } from 'date-fns-tz';
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { z } from 'zod/v4';
 import sql from 'src/utils/db';
 import { filterSchema } from './petitions.schema';
@@ -196,7 +196,13 @@ export class PetitionsService {
 
   async deleteRequisition(body: z.infer<typeof idObjectSchema>) {
     let deletedObj;
+
     await sql.begin(async (sql) => {
+      const movements =
+        await sql`select id from materialmovements where "reqId" = ${body.id} and active = true`;
+      if (movements.length)
+        throw new HttpException('La peticion esta en uso', 400);
+
       [deletedObj] =
         await sql`delete from requisitions where id = ${body.id} returning folio`;
 

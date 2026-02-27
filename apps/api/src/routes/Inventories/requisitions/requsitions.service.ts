@@ -109,7 +109,10 @@ export class RequisitionsService {
           ${body.job || ''},
           ${movement.amount},
           ${movement.amount}
-        ) returning folio`;
+        ) returning folio, id`;
+
+        await sql`insert into materialmovements ("materialId", "reqId", amount, "realAmount") values
+        (${material.id}, ${inserted.id}, ${-movement.amount}, ${-movement.amount})`;
 
         await this.req.record(
           `Hizo una requisicion de insumos de folio: ${inserted.folio}`,

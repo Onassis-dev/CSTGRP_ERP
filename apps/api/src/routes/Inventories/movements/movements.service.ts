@@ -22,6 +22,7 @@ export class MovementsService {
   constructor(private readonly req: ContextProvider) {}
 
   async getMovements(body: z.infer<typeof movementsFilterSchema>) {
+    console.time('getMovements');
     const movements = await sql`SELECT
         materials.code, materials.description, materials.measurement, materials."clientId", materials."leftoverAmount", materials.amount as inventory,
         materialmovements.active, materialmovements.amount, materialmovements."realAmount", 
@@ -31,6 +32,10 @@ export class MovementsService {
         COALESCE(
           jobs.ref, 
           imports.ref, 
+          CASE
+            WHEN requisitions.folio IS NULL THEN NULL
+            ELSE CONCAT('REQ-', requisitions.folio::text)
+          END,
           CASE materialmovements.type
             WHEN 'return' THEN 'RETORNO'
             WHEN 'scrap' THEN 'SCRAP'
@@ -45,17 +50,19 @@ export class MovementsService {
       JOIN materials on materials.id = materialmovements."materialId"
       LEFT JOIN jobs on jobs.id = materialmovements."jobId"
       LEFT JOIN imports on imports.id = materialmovements."importId"
+      LEFT JOIN requisitions on requisitions.id = materialmovements."reqId"
       
       WHERE
       ${body.jobpo ? sql`jobs.ref = ${body.jobpo}` : sql`TRUE`} AND
       ${body.import ? sql`imports.ref LIKE ${'%' + body.import + '%'}` : sql`TRUE`} AND
       ${body.programation ? sql`jobs.programation = ${body.programation}` : sql`TRUE`} AND
       ${body.code ? sql`materials.code LIKE ${'%' + body.code + '%'}` : sql`TRUE`} AND
-      ${body.req ? sql`(select STRING_AGG(folio::TEXT, ', ') from requisitions where jobs LIKE CONCAT('%', jobs.ref, ',%') and jobs.ref is not null and requisitions."materialId" = materials.id) = ${body.req}` : sql`TRUE`} AND
+      ${body.req ? sql`((select STRING_AGG(folio::TEXT, ', ') from requisitions where jobs LIKE CONCAT('%', jobs.ref, ',%') and jobs.ref is not null and requisitions."materialId" = materials.id) = ${body.req}) OR requisitions.folio = ${body.req}` : sql`TRUE`} AND
       ${body.checked !== null ? sql`materialmovements.active = ${body.checked === 'true'}` : sql`TRUE`} AND
       ${body.type !== null ? sql`materialmovements.type = ${body.type}` : sql`TRUE`}
       ORDER BY materialmovements.active, COALESCE(jobs.due, imports.due, materialmovements."activeDate") DESC, materialmovements.id DESC
       LIMIT 150`;
+    console.timeEnd('getMovements');
     return movements;
   }
 
@@ -74,9 +81,13 @@ export class MovementsService {
 
   async activateMovement(body: z.infer<typeof idObjectSchema>) {
     const [movement] =
-      await sql`select extra, active, (select code from materials where id = "materialId"), (select ref from jobs where id = "jobId"), "jobId" from materialmovements where id = ${body.id}`;
+      await sql`select extra, active, type, (select code from materials where id = "materialId"), (select ref from jobs where id = "jobId"), "jobId", "reqId" from materialmovements where id = ${body.id}`;
 
-    if (!movement.jobId || movement.extra)
+    if (
+      (!movement.jobId || movement.extra) &&
+      movement.type !== 'consumable' &&
+      !movement.reqId
+    )
       throw new HttpException('Este movimiento no se puede editar', 400);
 
     await sql.begin(async (sql) => {

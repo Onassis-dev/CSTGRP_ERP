@@ -41,7 +41,7 @@
 
 	let checkStatus = [
 		{ value: '', name: 'Sin filtro' },
-		{ value: 'true', name: 'Surtido', color: 'red' },
+		{ value: 'true', name: 'Surtido', color: 'green' },
 		{ value: 'false', name: 'No surtido', color: 'red' }
 	];
 

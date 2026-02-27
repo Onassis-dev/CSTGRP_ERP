@@ -1,15 +1,11 @@
 import {
   dateSchema,
   idSchema,
-  numberSchema,
+  absoluteNumberSchema,
+  signedAbsoluteNumberSchema,
   signedNumberSchema,
 } from 'src/utils/schemas';
 import { z } from 'zod/v4';
-
-const absoluteNumberSchema = numberSchema.transform((v) => Math.abs(Number(v)));
-const signedAbsoluteNumberSchema = signedNumberSchema.transform((v) =>
-  Math.abs(Number(v)),
-);
 
 export const movementsFilterSchema = z.object({
   code: z.string().nullable(),

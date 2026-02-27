@@ -36,3 +36,11 @@ export const idSchema = z.coerce
 export const idObjectSchema = z.object({
   id: idSchema,
 });
+
+// Extra
+export const absoluteNumberSchema = numberSchema.transform((v) =>
+  Math.abs(Number(v)),
+);
+export const signedAbsoluteNumberSchema = signedNumberSchema.transform((v) =>
+  Math.abs(Number(v)),
+);
