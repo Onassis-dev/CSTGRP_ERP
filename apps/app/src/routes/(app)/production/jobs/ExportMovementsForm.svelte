@@ -288,7 +288,11 @@
 					<Input bind:value={formData.programation} />
 				</Label>
 				<Label name="Job o PO">
-					<Input disabled={!selectedMovement.id} bind:value={formData.ref} />
+					{#if selectedMovement.id}
+						<Input bind:value={formData.ref} />
+					{:else}
+						<Input disabled={!selectedMovement.id} value={jobs.join(',')} />
+					{/if}
 				</Label>
 				<Label name="Fecha">
 					<Input type="date" bind:value={formData.due} />
