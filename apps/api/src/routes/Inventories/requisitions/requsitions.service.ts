@@ -54,7 +54,7 @@ export class RequisitionsService {
 
   async createRequisition(body: z.infer<typeof requisitionSchema>) {
     const [data] =
-      await sql`SELECT COALESCE(STRING_AGG((SELECT ref FROM jobs WHERE id = "jobId"), ', ') || ',', '') as jobs,
+      await sql`SELECT COALESCE(',' || STRING_AGG((SELECT ref FROM jobs WHERE id = "jobId"), ',') || ',', '') as jobs,
         BOOL_OR((select folio from requisitions where jobs LIKE CONCAT('%', (select ref from jobs where id = materialmovements."jobId"), '%') and requisitions."materialId" = (select "materialId" from materialmovements where id IN ${sql(body.jobIds)} limit 1)) is not null) as req,
         BOOL_OR(active) as active, SUM(amount) as necessary
         FROM materialmovements WHERE id IN ${sql(body.jobIds)}`;

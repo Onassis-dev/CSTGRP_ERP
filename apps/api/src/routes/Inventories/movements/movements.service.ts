@@ -44,7 +44,7 @@ export class MovementsService {
             ELSE ''
           END
         ) as ref,
-        (select STRING_AGG(folio::TEXT, ', ')  from requisitions where jobs.ref is not null AND jobs LIKE CONCAT('%', jobs.ref, ',%') and requisitions."materialId" = materials.id) as req
+        (select STRING_AGG(folio::TEXT, ', ')  from requisitions where jobs.ref is not null AND jobs LIKE CONCAT('%,', jobs.ref, ',%') and requisitions."materialId" = materials.id) as req
 
       FROM materialmovements
       JOIN materials on materials.id = materialmovements."materialId"
@@ -57,7 +57,7 @@ export class MovementsService {
       ${body.import ? sql`imports.ref LIKE ${'%' + body.import + '%'}` : sql`TRUE`} AND
       ${body.programation ? sql`jobs.programation = ${body.programation}` : sql`TRUE`} AND
       ${body.code ? sql`materials.code LIKE ${'%' + body.code + '%'}` : sql`TRUE`} AND
-      ${body.req ? sql`((select STRING_AGG(folio::TEXT, ', ') from requisitions where jobs LIKE CONCAT('%', jobs.ref, ',%') and jobs.ref is not null and requisitions."materialId" = materials.id) = ${body.req}) OR requisitions.folio = ${body.req}` : sql`TRUE`} AND
+      ${body.req ? sql`((select jobs from requisitions where folio::text = ${body.req}) LIKE '%,' || jobs.ref || ',%' and materialmovements."materialId" = (select "materialId" from requisitions where folio = ${body.req})) OR requisitions.folio = ${body.req}` : sql`TRUE`} AND
       ${body.checked !== null ? sql`materialmovements.active = ${body.checked === 'true'}` : sql`TRUE`} AND
       ${body.type !== null ? sql`materialmovements.type = ${body.type}` : sql`TRUE`}
       ORDER BY materialmovements.active, COALESCE(jobs.due, imports.due, materialmovements."activeDate") DESC, materialmovements.id DESC
