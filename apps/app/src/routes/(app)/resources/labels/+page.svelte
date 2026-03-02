@@ -25,13 +25,13 @@
 				if (file) {
 					form.append('file', file);
 					const result = (await api.post('/resources/labels/get-job', form)).data;
-					const existingJob = jobs.find((job: any) => job.ref === result.ref);
+					const existingJob = jobs.find((job: any) => job.ref === result.jobs[0]);
 					if (existingJob) {
-						jobs = jobs.map((job: any) => (job.ref === result.ref ? result : job));
+						jobs = jobs.map((job: any) => (job.ref === result.jobs[0] ? result : job));
 					} else {
-						jobs = [...jobs, result];
+						jobs = [...jobs, { ...result, ref: result.jobs[0] }];
 					}
-					selectedJob = result.ref;
+					selectedJob = result.jobs[0];
 				}
 			}}
 		/>
