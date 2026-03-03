@@ -50,6 +50,7 @@ export class StatsService {
             WHEN contract = 3 THEN "admissionDate" + INTERVAL '3 months'
           END
         ) <= ${fiveDaysAhead}
+        AND active = true
       ORDER BY next_renewal_date
     `;
 
