@@ -39,6 +39,7 @@ export class ProductsService {
       materialId = material.id;
     }
 
+    delete body.material;
     await sql.begin(async (sql) => {
       const [row] =
         await sql`insert into purchaseproducts ${sql({ ...body, materialId })} returning id`;
