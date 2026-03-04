@@ -52,7 +52,7 @@ export class MovementsService {
     LEFT JOIN imports ON imports.id = materialmovements."importId"
 
         WHERE materials.id = ${body.id}
-        AND (materialmovements.active = true OR imports.location <> 'At CST, Qtys verified')
+        AND (materialmovements.active = true OR materialmovements."importId" IS NOT NULL)
         AND materialmovements.extra = false
         AND (materialmovements.type IS NULL OR materialmovements.type <> 'return')
         AND materials."clientId" = ${clientId}

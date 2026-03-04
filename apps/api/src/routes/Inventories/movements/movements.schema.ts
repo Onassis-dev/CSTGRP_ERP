@@ -15,6 +15,7 @@ export const movementsFilterSchema = z.object({
   checked: z.string().nullable(),
   req: z.string().nullable(),
   type: z.string().nullable(),
+  order: z.string().nullable(),
 });
 
 export const updateAmountSchema = z.object({

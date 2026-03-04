@@ -59,7 +59,12 @@ export function processImport(text: string) {
             code = code.slice(0, -1);
             amount = amount * 2;
           }
-          materials.push({ code, amount: amount.toString() });
+          materials.push({
+            code,
+            amount: amount.toString(),
+            active: false,
+            activeDate: null,
+          });
           break;
         }
       }

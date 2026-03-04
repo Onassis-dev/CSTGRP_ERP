@@ -199,7 +199,7 @@
 												}}
 												variant="ghost"
 											>
-												<X class="size-3.5 text-red-500" />
+												<X class="!size-4 text-red-500" />
 											</Button>
 										</TableCell>
 										<TableCell
@@ -306,7 +306,7 @@
 											}}
 											variant="ghost"
 										>
-											<PlusIcon class="size-3.5 text-green-500" />
+											<PlusIcon class="!size-4 text-green-500" />
 										</Button>
 									</TableCell>
 								</TableRow>

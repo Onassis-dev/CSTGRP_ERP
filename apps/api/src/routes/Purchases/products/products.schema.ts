@@ -17,6 +17,7 @@ export const createSchema = z.object({
   suppliers: z
     .array(idSchema)
     .nonempty('Debe seleccionar al menos un proveedor'),
+  material: z.string().nullish(),
 });
 
 export const editSchema = createSchema.extend({

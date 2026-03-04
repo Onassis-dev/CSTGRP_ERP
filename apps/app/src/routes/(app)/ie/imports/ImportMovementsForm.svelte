@@ -1,6 +1,5 @@
 <script lang="ts">
 	import MaterialInput from '$lib/components/basic/MaterialInput.svelte';
-	import Select from '$lib/components/basic/Select.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import {
 		Dialog,
@@ -23,6 +22,7 @@
 	import { Trash } from 'lucide-svelte';
 	import { refetch } from '$lib/utils/query';
 	import Label from '$lib/components/basic/Label.svelte';
+	import { Checkbox } from '$lib/components/ui/checkbox';
 
 	interface Props {
 		show: boolean;
@@ -34,6 +34,8 @@
 		code: string;
 		amount: string;
 		measurement: string;
+		active: boolean;
+		activeDate?: string | null;
 	}
 
 	let materials: material[] = $state([]);
@@ -70,7 +72,7 @@
 	}
 
 	function addMaterial() {
-		materials.push({ code: '', measurement: '', amount: '' });
+		materials.push({ code: '', measurement: '', amount: '', active: false });
 		materials = materials;
 	}
 	function deleteMaterial(i: number) {
@@ -79,7 +81,7 @@
 	}
 
 	function cleanData() {
-		materials = [{ code: '', measurement: '', amount: '' }];
+		materials = [{ code: '', measurement: '', amount: '', active: false }];
 		formData = {};
 		files = null;
 		inputDisabled = false;
@@ -89,16 +91,11 @@
 		cleanData();
 		const { data } = await api.get('/ie/imports/' + selectedMovement.id);
 		materials = data.materials;
-		formData = { id: data.id, ref: data.ref, location: data.location, due: data.due };
+		formData = { id: data.id, ref: data.ref, due: data.due };
 		files = null;
 		inputDisabled = false;
 	}
 
-	let options = [
-		{ value: 'At M&M, In transit', name: 'En transito' },
-		{ value: 'At CST, In revision', name: 'En revisión' },
-		{ value: 'At CST, Qtys verified', name: 'Listo' }
-	];
 	let inputDisabled = $state(false);
 
 	$effect(() => {
@@ -125,20 +122,18 @@
 				<Label name="Importacion">
 					<Input disabled={inputDisabled} name="text" bind:value={formData.ref} />
 				</Label>
-				<Label name="Ubicacion">
-					<Select items={options} bind:value={formData.location} />
-				</Label>
 				<Label name="Fecha">
 					<Input type="date" bind:value={formData.due} />
 				</Label>
-				<Label name="Archivo" class="col-span-full">
+				<Label name="Archivo">
 					<FileInput type="file" bind:files />
 				</Label>
 			</div>
 
 			<Table class="mt-4">
 				<TableHeader class="border-t">
-					<TableHead class="border-l">Codigo</TableHead>
+					<TableHead class="border-l"></TableHead>
+					<TableHead>Codigo</TableHead>
 					<TableHead>Cantidad</TableHead>
 					<TableHead>Medida</TableHead>
 					<TableHead class="w-1 p-0"></TableHead>
@@ -147,7 +142,10 @@
 				<TableBody>
 					{#each materials as material, i}
 						<TableRow>
-							<TableCell class="border-l p-0 px-[1px]"
+							<TableCell class="w-1 border-l p-0 text-center"
+								><Checkbox class="mx-auto" bind:checked={materials[i].active} /></TableCell
+							>
+							<TableCell class="p-0 px-[1px]"
 								><MaterialInput
 									bind:value={materials[i].code}
 									bind:measurement={materials[i].measurement}
@@ -165,7 +163,7 @@
 								><Button
 									onclick={() => deleteMaterial(i)}
 									variant="ghost"
-									class="text-destructive-foreground aspect-square p-1"
+									class="aspect-square p-1 text-destructive-foreground"
 									><Trash class="size-5" /></Button
 								></TableCell
 							>

@@ -91,7 +91,7 @@
 	});
 
 	$effect(() => {
-		if (selectedEmployee) untrack(() => setFormData());
+		if (selectedEmployee?.id) untrack(() => setFormData());
 	});
 </script>
 

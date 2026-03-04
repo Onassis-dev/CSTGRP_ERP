@@ -19,7 +19,6 @@ export class ImportService {
       SELECT *
       FROM imports
       WHERE TRUE
-      ${body.location ? sql`AND location = ${body.location}` : sql``}
       ${body.code ? sql`AND ref ILIKE ${'%' + body.code + '%'}` : sql``}
       ORDER BY due DESC, ref DESC limit 150`;
 
@@ -29,7 +28,7 @@ export class ImportService {
   async getOne(body: z.infer<typeof idObjectSchema>) {
     const [data] = await sql`select * from imports where id = ${body.id}`;
     const materials =
-      await sql`select (select code from materials where id = "materialId"), amount, "realAmount", active from materialmovements where "importId" = ${body.id}`;
+      await sql`select (select code from materials where id = "materialId"), amount, "realAmount", active, "activeDate" from materialmovements where "importId" = ${body.id}`;
     return {
       ...data,
       due: data.due.toISOString().split('T')[0],
@@ -52,10 +51,10 @@ export class ImportService {
       materials.push({
         amount: Math.abs(parseFloat(movement.amount)),
         realAmount: Math.abs(parseFloat(movement.amount)),
-        active: body.location === 'At CST, Qtys verified',
+        active: movement.active,
+        activeDate: movement.active ? movement.activeDate || new Date() : null,
         materialId: material.id,
         importId: body.id,
-        activeDate: body.due,
       });
     }
 
@@ -63,11 +62,11 @@ export class ImportService {
 
     await sql.begin(async (sql) => {
       const previousObj = (
-        await sql`select ref, location from imports where id = ${body.id}`
+        await sql`select ref from imports where id = ${body.id}`
       )[0];
 
       const newObj = (
-        await sql`update imports set ${sql(body)} where id = ${body.id} returning ref, location`
+        await sql`update imports set ${sql(body)} where id = ${body.id} returning ref`
       )[0];
 
       const prevMaterials =
@@ -87,7 +86,7 @@ export class ImportService {
       }
 
       await this.req.record(
-        `Actualizo la importacion: ${previousObj?.ref} con status: ${previousObj?.location} a ${newObj?.ref}, ${newObj?.location}`,
+        `Actualizo la importacion: ${previousObj?.ref} a ${newObj?.ref}`,
         sql,
       );
     });
@@ -109,14 +108,14 @@ export class ImportService {
           400,
         );
 
-      await sql`insert into imports (ref, due, location) values (${body.ref},${body.due}, ${body.location})`;
+      await sql`insert into imports (ref, due) values (${body.ref},${body.due})`;
 
       await this.req.record(`Registro la importación: ${body.ref}`, sql);
 
       for (const material of body.materials) {
         const [movement] =
           await sql`insert into materialmovements ("materialId", "importId", amount, "realAmount", active, "activeDate") values
-         ((select id from materials where code = ${material.code}),(select id from imports where ref = ${body.ref}), ${Math.abs(parseFloat(material.amount))},${Math.abs(parseFloat(material.amount))}, ${body.location === 'At CST, Qtys verified'}, ${body.due}) returning "materialId"`;
+         ((select id from materials where code = ${material.code}),(select id from imports where ref = ${body.ref}), ${Math.abs(parseFloat(material.amount))},${Math.abs(parseFloat(material.amount))}, ${material.active}, ${material.active ? new Date() : null}) returning "materialId"`;
 
         await updateMaterialAmount(movement.materialId, sql);
       }
@@ -142,7 +141,5 @@ export class ImportService {
 
       await this.req.record(`Elimino la importacion ${deleted?.ref}`, sql);
     });
-
-    return;
   }
 }

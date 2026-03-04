@@ -5,8 +5,7 @@
 		DialogBody,
 		DialogContent,
 		DialogFooter,
-		DialogHeader,
-		DialogTitle
+		DialogHeader
 	} from '$lib/components/ui/dialog';
 	import { Input } from '$lib/components/ui/input';
 	import api from '$lib/utils/server';
@@ -17,6 +16,7 @@
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
 	import { untrack } from 'svelte';
 	import { Checkbox } from '$lib/components/ui/checkbox';
+	import MaterialInput from '$lib/components/basic/MaterialInput.svelte';
 
 	interface Props {
 		show?: boolean;
@@ -100,6 +100,9 @@
 				</Label>
 				<Label name="Proveedores elegidos">
 					<Input value={selectedSuppliers.length || 0} readonly />
+				</Label>
+				<Label name="Material enlazado">
+					<MaterialInput bind:value={formData.material} normal />
 				</Label>
 			</div>
 

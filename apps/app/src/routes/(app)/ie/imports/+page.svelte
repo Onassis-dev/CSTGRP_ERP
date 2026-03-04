@@ -1,6 +1,5 @@
 <script lang="ts">
 	import CusTable from '$lib/components/basic/CusTable.svelte';
-	import Select from '$lib/components/basic/Select.svelte';
 	import { Input } from '$lib/components/ui/input';
 	import { TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
 	import api from '$lib/utils/server';
@@ -21,17 +20,10 @@
 	let show4 = $state(false);
 
 	let filters = $state({
-		location: '',
 		code: ''
 	});
 
 	let selectedMovement: any = $state({});
-
-	let locations = [
-		{ value: 'At M&M, In transit', name: 'En transito' },
-		{ value: 'At CST, In revision', name: 'En revisión' },
-		{ value: 'At CST, Qtys verified', name: 'Listo' }
-	];
 
 	const movementsQuery = createQuery({
 		queryKey: ['imports', { ...filters }],
@@ -67,14 +59,6 @@
 		class="flex flex-col gap-2 lg:flex-row"
 		onsubmit={preventDefault(() => refetch(['imports']))}
 	>
-		<Select
-			menu
-			class="min-w-36"
-			items={locations}
-			allowDeselect
-			bind:value={filters.location}
-			onValueChange={() => refetch(['imports'])}
-		/>
 		<Input menu bind:value={filters.code} placeholder="Identificador" />
 	</form>
 	{#snippet right()}
@@ -92,7 +76,6 @@
 	<TableHeader>
 		<OptionsHead />
 		<TableHead class="w-[10%]">Importacion</TableHead>
-		<TableHead class="w-[10%]">Ubicacion</TableHead>
 		<TableHead class="w-full">Fecha</TableHead>
 	</TableHeader>
 	<TableBody>
@@ -100,7 +83,6 @@
 			<TableRow>
 				<OptionsCell editFunc={() => editImport(i)} deleteFunc={() => deleteIE(i)} />
 				<TableCell>{movement.ref}</TableCell>
-				<TableCell>{movement.location}</TableCell>
 				<TableCell>{formatDate(movement.due)}</TableCell>
 			</TableRow>
 		{/each}

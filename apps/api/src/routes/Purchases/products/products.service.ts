@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import {
   deleteSchema,
   editSchema,
@@ -15,7 +15,7 @@ export class ProductsService {
 
   async findAllProducts(body: z.infer<typeof searchSchema>) {
     const products =
-      await sql`Select *, (select name from purchasecategories where id = purchaseproducts."categoryId") as category from purchaseproducts
+      await sql`Select *, (select name from purchasecategories where id = purchaseproducts."categoryId") as category, (select code from materials where id = purchaseproducts."materialId") as material from purchaseproducts
      ${body.name ? sql`WHERE code ILIKE ${'%' + body.name + '%'}` : sql``}
      ${body.name ? sql`OR description ILIKE ${'%' + body.name + '%'}` : sql``} order by id desc limit 150`;
     return products;
@@ -30,10 +30,18 @@ export class ProductsService {
   async createProduct(body: z.infer<typeof createSchema>) {
     const suppliers = body.suppliers;
     delete body.suppliers;
+    let materialId = null;
+
+    if (body.material) {
+      const [material] =
+        await sql`select id from materials where code = ${body.material}`;
+      if (!material) throw new HttpException('Material no encontrado', 400);
+      materialId = material.id;
+    }
 
     await sql.begin(async (sql) => {
       const [row] =
-        await sql`insert into purchaseproducts ${sql(body)} returning id`;
+        await sql`insert into purchaseproducts ${sql({ ...body, materialId })} returning id`;
       if (suppliers?.length > 0)
         await sql`insert into products_suppliers ${sql(suppliers.map((supplier) => ({ productId: row.id, supplierId: supplier })))}`;
       await this.req.record(`Creo el producto ${body.code}`, sql);
@@ -43,9 +51,18 @@ export class ProductsService {
   async editProduct(body: z.infer<typeof editSchema>) {
     const suppliers = body.suppliers;
     delete body.suppliers;
+    let materialId = null;
 
+    if (body.material) {
+      const [material] =
+        await sql`select id from materials where code = ${body.material}`;
+      if (!material) throw new HttpException('Material no encontrado', 400);
+      materialId = material.id;
+    }
+
+    delete body.material;
     await sql.begin(async (sql) => {
-      await sql`update purchaseproducts set ${sql(body)} where id = ${body.id}`;
+      await sql`update purchaseproducts set ${sql({ ...body, materialId })} where id = ${body.id}`;
       await sql`delete from products_suppliers where "productId" = ${body.id}`;
       await sql`insert into products_suppliers ${sql(suppliers.map((supplier) => ({ productId: body.id, supplierId: supplier })))}`;
       const [row] =

@@ -1,5 +1,5 @@
 import { promises as fs } from 'fs';
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import {
   deleteSchema,
   editSchema,
@@ -41,7 +41,7 @@ export class OrdersService {
       await sql`select * from purchasesuppliers where id = ${body.supplierId}`;
 
     await sql.begin(async (sql) => {
-      await sql`insert into purchaseorders ${sql({
+      const [order] = await sql`insert into purchaseorders ${sql({
         ref: lastOrder.ref + 1,
         issuer: body.issuer,
         supplierId: body.supplierId,
@@ -52,7 +52,15 @@ export class OrdersService {
         net,
         products: JSON.stringify(products),
         supplier: JSON.stringify(supplier),
-      })}`;
+      })} returning id`;
+
+      for (const product of products) {
+        const [row] =
+          await sql`select "materialId" from purchaseproducts where id = ${product.id}`;
+        if (row?.materialId)
+          await sql`insert into materialmovements ("materialId", "purchaseId", amount, "realAmount") values (${row.materialId}, ${order.id}, ${-Math.abs(product.quantity)}, ${-Math.abs(product.quantity)})`;
+      }
+
       await this.req.record(`Creo la orden ${lastOrder.ref + 1}`, sql);
     });
   }
@@ -76,6 +84,14 @@ export class OrdersService {
       extra.supplier = JSON.stringify(supplier);
     }
 
+    const prevMovements =
+      await sql`select id from materialmovements where "purchaseId" = ${body.id} and active = true`;
+    if (prevMovements.length)
+      throw new HttpException(
+        'No se puede editar una orden que ya se ha surtido en almacen',
+        400,
+      );
+
     await sql.begin(async (sql) => {
       await sql`update purchaseorders set ${sql({
         ...extra,
@@ -90,11 +106,27 @@ export class OrdersService {
         business: body.business,
       })}
       where id = ${body.id}`;
+
+      await sql`delete from materialmovements where "purchaseId" = ${body.id}`;
+      for (const product of products) {
+        const [row] =
+          await sql`select "materialId" from purchaseproducts where id = ${product.id}`;
+        if (row?.materialId)
+          await sql`insert into materialmovements ("materialId", "purchaseId", amount, "realAmount") values (${row.materialId}, ${body.id}, ${-Math.abs(product.quantity)}, ${-Math.abs(product.quantity)})`;
+      }
       await this.req.record(`Edito la orden ${body.id}`, sql);
     });
   }
 
   async deleteOrder(body: z.infer<typeof deleteSchema>) {
+    const prevMovements =
+      await sql`select id from materialmovements where "purchaseId" = ${body.id} and active = true`;
+    if (prevMovements.length)
+      throw new HttpException(
+        'No se puede eliminar una orden que ya se ha surtido en almacen',
+        400,
+      );
+
     await sql.begin(async (sql) => {
       const [row] =
         await sql`delete from purchaseorders where id = ${body.id} returning *`;

@@ -22,7 +22,6 @@ export class MovementsService {
   constructor(private readonly req: ContextProvider) {}
 
   async getMovements(body: z.infer<typeof movementsFilterSchema>) {
-    console.time('getMovements');
     const movements = await sql`SELECT
         materials.code, materials.description, materials.measurement, materials."clientId", materials."leftoverAmount", materials.amount as inventory,
         materialmovements.active, materialmovements.amount, materialmovements."realAmount", 
@@ -35,6 +34,10 @@ export class MovementsService {
           CASE
             WHEN requisitions.folio IS NULL THEN NULL
             ELSE CONCAT('REQ-', requisitions.folio::text)
+          END,
+          CASE
+            WHEN purchaseorders.ref IS NULL THEN NULL
+            ELSE CONCAT('OC-', purchaseorders.ref::text)
           END,
           CASE materialmovements.type
             WHEN 'return' THEN 'RETORNO'
@@ -51,6 +54,7 @@ export class MovementsService {
       LEFT JOIN jobs on jobs.id = materialmovements."jobId"
       LEFT JOIN imports on imports.id = materialmovements."importId"
       LEFT JOIN requisitions on requisitions.id = materialmovements."reqId"
+      LEFT JOIN purchaseorders on purchaseorders.id = materialmovements."purchaseId"
       
       WHERE
       ${body.jobpo ? sql`jobs.ref = ${body.jobpo}` : sql`TRUE`} AND
@@ -59,10 +63,11 @@ export class MovementsService {
       ${body.code ? sql`materials.code LIKE ${'%' + body.code + '%'}` : sql`TRUE`} AND
       ${body.req ? sql`((select jobs from requisitions where folio::text = ${body.req}) LIKE '%,' || jobs.ref || ',%' and materialmovements."materialId" = (select "materialId" from requisitions where folio = ${body.req})) OR requisitions.folio = ${body.req}` : sql`TRUE`} AND
       ${body.checked !== null ? sql`materialmovements.active = ${body.checked === 'true'}` : sql`TRUE`} AND
-      ${body.type !== null ? sql`materialmovements.type = ${body.type}` : sql`TRUE`}
+      ${body.type !== null ? sql`materialmovements.type = ${body.type}` : sql`TRUE`} AND
+      ${body.order ? sql`purchaseorders.ref = ${body.order}` : sql`TRUE`}
       ORDER BY materialmovements.active, COALESCE(jobs.due, imports.due, materialmovements."activeDate") DESC, materialmovements.id DESC
       LIMIT 150`;
-    console.timeEnd('getMovements');
+
     return movements;
   }
 
@@ -81,12 +86,14 @@ export class MovementsService {
 
   async activateMovement(body: z.infer<typeof idObjectSchema>) {
     const [movement] =
-      await sql`select extra, active, type, (select code from materials where id = "materialId"), (select ref from jobs where id = "jobId"), "jobId", "reqId" from materialmovements where id = ${body.id}`;
+      await sql`select extra, active, type, (select code from materials where id = "materialId"), (select ref from jobs where id = "jobId"), "jobId", "reqId", "purchaseId", "importId" from materialmovements where id = ${body.id}`;
 
     if (
       (!movement.jobId || movement.extra) &&
       movement.type !== 'consumable' &&
-      !movement.reqId
+      !movement.reqId &&
+      !movement.purchaseId &&
+      !movement.importId
     )
       throw new HttpException('Este movimiento no se puede editar', 400);
 
