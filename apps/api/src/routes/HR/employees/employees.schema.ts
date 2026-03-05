@@ -43,7 +43,6 @@ export const createSchema = z.object({
   bornLocation: z.string(),
   genre: z.string().length(1),
   sons: z.number(),
-  vacations: z.number().nullish(),
   clinicNo: z.string().nullish(),
   email: z.email(),
   bcpet: dateSchema,

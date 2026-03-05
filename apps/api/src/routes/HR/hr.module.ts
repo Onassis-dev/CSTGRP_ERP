@@ -8,6 +8,8 @@ import { RecordsModule } from './records/records.module';
 import { EvaluationsModule } from './evaluations/evaluations.module';
 import { DocumentsModule } from './documents/documents.module';
 import { KioskModule } from './kiosk/kiosk.module';
+import { VacationsModule } from './vacations/vacations.module';
+
 @Module({
   imports: [
     EmployeesModule,
@@ -20,6 +22,7 @@ import { KioskModule } from './kiosk/kiosk.module';
     DocumentsModule,
     EvaluationsModule,
     KioskModule,
+    VacationsModule,
   ],
 })
 export class HRModule {}

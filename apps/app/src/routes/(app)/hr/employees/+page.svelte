@@ -19,7 +19,8 @@
 		Grid3x3,
 		Grid2X2,
 		DollarSignIcon,
-		UserRoundMinus
+		UserRoundMinus,
+		Plane
 	} from 'lucide-svelte';
 	import { TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
 	import { Badge } from '$lib/components/ui/badge';
@@ -34,12 +35,13 @@
 	import OptionsHead from '$lib/components/basic/OptionsHead.svelte';
 	import { format } from 'date-fns';
 	import { es } from 'date-fns/locale';
+	import VacationsForm from './VacationsForm.svelte';
 
 	let show1: boolean = $state(false);
 	let show2: boolean = $state(false);
 	let show3: boolean = $state(false);
 	let show4: boolean = $state(false);
-
+	let show5: boolean = $state(false);
 	let selectedEmployee: any = $state({});
 	let searchParams = $state({
 		noEmpleado: '',
@@ -83,7 +85,10 @@
 		selectedEmployee = filteredEmployees[i];
 		show3 = true;
 	}
-
+	function viewVacations(i: number) {
+		selectedEmployee = filteredEmployees[i];
+		show5 = true;
+	}
 	async function exportList(mode?: 'full') {
 		const url = mode === 'full' ? '/employees/export' : '/employees/export-basic';
 		downloadFile({
@@ -187,14 +192,19 @@
 					extraButtons={employee.active
 						? [
 								{
-									fn: () => deleteEmployee(i),
-									name: 'Baja',
-									icon: UserRoundMinus
+									fn: () => viewVacations(i),
+									name: 'Vacaciones',
+									icon: Plane
 								},
 								{
 									fn: () => viewSalary(i),
 									name: 'Salario',
 									icon: DollarSignIcon
+								},
+								{
+									fn: () => deleteEmployee(i),
+									name: 'Baja',
+									icon: UserRoundMinus
 								}
 							]
 						: [
@@ -230,3 +240,4 @@
 <QuitEmployeeForm bind:show={show2} bind:selectedEmployee />
 <EmployeeSalaryForm bind:show={show4} bind:selectedEmployee />
 <ReactivateForm bind:show={show3} bind:selectedEmployee />
+<VacationsForm bind:show={show5} bind:selectedEmployee />

@@ -18,7 +18,8 @@
 		Edit2Icon,
 		FileText,
 		History,
-		LineChart
+		LineChart,
+		Plane
 	} from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import { showSuccess } from '$lib/utils/showToast';
@@ -29,6 +30,7 @@
 	import EmployeeEvaluations from './EmployeeEvaluations.svelte';
 	import { refetch } from '$lib/utils/query';
 	import { civilStatus } from './employees.options';
+	import VacationsHistory from './VacationsHistory.svelte';
 
 	interface Props {
 		show?: boolean;
@@ -205,6 +207,12 @@
 						<TabsTrigger
 							class="rounded-none border-b border-transparent px-0.5 py-2 !shadow-none data-[state=active]:border-b-primary "
 							value="history"><History class="mr-1.5 size-3.5" />Historial</TabsTrigger
+						>
+						<TabsTrigger
+							class="rounded-none border-b border-transparent px-0.5 py-2 !shadow-none data-[state=active]:border-b-primary "
+							value="vacations"
+						>
+							<Plane class="mr-1.5 size-3.5" />Vacaciones</TabsTrigger
 						>
 						<TabsTrigger
 							class="rounded-none border-b border-transparent px-0.5 py-2 !shadow-none data-[state=active]:border-b-primary "
@@ -475,7 +483,7 @@
 						</div>
 						<div>
 							<p class="text-xs text-muted-foreground">Salario de Nómina:</p>
-							<DisplayInput bind:value={formData.nominaSalary} {edit} />
+							<div class="h-7 p-1 text-sm">{formData.nominaSalary}</div>
 						</div>
 						<div>
 							<p class="text-xs text-muted-foreground">Número de Clínica:</p>
@@ -541,6 +549,10 @@
 							<p class="text-xs text-muted-foreground">Departamento:</p>
 							<DisplayInput bind:value={formData.department} {edit} />
 						</div>
+						<div>
+							<p class="text-xs text-muted-foreground">Vacaciones:</p>
+							<div class="h-7 p-1 text-sm">{formData.vacations}</div>
+						</div>
 					</div>
 
 					<div class="relative grid w-full grid-cols-2 gap-x-4 gap-y-2 rounded-md border p-4">
@@ -566,6 +578,9 @@
 				</TabsContent>
 				<TabsContent value="docs">
 					<EmployeeDocs bind:employee />
+				</TabsContent>
+				<TabsContent value="vacations">
+					<VacationsHistory id={employee.id} />
 				</TabsContent>
 				<TabsContent value="evaluations">
 					<EmployeeEvaluations bind:employee />

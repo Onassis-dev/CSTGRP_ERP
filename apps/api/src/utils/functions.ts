@@ -97,3 +97,66 @@ export async function updateMaterialAmount(id, dbInstance?: any) {
     WHERE id = ${id} 
     returning amount`;
 }
+
+export async function otorgateVacations() {
+  const today = getTijuanaDate();
+
+  // What after 35 years????
+  await sql`
+    WITH
+    employees_to_otorgate AS (
+      SELECT 
+        employees.id,
+        employees."admissionDate",
+        COALESCE((select max(year) from "vacationsGranted" where "employeeId" = employees.id), 0) as last_granted,
+        (SELECT EXTRACT(YEAR FROM AGE(${today}, employees."admissionDate"))::int)as seniority
+      FROM employees
+      WHERE active = true
+    )
+    INSERT INTO "vacationsGranted" ("employeeId", year, date, days)
+    SELECT 
+      id, 
+      last_granted + 1,
+      "admissionDate" + (interval '1 year' * (last_granted + 1)),
+      CASE
+        WHEN last_granted + 1 = 1 THEN 12
+        WHEN last_granted + 1 = 2 THEN 14
+        WHEN last_granted + 1 = 3 THEN 16
+        WHEN last_granted + 1 = 4 THEN 18
+        WHEN last_granted + 1 = 5 THEN 20
+        WHEN last_granted + 1 >= 6 AND last_granted + 1 <= 10 THEN 22
+        WHEN last_granted + 1 >= 11 AND last_granted + 1 <= 15 THEN 24
+        WHEN last_granted + 1 >= 16 AND last_granted + 1 <= 20 THEN 26
+        WHEN last_granted + 1 >= 21 AND last_granted + 1 <= 25 THEN 28
+        WHEN last_granted + 1 >= 26 AND last_granted + 1 <= 30 THEN 30
+        WHEN last_granted + 1 >= 31 AND last_granted + 1 <= 35 THEN 32
+        ELSE 0 
+      END
+    FROM employees_to_otorgate
+    WHERE seniority > last_granted
+    ON CONFLICT ("employeeId", year) DO NOTHING
+  `;
+
+  await calculateVacationDays();
+}
+
+export async function calculateVacationDays(id?: number, dbInstance?: any) {
+  if (!dbInstance) dbInstance = sql;
+
+  await dbInstance`
+    UPDATE employees SET vacations = 
+    (
+      SELECT COALESCE(SUM("vacationsGranted".days), 0)
+      FROM "vacationsGranted"
+      WHERE "employeeId" = employees.id
+    )
+      -
+    (
+      SELECT COALESCE(SUM("vacations".days), 0)
+      FROM "vacations"
+      WHERE "employeeId" = employees.id
+    )
+    WHERE employees.active = true
+    ${id ? sql`AND employees.id = ${id}` : sql``}
+  `;
+}

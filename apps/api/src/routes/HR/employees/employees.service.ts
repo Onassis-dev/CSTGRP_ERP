@@ -251,6 +251,8 @@ export class EmployeesService {
         returning *, (select name from positions where id = "positionId") as position, (select name from areas where id = "areaId") as area`;
 
       await sql`insert into employeeRecords ("employeeId", date, type, text, doc) values (${body.id}, now(), 'baja', 'Empleado dado de baja', ${JSON.stringify({ ...employee, type: 'baja', formatDate: body.formatDate })})`;
+      await sql`delete from "vacations" where "employeeId" = ${body.id}`;
+      await sql`delete from "vacationsGranted" where "employeeId" = ${body.id}`;
       await this.req.record(
         `Dio de baja al empleado ${employee.name} ${employee.paternalLastName} ${employee.maternalLastName} - ${employee.noEmpleado}`,
         sql,
