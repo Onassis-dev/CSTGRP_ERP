@@ -33,6 +33,11 @@
 		<Loader2 class="size-4 animate-spin" />
 	</div>
 {:else if vacations.length}
+	<div class="mb-2 gap-2">
+		Dias disponibles: <span class="font-bold text-green-800"
+			>{vacations.reduce((acc, vacation) => acc + vacation.days, 0)}</span
+		>
+	</div>
 	{#each vacations as vacation}
 		<div class="mb-2 grid grid-cols-2 rounded-lg border p-4 px-8">
 			<div>{vacation.date}</div>
