@@ -483,7 +483,7 @@
 						</div>
 						<div>
 							<p class="text-xs text-muted-foreground">Salario de Nómina:</p>
-							<div class="h-7 p-1 text-sm">{formData.nominaSalary}</div>
+							<DisplayInput bind:value={formData.nominaSalary} {edit} />
 						</div>
 						<div>
 							<p class="text-xs text-muted-foreground">Número de Clínica:</p>
