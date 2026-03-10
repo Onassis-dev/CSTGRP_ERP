@@ -10,7 +10,7 @@ ENV VITE_BASEURL=${VITE_BASEURL}
 WORKDIR /app
 COPY . .
 
-RUN pnpm install
+RUN pnpm install --frozen-lockfile
 
 RUN pnpm run build
 
