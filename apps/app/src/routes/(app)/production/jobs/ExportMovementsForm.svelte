@@ -229,7 +229,7 @@
 		if (files) processPDF();
 	});
 	$effect(() => {
-		show;
+		if (show) console.log();
 		cleanData();
 	});
 	$effect(() => {
@@ -237,7 +237,7 @@
 	});
 
 	$effect(() => {
-		operations;
+		if (operations) console.log();
 		untrack(() => {
 			if (!operations?.length) return;
 			formData.corteTime = operations
