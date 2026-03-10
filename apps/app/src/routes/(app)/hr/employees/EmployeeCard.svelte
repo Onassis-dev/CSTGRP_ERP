@@ -108,6 +108,7 @@
 	}
 
 	async function setFormData() {
+		console.log('tried to read job');
 		let [employeeData] = (await api.get(`/employees/${employee.id}`)).data;
 		formData = {
 			...employeeData,
