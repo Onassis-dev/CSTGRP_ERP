@@ -14,7 +14,7 @@
 <thead
 	bind:this={ref}
 	class={cn(
-		'outline-border sticky top-0 z-20 w-full bg-white text-sm outline outline-1',
+		'sticky top-0 z-20 w-full bg-white text-sm outline outline-1 outline-border',
 		className
 	)}
 	{...restProps}

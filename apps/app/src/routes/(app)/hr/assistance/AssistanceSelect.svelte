@@ -57,7 +57,7 @@
 					<DropdownMenu.SubContent class="flex flex-col gap-2">
 						<Input bind:value={inputValue} type="number" />
 						<DropdownMenu.Item
-							class="bg-primary text-primary-foreground hover:bg-primary/90 flex w-full items-center justify-center"
+							class="flex w-full items-center justify-center bg-primary text-primary-foreground hover:bg-primary/90"
 							onclick={() => {
 								const newValue = Number(inputValue);
 								if (newValue > 0 && newValue <= 570) {

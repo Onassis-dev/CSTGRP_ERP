@@ -144,7 +144,7 @@
 				{/if}
 			</div>
 		{/each}
-		<div class="bg-gray mt-1.5 flex size-5 items-center justify-center rounded-full"></div>
+		<div class="mt-1.5 flex size-5 items-center justify-center rounded-full bg-gray"></div>
 	</div>
 </div>
 

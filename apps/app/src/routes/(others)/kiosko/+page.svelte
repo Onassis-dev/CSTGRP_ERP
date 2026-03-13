@@ -142,7 +142,7 @@
 			{/if}
 		</div>
 	</div>
-	<div class="bg-muted h-screen overflow-auto p-6">
+	<div class="h-screen overflow-auto bg-muted p-6">
 		{#if employee}
 			<Card class="p-6">
 				<div class="mb-6 grid grid-cols-[auto_1fr] gap-6">
@@ -157,7 +157,7 @@
 						<p class="text-xl font-semibold">
 							{employee.name}
 						</p>
-						<p class="text-muted-foreground text-sm">No. {employee.noEmpleado}</p>
+						<p class="text-sm text-muted-foreground">No. {employee.noEmpleado}</p>
 						<div class="mt-2 flex flex-wrap gap-2">
 							<div class="rounded-md border px-2 py-1 text-xs">{employee.area}</div>
 							<div class="rounded-md border px-2 py-1 text-xs">{employee.position}</div>
@@ -167,133 +167,133 @@
 
 				<div class="grid grid-cols-2 gap-6">
 					<div class="relative flex w-full flex-col gap-2.5 rounded-md border p-4">
-						<div class="bg-background absolute -top-3 left-4 px-2 text-sm font-semibold">
+						<div class="absolute -top-3 left-4 bg-background px-2 text-sm font-semibold">
 							Información Personal
 						</div>
 						<div class="min-h-9">
-							<p class="text-muted-foreground text-xs">Tipo de Posición:</p>
+							<p class="text-xs text-muted-foreground">Tipo de Posición:</p>
 							<p class="text-sm font-medium">{employee.positionType}</p>
 						</div>
 						<div class="min-h-9">
-							<p class="text-muted-foreground text-xs">Turno:</p>
+							<p class="text-xs text-muted-foreground">Turno:</p>
 							<p class="text-sm font-medium">{employee.shift}</p>
 						</div>
 						<div class="min-h-9">
-							<p class="text-muted-foreground text-xs">Nacionalidad:</p>
+							<p class="text-xs text-muted-foreground">Nacionalidad:</p>
 							<p class="text-sm font-medium">{employee.nationality}</p>
 						</div>
 						<div class="min-h-9">
-							<p class="text-muted-foreground text-xs">Estado Civil:</p>
+							<p class="text-xs text-muted-foreground">Estado Civil:</p>
 							<p class="text-sm font-medium">{employee.civilStatus}</p>
 						</div>
 						<div class="min-h-9">
-							<p class="text-muted-foreground text-xs">Género:</p>
+							<p class="text-xs text-muted-foreground">Género:</p>
 							<p class="text-sm font-medium">{employee.genre}</p>
 						</div>
 						<div class="min-h-9">
-							<p class="text-muted-foreground text-xs">Tipo de Sangre:</p>
+							<p class="text-xs text-muted-foreground">Tipo de Sangre:</p>
 							<p class="text-sm font-medium">{employee.blood}</p>
 						</div>
 					</div>
 
 					<div class="relative flex w-full flex-col gap-2.5 rounded-md border p-4">
-						<div class="bg-background absolute -top-3 left-4 px-2 text-sm font-semibold">
+						<div class="absolute -top-3 left-4 bg-background px-2 text-sm font-semibold">
 							Contacto
 						</div>
 						<div class="min-h-9">
-							<p class="text-muted-foreground text-xs">Correo Electrónico:</p>
+							<p class="text-xs text-muted-foreground">Correo Electrónico:</p>
 							<p class="text-sm font-medium">{employee.email}</p>
 						</div>
 						<div class="min-h-9">
-							<p class="text-muted-foreground text-xs">Teléfono:</p>
+							<p class="text-xs text-muted-foreground">Teléfono:</p>
 							<p class="text-sm font-medium">{employee.number}</p>
 						</div>
 						<div class="min-h-9">
-							<p class="text-muted-foreground text-xs">Dirección:</p>
+							<p class="text-xs text-muted-foreground">Dirección:</p>
 							<p class="text-sm font-medium">{employee.direction}</p>
 						</div>
 						<div class="min-h-9">
-							<p class="text-muted-foreground text-xs">Contacto de Emergencia:</p>
+							<p class="text-xs text-muted-foreground">Contacto de Emergencia:</p>
 							<p class="text-sm font-medium">{employee.emergencyContact}</p>
 						</div>
 						<div class="min-h-9">
-							<p class="text-muted-foreground text-xs">Teléfono de Emergencia:</p>
+							<p class="text-xs text-muted-foreground">Teléfono de Emergencia:</p>
 							<p class="text-sm font-medium">{employee.emergencyNumber}</p>
 						</div>
 						<div class="min-h-9">
-							<p class="text-muted-foreground text-xs">Lugar de Nacimiento:</p>
+							<p class="text-xs text-muted-foreground">Lugar de Nacimiento:</p>
 							<p class="text-sm font-medium">{employee.bornLocation}</p>
 						</div>
 						<div class="min-h-9">
-							<p class="text-muted-foreground text-xs">Fecha de Nacimiento:</p>
+							<p class="text-xs text-muted-foreground">Fecha de Nacimiento:</p>
 							<p class="text-sm font-medium">{formatDate(employee.bornDate)}</p>
 						</div>
 					</div>
 
 					<div class="relative flex w-full flex-col gap-2.5 rounded-md border p-4">
-						<div class="bg-background absolute -top-3 left-4 px-2 text-sm font-semibold">
+						<div class="absolute -top-3 left-4 bg-background px-2 text-sm font-semibold">
 							Información Legal
 						</div>
 						<div class="min-h-9">
-							<p class="text-muted-foreground text-xs">NSS:</p>
+							<p class="text-xs text-muted-foreground">NSS:</p>
 							<p class="text-sm font-medium">{employee.nss}</p>
 						</div>
 						<div class="min-h-9">
-							<p class="text-muted-foreground text-xs">CURP:</p>
+							<p class="text-xs text-muted-foreground">CURP:</p>
 							<p class="text-sm font-medium">{employee.curp}</p>
 						</div>
 						<div class="min-h-9">
-							<p class="text-muted-foreground text-xs">RFC:</p>
+							<p class="text-xs text-muted-foreground">RFC:</p>
 							<p class="text-sm font-medium">{employee.rfc}</p>
 						</div>
 						<div class="min-h-9">
-							<p class="text-muted-foreground text-xs">Número de Clínica:</p>
+							<p class="text-xs text-muted-foreground">Número de Clínica:</p>
 							<p class="text-sm font-medium">{employee.clinicNo}</p>
 						</div>
 						<div class="min-h-9">
-							<p class="text-muted-foreground text-xs">Número de Infonavit:</p>
+							<p class="text-xs text-muted-foreground">Número de Infonavit:</p>
 							<p class="text-sm font-medium">{employee.infonavitNo}</p>
 						</div>
 						<div class="min-h-9">
-							<p class="text-muted-foreground text-xs">Descuento de Infonavit:</p>
+							<p class="text-xs text-muted-foreground">Descuento de Infonavit:</p>
 							<p class="text-sm font-medium">{employee.infonavitDiscount}</p>
 						</div>
 					</div>
 
 					<div class="relative flex w-full flex-col gap-2.5 rounded-md border p-4">
-						<div class="bg-background absolute -top-3 left-4 px-2 text-sm font-semibold">
+						<div class="absolute -top-3 left-4 bg-background px-2 text-sm font-semibold">
 							Información Laboral
 						</div>
 						<div class="min-h-9">
-							<p class="text-muted-foreground text-xs">Fecha de Ingreso:</p>
+							<p class="text-xs text-muted-foreground">Fecha de Ingreso:</p>
 							<p class="text-sm font-medium">{formatDate(employee.admissionDate)}</p>
 						</div>
 						<div class="min-h-9">
-							<p class="text-muted-foreground text-xs">Tipo de Contrato:</p>
+							<p class="text-xs text-muted-foreground">Tipo de Contrato:</p>
 							<p class="text-sm font-medium">{employee.contract}</p>
 						</div>
 						<div class="min-h-9">
-							<p class="text-muted-foreground text-xs">Ruta de Camión:</p>
+							<p class="text-xs text-muted-foreground">Ruta de Camión:</p>
 							<p class="text-sm font-medium">{employee.route}</p>
 						</div>
 						<div class="min-h-9">
-							<p class="text-muted-foreground text-xs">Fecha de BCPET:</p>
+							<p class="text-xs text-muted-foreground">Fecha de BCPET:</p>
 							<p class="text-sm font-medium">{formatDate(employee.bcpet)}</p>
 						</div>
 						<div class="min-h-9">
-							<p class="text-muted-foreground text-xs">Banco:</p>
+							<p class="text-xs text-muted-foreground">Banco:</p>
 							<p class="text-sm font-medium">{employee.bank}</p>
 						</div>
 						<div class="min-h-9">
-							<p class="text-muted-foreground text-xs">Cuenta Bancaria:</p>
+							<p class="text-xs text-muted-foreground">Cuenta Bancaria:</p>
 							<p class="text-sm font-medium">{employee.account}</p>
 						</div>
 						<div class="min-h-9">
-							<p class="text-muted-foreground text-xs">Salario de Nómina:</p>
+							<p class="text-xs text-muted-foreground">Salario de Nómina:</p>
 							<p class="text-sm font-medium">{employee.nominaSalary}</p>
 						</div>
 						<div class="min-h-9">
-							<p class="text-muted-foreground text-xs">Salario IMSS:</p>
+							<p class="text-xs text-muted-foreground">Salario IMSS:</p>
 							<p class="text-sm font-medium">{employee.immsSalary}</p>
 						</div>
 					</div>
@@ -301,7 +301,7 @@
 			</Card>
 		{:else}
 			<div class="flex h-full flex-col items-center justify-center">
-				<p class="text-muted-foreground text-2xl font-semibold">Ingresa tus datos para continuar</p>
+				<p class="text-2xl font-semibold text-muted-foreground">Ingresa tus datos para continuar</p>
 			</div>
 		{/if}
 	</div>

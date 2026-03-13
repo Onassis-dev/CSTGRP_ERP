@@ -19,7 +19,7 @@
 	bind:ref
 	{value}
 	class={cn(
-		'data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground hover:bg-accent/50 relative flex w-full cursor-pointer select-none items-center rounded-sm py-1 pl-2 pr-8 text-sm outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+		'relative flex w-full cursor-pointer select-none items-center rounded-sm py-1 pl-2 pr-8 text-sm outline-none hover:bg-accent/50 data-[disabled]:pointer-events-none data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground data-[disabled]:opacity-50',
 		color ? 'pl-6' : 'pl-2',
 		className
 	)}

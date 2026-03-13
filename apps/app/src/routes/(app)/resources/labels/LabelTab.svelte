@@ -193,27 +193,27 @@
 		<CardContent>
 			<div class="grid grid-cols-6 gap-4">
 				<div class="col-span-3">
-					<p class="text-muted-foreground text-xs">Job:</p>
+					<p class="text-xs text-muted-foreground">Job:</p>
 					<Input bind:value={job.ref} disabled={locked} />
 				</div>
 				<div class="col-span-3">
-					<p class="text-muted-foreground text-xs">Codigo:</p>
+					<p class="text-xs text-muted-foreground">Codigo:</p>
 					<Input bind:value={job.part} disabled={locked} />
 				</div>
 				<div class="col-span-6">
-					<p class="text-muted-foreground text-xs">Descripción:</p>
+					<p class="text-xs text-muted-foreground">Descripción:</p>
 					<Input bind:value={job.description} disabled={locked} />
 				</div>
 				<div class="col-span-2">
-					<p class="text-muted-foreground text-xs">Cantidad:</p>
+					<p class="text-xs text-muted-foreground">Cantidad:</p>
 					<Input bind:value={job.amount} disabled={locked} />
 				</div>
 				<div class="col-span-2">
-					<p class="text-muted-foreground text-xs">Pz/Caja:</p>
+					<p class="text-xs text-muted-foreground">Pz/Caja:</p>
 					<Input bind:value={job.perBox} disabled={locked} />
 				</div>
 				<div class="col-span-2">
-					<p class="text-muted-foreground text-xs">Bastones:</p>
+					<p class="text-xs text-muted-foreground">Bastones:</p>
 					<Input
 						type="number"
 						min="0"
@@ -243,11 +243,11 @@
 		{#each job.destinations as destination, i}
 			<Card class="grid grid-cols-[auto_1fr] items-center gap-2 p-3">
 				<span class="col-span-2 text-sm">Destino {i + 1}</span>
-				<p class="text-muted-foreground text-xs">Po:</p>
+				<p class="text-xs text-muted-foreground">Po:</p>
 				<Input bind:value={destination.po} disabled={locked} />
-				<p class="text-muted-foreground text-xs">So:</p>
+				<p class="text-xs text-muted-foreground">So:</p>
 				<Input bind:value={destination.so} disabled={locked} />
-				<p class="text-muted-foreground text-xs">Qty:</p>
+				<p class="text-xs text-muted-foreground">Qty:</p>
 				<Input bind:value={destination.amount} disabled={locked} />
 				<Button
 					disabled={locked}

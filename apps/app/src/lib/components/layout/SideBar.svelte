@@ -73,7 +73,7 @@
 		{#if hasAccess('reports_orders') || hasAccess('reports_areas') || hasAccess('reports_history')}
 			<Accordion.Item value="reports" class="border-none">
 				<Accordion.Trigger
-					class="hover:bg-muted  mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
+					class="mb-[1px]  h-8 rounded-md p-2 text-sm hover:bg-muted hover:no-underline"
 				>
 					<LineChartIcon class="size-3.5 text-[#5c5e63]" />
 					Reportes
@@ -95,7 +95,7 @@
 		{#if hasAccess('prod_corte') || hasAccess('prod_cortesVarios') || hasAccess('prod_produccion') || hasAccess('prod_serigrafia') || hasAccess('jobs')}
 			<Accordion.Item value="production" class="border-none">
 				<Accordion.Trigger
-					class="hover:bg-muted  mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
+					class="mb-[1px]  h-8 rounded-md p-2 text-sm hover:bg-muted hover:no-underline"
 				>
 					<Factory class="size-3.5 text-[#5c5e63]" />
 					Producción
@@ -126,7 +126,7 @@
 		{#if hasAccess('progress')}
 			<Accordion.Item value="progress" class="border-none">
 				<Accordion.Trigger
-					class="hover:bg-muted  mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
+					class="mb-[1px]  h-8 rounded-md p-2 text-sm hover:bg-muted hover:no-underline"
 				>
 					<Ruler class="size-3.5 text-[#5c5e63]" />
 					Progreso
@@ -141,7 +141,7 @@
 		{#if hasAccess('inventory') || hasAccess('materialmovements') || hasAccess('requisitions')}
 			<Accordion.Item value="warehouse" class="border-none">
 				<Accordion.Trigger
-					class="hover:bg-muted  mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
+					class="mb-[1px]  h-8 rounded-md p-2 text-sm hover:bg-muted hover:no-underline"
 				>
 					<Package class="size-3.5 text-[#5c5e63]" />
 					Almacen
@@ -170,7 +170,7 @@
 		{#if hasAccess('quality')}
 			<Accordion.Item value="quality" class="border-none">
 				<Accordion.Trigger
-					class="hover:bg-muted  mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
+					class="mb-[1px]  h-8 rounded-md p-2 text-sm hover:bg-muted hover:no-underline"
 				>
 					<BadgeCheck class="size-3.5 text-[#5c5e63]" />
 					Calidad
@@ -185,7 +185,7 @@
 		{#if hasAccess('imports') || hasAccess('exports') || hasAccess('ie_options')}
 			<Accordion.Item value="ie" class="border-none">
 				<Accordion.Trigger
-					class="hover:bg-muted  mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
+					class="mb-[1px]  h-8 rounded-md p-2 text-sm hover:bg-muted hover:no-underline"
 				>
 					<Truck class="size-3.5 text-[#5c5e63]" />
 					Imp-Exp
@@ -219,7 +219,7 @@
 		{#if hasAccess('purchases')}
 			<Accordion.Item value="purchases" class="border-none">
 				<Accordion.Trigger
-					class="hover:bg-muted  mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
+					class="mb-[1px]  h-8 rounded-md p-2 text-sm hover:bg-muted hover:no-underline"
 				>
 					<ShoppingCart class="size-3.5 text-[#5c5e63]" />
 					Compras
@@ -235,7 +235,7 @@
 		{#if hasAccess('maintenance')}
 			<Accordion.Item value="maintenance" class="border-none">
 				<Accordion.Trigger
-					class="hover:bg-muted  mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
+					class="mb-[1px]  h-8 rounded-md p-2 text-sm hover:bg-muted hover:no-underline"
 				>
 					<Wrench class="size-3.5 text-[#5c5e63]" />
 					Mantenimiento
@@ -249,7 +249,7 @@
 		{#if hasAccess('employees') || hasAccess('assistance') || hasAccess('productivity')}
 			<Accordion.Item value="hr" class="border-none">
 				<Accordion.Trigger
-					class="hover:bg-muted mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
+					class="mb-[1px] h-8 rounded-md p-2 text-sm hover:bg-muted hover:no-underline"
 				>
 					<Users class="size-3.5 text-[#5c5e63]" />
 					RRHH
@@ -273,7 +273,7 @@
 		{#if hasAccess('it')}
 			<Accordion.Item value="it" class="border-none">
 				<Accordion.Trigger
-					class="hover:bg-muted mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
+					class="mb-[1px] h-8 rounded-md p-2 text-sm hover:bg-muted hover:no-underline"
 				>
 					<Monitor class="size-3.5 text-[#5c5e63]" />
 					Sistemas
@@ -290,7 +290,7 @@
 		{#if hasAccess('structure')}
 			<Accordion.Item value="structure" class="border-none">
 				<Accordion.Trigger
-					class="hover:bg-muted mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
+					class="mb-[1px] h-8 rounded-md p-2 text-sm hover:bg-muted hover:no-underline"
 				>
 					<GitMerge class="size-3.5 text-[#5c5e63]" />
 					Estructura
@@ -306,7 +306,7 @@
 		{#if $userData?.clientId}
 			<Accordion.Item value="clients" class="border-none">
 				<Accordion.Trigger
-					class="hover:bg-muted mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
+					class="mb-[1px] h-8 rounded-md p-2 text-sm hover:bg-muted hover:no-underline"
 				>
 					<ShoppingBag class="size-3.5 text-[#5c5e63]" />
 					Clients
@@ -321,7 +321,7 @@
 		{#if hasAccess('users')}
 			<Accordion.Item value="admin" class="border-none">
 				<Accordion.Trigger
-					class="hover:bg-muted mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
+					class="mb-[1px] h-8 rounded-md p-2 text-sm hover:bg-muted hover:no-underline"
 				>
 					<Shield class="size-3.5 text-[#5c5e63]" />
 					Admin
@@ -336,7 +336,7 @@
 		{#if hasAccess('formats') || hasAccess('directory')}
 			<Accordion.Item value="resources" class="border-none">
 				<Accordion.Trigger
-					class="hover:bg-muted mb-[1px] h-8 rounded-md p-2 text-sm hover:no-underline"
+					class="mb-[1px] h-8 rounded-md p-2 text-sm hover:bg-muted hover:no-underline"
 				>
 					<Folders class="size-3.5 text-[#5c5e63]" />
 					Recursos
@@ -361,14 +361,14 @@
 	</Accordion.Root>
 
 	<div class="mt-auto space-y-1 px-2 pb-2">
-		<p class="hover:bg-muted flex h-8 items-center gap-2 rounded-md px-2 text-sm">
+		<p class="flex h-8 items-center gap-2 rounded-md px-2 text-sm hover:bg-muted">
 			<UserCircle class="size-3.5 text-[#5c5e63]" />
 			{$userData?.username}
 		</p>
 
 		<DropdownMenu>
 			<DropdownMenuTrigger
-				class="hover:bg-muted flex h-8 w-full items-center gap-2 rounded-md p-2 text-sm"
+				class="flex h-8 w-full items-center gap-2 rounded-md p-2 text-sm hover:bg-muted"
 			>
 				<LogOut class="size-3.5 text-[#5c5e63]" />
 				Salir

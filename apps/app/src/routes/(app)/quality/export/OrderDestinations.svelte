@@ -106,7 +106,7 @@
 					{/each}
 					{#if data?.destinations.length === 0}
 						<TableRow>
-							<TableCell class="text-muted-foreground border-l text-center" colspan={100}
+							<TableCell class="border-l text-center text-muted-foreground" colspan={100}
 								>No hay destinos</TableCell
 							>
 						</TableRow>

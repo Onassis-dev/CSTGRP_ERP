@@ -266,7 +266,7 @@
 					</div>
 				</TableCell>
 				<TableCell class={cn('border-l')}>
-					<div class="text-muted-foreground flex items-center gap-3">
+					<div class="flex items-center gap-3 text-muted-foreground">
 						{#if row?.created_at}
 							{format(new Date(row?.created_at), 'dd/MM/yyyy HH:mm', { locale: es })}
 						{/if}

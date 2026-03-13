@@ -53,9 +53,7 @@
 <Dialog bind:open={show}>
 	<DialogContent>
 		<DialogHeader
-			title={selectedShipTo.id
-				? `Editar ${selectedShipTo.name}`
-				: 'Registrar ship to'}
+			title={selectedShipTo.id ? `Editar ${selectedShipTo.name}` : 'Registrar ship to'}
 		/>
 		<DialogBody>
 			<Label name="Nombre">
@@ -68,4 +66,3 @@
 		<DialogFooter submitFunc={handleSubmit} hideFunc={() => (show = false)} />
 	</DialogContent>
 </Dialog>
-

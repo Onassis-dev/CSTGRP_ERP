@@ -36,7 +36,7 @@
 				</div>
 				Confirmar acción
 			</h2>
-			<p class="text-muted-foreground mt-2 text-center text-sm">{text}</p>
+			<p class="mt-2 text-center text-sm text-muted-foreground">{text}</p>
 			<div class="mt-4 flex justify-center gap-2">
 				<Button onclick={() => (show = false)} variant="outline">Cancelar</Button>
 				<Button

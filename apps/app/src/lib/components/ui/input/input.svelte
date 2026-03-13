@@ -25,7 +25,7 @@
 	<input
 		bind:this={ref}
 		class={cn(
-			'border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-8 w-full rounded-sm border px-3 py-2 text-base file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
+			'flex h-8 w-full rounded-sm border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
 			className
 		)}
 		type="file"
@@ -37,7 +37,7 @@
 	<input
 		bind:this={ref}
 		class={cn(
-			'border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring  flex h-8 w-full rounded-sm border px-3 py-2 text-sm  focus-visible:outline-none focus-visible:ring-1  disabled:cursor-not-allowed disabled:opacity-50',
+			'flex h-8 w-full rounded-sm border  border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-1 focus-visible:ring-ring  disabled:cursor-not-allowed disabled:opacity-50',
 			menu ? 'h-7' : '',
 			className
 		)}

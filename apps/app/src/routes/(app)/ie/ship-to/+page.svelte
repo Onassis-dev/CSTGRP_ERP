@@ -80,10 +80,7 @@
 	<TableBody>
 		{#each shipTo as shipToItem, i}
 			<TableRow>
-				<OptionsCell
-					editFunc={() => editShipTo(i)}
-					deleteFunc={() => deleteShipTo(i)}
-				/>
+				<OptionsCell editFunc={() => editShipTo(i)} deleteFunc={() => deleteShipTo(i)} />
 				<TableCell>{shipToItem.name}</TableCell>
 				<TableCell>{shipToItem.direction}</TableCell>
 			</TableRow>
@@ -93,4 +90,3 @@
 
 <DeletePopUp bind:show={show3} text="Eliminar ship to" deleteFunc={handleDelete} />
 <ShipToForm bind:show={show4} {selectedShipTo} />
-

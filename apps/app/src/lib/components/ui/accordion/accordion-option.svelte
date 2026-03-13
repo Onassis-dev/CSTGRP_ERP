@@ -17,7 +17,7 @@
 <a {href} class={cn(' relative flex h-7 items-center text-sm', className)}>
 	<span
 		class={cn(
-			'hover:bg-muted flex h-full w-full items-center rounded-sm p-2',
+			'flex h-full w-full items-center rounded-sm p-2 hover:bg-muted',
 			active ? 'bg-muted' : ''
 		)}
 	>

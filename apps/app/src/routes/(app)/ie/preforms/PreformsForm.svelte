@@ -159,9 +159,9 @@
 		/>
 		<DialogBody>
 			<div
-				class="border-primary/20 relative mb-6 grid w-full grid-cols-5 gap-x-4 gap-y-2 rounded-md border p-4"
+				class="relative mb-6 grid w-full grid-cols-5 gap-x-4 gap-y-2 rounded-md border border-primary/20 p-4"
 			>
-				<div class="bg-background absolute -top-5 left-8 my-2 px-2 font-semibold">
+				<div class="absolute -top-5 left-8 my-2 bg-background px-2 font-semibold">
 					Datos Generales
 				</div>
 				<Label name="Factura">
@@ -207,9 +207,9 @@
 			</div>
 
 			<div
-				class="border-primary/20 relative mb-6 grid w-full grid-cols-5 gap-x-4 gap-y-2 rounded-md border p-4"
+				class="relative mb-6 grid w-full grid-cols-5 gap-x-4 gap-y-2 rounded-md border border-primary/20 p-4"
 			>
-				<div class="bg-background absolute -top-5 left-8 my-2 px-2 font-semibold">
+				<div class="absolute -top-5 left-8 my-2 bg-background px-2 font-semibold">
 					GASTOS ADUANALES AL COMERCIO EXTERIOR
 				</div>
 				{#each formData.exteriorData as item}
@@ -220,9 +220,9 @@
 			</div>
 
 			<div
-				class="border-primary/20 relative mb-6 grid w-full grid-cols-5 gap-x-4 gap-y-2 rounded-md border p-4"
+				class="relative mb-6 grid w-full grid-cols-5 gap-x-4 gap-y-2 rounded-md border border-primary/20 p-4"
 			>
-				<div class="bg-background absolute -top-5 left-8 my-2 px-2 font-semibold">
+				<div class="absolute -top-5 left-8 my-2 bg-background px-2 font-semibold">
 					GASTOS AGENCIA ADUANAL MEX
 				</div>
 				{#each formData.mexData as item}
@@ -233,9 +233,9 @@
 			</div>
 
 			<div
-				class="border-primary/20 relative mb-6 grid w-full grid-cols-5 gap-x-4 gap-y-2 rounded-md border p-4"
+				class="relative mb-6 grid w-full grid-cols-5 gap-x-4 gap-y-2 rounded-md border border-primary/20 p-4"
 			>
-				<div class="bg-background absolute -top-5 left-8 my-2 px-2 font-semibold">
+				<div class="absolute -top-5 left-8 my-2 bg-background px-2 font-semibold">
 					GASTOS AGENCIA ADUANAL US
 				</div>
 				{#each formData.usData as item}
@@ -246,9 +246,9 @@
 			</div>
 
 			<div
-				class="border-primary/20 relative mb-6 grid w-full grid-cols-5 gap-x-4 gap-y-2 rounded-md border p-4"
+				class="relative mb-6 grid w-full grid-cols-5 gap-x-4 gap-y-2 rounded-md border border-primary/20 p-4"
 			>
-				<div class="bg-background absolute -top-5 left-8 my-2 px-2 font-semibold">
+				<div class="absolute -top-5 left-8 my-2 bg-background px-2 font-semibold">
 					ENTRADAS DE ALMACEN US
 				</div>
 				<div class="grid grid-cols-[10rem_10rem_10rem] items-center gap-2">
@@ -264,9 +264,9 @@
 			</div>
 
 			<div
-				class="border-primary/20 relative mb-6 grid w-full grid-cols-5 gap-x-4 gap-y-2 rounded-md border p-4"
+				class="relative mb-6 grid w-full grid-cols-5 gap-x-4 gap-y-2 rounded-md border border-primary/20 p-4"
 			>
-				<div class="bg-background absolute -top-5 left-8 my-2 px-2 font-semibold">GASTOS EXTRA</div>
+				<div class="absolute -top-5 left-8 my-2 bg-background px-2 font-semibold">GASTOS EXTRA</div>
 
 				{#each formData.extraData as item}
 					<Label name={item.name}>
@@ -342,7 +342,7 @@
 								><Button
 									onclick={() => deleteRow(i)}
 									variant="ghost"
-									class="text-destructive-foreground aspect-square p-1"
+									class="aspect-square p-1 text-destructive-foreground"
 									><Trash class="size-5" /></Button
 								></TableCell
 							>
@@ -354,9 +354,9 @@
 			<Button onclick={addRow} class="mb-6">Agregar Entrada</Button>
 
 			<div
-				class="border-primary/20 relative mb-6 grid w-full gap-x-4 gap-y-2 rounded-md border p-4"
+				class="relative mb-6 grid w-full gap-x-4 gap-y-2 rounded-md border border-primary/20 p-4"
 			>
-				<div class="bg-background absolute -top-5 left-8 my-2 px-2 font-semibold">FIJOS</div>
+				<div class="absolute -top-5 left-8 my-2 bg-background px-2 font-semibold">FIJOS</div>
 
 				<div class="grid grid-cols-[5rem_10rem_10rem] items-center gap-2">
 					<div></div>
@@ -370,9 +370,9 @@
 				</div>
 			</div>
 			<div
-				class="border-primary/20 relative mb-6 grid w-full gap-x-4 gap-y-2 rounded-md border p-4"
+				class="relative mb-6 grid w-full gap-x-4 gap-y-2 rounded-md border border-primary/20 p-4"
 			>
-				<div class="bg-background absolute -top-5 left-8 my-2 px-2 font-semibold">COMENTARIOS</div>
+				<div class="absolute -top-5 left-8 my-2 bg-background px-2 font-semibold">COMENTARIOS</div>
 
 				<Textarea bind:value={formData.comments} />
 			</div>

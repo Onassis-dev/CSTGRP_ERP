@@ -112,7 +112,7 @@
 <CusTable>
 	{#each Object.keys(separatedProductivity) as areaId}
 		<TableHeader class=" text-md sticky top-0 z-30 text-left uppercase ">
-			<TableHead colspan={100} class="bg-foreground text-background font-semibold"
+			<TableHead colspan={100} class="bg-foreground font-semibold text-background"
 				>{areas[areaId]}</TableHead
 			>
 		</TableHeader>

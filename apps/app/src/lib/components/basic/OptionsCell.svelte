@@ -26,12 +26,12 @@
 	}: Props = $props();
 </script>
 
-<TableCell class="options-cell bg-background sticky left-0 border-r-0 p-0">
+<TableCell class="options-cell sticky left-0 border-r-0 bg-background p-0">
 	<DropdownMenu>
 		<DropdownMenuTrigger
-			class="hover:bg-muted/50 flex aspect-square h-full items-center justify-center "
+			class="flex aspect-square h-full items-center justify-center hover:bg-muted/50 "
 		>
-			<Ellipsis class="text-muted-foreground size-3.5" />
+			<Ellipsis class="size-3.5 text-muted-foreground" />
 		</DropdownMenuTrigger>
 
 		<DropdownMenuContent side="bottom" align="start">

@@ -32,7 +32,7 @@
 			<div class="mb-2 flex items-center gap-2">
 				<p class="text-2xl font-medium">{$stats.data?.active}</p>
 				<p class="text-muted-foreground">/</p>
-				<p class="text-muted-foreground text-2xl font-medium">{$stats.data?.total}</p>
+				<p class="text-2xl font-medium text-muted-foreground">{$stats.data?.total}</p>
 			</div>
 			<Progress value={($stats.data?.active / $stats.data?.total) * 100} />
 		</CardContent>
