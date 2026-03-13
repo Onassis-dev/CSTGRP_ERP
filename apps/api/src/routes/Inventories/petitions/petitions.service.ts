@@ -1,14 +1,13 @@
 import { promises as fs } from 'fs';
-import { format, toZonedTime } from 'date-fns-tz';
 import { HttpException, Injectable } from '@nestjs/common';
 import { z } from 'zod/v4';
 import sql from 'src/utils/db';
-import { filterSchema } from './petitions.schema';
+import { downloadMultipleSchema, filterSchema } from './petitions.schema';
 import { ContextProvider } from 'src/interceptors/context.provider';
 import path from 'path';
 import { PDFDocument, StandardFonts } from 'pdf-lib';
-import { fillBox } from 'src/utils/pdf';
 import { idObjectSchema } from 'src/utils/schemas';
+import { fillRequisition } from './petitions.create';
 
 @Injectable()
 export class PetitionsService {
@@ -41,7 +40,7 @@ export class PetitionsService {
       '..',
       'static',
       'templates',
-      'req.pdf',
+      'req1.pdf',
     );
 
     const template = await fs.readFile(templatePath);
@@ -49,145 +48,52 @@ export class PetitionsService {
     const [page] = pdfDoc.getPages();
     const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-    fillBox({
-      page,
-      font,
-      text: requisition.folio.toString(),
-      size: 12,
-      x: 467,
-      y: 695,
-      width: 100,
-      height: 25,
-      align: 'center',
-    });
+    fillRequisition(page, font, requisition, 'top');
 
-    fillBox({
-      page,
-      font,
-      text: requisition.jobs,
-      size: 12,
-      x: 85,
-      y: 578,
-      width: 390,
-      height: 27,
-    });
+    const pdfBytes = await pdfDoc.save();
 
-    fillBox({
-      page,
-      font,
-      text: requisition.code,
-      size: 12,
-      x: 85,
-      y: 540,
-      width: 140,
-      height: 35,
-    });
+    return pdfBytes;
+  }
 
-    fillBox({
-      page,
-      font,
-      text: requisition.description,
-      size: 8,
-      x: 295,
-      y: 535,
-      width: 160,
-      height: 35,
-      maxLines: 3,
-    });
+  async downloadMultiple(body: z.infer<typeof downloadMultipleSchema>) {
+    const requisitions =
+      await sql`select requisitions.*, materials.code, materials.description, materials.measurement from requisitions
+    join materials on requisitions."materialId" = materials.id
+    where requisitions.id in ${sql(body.list)}`;
 
-    fillBox({
-      page,
-      font,
-      text: requisition.petitioner,
-      size: 12,
-      x: 90,
-      y: 660,
-      width: 260,
-      height: 30,
-    });
+    const templatePath = path.resolve(
+      __dirname,
+      '..',
+      '..',
+      '..',
+      '..',
+      'static',
+      'templates',
+      'req1.pdf',
+    );
 
-    fillBox({
-      page,
-      font,
-      text: requisition.area,
-      size: 12,
-      x: 430,
-      y: 660,
-      width: 130,
-      height: 30,
-    });
+    const template = await fs.readFile(templatePath);
+    const pdfDoc = await PDFDocument.load(template);
+    const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+    const pageCount = Math.ceil(requisitions.length / 2);
 
-    fillBox({
-      page,
-      font,
-      text:
-        String(requisition.necesary).replace(/\B(?=(\d{3})+(?!\d))/g, ',') +
-        ' ' +
-        requisition.measurement,
-      size: 11,
-      x: 470,
-      y: 560,
-      width: 90,
-      height: 28,
-      align: 'center',
-    });
+    for (let i = 0; i < pageCount - 1; i++) {
+      const [copiedPage] = await pdfDoc.copyPages(pdfDoc, [0]);
+      pdfDoc.addPage(copiedPage);
+    }
 
-    fillBox({
-      page,
-      font,
-      text:
-        String(requisition.requested).replace(/\B(?=(\d{3})+(?!\d))/g, ',') +
-        ' ' +
-        requisition.measurement,
-      size: 11,
-      x: 470,
-      y: 510,
-      width: 90,
-      height: 28,
-      align: 'center',
-    });
+    const pages = await pdfDoc.getPages();
 
-    fillBox({
-      page,
-      font,
-      text: format(
-        toZonedTime(requisition.created_at, 'America/Tijuana'),
-        'dd/MM/yyyy',
-      ),
-      size: 12,
-      x: 150,
-      y: 695,
-      width: 140,
-      height: 40,
-    });
-
-    fillBox({
-      page,
-      font,
-      text: format(
-        toZonedTime(requisition.created_at, 'America/Tijuana'),
-        'HH:mm',
-      ),
-      size: 12,
-      x: 380,
-      y: 695,
-      width: 80,
-      height: 40,
-      align: 'center',
-    });
-
-    const motivesPosition = {
-      Empaque: 270,
-      Producción: 190,
-      'Corte de tela': 345,
-      'Cortes varios': 445,
-    };
-
-    page.drawText('X', {
-      x: motivesPosition[requisition.motive],
-      y: 630,
-      size: 12,
-    });
+    let i = 0;
+    for (const page of pages) {
+      fillRequisition(page, font, requisitions[i], 'top');
+      console.log(i);
+      i++;
+      if (i < requisitions.length) {
+        fillRequisition(page, font, requisitions[i], 'bottom');
+        i++;
+      }
+    }
 
     const pdfBytes = await pdfDoc.save();
 

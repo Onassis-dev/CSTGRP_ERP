@@ -11,7 +11,7 @@ import { PetitionsService } from './petitions.service';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
-import { filterSchema } from './petitions.schema';
+import { downloadMultipleSchema, filterSchema } from './petitions.schema';
 import { idObjectSchema } from 'src/utils/schemas';
 
 @ApiTags('Material Petitions')
@@ -30,6 +30,13 @@ export class PetitionsController {
   @Header('Content-Disposition', 'inline; filename="requisicion.pdf"')
   download(@Param(new ZodPiPe(idObjectSchema)) params) {
     return this.petitionsService.download(params);
+  }
+
+  @Get('/download-multiple')
+  @Header('Content-Type', 'application/pdf')
+  @Header('Content-Disposition', 'inline; filename="requisicion.pdf"')
+  downloadMultiple(@Query(new ZodPiPe(downloadMultipleSchema)) params) {
+    return this.petitionsService.downloadMultiple(params);
   }
 
   @Delete(':id')

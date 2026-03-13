@@ -7,3 +7,7 @@ export const filterSchema = z.object({
     .nullish()
     .transform((e) => e?.toUpperCase().trim()),
 });
+
+export const downloadMultipleSchema = z.object({
+  list: z.string().transform((e) => e.split(',').map((v) => Number(v))),
+});
