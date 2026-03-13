@@ -1,7 +1,6 @@
 <script lang="ts">
 	import Label from '$lib/components/basic/Label.svelte';
 	import Select from '$lib/components/basic/Select.svelte';
-	import { Button } from '$lib/components/ui/button';
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import {
 		Dialog,
@@ -60,12 +59,10 @@
 	});
 
 	async function handleSubmit() {
-		const { data } = await api.post('requisitions', {
+		await api.post('requisitions', {
 			...formData,
 			jobIds: jobs.filter((v) => v.selected).map((v) => v.id)
 		});
-
-		window.open(`${import.meta.env.VITE_BASEURL}/petitions/download/${data?.id}`, '_blank');
 
 		refetch(['requisitions']);
 		showSuccess('Requisicion registrada');

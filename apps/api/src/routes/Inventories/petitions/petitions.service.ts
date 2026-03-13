@@ -87,7 +87,6 @@ export class PetitionsService {
     let i = 0;
     for (const page of pages) {
       fillRequisition(page, font, requisitions[i], 'top');
-      console.log(i);
       i++;
       if (i < requisitions.length) {
         fillRequisition(page, font, requisitions[i], 'bottom');

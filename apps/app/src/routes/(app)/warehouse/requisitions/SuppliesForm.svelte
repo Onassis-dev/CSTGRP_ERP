@@ -128,7 +128,7 @@
 								><Button
 									onclick={() => deleteMaterial(i)}
 									variant="ghost"
-									class="text-destructive-foreground aspect-square p-1"
+									class="aspect-square p-1 text-destructive-foreground"
 									><Trash class="size-5" /></Button
 								></TableCell
 							>
