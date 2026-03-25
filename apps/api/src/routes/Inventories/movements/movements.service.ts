@@ -73,9 +73,9 @@ export class MovementsService {
 
   async updateRealAmount(body: z.infer<typeof updateAmountSchema>) {
     const [movement] =
-      await sql`select "materialId", active, extra, id, amount, "jobId" from materialmovements where id = ${body.id}`;
+      await sql`select "materialId", active, extra, id, amount, "jobId", "reqId" from materialmovements where id = ${body.id}`;
 
-    if (!movement.jobId || movement.extra)
+    if ((!movement.jobId || movement.extra) && !movement.reqId)
       throw new HttpException('Este movimiento no se puede editar', 400);
 
     if (movement.active)
