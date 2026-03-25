@@ -467,8 +467,8 @@ export function createLabel(
       const barcodeCanvas = createCanvas(0, 0);
       JsBarcode(barcodeCanvas, info.code.replace(/-/g, ''), {
         format: 'CODE39',
-        width: 2,
-        height: 80,
+        width: 3.8,
+        height: 90,
         displayValue: false,
       });
       const barcodeX = (ctx.canvas.width - barcodeCanvas.width) / 2;
