@@ -510,7 +510,7 @@ export function createLabel(
 
   if (type === 'codigo-polaris') {
     const x = [125, 0, 0, 700, 0];
-    const y = [105, 190, 380, 105, 220];
+    const y = [105, 190, 380, 105, 210];
     const height = 520;
     const adjustments = [0, 0, 0];
 
@@ -529,8 +529,8 @@ export function createLabel(
       const barcodeCanvas = createCanvas(0, 0);
       JsBarcode(barcodeCanvas, info.code.replace(/-/g, ''), {
         format: 'CODE39',
-        width: 2,
-        height: 80,
+        width: 3,
+        height: 100,
         displayValue: false,
       });
       const barcodeX = (ctx.canvas.width - barcodeCanvas.width) / 2;
