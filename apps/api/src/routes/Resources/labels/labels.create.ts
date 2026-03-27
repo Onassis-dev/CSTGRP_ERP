@@ -605,7 +605,7 @@ export function createLabel(
     ctx.fillText(POText, 280, 520);
     drawCode(ctx, {
       code: 'K' + POText,
-      width: 2.5,
+      width: 2.6,
       height: 100,
       x: 120,
       y: 540,
@@ -615,16 +615,16 @@ export function createLabel(
     ctx.fillText(LicText, 260, 740);
     drawCode(ctx, {
       code: '1J' + LicText,
-      width: 2.5,
+      width: 2.6,
       height: 100,
       x: 50,
-      y: 760,
+      y: 750,
     });
 
     ctx.fillText(info.jobpo, 1130, 740);
     drawCode(ctx, {
       code: '1T' + info.jobpo,
-      width: 2.5,
+      width: 2.6,
       height: 100,
       x: 1000,
       y: 760,
@@ -633,7 +633,7 @@ export function createLabel(
     ctx.fillText(String(info.amount || 0), 1200, 660);
     drawCode(ctx, {
       code: 'Q' + String(info.amount || 0),
-      width: 2.5,
+      width: 2.6,
       height: 100,
       x: 1120,
       y: 480,
@@ -642,7 +642,7 @@ export function createLabel(
     ctx.fillText(String(info.rev), 1090, 405);
     ctx.fillText('MX', 1360, 405);
 
-    ctx.font = '26px Swiss';
+    ctx.font = '28px SwissBold';
     const words = info.description.split(' ');
     let line = '';
     const lines = [];
