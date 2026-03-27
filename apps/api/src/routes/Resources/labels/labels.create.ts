@@ -605,35 +605,35 @@ export function createLabel(
     ctx.fillText(POText, 280, 520);
     drawCode(ctx, {
       code: 'K' + POText,
-      width: 2.6,
-      height: 100,
+      width: 2.4,
+      height: 120,
       x: 120,
-      y: 540,
+      y: 530,
     });
 
     const LicText = `${info.jobpo}${format(info.date, 'yy')}${getDayOfYear(info.date).toString().padStart(3, '0')}${info.boxNo.padStart(4, '0')}`;
     ctx.fillText(LicText, 260, 740);
     drawCode(ctx, {
       code: '1J' + LicText,
-      width: 2.6,
-      height: 100,
-      x: 50,
+      width: 2.4,
+      height: 120,
+      x: 60,
       y: 750,
     });
 
     ctx.fillText(info.jobpo, 1130, 740);
     drawCode(ctx, {
       code: '1T' + info.jobpo,
-      width: 2.6,
+      width: 2.5,
       height: 100,
-      x: 1000,
+      x: 990,
       y: 760,
     });
 
     ctx.fillText(String(info.amount || 0), 1200, 660);
     drawCode(ctx, {
       code: 'Q' + String(info.amount || 0),
-      width: 2.6,
+      width: 2.5,
       height: 100,
       x: 1120,
       y: 480,
