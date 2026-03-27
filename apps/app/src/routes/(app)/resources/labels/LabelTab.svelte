@@ -46,8 +46,10 @@
 		amount: number;
 		po?: string;
 		so?: string;
+		rel?: string;
 		labelAmount?: number;
 		destinationIndex?: number;
+		boxNo?: string;
 	};
 
 	let selectedLabels: LabelButton[] = $derived.by(() => {
@@ -145,13 +147,38 @@
 						});
 					}
 				}
+			} else if (label === 'polaris') {
+				let previousBoxNo = 0;
+				job.destinations.forEach((destination: any) => {
+					const destinationBoxes = Math.ceil(Number(destination.amount) / job.perBox);
+
+					for (let i = 0; i < destinationBoxes; i++) {
+						const boxAmount =
+							(i + 1) * job.perBox <= Number(destination.amount)
+								? job.perBox
+								: Number(destination.amount) % job.perBox;
+
+						buttons.push({
+							name: label,
+							amount: boxAmount,
+							labelAmount: boxAmount,
+							po: destination.po,
+							so: destination.so,
+							rel: destination.rel,
+							boxNo: String(previousBoxNo + i + 1)
+						});
+					}
+
+					previousBoxNo += destinationBoxes;
+				});
 			} else if (label === 'codigo-chaparral' || label === 'codigo-kawasaki') {
 				job.destinations.forEach((destination: any) => {
 					buttons.push({
 						name: label,
 						amount: Math.ceil(Number(destination.amount) / labelList[label]),
 						po: destination.po,
-						so: destination.so
+						so: destination.so,
+						rel: destination.rel
 					});
 				});
 			} else {
@@ -184,7 +211,8 @@
 				job.destinations.push({
 					so: '',
 					po: '',
-					amount: job.amount
+					amount: job.amount,
+					rel: ''
 				})}>Agregar destino</Button
 		>
 		<Button variant="outline" onclick={handleDelete}>
@@ -214,7 +242,7 @@
 					<p class="text-xs text-muted-foreground">Pz/Caja:</p>
 					<Input bind:value={job.perBox} disabled={locked} />
 				</div>
-				<div class="col-span-2">
+				<div>
 					<p class="text-xs text-muted-foreground">Bastones:</p>
 					<Input
 						type="number"
@@ -237,6 +265,10 @@
 						disabled={locked}
 					/>
 				</div>
+				<div>
+					<p class="text-xs text-muted-foreground">REV:</p>
+					<Input bind:value={job.rev} disabled={locked} />
+				</div>
 			</div>
 		</CardContent>
 	</Card>
@@ -251,6 +283,8 @@
 				<Input bind:value={destination.so} disabled={locked} />
 				<p class="text-xs text-muted-foreground">Qty:</p>
 				<Input bind:value={destination.amount} disabled={locked} />
+				<p class="text-xs text-muted-foreground">REL:</p>
+				<Input bind:value={destination.rel} disabled={locked} />
 				<Button
 					disabled={locked}
 					variant="outline"
@@ -279,7 +313,10 @@
 								date: job.due,
 								po: label.po,
 								so: label.so,
-								amount: label.labelAmount
+								amount: label.labelAmount,
+								rel: label.rel,
+								rev: job.rev,
+								boxNo: label.boxNo
 							}
 						},
 						{ responseType: 'arraybuffer' }
@@ -296,11 +333,18 @@
 					}
 				}}
 				>{label.name}
+				{#if label.name === 'polaris'}
+					({label.boxNo})
+				{/if}
 				{#if label.destinationIndex}
 					({label.destinationIndex})
 				{/if}
-				<span class={cn('text-blue-200', label.name === 'cantidad' && 'text-red-300')}
-					>{label.amount}</span
+				<span
+					class={cn(
+						'text-blue-200',
+						label.name === 'cantidad' && 'text-red-300',
+						label.name === 'polaris' && 'text-green-300'
+					)}>{label.amount}</span
 				></Button
 			>
 		{/each}
