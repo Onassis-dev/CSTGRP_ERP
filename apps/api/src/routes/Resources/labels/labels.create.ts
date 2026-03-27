@@ -605,20 +605,20 @@ export function createLabel(
     ctx.fillText(POText, 280, 520);
     drawCode(ctx, {
       code: 'K' + POText,
-      width: 2.4,
-      height: 120,
-      x: 120,
-      y: 530,
+      width: 2.5,
+      height: 100,
+      x: 150,
+      y: 535,
     });
 
     const LicText = `${info.jobpo}${format(info.date, 'yy')}${getDayOfYear(info.date).toString().padStart(3, '0')}${info.boxNo.padStart(4, '0')}`;
     ctx.fillText(LicText, 260, 740);
     drawCode(ctx, {
       code: '1J' + LicText,
-      width: 2.4,
-      height: 120,
-      x: 60,
-      y: 750,
+      width: 2.5,
+      height: 100,
+      x: 80,
+      y: 755,
     });
 
     ctx.fillText(info.jobpo, 1130, 740);
@@ -661,6 +661,18 @@ export function createLabel(
     if (lines.length > 0) ctx.fillText(lines[0], 1090, 260);
     if (lines.length > 1) ctx.fillText(lines[1], 1090, 260 + 32);
     if (lines.length > 2) ctx.fillText(lines[2], 1090, 260 + 64);
+
+    const w = ctx.canvas.width;
+    const h = ctx.canvas.height;
+    const snapshot = createCanvas(w, h);
+    snapshot.getContext('2d').drawImage(ctx.canvas, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    ctx.save();
+    ctx.translate(w / 2, h / 2);
+    ctx.rotate(Math.PI);
+    ctx.translate(-w / 2, -h / 2);
+    ctx.drawImage(snapshot, 0, 0);
+    ctx.restore();
   }
 
   if (type === 'codigo-chaparral') {
