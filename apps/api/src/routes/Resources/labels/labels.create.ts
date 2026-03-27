@@ -1,7 +1,7 @@
 import { CanvasRenderingContext2D, createCanvas } from 'canvas';
 import JsBarcode from 'jsbarcode';
 import { downloadLabelSchema } from './labels.schema';
-import { format } from 'date-fns';
+import { format, getDayOfYear } from 'date-fns';
 import { z } from 'zod/v4';
 
 export function formatYamahaDate(date: string): string {
@@ -18,6 +18,32 @@ export function formatCodigoYamahaDate(date: string): string {
 
 export function formatDate(date: string): string {
   return format(new Date(date), 'MM/dd/yyyy');
+}
+
+export function drawCode(
+  ctx: CanvasRenderingContext2D,
+  {
+    code,
+    width,
+    height,
+    x,
+    y,
+  }: {
+    code: string;
+    width: number;
+    height: number;
+    x: number;
+    y: number;
+  },
+) {
+  const barcodeCanvas = createCanvas(0, 0);
+  JsBarcode(barcodeCanvas, code, {
+    format: 'CODE39',
+    width: width,
+    height: height,
+    displayValue: false,
+  });
+  ctx.drawImage(barcodeCanvas, x, y);
 }
 
 export function createLabel(
@@ -315,24 +341,21 @@ export function createLabel(
   }
 
   if (type === 'codigo-yamaha') {
-    const barcode1Canvas = createCanvas(0, 0);
-    JsBarcode(barcode1Canvas, info.code.replace(/-/g, '').padEnd(12, '0'), {
-      format: 'CODE39',
+    drawCode(ctx, {
+      code: info.code.replace(/-/g, '').padEnd(12, '0'),
       width: 2,
       height: 100,
-      displayValue: false,
+      x: 45,
+      y: 255,
     });
 
-    const barcode2Canvas = createCanvas(0, 0);
-    JsBarcode(barcode2Canvas, '1', {
-      format: 'CODE39',
+    drawCode(ctx, {
+      code: '1',
       width: 2,
       height: 60,
-      displayValue: false,
+      x: 740,
+      y: 140,
     });
-
-    ctx.drawImage(barcode1Canvas, 45, 255);
-    ctx.drawImage(barcode2Canvas, 740, 140);
 
     const x = [520, 550, 550, 595, 200, 70];
     const y = [115, 263, 150, 198, 400, 400];
@@ -565,6 +588,79 @@ export function createLabel(
         ctx.fillText(lines[1], desc2X, y[2] + verticalOffset + 45);
       }
     }
+  }
+
+  if (type === 'polaris') {
+    ctx.font = '60px SwissBold';
+    ctx.fillText(info.code, 370, 290);
+    drawCode(ctx, {
+      code: 'P' + info.code.replace(/-/g, ''),
+      width: 3,
+      height: 100,
+      x: 280,
+      y: 310,
+    });
+
+    const POText = `P${info.po || '123456'}REL${info.rel.padStart(4, '0')}`;
+    ctx.fillText(POText, 280, 520);
+    drawCode(ctx, {
+      code: 'K' + POText,
+      width: 2.5,
+      height: 100,
+      x: 120,
+      y: 540,
+    });
+
+    const LicText = `${info.jobpo}${format(info.date, 'yy')}${getDayOfYear(info.date).toString().padStart(3, '0')}${info.boxNo.padStart(4, '0')}`;
+    ctx.fillText(LicText, 260, 740);
+    drawCode(ctx, {
+      code: '1J' + LicText,
+      width: 2.5,
+      height: 100,
+      x: 50,
+      y: 760,
+    });
+
+    ctx.fillText(info.jobpo, 1130, 740);
+    drawCode(ctx, {
+      code: '1T' + info.jobpo,
+      width: 2.5,
+      height: 100,
+      x: 1000,
+      y: 760,
+    });
+
+    ctx.fillText(String(info.amount || 0), 1200, 660);
+    drawCode(ctx, {
+      code: 'Q' + String(info.amount || 0),
+      width: 2.5,
+      height: 100,
+      x: 1120,
+      y: 480,
+    });
+
+    ctx.fillText(String(info.rev), 1090, 405);
+    ctx.fillText('MX', 1360, 405);
+
+    ctx.font = '26px Swiss';
+    const words = info.description.split(' ');
+    let line = '';
+    const lines = [];
+
+    for (const word of words) {
+      const testLine = line + (line ? ' ' : '') + word;
+      const metrics = ctx.measureText(testLine);
+      if (metrics.width > 350) {
+        lines.push(line);
+        line = word;
+      } else {
+        line = testLine;
+      }
+    }
+    if (line) lines.push(line);
+    if (lines.length > 0) ctx.fillText(lines[0], 1090, 260);
+    if (lines.length > 1) ctx.fillText(lines[1], 1090, 260 + 32);
+    if (lines.length > 2) ctx.fillText(lines[2], 1090, 260 + 64);
   }
 
   if (type === 'codigo-chaparral') {

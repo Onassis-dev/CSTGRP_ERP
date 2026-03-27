@@ -14,5 +14,8 @@ export const downloadLabelSchema = z.object({
     amount: z.number().nullish(),
     so: z.string().nullish(),
     po: z.string().nullish(),
+    rev: z.string().default('1'),
+    rel: z.string().default('1'),
+    boxNo: z.string().default('1'),
   }),
 });

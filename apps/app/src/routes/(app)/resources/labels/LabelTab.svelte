@@ -36,8 +36,9 @@
 		'yamaha-info': 5,
 		'yamaha-info-2': 5,
 		'codigo-chaparral': 3,
+		'codigo-kawasaki': 3,
 		'codigo-polaris': 3,
-		'codigo-kawasaki': 3
+		polaris: 1
 	};
 
 	type LabelButton = {
@@ -71,6 +72,7 @@
 				'inspector',
 				'bastones',
 				'codigo-polaris',
+				'polaris',
 				'warning',
 				'info',
 				'outer-armor',
@@ -91,7 +93,7 @@
 		} else if (part.slice(0, 2) === 'ST') {
 			usedLabels = ['outer-armor', 'cantidad'];
 		} else if (part.slice(0, 2) === '28') {
-			usedLabels = ['codigo-polaris', 'commercial'];
+			usedLabels = ['codigo-polaris', 'polaris', 'commercial'];
 		} else if (part[0] === 'W' || part[0] === '9') {
 			usedLabels = ['codigo-kawasaki', 'kawasaki', 'cantidad'];
 		}
