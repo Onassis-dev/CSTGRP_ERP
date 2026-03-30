@@ -99,7 +99,7 @@
 				/>
 				<TableCell>{device.ref}</TableCell>
 				<TableCell>{device.programation}</TableCell>
-				<TableCell>{device.part}</TableCell>
+				<TableCell>{device.clientId === 3 ? device.part : device.description}</TableCell>
 				<TableCell>{device[area]}</TableCell>
 				<TableCell>{device.amount}</TableCell>
 				<TableCell>{device.amount - device[area]}</TableCell>
