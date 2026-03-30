@@ -19,6 +19,8 @@ export class HistoryService {
       weeks.push(mondayDate);
     }
 
+    const areasToShow = sql([33, 34, 47, 48]);
+
     weeks = weeks.map(async (mondayDate) => {
       let history: any[] = await sql`
     SELECT 
@@ -59,20 +61,21 @@ export class HistoryService {
     JOIN positions p ON (s."positionId" = p.id)
     WHERE s."mondayDate" = ${mondayDate}
       AND p.supervisor = false
-      AND a.id IN (33,34)
+      AND a.id IN ${areasToShow}
     GROUP BY a.id, a.name;
-`;
+      `;
 
-      if (!history.length)
+      if (!history.length) {
         history = await sql`
-      SELECT 
+        SELECT 
         a.id,
         a.name as area,
         0 as "mondayMinutes",
         0 as "tuesdayMinutes",
         0 as "wednesdayMinutes",
         0 as "thursdayMinutes",
-        0 as "fridayMinutes" FROM areas a WHERE a.id IN (33,34)`;
+        0 as "fridayMinutes" FROM areas a WHERE a.id IN ${areasToShow}`;
+      }
 
       for (const area of history) {
         const [{ prod: mondayProd }] = await sql`
@@ -118,13 +121,14 @@ export class HistoryService {
 
     weeks = await Promise.all(weeks);
 
-    const result = [
-      { area: 'CSI CB', data: [] },
-      { area: 'CSI CM', data: [] },
-    ];
+    const result = [];
 
     for (const week of weeks) {
       for (const area of week.history) {
+        if (!result.find((r) => r.area === area.area)) {
+          result.push({ area: area.area, data: [] });
+        }
+
         result
           .find((r) => r.area === area.area)
           .data.push(...area.data.reverse());

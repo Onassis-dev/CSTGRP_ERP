@@ -140,7 +140,6 @@ export class AreasService {
 
     for (const area of areas) {
       const process = area.name.toLowerCase();
-      console.log(mondayDate);
 
       const [{ prod: mondayProd }] = await sql`
         select SUM(ordermovements.${sql(process)} * (${sql(process + 'Time')} / amount)) as prod from ordermovements join jobs on jobs.id = ordermovements."progressId" where "date" = ${mondayDate} and ordermovements.${sql(process)} is not null`;
@@ -152,12 +151,6 @@ export class AreasService {
         select SUM(ordermovements.${sql(process)} * (${sql(process + 'Time')} / amount)) as prod from ordermovements join jobs on jobs.id = ordermovements."progressId" where "date" = ${addDays(mondayDate, 3)} and ordermovements.${sql(process)} is not null`;
       const [{ prod: fridayProd }] = await sql`
         select SUM(ordermovements.${sql(process)} * (${sql(process + 'Time')} / amount)) as prod from ordermovements join jobs on jobs.id = ordermovements."progressId" where "date" = ${addDays(mondayDate, 4)} and ordermovements.${sql(process)} is not null`;
-
-      console.log('mondayProd: ', mondayProd);
-      console.log('tuesdayProd: ', tuesdayProd);
-      console.log('wednesdayProd: ', wednesdayProd);
-      console.log('thursdayProd: ', thursdayProd);
-      console.log('fridayProd: ', fridayProd);
 
       area.mondayAvg = mondayProd / area.mondayMinutes;
       area.tuesdayAvg = tuesdayProd / area.tuesdayMinutes;
