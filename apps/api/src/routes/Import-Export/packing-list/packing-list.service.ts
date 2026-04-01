@@ -164,7 +164,10 @@ export class PackingListService {
         (acc, order) => acc + Math.ceil(order.amount / order.perBox),
         0,
       ),
-      pallets: data.orders?.reduce((acc, order) => acc + order.pallets, 0),
+      pallets: data.orders?.reduce(
+        (acc, order) => acc + Number(order.pallets || 0),
+        0,
+      ),
       type: 'FINISHED GOODS',
     };
 
