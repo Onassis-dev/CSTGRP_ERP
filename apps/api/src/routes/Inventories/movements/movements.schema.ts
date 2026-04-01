@@ -59,3 +59,8 @@ export const updateMovementDateSchema = z.object({
   id: idSchema,
   date: dateSchema,
 });
+
+export const updatePurchaseAmountSchema = z.object({
+  id: idSchema,
+  amount: absoluteNumberSchema,
+});

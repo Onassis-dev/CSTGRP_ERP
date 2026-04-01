@@ -233,6 +233,9 @@
 				<Label name="Perm. Compras">
 					<Select items={permissions} bind:value={formData.permissions.purchases} />
 				</Label>
+				<Label name="Perm. Modificar">
+					<Select items={permissions} bind:value={formData.permissions.modify_purchases} />
+				</Label>
 			</div>
 
 			<div class={cardClass}>

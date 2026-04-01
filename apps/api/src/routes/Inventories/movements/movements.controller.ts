@@ -22,6 +22,7 @@ import {
   suppliesSchema,
   updateAmountSchema,
   updateMovementDateSchema,
+  updatePurchaseAmountSchema,
 } from './movements.schema';
 import { idObjectSchema } from 'src/utils/schemas';
 
@@ -84,6 +85,11 @@ export class MovementsController {
   @Put('date')
   updateMovementDate(@Body(new ZodPiPe(updateMovementDateSchema)) body) {
     return this.movementsService.updateMovementDate(body);
+  }
+
+  @Put('purchase-amount')
+  updatePurchaseAmount(@Body(new ZodPiPe(updatePurchaseAmountSchema)) body) {
+    return this.movementsService.updatePurchaseAmount(body);
   }
 
   @Delete('')

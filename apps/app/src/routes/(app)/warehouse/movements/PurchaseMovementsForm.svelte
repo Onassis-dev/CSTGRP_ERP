@@ -12,8 +12,6 @@
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
 	import { refetch } from '$lib/utils/query';
-	import DeletePopUp from '$lib/components/complex/DeletePopUp.svelte';
-	import { Trash } from 'lucide-svelte';
 
 	interface Props {
 		show: boolean;
@@ -23,26 +21,26 @@
 	let { show = $bindable(), selectedMovement }: Props = $props();
 
 	let formData: any = $state({});
-	let showDelete = $state(false);
 
 	$effect(() => {
 		formData = {
-			date: selectedMovement?.activeDate?.split('T')[0] || '',
+			amount: selectedMovement?.amount || '',
 			id: selectedMovement?.id
 		};
 	});
 
 	async function submit() {
-		await api.put(`/materialmovements/date`, formData);
+		await api.put(`/materialmovements/purchase-amount`, formData);
+		refetch(['material-movements']);
+		showSuccess(`Cantidad actualizada`);
 		show = false;
-		showSuccess(`Movimiento actualizado`);
 	}
 </script>
 
 <Dialog bind:open={show}>
 	<DialogContent class="sm:max-w-sm">
 		<DialogHeader>
-			<DialogTitle>Editar movimiento</DialogTitle>
+			<DialogTitle>Editar compra</DialogTitle>
 		</DialogHeader>
 
 		<DialogBody grid="1">
@@ -55,35 +53,10 @@
 			</Label>
 
 			<Label name="Cantidad">
-				<Input value={selectedMovement?.amount} disabled />
+				<Input bind:value={selectedMovement.amount} />
 			</Label>
-
-			<Label name="Fecha">
-				<Input type="date" bind:value={formData.date} />
-			</Label>
-
-			{#if selectedMovement?.type}
-				<Button
-					variant="outline"
-					onclick={() => {
-						show = false;
-						showDelete = true;
-					}}><Trash class="size-4" /> Eliminar</Button
-				>
-			{/if}
 
 			<Button onclick={submit} variant="default" class="mt-4 w-full">Guardar cambios</Button>
 		</DialogBody>
 	</DialogContent>
 </Dialog>
-
-<DeletePopUp
-	bind:show={showDelete}
-	text="Eliminar movimiento"
-	deleteFunc={async () => {
-		await api.delete(`/materialmovements`, { data: { id: selectedMovement?.id } });
-		refetch(['material-movements']);
-		showDelete = false;
-		showSuccess('Movimiento eliminado');
-	}}
-/>

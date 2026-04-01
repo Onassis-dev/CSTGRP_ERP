@@ -11,6 +11,7 @@ import {
   suppliesSchema,
   updateAmountSchema,
   updateMovementDateSchema,
+  updatePurchaseAmountSchema,
 } from './movements.schema';
 import { updateMaterialAmount } from 'src/utils/functions';
 import exceljs from 'exceljs';
@@ -25,7 +26,7 @@ export class MovementsService {
     const movements = await sql`SELECT
         materials.code, materials.description, materials.measurement, materials."clientId", materials."leftoverAmount", materials.amount as inventory,
         materialmovements.active, materialmovements.amount, materialmovements."realAmount", 
-        materialmovements.id, materialmovements.extra, materialmovements.type, materialmovements."jobId",
+        materialmovements.id, materialmovements.extra, materialmovements.type, materialmovements."jobId", materialmovements."purchaseId",
         materialmovements."activeDate",
         jobs.programation,
         COALESCE(
@@ -317,6 +318,26 @@ export class MovementsService {
 
       await this.req.record(
         `Actualizo la fecha de un movimiento de ${movement.code}`,
+        sql,
+      );
+    });
+  }
+
+  async updatePurchaseAmount(body: z.infer<typeof updatePurchaseAmountSchema>) {
+    const [user] =
+      await sql`select permissions from users where id = ${this.req.userId}`;
+    if (user.permissions.modify_purchases < 2) throw new HttpException('', 403);
+
+    await sql.begin(async (sql) => {
+      const [movement] = await sql`
+        update materialmovements set amount = ${body.amount}, "realAmount" = ${body.amount}
+        where id = ${body.id} and "purchaseId" is not null and active = false
+        returning (select code from materials where id = "materialId")`;
+      if (!movement)
+        throw new HttpException('Este movimiento ya fue surtido', 400);
+
+      await this.req.record(
+        `Actualizo la cantidad de un movimiento de compra de ${movement.code}`,
         sql,
       );
     });

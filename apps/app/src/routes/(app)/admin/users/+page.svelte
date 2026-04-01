@@ -83,7 +83,8 @@
 		<TableHead colspan={7}>Producción</TableHead>
 		<TableHead colspan={6}>Almacen</TableHead>
 		<TableHead colspan={3}>Import-Export</TableHead>
-		<TableHead colspan={2}>-</TableHead>
+		<TableHead colspan={2}>Compras</TableHead>
+		<TableHead colspan={1}>-</TableHead>
 	</TableHeader>
 	<TableHeader>
 		<OptionsHead />
@@ -118,8 +119,9 @@
 		<TableHead class="w-[12.5%]">Importaciones</TableHead>
 		<TableHead class="w-[12.5%]">Exportaciones</TableHead>
 		<TableHead class="w-[12.5%]">Opciones</TableHead>
-		<TableHead class="w-[12.5%]">Sistemas</TableHead>
 		<TableHead class="w-[12.5%]">Compras</TableHead>
+		<TableHead class="w-[12.5%]">Modificaciones</TableHead>
+		<TableHead class="w-[12.5%]">Sistemas</TableHead>
 		<TableHead class="w-[12.5%]">Mantenimiento</TableHead>
 		<TableHead class="w-[12.5%]">Progreso</TableHead>
 		<TableHead class="w-[12.5%]">Cliente</TableHead>
@@ -413,18 +415,28 @@
 				<TableCell class="p-1.5 text-center"
 					><Badge
 						class="flex h-full w-full items-center justify-center p-1"
-						color={getBadgeColor(user.permissions.it)}
+						color={getBadgeColor(user.permissions.purchases)}
 					>
-						{@const SvelteComponent_11 = badgeTexts[user.permissions.it]}
+						{@const SvelteComponent_11 = badgeTexts[user.permissions.purchases]}
 						<SvelteComponent_11 class="size-3.5" />
 					</Badge></TableCell
 				>
 				<TableCell class="p-1.5 text-center"
 					><Badge
 						class="flex h-full w-full items-center justify-center p-1"
-						color={getBadgeColor(user.permissions.purchases)}
+						color={getBadgeColor(user.permissions.modify_purchases)}
 					>
-						{@const SvelteComponent_11 = badgeTexts[user.permissions.purchases]}
+						{@const SvelteComponent_11 = badgeTexts[user.permissions.modify_purchases]}
+						<SvelteComponent_11 class="size-3.5" />
+					</Badge></TableCell
+				>
+
+				<TableCell class="p-1.5 text-center"
+					><Badge
+						class="flex h-full w-full items-center justify-center p-1"
+						color={getBadgeColor(user.permissions.it)}
+					>
+						{@const SvelteComponent_11 = badgeTexts[user.permissions.it]}
 						<SvelteComponent_11 class="size-3.5" />
 					</Badge></TableCell
 				>

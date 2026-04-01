@@ -21,10 +21,13 @@
 	import DeletePopUp from '$lib/components/complex/DeletePopUp.svelte';
 	import { userData } from '$lib/utils/store';
 	import MovementsForm from './MovementsForm.svelte';
+	import PurchaseMovementsForm from './PurchaseMovementsForm.svelte';
 
 	let show2 = $state(false);
 	let show3 = $state(false);
 	let show4 = $state(false);
+	let show5 = $state(false);
+
 	let selectedMovement: any = $state();
 	let movementI = $state(0);
 	let previousAmount = $state('');
@@ -159,6 +162,17 @@
 							}}><Pen class="size-3.5" /></Button
 						>
 					{/if}
+					{#if $userData?.permissions.modify_purchases >= 2 && movement.purchaseId}
+						<Button
+							size="icon"
+							variant="outline"
+							class="ml-1"
+							onclick={() => {
+								selectedMovement = movement;
+								show5 = true;
+							}}><Pen class="size-3.5" /></Button
+						>
+					{/if}
 				</TableCell>
 				<TableCell>{movement.programation || ''}</TableCell>
 				<TableCell>{movement.req || ''}</TableCell>
@@ -222,3 +236,4 @@
 />
 <MovementsMenu bind:show={show3} />
 <MovementsForm bind:show={show4} {selectedMovement} />
+<PurchaseMovementsForm bind:show={show5} {selectedMovement} />
