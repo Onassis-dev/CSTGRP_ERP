@@ -104,6 +104,15 @@
 							</TableCell>
 						</TableRow>
 					{/each}
+					<TableRow>
+						<TableCell class="" colspan={3}></TableCell>
+						<TableCell class="" colspan={3}
+							>Total: {data?.destinations.reduce(
+								(acc: number, row: any) => acc + row.pallets,
+								0
+							)}</TableCell
+						>
+					</TableRow>
 					{#if data?.destinations.length === 0}
 						<TableRow>
 							<TableCell class="border-l text-center text-muted-foreground" colspan={100}
