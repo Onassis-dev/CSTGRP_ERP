@@ -16,7 +16,7 @@ export class JobsService {
 
   async get(body: z.infer<typeof IEFilterSchema>) {
     const movements = await sql`
-      SELECT id, ref, programation, due
+      SELECT id, ref, programation, due, part, description, "clientId"
       FROM jobs
       WHERE TRUE 
       ${body.job ? sql`AND ref ILIKE ${'%' + body.job + '%'} ` : sql``}

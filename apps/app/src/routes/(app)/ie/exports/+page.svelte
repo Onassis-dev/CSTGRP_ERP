@@ -21,7 +21,8 @@
 	let showForm = $state(false);
 
 	let filters = $state({
-		jobpo: ''
+		jobpo: '',
+		pl: ''
 	});
 
 	let selectedRow: any = $state({});
@@ -59,11 +60,19 @@
 </script>
 
 <MenuBar>
-	<form
-		class="flex flex-col gap-2 lg:flex-row"
-		onsubmit={preventDefault(() => refetch(['exports']))}
-	>
-		<Input menu bind:value={filters.jobpo} placeholder="Job PO" />
+	<form class="flex flex-col gap-2 lg:flex-row">
+		<Input
+			menu
+			bind:value={filters.jobpo}
+			placeholder="Job PO"
+			onkeydown={(e) => (e.key === 'Enter' ? refetch(['exports']) : null)}
+		/>
+		<Input
+			menu
+			bind:value={filters.pl}
+			placeholder="Packing List"
+			onkeydown={(e) => (e.key === 'Enter' ? refetch(['exports']) : null)}
+		/>
 	</form>
 	{#snippet right()}
 		<Button
@@ -79,7 +88,8 @@
 <CusTable>
 	<TableHeader>
 		<OptionsHead />
-		<TableHead class="w-[100%]">SO</TableHead>
+		<TableHead>SO</TableHead>
+		<TableHead class="w-[100%]">Packing List</TableHead>
 	</TableHeader>
 	<TableBody>
 		{#each movements as movement, i}
@@ -98,6 +108,7 @@
 						: undefined}
 				/>
 				<TableCell>{movement.so}</TableCell>
+				<TableCell>{movement.packSlip}</TableCell>
 			</TableRow>
 		{/each}
 	</TableBody>

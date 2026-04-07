@@ -111,7 +111,7 @@
 				</TableCell>
 				<TableCell>{email.programation}</TableCell>
 				<TableCell>{email.ref}</TableCell>
-				<TableCell>{email.part}</TableCell>
+				<TableCell>{email.clientId === 3 ? email.part : email.description}</TableCell>
 				<TableCell>{formatDate(email.due)}</TableCell>
 				<TableCell>{email.amount}</TableCell>
 				<TableCell

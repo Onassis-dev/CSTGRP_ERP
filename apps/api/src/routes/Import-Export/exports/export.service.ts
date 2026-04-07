@@ -10,11 +10,13 @@ export class ExportService {
   constructor(private readonly context: ContextProvider) {}
 
   async findAll(filter: z.infer<typeof getExportSchema>) {
-    return sql`select destinys.so, destinys.id, (destinys.exported IS NOT NULL) as exported
+    return sql`select destinys.so, destinys.id, destinys."packSlip", (destinys.exported IS NOT NULL) as exported
     from destinys 
     left join order_destiny on order_destiny."destinyId" = destinys.id
     left join jobs on jobs.id = order_destiny."orderId"
-    ${filter.jobpo ? sql`where jobs.ref = ${filter.jobpo}` : sql``}
+    WHERE
+    ${filter.jobpo ? sql`jobs.ref = ${filter.jobpo}` : sql`TRUE`}
+    ${filter.pl ? sql`AND destinys."packSlip" = ${filter.pl}` : sql``}
     group by destinys.id`;
   }
 

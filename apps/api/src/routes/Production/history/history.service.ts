@@ -16,7 +16,7 @@ export class HistoryService {
 
   async getOrders(body: z.infer<typeof getHistorySchema>) {
     const orders = await sql`
-    select id, programation, ref, part, "due", "clientId",
+    select id, programation, ref, part, description, "due", "clientId",
     amount, completed,
     CASE WHEN "serigrafiaTime" > 0 THEN "serigrafia" ELSE NULL END as "serigrafia",
     CASE WHEN "corteTime" > 0 THEN "corte" ELSE NULL END as "corte",
