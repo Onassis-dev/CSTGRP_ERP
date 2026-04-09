@@ -7,57 +7,63 @@
 		DialogFooter,
 		DialogHeader
 	} from '$lib/components/ui/dialog';
-	import Input from '$lib/components/ui/input/input.svelte';
-	import { refetch } from '$lib/utils/query';
-
+	import { Input } from '$lib/components/ui/input';
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
+	import { refetch } from '$lib/utils/query';
 
 	interface Props {
 		show?: boolean;
-		selectedOperation: any;
-		reload: () => void;
+		selectedOrder: any;
 	}
 
-	let { show = $bindable(false), selectedOperation = $bindable({}), reload }: Props = $props();
-	let data: any = $state();
-	let formData: any = $state({});
+	let { show = $bindable(false), selectedOrder = $bindable({}) }: Props = $props();
+	let formData: any = $state();
 	let disabled: boolean = $state(false);
 
-	$effect(() => {
-		data = { ...selectedOperation };
-		formData = { date: new Date().toISOString().split('T')[0] };
-	});
+	function setFormData() {
+		formData = { ...selectedOrder };
+	}
 
 	async function handleSubmit() {
 		disabled = true;
 		try {
-			await api.post('/progress/history', {
-				operationId: data.id,
-				added: formData.added,
+			await api.post('/contractors/progress', {
+				orderId: selectedOrder.id,
+				amount: formData.newProgress,
 				date: formData.date
 			});
 		} finally {
 			disabled = false;
 		}
-		refetch(['progress-orders']);
-		reload();
+		showSuccess('Progreso guardado');
+		refetch(['contractors-orders']);
 		show = false;
-		disabled = false;
-		showSuccess('Progreso capturado');
+		selectedOrder = null;
 	}
+
+	$effect(() => {
+		show;
+		setFormData();
+	});
 </script>
 
 <Dialog bind:open={show}>
 	<DialogContent>
-		<DialogHeader title={data?.code} />
+		<DialogHeader title="Agregar progreso" />
 
 		<DialogBody grid="2">
+			<Label name="Job/PO">
+				<Input bind:value={formData.ref} disabled />
+			</Label>
+			<Label name="Parte">
+				<Input bind:value={formData.part} disabled />
+			</Label>
 			<Label name="Fecha" class="col-span-full">
 				<Input type="date" bind:value={formData.date} />
 			</Label>
 			<Label name="Cantidad" class="col-span-full">
-				<Input bind:value={formData.added} />
+				<Input bind:value={formData.newProgress} />
 			</Label>
 		</DialogBody>
 		<DialogFooter submitFunc={handleSubmit} hideFunc={() => (show = false)} {disabled} />

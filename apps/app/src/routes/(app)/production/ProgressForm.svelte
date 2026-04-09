@@ -20,18 +20,24 @@
 
 	let { show = $bindable(false), selectedOrder = $bindable({}), area }: Props = $props();
 	let formData: any = $state();
+	let disabled: boolean = $state(false);
 
 	function setFormData() {
 		formData = { ...selectedOrder };
 	}
 
 	async function handleSubmit() {
-		await api.post('/progress', {
-			orderId: selectedOrder.id,
-			area,
-			amount: formData.newProgress,
-			date: formData.date
-		});
+		disabled = true;
+		try {
+			await api.post('/progress', {
+				orderId: selectedOrder.id,
+				area,
+				amount: formData.newProgress,
+				date: formData.date
+			});
+		} finally {
+			disabled = false;
+		}
 		showSuccess('Progreso guardado');
 		refetch(['orders', { area }]);
 		show = false;
@@ -62,6 +68,6 @@
 				<Input bind:value={formData.newProgress} />
 			</Label>
 		</DialogBody>
-		<DialogFooter submitFunc={handleSubmit} hideFunc={() => (show = false)} />
+		<DialogFooter submitFunc={handleSubmit} hideFunc={() => (show = false)} {disabled} />
 	</DialogContent>
 </Dialog>
