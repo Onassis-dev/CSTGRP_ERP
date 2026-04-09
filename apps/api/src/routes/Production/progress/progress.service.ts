@@ -28,6 +28,7 @@ export class ProgressService {
        ${body.completed ? sql`AND (jobs.completed = true OR ${sql('jobs.' + body.area)} = jobs.amount)` : sql`AND jobs.completed = false AND ${sql('jobs.' + body.area)} < jobs.amount`}
        ${body.job ? sql`AND jobs.ref LIKE ${'%' + body.job + '%'}` : sql``}
        ${body.programation ? sql`AND jobs.programation LIKE ${'%' + body.programation + '%'}` : sql``}
+       ${body.filterArea ? sql`AND jobs."areaId" = ${body.filterArea}` : sql``}
        AND jobs."areaId" IN (SELECT unnest(prod_areas) FROM users WHERE id = ${this.req.userId})
        order by jobs.ref desc limit 150`;
 

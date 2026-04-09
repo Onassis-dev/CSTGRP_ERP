@@ -15,6 +15,7 @@
 	import ProgressForm from './ProgressForm.svelte';
 	import MovementCard from './MovementCard.svelte';
 	import { Badge, type BadgeVariant } from '$lib/components/ui/badge';
+	import { getAreas, getOptions } from '$lib/utils/queries';
 
 	interface Props {
 		area: string;
@@ -25,6 +26,11 @@
 		{ name: 'Pendiente', value: 'false', color: 'yellow' }
 	];
 
+	const areasQuery = createQuery({
+		queryKey: ['areas'],
+		queryFn: getAreas
+	});
+	const areas = $derived(getOptions($areasQuery.data));
 	const dateStates: Record<number, BadgeVariant> = {
 		0: 'outline',
 		1: 'yellow',
@@ -36,7 +42,8 @@
 		area,
 		job: '',
 		programation: '',
-		completed: 'false'
+		completed: 'false',
+		filterArea: ''
 	});
 
 	let show: boolean = $state(false);
@@ -64,6 +71,13 @@
 		<Input menu bind:value={filters.programation} placeholder="Programación" class="max-w-32" />
 		<Input menu bind:value={filters.job} placeholder="Job" class="max-w-32" />
 		<Select menu items={completed} bind:value={filters.completed} class="min-w-36 max-w-36" />
+		<Select
+			menu
+			items={areas}
+			bind:value={filters.filterArea}
+			allowDeselect
+			class="min-w-36 max-w-52"
+		/>
 	</div>
 </MenuBar>
 
@@ -79,7 +93,7 @@
 		<TableHead class="w-1/6">Due date</TableHead>
 	</TableHeader>
 	<TableBody>
-		{#each $orders?.data as device, i}
+		{#each $orders?.data as device}
 			<TableRow>
 				<OptionsCell
 					viewFunc={() => {
