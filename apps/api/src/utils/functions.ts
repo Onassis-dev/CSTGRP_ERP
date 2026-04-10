@@ -102,23 +102,24 @@ export async function otorgateVacations() {
   const today = getTijuanaDate();
 
   // What after 35 years????
-  await sql`
+  try {
+    await sql`
     WITH
     employees_to_otorgate AS (
       SELECT 
-        employees.id,
-        employees."admissionDate",
-        COALESCE((select max(year) from "vacationsGranted" where "employeeId" = employees.id), 0) as last_granted,
-        (SELECT EXTRACT(YEAR FROM AGE(${today}, employees."admissionDate"))::int)as seniority
+      employees.id,
+      employees."admissionDate",
+      COALESCE((select max(year) from "vacationsGranted" where "employeeId" = employees.id), 0) as last_granted,
+      (SELECT EXTRACT(YEAR FROM AGE(${today}, employees."admissionDate"))::int)as seniority
       FROM employees
       WHERE active = true
     )
     INSERT INTO "vacationsGranted" ("employeeId", year, date, days)
     SELECT 
-      id, 
-      last_granted + 1,
-      "admissionDate" + (interval '1 year' * (last_granted + 1)),
-      CASE
+    id, 
+    last_granted + 1,
+    "admissionDate" + (interval '1 year' * (last_granted + 1)),
+    CASE
         WHEN last_granted + 1 = 1 THEN 12
         WHEN last_granted + 1 = 2 THEN 14
         WHEN last_granted + 1 = 3 THEN 16
@@ -131,13 +132,17 @@ export async function otorgateVacations() {
         WHEN last_granted + 1 >= 26 AND last_granted + 1 <= 30 THEN 30
         WHEN last_granted + 1 >= 31 AND last_granted + 1 <= 35 THEN 32
         ELSE 0 
-      END
-    FROM employees_to_otorgate
-    WHERE seniority > last_granted
-    ON CONFLICT ("employeeId", year) DO NOTHING
-  `;
+        END
+        FROM employees_to_otorgate
+        WHERE seniority > last_granted
+        ON CONFLICT ("employeeId", year) DO NOTHING
+        `;
 
-  await calculateVacationDays();
+    await calculateVacationDays();
+    console.log('VACATIONS_OTORGATED');
+  } catch (error) {
+    console.error('VACATIONS_ERROR:', error);
+  }
 }
 
 export async function calculateVacationDays(id?: number, dbInstance?: any) {
