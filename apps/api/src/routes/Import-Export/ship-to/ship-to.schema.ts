@@ -10,8 +10,6 @@ export const createShipToSchema = z.object({
   direction: z.string(),
 });
 
-export const editShipToSchema =
-  createShipToSchema.extend({
-    id: idSchema,
-  });
-
+export const editShipToSchema = createShipToSchema.extend({
+  id: idSchema,
+});

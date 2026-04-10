@@ -15,4 +15,3 @@ import { ShipToService } from './ship-to.service';
   ],
 })
 export class ShipToModule {}
-

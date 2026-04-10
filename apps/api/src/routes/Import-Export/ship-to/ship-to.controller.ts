@@ -22,9 +22,7 @@ import { idObjectSchema } from 'src/utils/schemas';
 @Controller('ie/ship-to')
 @UseGuards(new AuthGuard('ie_options'))
 export class ShipToController {
-  constructor(
-    private readonly shipToService: ShipToService,
-  ) {}
+  constructor(private readonly shipToService: ShipToService) {}
 
   @Get('')
   get(@Query(new ZodPiPe(searchShipToSchema)) params) {
@@ -46,4 +44,3 @@ export class ShipToController {
     return this.shipToService.delete(body);
   }
 }
-

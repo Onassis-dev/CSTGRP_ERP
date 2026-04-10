@@ -27,10 +27,7 @@ export class ShipToService {
   async update(body: z.infer<typeof editShipToSchema>) {
     await sql.begin(async (sql) => {
       await sql`update "shipTo" set ${sql(body)} where id = ${body.id}`;
-      await this.req.record(
-        `Actualizo el ship to ${body.name}`,
-        sql,
-      );
+      await this.req.record(`Actualizo el ship to ${body.name}`, sql);
     });
     return;
   }
@@ -38,10 +35,7 @@ export class ShipToService {
   async post(body: z.infer<typeof createShipToSchema>) {
     await sql.begin(async (sql) => {
       await sql`insert into "shipTo" ${sql(body)}`;
-      await this.req.record(
-        `Registro el ship to ${body.name}`,
-        sql,
-      );
+      await this.req.record(`Registro el ship to ${body.name}`, sql);
     });
     return;
   }
@@ -50,12 +44,8 @@ export class ShipToService {
     await sql.begin(async (sql) => {
       const [deleted] =
         await sql`delete from "shipTo" where id = ${body.id} returning name`;
-      await this.req.record(
-        `Elimino el ship to ${deleted.name}`,
-        sql,
-      );
+      await this.req.record(`Elimino el ship to ${deleted.name}`, sql);
     });
     return;
   }
 }
-
