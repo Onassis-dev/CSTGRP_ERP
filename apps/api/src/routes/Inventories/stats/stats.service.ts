@@ -21,6 +21,7 @@ export class StatsService {
         materials.measurement, 
         materials.amount,
         materials."leftoverAmount",
+        materials."clientId",
         (
           SELECT string_agg("ref", ', ') 
           FROM materialmovements 
@@ -32,10 +33,12 @@ export class StatsService {
         ABS(materials.total + ms.total_amount) as missing
     FROM materials
     JOIN MaterialSum ms ON ms.id = materials.id
-    WHERE materials.total  + ms.total_amount < 0`;
+    WHERE materials.total  + ms.total_amount < 0
+    ORDER BY materials."clientId", materials.code`;
 
     const secondMovements = await sql`SELECT 
     code, ref, measurement, materials.description,
+    materials."clientId",
     (materials.amount + materials."leftoverAmount") AS missing
     FROM materialmovements JOIN materials ON materials.id = materialmovements."materialId"
     JOIN jobs ON jobs.id = materialmovements."jobId"
@@ -49,6 +52,7 @@ export class StatsService {
                 AND materialmovements_inner.active = true
                 AND materialmovements_inner."amount" < 0
             ORDER BY 
+                materials."clientId",
                 materialmovements_inner."activeDate" DESC, 
                 materialmovements_inner.id DESC
             LIMIT 1
@@ -61,6 +65,7 @@ export class StatsService {
     const movements = await sql`WITH MaterialSum AS (
     SELECT 
         materials.id,
+        materials."clientId",
         SUM(materialmovements.amount) as total_amount
     FROM materialmovements
     JOIN materials ON materials.id = materialmovements."materialId"
@@ -74,6 +79,7 @@ export class StatsService {
         materials.measurement, 
         materials.amount,
         materials."leftoverAmount",
+        materials."clientId",
         (
           SELECT string_agg("ref", ', ') 
           FROM materialmovements 
@@ -92,7 +98,7 @@ export class StatsService {
 
   async getMaterialWarnings() {
     const materials =
-      await sql`select code, amount, description, "minAmount" , measurement from materials where amount <= "minAmount" and "minAmount" > 0 order by code desc`;
+      await sql`select code, amount, description, "minAmount" , measurement, "clientId" from materials where amount <= "minAmount" and "minAmount" > 0 order by "clientId", code desc`;
     return materials;
   }
 

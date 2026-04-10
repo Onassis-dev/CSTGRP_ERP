@@ -1,7 +1,5 @@
 <script lang="ts">
 	import api from '$lib/utils/server';
-	import { getDayNumber } from '$lib/utils/functions';
-	import { Input } from '$lib/components/ui/input';
 	import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
 	import {
 		Table,
@@ -20,6 +18,7 @@
 	import { format } from 'date-fns';
 	import { es } from 'date-fns/locale';
 	import { FileDown } from 'lucide-svelte';
+	import { getClients } from '$lib/utils/queries';
 	const stockWarningsQuery = createQuery({
 		queryKey: ['stockwarnings'],
 		queryFn: async () => (await api.get('/inventorystats/stockwarnings')).data
@@ -33,6 +32,11 @@
 	const outOfStockWithoutLeftoverQuery = createQuery({
 		queryKey: ['outofstockwithoutleftover'],
 		queryFn: async () => (await api.get('/inventorystats/outofstockwithoutleftover')).data
+	});
+
+	const clients = createQuery({
+		queryKey: ['clients'],
+		queryFn: getClients
 	});
 </script>
 
@@ -58,6 +62,7 @@
 		<CardContent class="overflow-y-auto px-0 pb-0 " card>
 			<Table class="w-full">
 				<TableHeader class="sticky top-0 border-t">
+					<TableHead>Cliente</TableHead>
 					<TableHead>Codigo</TableHead>
 					<TableHead>Descripcion</TableHead>
 					<TableHead class="w-min">Job</TableHead>
@@ -70,6 +75,11 @@
 				<TableBody>
 					{#each $outOfStockQuery?.data as row}
 						<TableRow>
+							<TableCell
+								><Badge color={$clients?.data?.[row.clientId]?.color}
+									>{$clients?.data?.[row.clientId]?.name}
+								</Badge>
+							</TableCell>
 							<TableCell>{row.code || ''}</TableCell>
 							<TableCell class="whitespace-hidden max-w-64 overflow-hidden text-ellipsis"
 								>{row.description || ''}</TableCell
@@ -93,6 +103,7 @@
 		<CardContent class="overflow-auto px-0 pb-0" card>
 			<Table>
 				<TableHeader class="sticky top-0 border-t">
+					<TableHead>Cliente</TableHead>
 					<TableHead>Codigo</TableHead>
 					<TableHead>Descripcion</TableHead>
 					<TableHead>Cantidad</TableHead>
@@ -101,8 +112,13 @@
 				</TableHeader>
 				<TableBody>
 					{#each $stockWarningsQuery?.data as row}
-						<TableRow>
-							<TableCell class="border-l">{row.code}</TableCell>
+						<TableRow class="border-l">
+							<TableCell
+								><Badge color={$clients?.data?.[row.clientId]?.color}
+									>{$clients?.data?.[row.clientId]?.name}
+								</Badge>
+							</TableCell>
+							<TableCell>{row.code}</TableCell>
 							<TableCell class="whitespace-hidden max-w-64 overflow-hidden text-ellipsis"
 								>{row.description}</TableCell
 							>
@@ -125,6 +141,7 @@
 		<CardContent class="overflow-y-auto px-0 pb-0 " card>
 			<Table class="w-full">
 				<TableHeader class="sticky top-0 border-t">
+					<TableHead>Cliente</TableHead>
 					<TableHead>Codigo</TableHead>
 					<TableHead>Descripcion</TableHead>
 					<TableHead class="w-min">Job</TableHead>
@@ -137,6 +154,11 @@
 				<TableBody>
 					{#each $outOfStockWithoutLeftoverQuery?.data as row}
 						<TableRow>
+							<TableCell
+								><Badge color={$clients?.data?.[row.clientId]?.color}
+									>{$clients?.data?.[row.clientId]?.name}
+								</Badge>
+							</TableCell>
 							<TableCell>{row.code || ''}</TableCell>
 							<TableCell class="whitespace-hidden max-w-64 overflow-hidden text-ellipsis"
 								>{row.description || ''}</TableCell
