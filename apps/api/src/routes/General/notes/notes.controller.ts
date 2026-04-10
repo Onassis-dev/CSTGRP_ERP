@@ -1,12 +1,10 @@
 import { Controller, Get, Body, UseGuards, Put } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import { editNoteSchema } from './notes.schema';
 import { NotesService } from './notes.service';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { z } from 'zod/v4';
 
-@ApiTags('Notes')
 @Controller('notes')
 @UseGuards(new AuthGuard())
 export class NotesController {

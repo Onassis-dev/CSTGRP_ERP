@@ -1,0 +1,30 @@
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import { ProgressService } from './progress.service';
+import {
+  captureProgressSchema,
+  getHistorySchema,
+  getProgressSchema,
+} from './progress.schema';
+import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
+import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
+
+@Controller('contractors/progress')
+@UseGuards(new AuthGuard())
+export class ProgressController {
+  constructor(private readonly progressService: ProgressService) {}
+
+  @Get('')
+  getOrders(@Query(new ZodPiPe(getProgressSchema)) query) {
+    return this.progressService.getOrders(query);
+  }
+
+  @Get('records')
+  getOrderHistory(@Query(new ZodPiPe(getHistorySchema)) query) {
+    return this.progressService.getOrderHistory(query);
+  }
+
+  @Post('')
+  captureDailyProgress(@Body(new ZodPiPe(captureProgressSchema)) body) {
+    return this.progressService.captureDailyProgress(body);
+  }
+}

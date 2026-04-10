@@ -1,9 +1,7 @@
 import { Controller, Get, Header, UseGuards } from '@nestjs/common';
 import { StatsService } from './stats.service';
-import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 
-@ApiTags('Inventory Stats')
 @Controller('inventorystats')
 @UseGuards(new AuthGuard('inventorystats'))
 export class StatsController {

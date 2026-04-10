@@ -7,13 +7,11 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { LabelsService } from './labels.service';
-import { ApiTags } from '@nestjs/swagger';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import { downloadLabelSchema } from './labels.schema';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { FileInterceptor, File } from '@nest-lab/fastify-multer';
 
-@ApiTags('Labels')
 @Controller('resources/labels')
 @UseGuards(new AuthGuard('labels'))
 export class LabelsController {

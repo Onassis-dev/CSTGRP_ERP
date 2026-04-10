@@ -10,7 +10,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { DestinationDirectionsService } from './destination-directions.service';
-import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import {
@@ -20,7 +19,6 @@ import {
 } from './destination-directions.schema';
 import { idObjectSchema } from 'src/utils/schemas';
 
-@ApiTags('DestinationDirections')
 @Controller('ie/destination-directions')
 @UseGuards(new AuthGuard('ie_options'))
 export class DestinationDirectionsController {

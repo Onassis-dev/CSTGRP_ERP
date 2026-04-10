@@ -8,12 +8,10 @@ import {
   Delete,
 } from '@nestjs/common';
 import { EmailsService } from './emails.service';
-import { ApiTags } from '@nestjs/swagger';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import { deleteSchema, editSchema, createSchema } from './emails.schema';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 
-@ApiTags('Emails')
 @Controller('emails')
 @UseGuards(new AuthGuard('it'))
 export class EmailsController {

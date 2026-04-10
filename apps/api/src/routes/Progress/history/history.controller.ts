@@ -8,14 +8,12 @@ import {
   UseGuards,
   Query,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { HistoryService } from './history.service';
 import { captureProgressSchema, updateHistorySchema } from './history.schema';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import { idObjectSchema } from 'src/utils/schemas';
 
-@ApiTags('Progress History')
 @Controller('progress/history')
 @UseGuards(new AuthGuard('progress'))
 export class HistoryController {

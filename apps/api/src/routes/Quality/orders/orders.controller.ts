@@ -1,6 +1,5 @@
 import { Controller, Get, UseGuards, Query, Put, Body } from '@nestjs/common';
 import { OrdersService } from './orders.service';
-import { ApiTags } from '@nestjs/swagger';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import {
   getDestinationsSchema,
@@ -9,7 +8,6 @@ import {
 } from './orders.schema';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 
-@ApiTags('Quality Orders')
 @Controller('quality/orders')
 @UseGuards(new AuthGuard('quality'))
 export class OrdersController {

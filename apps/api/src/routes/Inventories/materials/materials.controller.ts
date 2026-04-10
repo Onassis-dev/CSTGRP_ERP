@@ -10,13 +10,11 @@ import {
   UploadedFile,
 } from '@nestjs/common';
 import { MaterialsService } from './materials.service';
-import { ApiTags } from '@nestjs/swagger';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import { deleteSchema, editSchema, createSchema } from './materials.schema';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { FileInterceptor, File } from '@nest-lab/fastify-multer';
 
-@ApiTags('Materials')
 @Controller('materials')
 @UseGuards(new AuthGuard('inventory'))
 export class MaterialsController {

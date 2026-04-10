@@ -1,12 +1,10 @@
 import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { MovementsService } from './movements.service';
-import { ApiTags } from '@nestjs/swagger';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import { IEFilterSchema } from './movements.schema';
 import { idObjectSchema } from 'src/utils/schemas';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 
-@ApiTags('Clients')
 @Controller('clients')
 @UseGuards(new AuthGuard())
 export class MovementsController {

@@ -26,7 +26,8 @@
 		Truck,
 		BadgeCheck,
 		Ruler,
-		Wrench
+		Wrench,
+		HardHat
 	} from 'lucide-svelte';
 	import { goto } from '$app/navigation';
 	import { cn } from '$lib/utils';
@@ -75,7 +76,7 @@
 				<Accordion.Trigger
 					class="mb-[1px]  h-8 rounded-md p-2 text-sm hover:bg-muted hover:no-underline"
 				>
-					<LineChartIcon class="size-3.5 text-[#5c5e63]" />
+					<LineChartIcon class="size-4 text-[#5c5e63]" />
 					Reportes
 				</Accordion.Trigger>
 				<Accordion.Content>
@@ -97,7 +98,7 @@
 				<Accordion.Trigger
 					class="mb-[1px]  h-8 rounded-md p-2 text-sm hover:bg-muted hover:no-underline"
 				>
-					<Factory class="size-3.5 text-[#5c5e63]" />
+					<Factory class="size-4 text-[#5c5e63]" />
 					Producción
 				</Accordion.Trigger>
 				<Accordion.Content>
@@ -128,7 +129,7 @@
 				<Accordion.Trigger
 					class="mb-[1px]  h-8 rounded-md p-2 text-sm hover:bg-muted hover:no-underline"
 				>
-					<Ruler class="size-3.5 text-[#5c5e63]" />
+					<Ruler class="size-4 text-[#5c5e63]" />
 					Progreso
 				</Accordion.Trigger>
 				<Accordion.Content>
@@ -143,7 +144,7 @@
 				<Accordion.Trigger
 					class="mb-[1px]  h-8 rounded-md p-2 text-sm hover:bg-muted hover:no-underline"
 				>
-					<Package class="size-3.5 text-[#5c5e63]" />
+					<Package class="size-4 text-[#5c5e63]" />
 					Almacen
 				</Accordion.Trigger>
 				<Accordion.Content>
@@ -172,7 +173,7 @@
 				<Accordion.Trigger
 					class="mb-[1px]  h-8 rounded-md p-2 text-sm hover:bg-muted hover:no-underline"
 				>
-					<BadgeCheck class="size-3.5 text-[#5c5e63]" />
+					<BadgeCheck class="size-4 text-[#5c5e63]" />
 					Calidad
 				</Accordion.Trigger>
 				<Accordion.Content>
@@ -187,7 +188,7 @@
 				<Accordion.Trigger
 					class="mb-[1px]  h-8 rounded-md p-2 text-sm hover:bg-muted hover:no-underline"
 				>
-					<Truck class="size-3.5 text-[#5c5e63]" />
+					<Truck class="size-4 text-[#5c5e63]" />
 					Imp-Exp
 				</Accordion.Trigger>
 				<Accordion.Content>
@@ -221,7 +222,7 @@
 				<Accordion.Trigger
 					class="mb-[1px]  h-8 rounded-md p-2 text-sm hover:bg-muted hover:no-underline"
 				>
-					<ShoppingCart class="size-3.5 text-[#5c5e63]" />
+					<ShoppingCart class="size-4 text-[#5c5e63]" />
 					Compras
 				</Accordion.Trigger>
 				<Accordion.Content>
@@ -237,7 +238,7 @@
 				<Accordion.Trigger
 					class="mb-[1px]  h-8 rounded-md p-2 text-sm hover:bg-muted hover:no-underline"
 				>
-					<Wrench class="size-3.5 text-[#5c5e63]" />
+					<Wrench class="size-4 text-[#5c5e63]" />
 					Mantenimiento
 				</Accordion.Trigger>
 				<Accordion.Content>
@@ -251,7 +252,7 @@
 				<Accordion.Trigger
 					class="mb-[1px] h-8 rounded-md p-2 text-sm hover:bg-muted hover:no-underline"
 				>
-					<Users class="size-3.5 text-[#5c5e63]" />
+					<Users class="size-4 text-[#5c5e63]" />
 					RRHH
 				</Accordion.Trigger>
 				<Accordion.Content>
@@ -275,7 +276,7 @@
 				<Accordion.Trigger
 					class="mb-[1px] h-8 rounded-md p-2 text-sm hover:bg-muted hover:no-underline"
 				>
-					<Monitor class="size-3.5 text-[#5c5e63]" />
+					<Monitor class="size-4 text-[#5c5e63]" />
 					Sistemas
 				</Accordion.Trigger>
 
@@ -287,12 +288,27 @@
 				</Accordion.Content>
 			</Accordion.Item>
 		{/if}
+		{#if true}
+			<Accordion.Item value="contractors" class="border-none">
+				<Accordion.Trigger
+					class="mb-[1px] h-8 rounded-md p-2 text-sm hover:bg-muted hover:no-underline"
+				>
+					<HardHat class="size-4 text-[#5c5e63]" />
+					Contratistas
+				</Accordion.Trigger>
+
+				<Accordion.Content>
+					<Accordion.Option href="/contractors/orders" />
+					<Accordion.Option href="/contractors/deliveries" />
+				</Accordion.Content>
+			</Accordion.Item>
+		{/if}
 		{#if hasAccess('structure')}
 			<Accordion.Item value="structure" class="border-none">
 				<Accordion.Trigger
 					class="mb-[1px] h-8 rounded-md p-2 text-sm hover:bg-muted hover:no-underline"
 				>
-					<GitMerge class="size-3.5 text-[#5c5e63]" />
+					<GitMerge class="size-4 text-[#5c5e63]" />
 					Estructura
 				</Accordion.Trigger>
 
@@ -300,6 +316,7 @@
 					<Accordion.Option href="/structure/areas" />
 					<Accordion.Option href="/structure/positions" />
 					<Accordion.Option href="/structure/clients" />
+					<Accordion.Option href="/structure/contractors" />
 				</Accordion.Content>
 			</Accordion.Item>
 		{/if}
@@ -308,7 +325,7 @@
 				<Accordion.Trigger
 					class="mb-[1px] h-8 rounded-md p-2 text-sm hover:bg-muted hover:no-underline"
 				>
-					<ShoppingBag class="size-3.5 text-[#5c5e63]" />
+					<ShoppingBag class="size-4 text-[#5c5e63]" />
 					Clients
 				</Accordion.Trigger>
 
@@ -323,7 +340,7 @@
 				<Accordion.Trigger
 					class="mb-[1px] h-8 rounded-md p-2 text-sm hover:bg-muted hover:no-underline"
 				>
-					<Shield class="size-3.5 text-[#5c5e63]" />
+					<Shield class="size-4 text-[#5c5e63]" />
 					Admin
 				</Accordion.Trigger>
 
@@ -338,7 +355,7 @@
 				<Accordion.Trigger
 					class="mb-[1px] h-8 rounded-md p-2 text-sm hover:bg-muted hover:no-underline"
 				>
-					<Folders class="size-3.5 text-[#5c5e63]" />
+					<Folders class="size-4 text-[#5c5e63]" />
 					Recursos
 				</Accordion.Trigger>
 
@@ -362,7 +379,7 @@
 
 	<div class="mt-auto space-y-1 px-2 pb-2">
 		<p class="flex h-8 items-center gap-2 rounded-md px-2 text-sm hover:bg-muted">
-			<UserCircle class="size-3.5 text-[#5c5e63]" />
+			<UserCircle class="size-4 text-[#5c5e63]" />
 			{$userData?.username}
 		</p>
 
@@ -370,7 +387,7 @@
 			<DropdownMenuTrigger
 				class="flex h-8 w-full items-center gap-2 rounded-md p-2 text-sm hover:bg-muted"
 			>
-				<LogOut class="size-3.5 text-[#5c5e63]" />
+				<LogOut class="size-4 text-[#5c5e63]" />
 				Salir
 			</DropdownMenuTrigger>
 			<DropdownMenuContent side="bottom" align="start">

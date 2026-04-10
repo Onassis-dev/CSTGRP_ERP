@@ -25,6 +25,12 @@ export class VariousService {
     return rows;
   }
 
+  async getContractors() {
+    const rows =
+      await sql`select id as value, name, active from contractors order by name asc`;
+    return rows;
+  }
+
   async getPositions() {
     const rows =
       await sql`select id as value, name, color, active from positions`;

@@ -20,6 +20,16 @@ export const getProducts = async () => {
 	return result;
 };
 
+export const getContractors = async () => {
+	const contractorsList = (await api.get('/hrvarious/contractors')).data;
+	const result: Record<string, any> = {};
+	contractorsList.forEach((contractor: any) => {
+		result[contractor.value] = contractor;
+	});
+
+	return result;
+};
+
 export const getAreas = async () => {
 	const areasList = (await api.get('/hrvarious/areas')).data;
 	const result: Record<string, any> = {};

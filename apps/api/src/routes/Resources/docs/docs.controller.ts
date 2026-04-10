@@ -9,7 +9,6 @@ import {
   Query,
 } from '@nestjs/common';
 import { DocsService } from './docs.service';
-import { ApiTags } from '@nestjs/swagger';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import {
   deleteSchema,
@@ -19,7 +18,6 @@ import {
 } from './docs.schema';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 
-@ApiTags('Docs')
 @Controller('resources/docs')
 @UseGuards(new AuthGuard('docs'))
 export class DocsController {

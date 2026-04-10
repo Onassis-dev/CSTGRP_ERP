@@ -1,6 +1,5 @@
 import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { ProgressService } from './progress.service';
-import { ApiTags } from '@nestjs/swagger';
 import {
   captureProgressSchema,
   getHistorySchema,
@@ -9,7 +8,6 @@ import {
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 
-@ApiTags('Progress')
 @Controller('progress')
 @UseGuards(new AuthGuard())
 export class ProgressController {

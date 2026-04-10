@@ -115,8 +115,8 @@
 				<TableCell>{device.programation}</TableCell>
 				<TableCell>{device.clientId === 3 ? device.part : device.description}</TableCell>
 				<TableCell>{device[area]}</TableCell>
-				<TableCell>{device.amount}</TableCell>
-				<TableCell>{device.amount - device[area]}</TableCell>
+				<TableCell>{device.prodAmount}</TableCell>
+				<TableCell>{device.prodAmount - device[area]}</TableCell>
 				<TableCell>
 					<Badge color={dateStates[device.state]}>{formatDate(device.due)}</Badge>
 				</TableCell>

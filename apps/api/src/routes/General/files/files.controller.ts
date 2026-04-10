@@ -1,11 +1,9 @@
 import { Controller, Get, UseGuards, Param } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import { fileSchema } from './files.schema';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { getFile } from 'src/utils/storage';
 
-@ApiTags('Files')
 @Controller('static')
 export class FilesController {
   @UseGuards(new AuthGuard('employees'))

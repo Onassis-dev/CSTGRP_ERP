@@ -7,7 +7,6 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import { PackingListService } from './packing-list.service';
@@ -17,7 +16,6 @@ import {
 } from './packing-list.schema';
 import { idObjectSchema } from 'src/utils/schemas';
 
-@ApiTags('PackingList')
 @Controller('ie/packing-list')
 @UseGuards(new AuthGuard('exports'))
 export class PackingListController {

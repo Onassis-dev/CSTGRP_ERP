@@ -1,6 +1,5 @@
 import { Controller, UseGuards, Get, Query, Header } from '@nestjs/common';
 import { ToolsService } from './tools.service';
-import { ApiTags } from '@nestjs/swagger';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import {
   generateUlineRoundSchema,
@@ -9,7 +8,6 @@ import {
 } from './tools.schema';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 
-@ApiTags('Tools')
 @Controller('resources/tools')
 @UseGuards(new AuthGuard('directory'))
 export class ToolsController {

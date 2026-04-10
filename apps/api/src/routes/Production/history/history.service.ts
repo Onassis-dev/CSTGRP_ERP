@@ -17,7 +17,7 @@ export class HistoryService {
   async getOrders(body: z.infer<typeof getHistorySchema>) {
     const orders = await sql`
     select id, programation, ref, part, description, "due", "clientId",
-    amount, completed,
+    "prodAmount" as amount, completed,
     CASE WHEN "serigrafiaTime" > 0 THEN "serigrafia" ELSE NULL END as "serigrafia",
     CASE WHEN "corteTime" > 0 THEN "corte" ELSE NULL END as "corte",
     CASE WHEN "cortesVariosTime" > 0 THEN "cortesVarios" ELSE NULL END as "cortesVarios",
@@ -45,7 +45,7 @@ export class HistoryService {
     await sql.begin(async (sql) => {
       const [order] = await sql`select *,
          (select SUM(${sql(body.area)})::integer from ordermovements om2 where om2."progressId" = ordermovements."progressId") as done,
-         (select amount from jobs where id = ordermovements."progressId") as amount,
+         (select "prodAmount" from jobs where id = ordermovements."progressId") as amount,
          (select ref from jobs where id = ordermovements."progressId") as ref
          from ordermovements where id = ${body.id}`;
 

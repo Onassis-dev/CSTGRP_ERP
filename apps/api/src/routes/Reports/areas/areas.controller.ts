@@ -1,5 +1,4 @@
 import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { AreasService } from './areas.service';
 import {
@@ -9,7 +8,6 @@ import {
 } from './areas.schema';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 
-@ApiTags('Reports Orders')
 @Controller('reports/areas')
 @UseGuards(new AuthGuard('reports_areas'))
 export class AreasController {

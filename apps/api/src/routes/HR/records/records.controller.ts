@@ -8,7 +8,6 @@ import {
   Put,
 } from '@nestjs/common';
 import { RecordsService } from './records.service';
-import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import {
@@ -18,7 +17,6 @@ import {
 } from './records.schema';
 import { idObjectSchema } from 'src/utils/schemas';
 
-@ApiTags('Employees History')
 @Controller('employees/history')
 @UseGuards(new AuthGuard('employees'))
 export class RecordsController {

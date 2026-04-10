@@ -10,7 +10,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ShipToService } from './ship-to.service';
-import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import {
@@ -20,7 +19,6 @@ import {
 } from './ship-to.schema';
 import { idObjectSchema } from 'src/utils/schemas';
 
-@ApiTags('ShipTo')
 @Controller('ie/ship-to')
 @UseGuards(new AuthGuard('ie_options'))
 export class ShipToController {

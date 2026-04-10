@@ -8,11 +8,9 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { VariousService } from './various.service';
-import { ApiTags } from '@nestjs/swagger';
 import { FileInterceptor, File } from '@nest-lab/fastify-multer';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 
-@ApiTags('Inventory various')
 @Controller('inventoryvarious')
 @UseGuards(new AuthGuard())
 export class VariousController {

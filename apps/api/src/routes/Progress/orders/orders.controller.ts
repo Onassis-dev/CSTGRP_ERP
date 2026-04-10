@@ -1,5 +1,4 @@
 import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { OrdersService } from './orders.service';
 import {
@@ -10,7 +9,6 @@ import {
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import { idObjectSchema } from 'src/utils/schemas';
 
-@ApiTags('Progress Orders')
 @Controller('progress/orders')
 @UseGuards(new AuthGuard('progress'))
 export class OrdersController {

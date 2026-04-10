@@ -8,12 +8,10 @@ import {
   Delete,
 } from '@nestjs/common';
 import { ComputersService } from './computers.service';
-import { ApiTags } from '@nestjs/swagger';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import { deleteSchema, editSchema, createSchema } from './computers.schema';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 
-@ApiTags('Computers')
 @Controller('computers')
 @UseGuards(new AuthGuard('it'))
 export class ComputersController {

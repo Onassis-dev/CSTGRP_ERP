@@ -19,11 +19,11 @@ export const updateOrderAmounts = async (id: number, sql2: postgres.Sql) => {
   "serigrafia" = COALESCE((SELECT SUM("serigrafia") FROM ordermovements WHERE "progressId" = ${id}), 0),
 
   "completed" = (
-      ((COALESCE("produccionTime", 0) > 0 AND "produccion" = "amount") OR COALESCE("produccionTime", 0) = 0) AND
-      ((COALESCE("serigrafiaTime", 0) > 0 AND "serigrafia" = "amount") OR COALESCE("serigrafiaTime", 0) = 0) AND
-      ((COALESCE("corteTime", 0) > 0 AND "corte" = "amount") OR COALESCE("corteTime", 0) = 0) AND
-      ((COALESCE("cortesVariosTime", 0) > 0 AND "cortesVarios" = "amount") OR COALESCE("cortesVariosTime", 0) = 0) AND
-      ((COALESCE("calidadTime", 0) > 0 AND "calidad" = "amount") OR COALESCE("calidadTime", 0) = 0)
+      ((COALESCE("produccionTime", 0) > 0 AND "produccion" = "prodAmount") OR COALESCE("produccionTime", 0) = 0) AND
+      ((COALESCE("serigrafiaTime", 0) > 0 AND "serigrafia" = "prodAmount") OR COALESCE("serigrafiaTime", 0) = 0) AND
+      ((COALESCE("corteTime", 0) > 0 AND "corte" = "prodAmount") OR COALESCE("corteTime", 0) = 0) AND
+      ((COALESCE("cortesVariosTime", 0) > 0 AND "cortesVarios" = "prodAmount") OR COALESCE("cortesVariosTime", 0) = 0) AND
+      ((COALESCE("calidadTime", 0) > 0 AND "calidad" = "prodAmount") OR COALESCE("calidadTime", 0) = 0)
     )
 
 WHERE id = ${id} returning *`;
@@ -36,8 +36,8 @@ WHERE id = ${id} returning *`;
   }
 
   const [updatedMovement] = await db`update materialmovements set 
-    "amount" = (select calidad from jobs where id = ${id}),
-    "realAmount" = (select calidad from jobs where id = ${id})
+    "amount" = (select (calidad + contractor) from jobs where id = ${id}),
+    "realAmount" = (select (calidad + contractor) from jobs where id = ${id})
     where id = (select "movementId" from jobs where id = ${id}) returning "materialId"`;
 
   if (updatedMovement)

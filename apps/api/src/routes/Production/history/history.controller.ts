@@ -9,7 +9,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { HistoryService } from './history.service';
-import { ApiTags } from '@nestjs/swagger';
 import {
   getHistorySchema,
   getMovementsSchema,
@@ -19,7 +18,6 @@ import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { idObjectSchema } from 'src/utils/schemas';
 
-@ApiTags('History')
 @Controller('prod-history')
 @UseGuards(new AuthGuard('prodmovements'))
 export class HistoryController {

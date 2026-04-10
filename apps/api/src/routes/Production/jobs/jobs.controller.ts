@@ -10,14 +10,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { JobsService } from './jobs.service';
-import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import { exportSchema, IEFilterSchema } from './jobs.schema';
 import { updateExportSchema } from './jobs.schema';
 import { idObjectSchema } from 'src/utils/schemas';
 
-@ApiTags('Jobs')
 @Controller('jobs')
 @UseGuards(new AuthGuard('jobs'))
 export class JobsController {

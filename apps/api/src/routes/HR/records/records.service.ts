@@ -12,7 +12,6 @@ import path from 'path';
 import { PDFDocument, StandardFonts } from 'pdf-lib';
 import { drawAlta, drawBaja, drawSalary } from './records.utils';
 import { idObjectSchema } from 'src/utils/schemas';
-// import { markPage } from 'src/utils/pdf';
 
 @Injectable()
 export class RecordsService {
@@ -101,7 +100,6 @@ export class RecordsService {
     const pdfDoc = await PDFDocument.load(template);
     const [page] = pdfDoc.getPages();
     const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-    // markPage(page);
 
     if (data.type === 'alta') drawAlta(page, font, data);
 

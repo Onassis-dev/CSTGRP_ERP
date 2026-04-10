@@ -1,9 +1,7 @@
 import { Controller, Get, Header, Query, UseGuards } from '@nestjs/common';
 import { VariousService } from './various.service';
-import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 
-@ApiTags('HR Various')
 @Controller('hrvarious')
 @UseGuards(new AuthGuard())
 export class VariousController {
@@ -17,6 +15,11 @@ export class VariousController {
   @Get('assistance-areas')
   getAssistanceAreas() {
     return this.employeesService.getAssistanceAreas();
+  }
+
+  @Get('contractors')
+  getContractors() {
+    return this.employeesService.getContractors();
   }
 
   @Get('positions')

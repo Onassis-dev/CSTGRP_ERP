@@ -10,7 +10,6 @@ import {
   Param,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
-import { ApiTags } from '@nestjs/swagger';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import {
   deleteSchema,
@@ -21,7 +20,6 @@ import {
 } from './orders.schema';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 
-@ApiTags('Purchases')
 @Controller('purchases/orders')
 @UseGuards(new AuthGuard('purchases'))
 export class OrdersController {

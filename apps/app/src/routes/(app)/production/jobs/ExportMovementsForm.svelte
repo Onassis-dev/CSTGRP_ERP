@@ -27,7 +27,13 @@
 	import Select from '$lib/components/basic/Select.svelte';
 	import { untrack } from 'svelte';
 	import { createQuery } from '@tanstack/svelte-query';
-	import { getAreas, getClients, getOptions, getProducts } from '$lib/utils/queries';
+	import {
+		getAreas,
+		getClients,
+		getContractors,
+		getOptions,
+		getProducts
+	} from '$lib/utils/queries';
 	import { cn } from '$lib/utils';
 
 	interface Props {
@@ -72,6 +78,12 @@
 		queryFn: getAreas
 	});
 	const areasList = $derived(getOptions($areasQuery?.data));
+
+	const contractorsQuery = createQuery({
+		queryKey: ['hr-contractors'],
+		queryFn: getContractors
+	});
+	const contractors = $derived(getOptions($contractorsQuery?.data));
 
 	const productsQuery = createQuery({
 		queryKey: ['inventory-products'],
@@ -284,25 +296,30 @@
 		<DialogHeader title={selectedMovement.id ? 'Actualizar job-po' : 'Registrar job-po'} />
 		<DialogBody class="flex flex-col gap-4 overflow-scroll">
 			<div class="grid w-full gap-2 sm:grid-cols-5">
-				<Label name="Programación">
-					<Input bind:value={formData.programation} />
-				</Label>
-				<Label name="Job o PO">
-					{#if selectedMovement.id}
-						<Input bind:value={formData.ref} />
-					{:else}
-						<Input disabled={!selectedMovement.id} value={jobs.join(',')} />
-					{/if}
-				</Label>
+				<div class="flex items-end gap-2">
+					<Label name="Programación">
+						<Input bind:value={formData.programation} />
+					</Label>
+					<Label name="Job o PO">
+						{#if selectedMovement.id}
+							<Input bind:value={formData.ref} />
+						{:else}
+							<Input disabled={!selectedMovement.id} value={jobs.join(',')} />
+						{/if}
+					</Label>
+				</div>
 				<Label name="Fecha">
 					<Input type="date" bind:value={formData.due} />
 				</Label>
-				<div class="flex items-end gap-2">
+				<div class="col-span-2 flex items-end gap-2">
 					<Label name="Cantidad">
 						<Input bind:value={formData.amount} />
 					</Label>
 					<Label name="Pz/Caja">
 						<Input bind:value={formData.perBox} />
+					</Label>
+					<Label name="Pz contratista">
+						<Input bind:value={formData.contractorAmount} />
 					</Label>
 				</div>
 				<div class="flex items-end gap-2">
@@ -326,11 +343,19 @@
 				<Label name="Parte">
 					<Input bind:value={formData.part} disabled={!!formData.productId} />
 				</Label>
-				<Label name="Descripción" class="col-span-2">
+				<Label name="Descripción">
 					<Input bind:value={formData.description} />
 				</Label>
 				<Label name="Area">
 					<Select items={areasList} bind:value={formData.areaId} placeholder="" />
+				</Label>
+				<Label name="Contratista">
+					<Select
+						items={contractors}
+						bind:value={formData.contractorId}
+						placeholder=""
+						allowDeselect
+					/>
 				</Label>
 				<Label name="Producto">
 					<Select

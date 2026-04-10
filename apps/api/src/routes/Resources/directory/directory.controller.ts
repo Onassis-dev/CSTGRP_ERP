@@ -8,12 +8,10 @@ import {
   Delete,
 } from '@nestjs/common';
 import { DirectoryService } from './directory.service';
-import { ApiTags } from '@nestjs/swagger';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import { deleteSchema, editSchema, createSchema } from './directory.schema';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 
-@ApiTags('Directory')
 @Controller('resources/directory')
 @UseGuards(new AuthGuard('directory'))
 export class DirectoryController {

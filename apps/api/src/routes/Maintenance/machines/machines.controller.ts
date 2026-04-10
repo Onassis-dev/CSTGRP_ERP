@@ -9,7 +9,6 @@ import {
   Query,
 } from '@nestjs/common';
 import { MachinesService } from './machines.service';
-import { ApiTags } from '@nestjs/swagger';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import {
   deleteSchema,
@@ -19,7 +18,6 @@ import {
 } from './machines.schema';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 
-@ApiTags('Machines')
 @Controller('maintenance/machines')
 @UseGuards(new AuthGuard('maintenance'))
 export class MachinesController {

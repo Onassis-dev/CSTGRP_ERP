@@ -10,7 +10,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ImportService } from './import.service';
-import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import {
@@ -20,7 +19,6 @@ import {
 } from './import.schema';
 import { idObjectSchema } from 'src/utils/schemas';
 
-@ApiTags('Import')
 @Controller('ie/imports')
 @UseGuards(new AuthGuard('imports'))
 export class ImportController {

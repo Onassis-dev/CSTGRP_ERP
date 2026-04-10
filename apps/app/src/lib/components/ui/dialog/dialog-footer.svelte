@@ -10,10 +10,12 @@
 		children,
 		submitFunc,
 		hideFunc,
+		disabled = false,
 		...restProps
 	}: WithElementRef<HTMLAttributes<HTMLDivElement>> & {
 		submitFunc?: () => void;
 		hideFunc?: () => void;
+		disabled?: boolean;
 	} = $props();
 </script>
 
@@ -23,7 +25,7 @@
 	{...restProps}
 >
 	{#if submitFunc}
-		<Button onclick={submitFunc}>Guardar</Button>
+		<Button onclick={submitFunc} {disabled}>Guardar</Button>
 	{/if}
 	{#if hideFunc}
 		<Button onclick={hideFunc} variant="outline">Cancelar</Button>

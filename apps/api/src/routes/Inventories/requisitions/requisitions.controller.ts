@@ -1,6 +1,5 @@
 import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { RequisitionsService } from './requsitions.service';
-import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import {
@@ -10,7 +9,6 @@ import {
   suppliesSchema,
 } from './requsitions.schema';
 
-@ApiTags('Material Requisitions')
 @Controller('requisitions')
 @UseGuards(new AuthGuard('requisitions'))
 export class RequisitionsController {

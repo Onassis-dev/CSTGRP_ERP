@@ -18,7 +18,7 @@ export class OrdersService {
     const orders = await sql`
     select id, programation, ref, part, due, "clientId",
     "produccionTime" as time,
-    "produccionTime" - (select SUM((operations.progress::float / amount::float) * operations.minutes) from operations where "orderId" = jobs.id AND operations.area = 'produccion') as missing
+    "produccionTime" - (select SUM((operations.progress::float / "prodAmount"::float) * operations.minutes) from operations where "orderId" = jobs.id AND operations.area = 'produccion') as missing
     from jobs
     WHERE
       ${body.jobpo ? sql`ref LIKE ${'%' + body.jobpo + '%'}` : sql`TRUE`} AND
@@ -29,7 +29,7 @@ export class OrdersService {
         NOT EXISTS (
           SELECT 1 FROM operations 
           WHERE "orderId" = jobs.id 
-          AND progress != jobs.amount
+          AND progress != jobs."prodAmount"
         )
       )
       AND part is not null
@@ -42,7 +42,7 @@ export class OrdersService {
 
   async getOrder(params: z.infer<typeof idObjectSchema>) {
     const [order] = await sql`
-      select jobs.id, part, amount, ref,
+      select jobs.id, part, "prodAmount", ref,
       (select json_agg(operations order by id desc) from operations where "orderId" = jobs.id) as operations
       from jobs
       left join operations on operations."orderId" = jobs.id
@@ -97,15 +97,15 @@ export class OrdersService {
 
     for (const area of areas) {
       const [{ prod: mondayProd }] = await sql`
-        select COALESCE(SUM((progressmovements.added::float / jobs.amount::float) * operations.minutes), 0) as prod from progressmovements join operations on operations.id = progressmovements."operationId" join jobs on jobs.id = operations."orderId" WHERE progressmovements.date = ${mondayDate} AND operations.area = 'produccion' AND jobs."areaId" = ${area.id}`;
+        select COALESCE(SUM((progressmovements.added::float / jobs."prodAmount"::float) * operations.minutes), 0) as prod from progressmovements join operations on operations.id = progressmovements."operationId" join jobs on jobs.id = operations."orderId" WHERE progressmovements.date = ${mondayDate} AND operations.area = 'produccion' AND jobs."areaId" = ${area.id}`;
       const [{ prod: tuesdayProd }] = await sql`
-        select COALESCE(SUM((progressmovements.added::float / jobs.amount::float) * operations.minutes), 0) as prod from progressmovements join operations on operations.id = progressmovements."operationId" join jobs on jobs.id = operations."orderId" WHERE progressmovements.date = ${addDays(mondayDate, 1)} AND operations.area = 'produccion' AND jobs."areaId" = ${area.id}`;
+        select COALESCE(SUM((progressmovements.added::float / jobs."prodAmount"::float) * operations.minutes), 0) as prod from progressmovements join operations on operations.id = progressmovements."operationId" join jobs on jobs.id = operations."orderId" WHERE progressmovements.date = ${addDays(mondayDate, 1)} AND operations.area = 'produccion' AND jobs."areaId" = ${area.id}`;
       const [{ prod: wednesdayProd }] = await sql`
-        select COALESCE(SUM((progressmovements.added::float / jobs.amount::float) * operations.minutes), 0) as prod from progressmovements join operations on operations.id = progressmovements."operationId" join jobs on jobs.id = operations."orderId" WHERE progressmovements.date = ${addDays(mondayDate, 2)} AND operations.area = 'produccion' AND jobs."areaId" = ${area.id}`;
+        select COALESCE(SUM((progressmovements.added::float / jobs."prodAmount"::float) * operations.minutes), 0) as prod from progressmovements join operations on operations.id = progressmovements."operationId" join jobs on jobs.id = operations."orderId" WHERE progressmovements.date = ${addDays(mondayDate, 2)} AND operations.area = 'produccion' AND jobs."areaId" = ${area.id}`;
       const [{ prod: thursdayProd }] = await sql`
-        select COALESCE(SUM((progressmovements.added::float / jobs.amount::float) * operations.minutes), 0) as prod from progressmovements join operations on operations.id = progressmovements."operationId" join jobs on jobs.id = operations."orderId" WHERE progressmovements.date = ${addDays(mondayDate, 3)} AND operations.area = 'produccion' AND jobs."areaId" = ${area.id}`;
+        select COALESCE(SUM((progressmovements.added::float / jobs."prodAmount"::float) * operations.minutes), 0) as prod from progressmovements join operations on operations.id = progressmovements."operationId" join jobs on jobs.id = operations."orderId" WHERE progressmovements.date = ${addDays(mondayDate, 3)} AND operations.area = 'produccion' AND jobs."areaId" = ${area.id}`;
       const [{ prod: fridayProd }] = await sql`
-        select COALESCE(SUM((progressmovements.added::float / jobs.amount::float) * operations.minutes), 0) as prod from progressmovements join operations on operations.id = progressmovements."operationId" join jobs on jobs.id = operations."orderId" WHERE progressmovements.date = ${addDays(mondayDate, 4)} AND operations.area = 'produccion' AND jobs."areaId" = ${area.id}`;
+        select COALESCE(SUM((progressmovements.added::float / jobs."prodAmount"::float) * operations.minutes), 0) as prod from progressmovements join operations on operations.id = progressmovements."operationId" join jobs on jobs.id = operations."orderId" WHERE progressmovements.date = ${addDays(mondayDate, 4)} AND operations.area = 'produccion' AND jobs."areaId" = ${area.id}`;
 
       area.mondayAvg = mondayProd / area.mondayMinutes;
       area.tuesdayAvg = tuesdayProd / area.tuesdayMinutes;
@@ -150,7 +150,7 @@ export class OrdersService {
     GROUP BY a.id;`;
 
     const produced = await sql`
-    select progressmovements.added, operations.code, jobs.ref, (progressmovements.added * (operations.minutes / jobs.amount)) as "workedMinutes"
+    select progressmovements.added, operations.code, jobs.ref, (progressmovements.added * (operations.minutes / jobs."prodAmount")) as "workedMinutes"
     from progressmovements
     join operations on operations.id = progressmovements."operationId"
     join jobs on jobs.id = operations."orderId"

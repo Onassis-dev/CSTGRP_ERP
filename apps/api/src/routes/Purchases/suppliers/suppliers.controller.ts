@@ -9,7 +9,6 @@ import {
   Query,
 } from '@nestjs/common';
 import { SuppliersService } from './suppliers.service';
-import { ApiTags } from '@nestjs/swagger';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import {
   deleteSchema,
@@ -19,7 +18,6 @@ import {
 } from './suppliers.schema';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 
-@ApiTags('Suppliers')
 @Controller('purchases/suppliers')
 @UseGuards(new AuthGuard('purchases'))
 export class SuppliersController {

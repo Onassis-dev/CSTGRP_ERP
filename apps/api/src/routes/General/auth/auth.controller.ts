@@ -8,13 +8,11 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import { loginSchema } from './auth.schema';
 import { AuthService } from './auth.service';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 
-@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}

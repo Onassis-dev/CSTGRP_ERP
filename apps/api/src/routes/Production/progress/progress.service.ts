@@ -25,7 +25,7 @@ export class ProgressService {
        END as "state"
        from jobs
        where ${sql(`${body.area}Time`)} <> 0
-       ${body.completed ? sql`AND (jobs.completed = true OR ${sql('jobs.' + body.area)} = jobs.amount)` : sql`AND jobs.completed = false AND ${sql('jobs.' + body.area)} < jobs.amount`}
+       ${body.completed ? sql`AND (jobs.completed = true OR ${sql('jobs.' + body.area)} = jobs."prodAmount")` : sql`AND jobs.completed = false AND ${sql('jobs.' + body.area)} < jobs."prodAmount"`}
        ${body.job ? sql`AND jobs.ref LIKE ${'%' + body.job + '%'}` : sql``}
        ${body.programation ? sql`AND jobs.programation LIKE ${'%' + body.programation + '%'}` : sql``}
        ${body.filterArea ? sql`AND jobs."areaId" = ${body.filterArea}` : sql``}
@@ -48,7 +48,7 @@ export class ProgressService {
 
     await sql.begin(async (sql) => {
       const [order] = await sql`select SUM(${sql(body.area)})::integer as done,
-         (select amount from jobs where id = ${body.orderId}),
+         (select "prodAmount" from jobs where id = ${body.orderId}) as amount,
          (select ref from jobs where id = ${body.orderId})
           from ordermovements where "progressId" = ${body.orderId}`;
 

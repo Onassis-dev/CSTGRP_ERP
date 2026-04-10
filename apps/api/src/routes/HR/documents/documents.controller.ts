@@ -11,7 +11,6 @@ import {
   UploadedFile,
 } from '@nestjs/common';
 import { DocumentsService } from './documents.service';
-import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import {
@@ -24,7 +23,6 @@ import { FileInterceptor } from '@nest-lab/fastify-multer';
 import { File } from '@nest-lab/fastify-multer';
 import { idObjectSchema } from 'src/utils/schemas';
 
-@ApiTags('Employees Documents')
 @Controller('employees/documents')
 @UseGuards(new AuthGuard('employees'))
 export class DocumentsController {

@@ -1,11 +1,9 @@
 import { Controller, Get, UseGuards, Param, Query } from '@nestjs/common';
 import { StatsService } from './stats.service';
-import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import { areaAssistanceInfoSchema, dateObjectSchema } from './stats.schema';
 
-@ApiTags('HR Stats')
 @Controller('hrstats')
 @UseGuards(new AuthGuard('hr_dashboard'))
 export class StatsController {

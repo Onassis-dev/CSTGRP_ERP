@@ -10,14 +10,12 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import { PreformService } from './preform.service';
 import { createPreformSchema, editPreformSchema } from './preform.schema';
 import { idObjectSchema } from 'src/utils/schemas';
 
-@ApiTags('Preform')
 @Controller('ie/preforms')
 @UseGuards(new AuthGuard('ie_options'))
 export class PreformController {

@@ -9,7 +9,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { MovementsService } from './movements.service';
-import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import {
@@ -26,7 +25,6 @@ import {
 } from './movements.schema';
 import { idObjectSchema } from 'src/utils/schemas';
 
-@ApiTags('Material Movements')
 @Controller('materialmovements')
 @UseGuards(new AuthGuard('materialmovements'))
 export class MovementsController {

@@ -1,12 +1,10 @@
 import { Controller, Get, UseGuards, Param, Post, Body } from '@nestjs/common';
 import { VacationsService } from './vacations.service';
-import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import { idObjectSchema } from 'src/utils/schemas';
 import { createVacationSchema } from './vacations.schema';
 
-@ApiTags('Employees Vacations')
 @Controller('employees/vacations')
 @UseGuards(new AuthGuard('employees'))
 export class VacationsController {

@@ -8,12 +8,10 @@ import {
   Delete,
 } from '@nestjs/common';
 import { PositionsService } from './positions.service';
-import { ApiTags } from '@nestjs/swagger';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import { deleteSchema, editSchema, createSchema } from './positions.schema';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 
-@ApiTags('Positions')
 @Controller('positions')
 @UseGuards(new AuthGuard('structure'))
 export class PositionsController {

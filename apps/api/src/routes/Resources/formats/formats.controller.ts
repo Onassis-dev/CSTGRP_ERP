@@ -10,7 +10,6 @@ import {
   UseInterceptors,
   UploadedFile,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import {
   createFormatSchema,
@@ -24,7 +23,6 @@ import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { FormatsService } from './formats.service';
 import { File, FileInterceptor } from '@nest-lab/fastify-multer';
 
-@ApiTags('Formats')
 @Controller('resources/formats')
 @UseGuards(new AuthGuard('formats'))
 export class FormatsController {

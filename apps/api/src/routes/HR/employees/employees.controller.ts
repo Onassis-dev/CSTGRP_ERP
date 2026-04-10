@@ -12,7 +12,6 @@ import {
   Query,
 } from '@nestjs/common';
 import { EmployeesService } from './employees.service';
-import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import {
@@ -27,7 +26,6 @@ import {
 } from './employees.schema';
 import { FileInterceptor, File } from '@nest-lab/fastify-multer';
 
-@ApiTags('Employees')
 @Controller('employees')
 @UseGuards(new AuthGuard('employees'))
 export class EmployeesController {

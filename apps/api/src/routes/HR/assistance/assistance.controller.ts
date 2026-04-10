@@ -9,12 +9,10 @@ import {
   Query,
 } from '@nestjs/common';
 import { AssistanceService } from './assistance.service';
-import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import { editSchema, weekSchema } from './assistance.schema';
 
-@ApiTags('Assistance')
 @Controller('assistance')
 @UseGuards(new AuthGuard('assistance'))
 export class AssistanceController {

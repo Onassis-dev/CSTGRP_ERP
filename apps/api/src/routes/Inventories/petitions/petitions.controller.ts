@@ -8,13 +8,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { PetitionsService } from './petitions.service';
-import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import { downloadMultipleSchema, filterSchema } from './petitions.schema';
 import { idObjectSchema } from 'src/utils/schemas';
 
-@ApiTags('Material Petitions')
 @Controller('petitions')
 @UseGuards(new AuthGuard('petitions'))
 export class PetitionsController {

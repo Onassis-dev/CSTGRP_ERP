@@ -211,6 +211,9 @@ const valueTraduccion = {
   requested: 'Solicitado',
   ref: 'Referencia',
   operations: 'Operaciones',
+  contractors: 'Contratistas',
+  contractorAmount: 'Cantidad de contratista',
+  contractorId: 'Contratista',
 };
 
 export const getTraducction = (value: string | number) => {

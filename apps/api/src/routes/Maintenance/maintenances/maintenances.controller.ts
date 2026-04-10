@@ -9,13 +9,11 @@ import {
   Param,
 } from '@nestjs/common';
 import { MaintenancesService } from './maintenances.service';
-import { ApiTags } from '@nestjs/swagger';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import { deleteSchema, editSchema, createSchema } from './maintenances.schema';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { idObjectSchema } from 'src/utils/schemas';
 
-@ApiTags('Maintenances')
 @Controller('maintenance/maintenances')
 @UseGuards(new AuthGuard('maintenance'))
 export class MaintenancesController {
