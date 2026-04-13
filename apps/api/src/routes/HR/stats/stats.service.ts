@@ -14,14 +14,6 @@ export class StatsService {
   }
 
   async contractExpiration() {
-    const today = new Date();
-
-    const fiveDaysAhead = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate() + 5,
-    );
-
     // Calculate renewal dates based on admission date and contract number
     const rows = await sql`
       SELECT 
@@ -49,7 +41,7 @@ export class StatsService {
             WHEN contract = 2 THEN "admissionDate" + INTERVAL '2 months'
             WHEN contract = 3 THEN "admissionDate" + INTERVAL '3 months'
           END
-        ) <= ${fiveDaysAhead}
+        ) <= now() + INTERVAL '10 days'
         AND active = true
       ORDER BY next_renewal_date
     `;

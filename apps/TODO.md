@@ -22,6 +22,8 @@
 
 # IDEAS
 
+- Solo produccion
+
 - Se necesita generar un pase de salida, con eso se editaran los jobs seleccionados,
   con es se registratran las ordenes, se registraran las entregas.
   Tambien se podran poner precios por cliente/producto (no se pueden hacer pases con precios que no existen)
@@ -31,6 +33,6 @@
 
 - Para compras hay que agregar la empresa (cambiar el logo, direccion) y estandarizar las OC.
 
-- Para ivan tengo que hacer un formato
+- Para ivan tengo que hacer un formato (SO, PO)
 
 - Tengo que permitir apoyos en asistencia, pero por fracciones del dia.
