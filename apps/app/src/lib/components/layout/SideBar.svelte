@@ -192,6 +192,9 @@
 					Imp-Exp
 				</Accordion.Trigger>
 				<Accordion.Content>
+					{#if hasAccess('ie_options')}
+						<Accordion.Option href="/ie/dashboard" />
+					{/if}
 					{#if hasAccess('imports')}
 						<Accordion.Option href="/ie/imports" />
 					{/if}

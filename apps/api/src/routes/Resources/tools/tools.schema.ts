@@ -19,3 +19,13 @@ export const generateUlineRoundSchema = z.object({
   week: intSchema,
   pages: intSchema,
 });
+
+export const generateIELabelsSchema = z.object({
+  client: z.string().nullish(),
+  destination: z.string().nullish(),
+  ps: z.string().nullish(),
+  po: z.string().nullish(),
+  so: z.string().nullish(),
+  pallets: intSchema.nullish(),
+  date: dateSchema.nullish(),
+});

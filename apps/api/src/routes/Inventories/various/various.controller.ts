@@ -31,6 +31,11 @@ export class VariousController {
     return this.variousService.getClientsLegal();
   }
 
+  @Get('destinations')
+  getDestinations() {
+    return this.variousService.getDestinations();
+  }
+
   @Get('clients')
   getClients() {
     return this.variousService.getClients();

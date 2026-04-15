@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Label</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding-left: 0.5in;
+        padding-right: 0.5in;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .label-page {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        padding: 8mm 6mm 10mm;
+        break-after: page;
+        page-break-after: always;
+        font-family: Arial, Helvetica, sans-serif;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: #000;
+        line-height: 1;
+        letter-spacing: -0.01em;
+        font-size: 25pt;
+      }
+
+      .label-page:last-child {
+        break-after: auto;
+        page-break-after: auto;
+      }
+
+      .label-logo-wrap {
+        position: absolute;
+        top: 8mm;
+        left: 6mm;
+        border: 1px solid #000;
+        padding: 2mm 3mm;
+        background: #fff;
+      }
+
+      .label-logo {
+        height: 16mm;
+        width: auto;
+        display: block;
+      }
+
+      .label-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        justify-content: flex-start;
+        padding-top: 2mm;
+      }
+
+      .hide {
+        display: none;
+      }
+
+      .label-body > p {
+        margin: 0;
+        margin-bottom: 2mm;
+      }
+
+      .separate {
+        margin-bottom: 10mm !important;
+      }
+
+      .label-client {
+        font-size: 40pt;
+      }
+
+      img {
+        height: 18mm;
+        margin-bottom: 5mm;
+        width: auto;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+      }
+    </style>
+  </head>
+  <body>
+    {{#palletPages}}
+    <div class="label-page">
+      <img class="{{hideImg}}" src="{{logoSrc}}" alt="" />
+      <div class="label-body">
+        <p class="label-client">{{client}}</p>
+        <p class="label-cs separate">CS TECH GROUP</p>
+        <p class="label-ps">PS - {{ps}}</p>
+        <p class="label-po">PO - {{po}}</p>
+        <p class="label-so {{hideSo}}">SO - {{so}}</p>
+        <p class="label-pallet separate">PALLET {{pallet}} / {{pallets}}</p>
+        <p class="label-address-text separate">{{destination}}</p>
+        <p class="label-finished-goods">FINISHED GOODS</p>
+        <p class="label-shipping-date">SHIPPING DATE: {{date}}</p>
+      </div>
+    </div>
+    {{/palletPages}}
+  </body>
+</html>

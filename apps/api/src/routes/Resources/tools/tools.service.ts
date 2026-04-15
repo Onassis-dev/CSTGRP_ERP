@@ -5,10 +5,15 @@ import {
   generateZenpetSchema,
   generateUlineSchema,
   generateUlineRoundSchema,
+  generateIELabelsSchema,
 } from './tools.schema';
 import { z } from 'zod/v4';
 import { degrees, PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { fillBox } from 'src/utils/pdf';
+import puppeteer from 'puppeteer';
+import Mustache from 'mustache';
+import sql from 'src/utils/db';
+import { format } from 'date-fns';
 
 @Injectable()
 export class ToolsService {
@@ -202,5 +207,82 @@ export class ToolsService {
     }
     const pdfBytes = await pdfDoc.save();
     return pdfBytes;
+  }
+
+  async generateIELabels(body: z.infer<typeof generateIELabelsSchema>) {
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-accelerated-2d-canvas',
+        '--disable-gpu',
+      ],
+      executablePath:
+        process.env.NODE_ENV === 'production'
+          ? '/usr/bin/google-chrome'
+          : undefined,
+    });
+    const page = await browser.newPage();
+
+    const templateDir = path.resolve(
+      __dirname,
+      '..',
+      '..',
+      '..',
+      '..',
+      'static',
+      'templates',
+      'ie',
+    );
+    const template = await fs.readFile(
+      path.join(templateDir, 'labels.html'),
+      'utf-8',
+    );
+
+    const [client] =
+      await sql`select name, "legalName" from clients where id = ${body.client}`;
+
+    let logoDir: string | undefined;
+    let logoSrc: string | undefined;
+
+    if (['CSI', 'ZENPET', 'HEADREST'].includes(client.name.toUpperCase())) {
+      logoDir = path.join(templateDir, client.name.toLowerCase() + '.png');
+    }
+
+    if (logoDir) {
+      const logoBuf = await fs.readFile(logoDir);
+      logoSrc = `data:image/png;base64,${logoBuf.toString('base64')}`;
+    }
+
+    const view = {
+      ...body,
+      hideSo: body.so ? '' : 'hide',
+      client: client.legalName,
+      hideImg: logoSrc ? '' : 'hide',
+      date: format(body.date, 'MM-dd-yyyy'),
+      ...(logoSrc ? { logoSrc } : {}),
+      palletPages: Array.from({ length: body.pallets }, (_, i) => ({
+        pallet: i + 1,
+      })),
+    };
+
+    await page.setContent(Mustache.render(template, view));
+
+    const pdf = await page.pdf({
+      format: 'letter',
+      printBackground: true,
+      margin: {
+        top: '0.7in',
+        right: '0.7in',
+        bottom: '0.7in',
+        left: '0.7in',
+      },
+    });
+
+    await browser.close();
+
+    return pdf;
   }
 }

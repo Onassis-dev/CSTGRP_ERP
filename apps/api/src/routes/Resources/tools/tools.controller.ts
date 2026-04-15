@@ -5,6 +5,7 @@ import {
   generateUlineRoundSchema,
   generateUlineSchema,
   generateZenpetSchema,
+  generateIELabelsSchema,
 } from './tools.schema';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 
@@ -32,5 +33,12 @@ export class ToolsController {
   @Header('Content-Disposition', 'inline; filename="uline-round-labels.pdf"')
   generateUlineRound(@Query(new ZodPiPe(generateUlineRoundSchema)) query) {
     return this.toolsService.generateUlineRound(query);
+  }
+
+  @Get('ielabels')
+  @Header('Content-Type', 'application/pdf')
+  @Header('Content-Disposition', 'inline; filename="ielabels.pdf"')
+  generateIELabels(@Query(new ZodPiPe(generateIELabelsSchema)) query) {
+    return this.toolsService.generateIELabels(query);
   }
 }

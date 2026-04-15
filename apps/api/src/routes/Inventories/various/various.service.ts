@@ -30,6 +30,12 @@ export class VariousService {
     return rows;
   }
 
+  async getDestinations() {
+    const rows =
+      await sql`select direction as value, direction as name from "destinationDirections" order by direction desc`;
+    return rows;
+  }
+
   async getAreas() {
     const rows =
       await sql`select id as value, name, color, type, active from areas`;

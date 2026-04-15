@@ -95,6 +95,10 @@
 		clients = (await api.get('/inventoryvarious/clients-legal')).data;
 	};
 
+	const fetchDestinations = async () => {
+		destinations = (await api.get('/inventoryvarious/destinations')).data;
+	};
+
 	async function fetchData() {
 		formData = (await api.get('/ie/preforms/' + selectedRow.id)).data;
 	}
