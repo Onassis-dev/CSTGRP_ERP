@@ -58,7 +58,7 @@ export class OrdersService {
         const [row] =
           await sql`select "materialId" from purchaseproducts where id = ${product.id}`;
         if (row?.materialId)
-          await sql`insert into materialmovements ("materialId", "purchaseId", amount, "realAmount") values (${row.materialId}, ${order.id}, ${-Math.abs(product.quantity)}, ${-Math.abs(product.quantity)})`;
+          await sql`insert into materialmovements ("materialId", "purchaseId", amount, "realAmount") values (${row.materialId}, ${order.id}, ${Math.abs(product.quantity)}, ${Math.abs(product.quantity)})`;
       }
 
       await this.req.record(`Creo la orden ${lastOrder.ref + 1}`, sql);
