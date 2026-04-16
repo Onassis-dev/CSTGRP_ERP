@@ -291,7 +291,7 @@
 				</Accordion.Content>
 			</Accordion.Item>
 		{/if}
-		{#if true}
+		{#if false}
 			<Accordion.Item value="contractors" class="border-none">
 				<Accordion.Trigger
 					class="mb-[1px] h-8 rounded-md p-2 text-sm hover:bg-muted hover:no-underline"
