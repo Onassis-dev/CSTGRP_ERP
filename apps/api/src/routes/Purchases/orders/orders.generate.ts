@@ -5,21 +5,133 @@ import { PDFFont } from 'pdf-lib';
 import { numberToWords } from 'src/routes/HR/documents/documents.utils';
 import { fillBox } from 'src/utils/pdf';
 import { formatNumber } from './orders.utils';
+import { HttpException } from '@nestjs/common';
 
-const business = {
+type Lang = 'es' | 'en';
+const businessList = {
   1: {
     name: 'BC PET TREATS S DE RL DE CV',
     address: 'Calle 6 Oriente #134 CD Industrial Tijuana B.C, C.P 22444',
     rfc: 'BPT130606JY0',
     email: 'compras@bcpet.mx',
+    lang: 'es' as Lang,
+    buyer: 'Aracely Varguez',
   },
   2: {
     name: 'MPM BAJA S DE RL DE CV',
     address: 'Calle Dos Oriente #134 CD Industrial Tijuana B.C, C.P 22444',
     rfc: 'MBA231027MP6',
     email: 'compras@mpmtj.com',
+    lang: 'es' as Lang,
+    buyer: 'Aracely Varguez',
+  },
+  3: {
+    name: 'MPM BAJA S DE RL DE CV',
+    address: 'Calle Dos Oriente #134 CD Industrial Tijuana B.C, C.P 22444',
+    billAdress: '2364 Paseo de las Americas #104-1009 San Diego, CA 92154',
+    lang: 'en' as Lang,
   },
 };
+
+const translations = {
+  orderTitle: {
+    es: 'ORDEN DE COMPRA',
+    en: 'PURCHASE ORDER',
+  },
+  orderNo: {
+    es: 'No. Orden:',
+    en: 'Order No:',
+  },
+  date: {
+    es: 'Fecha:',
+    en: 'Date:',
+  },
+  currency: {
+    es: 'Moneda:',
+    en: 'Currency:',
+  },
+  provider: {
+    es: 'Proveedor:',
+    en: 'Provider:',
+  },
+  contact: {
+    es: 'Contacto:',
+    en: 'Contact:',
+  },
+  email: {
+    es: 'Correo:',
+    en: 'Email:',
+  },
+  phone: {
+    es: 'Tel:',
+    en: 'Phone:',
+  },
+  deliveryAddress: {
+    es: 'Direccion de entrega:',
+    en: 'Delivery Address:',
+  },
+  buyer: {
+    es: 'Comprador:',
+    en: 'Buyer:',
+  },
+  noParte: {
+    es: 'No. Parte',
+    en: 'Part No.',
+  },
+  description: {
+    es: 'Descripción',
+    en: 'Description',
+  },
+  quantity: {
+    es: 'Cantidad',
+    en: 'Quantity',
+  },
+  price: {
+    es: 'Precio',
+    en: 'Price',
+  },
+  importe: {
+    es: 'Importe',
+    en: 'Amount',
+  },
+  subtotal: {
+    es: 'Subtotal:',
+    en: 'Subtotal:',
+  },
+  vat: {
+    es: 'IVA',
+    en: 'VAT',
+  },
+  total: {
+    es: 'Total:',
+    en: 'Total:',
+  },
+  dollars: {
+    es: 'Dolares',
+    en: 'Dollars',
+  },
+  pesos: {
+    es: 'Pesos',
+    en: 'Pesos',
+  },
+  billAddress: {
+    es: 'Direccion de facturacion:',
+    en: 'Billing Address:',
+  },
+} as const;
+
+const formatDate = (date: string, lang: Lang) => {
+  if (lang === 'es')
+    return format(toZonedTime(date, 'America/Tijuana'), 'dd/MM/yyyy');
+  if (lang === 'en')
+    return format(toZonedTime(date, 'America/Tijuana'), 'MM/dd/yyyy');
+  return '';
+};
+type TranslationKey = keyof typeof translations;
+
+function getTranslations(lang: Lang) {
+  return (key: TranslationKey) => translations[key][lang];
+}
 
 export function generateOrder(
   page: PDFPage,
@@ -60,10 +172,17 @@ export function generateOrder(
     x: leftMargin,
   };
 
+  const business = businessList[data.business];
+  const t = getTranslations(business.lang);
+
+  if (!business) throw new HttpException('Error: (Empresa no encontrada)', 400);
+
+  if (!t) throw new HttpException('Error: (Idioma no encontrado)', 400);
+
   // Order
   fillBox({
     ...rightProps,
-    text: 'ORDEN DE COMPRA',
+    text: t('orderTitle'),
     font: font,
     size: 12,
     y: 735,
@@ -71,28 +190,26 @@ export function generateOrder(
 
   fillBox({
     ...rightProps,
-    text: 'No. Orden: ' + data.ref,
+    text: t('orderNo') + ' ' + data.ref,
     y: 730 - 1 * 12,
   });
 
   fillBox({
     ...rightProps,
-    text:
-      'Fecha: ' +
-      format(toZonedTime(data.created_at, 'America/Tijuana'), 'dd/MM/yyyy'),
+    text: t('date') + ' ' + formatDate(data.created_at, business.lang),
     y: 730 - 2 * 12,
   });
 
   fillBox({
     ...rightProps,
-    text: 'Moneda: ' + data.currency,
+    text: t('currency') + ' ' + data.currency,
     y: 730 - 3 * 12,
   });
 
   // Company
   fillBox({
     ...rightProps,
-    text: 'Direccion de entrega:',
+    text: t('deliveryAddress'),
     font: font,
     size: 12,
     y: 635,
@@ -100,38 +217,60 @@ export function generateOrder(
 
   fillBox({
     ...rightProps,
-    text: business[data.business].name,
+    text: business.name,
     y: 630 - 1 * 12,
   });
 
   fillBox({
     ...rightProps,
-    text: business[data.business].address,
+    text: business.address,
     y: 630 - 2 * 12,
   });
 
-  fillBox({
-    ...rightProps,
-    text: 'Comprador: Aracely Varguez',
-    y: 619 - 3 * 12,
-  });
+  if (business.buyer) {
+    fillBox({
+      ...rightProps,
+      text: t('buyer') + ' ' + business.buyer,
+      y: 619 - 3 * 12,
+    });
+  }
 
-  fillBox({
-    ...rightProps,
-    text: 'Correo: ' + business[data.business].email,
-    y: 619 - 4 * 12,
-  });
+  if (business.email) {
+    fillBox({
+      ...rightProps,
+      text: t('email') + ' ' + business.email,
+      y: 619 - 4 * 12,
+    });
+  }
 
-  fillBox({
-    ...rightProps,
-    text: `RFC: ${business[data.business].rfc}`,
-    y: 619 - 5 * 12,
-  });
+  if (business.rfc) {
+    fillBox({
+      ...rightProps,
+      text: `RFC: ${business.rfc}`,
+      y: 619 - 5 * 12,
+    });
+  }
+
+  if (business.billAdress) {
+    fillBox({
+      ...rightProps,
+      text: t('billAddress'),
+      font: font,
+      size: 12,
+      y: 575,
+    });
+
+    fillBox({
+      ...rightProps,
+      text: business.billAdress,
+      y: 586 - 2 * 12,
+    });
+  }
 
   // Supplier
   fillBox({
     ...leftProps,
-    text: 'Proveedor:',
+    text: t('provider'),
     font: bold,
     size: 12,
     y: 635,
@@ -145,27 +284,31 @@ export function generateOrder(
 
   fillBox({
     ...leftProps,
-    text: 'Contacto: ' + data.supplier.atention || '',
+    text: data.supplier.atention
+      ? `${t('contact')} ${data.supplier.atention}`
+      : '',
     y: 630 - 2 * 12,
   });
 
   fillBox({
     ...leftProps,
-    text: 'Correo: ' + data.supplier.email || '',
+    text: data.supplier.email ? `${t('email')} ${data.supplier.email}` : '',
     y: 630 - 3 * 12,
   });
 
   fillBox({
     ...leftProps,
-    text: 'Tel: ' + data.supplier.phone || '',
+    text: data.supplier.phone ? `${t('phone')} ${data.supplier.phone}` : '',
     y: 630 - 4 * 12,
   });
 
-  fillBox({
-    ...leftProps,
-    text: 'RFC: ' + data.supplier.document,
-    y: 630 - 5 * 12,
-  });
+  if (data.supplier.document) {
+    fillBox({
+      ...leftProps,
+      text: 'RFC: ' + data.supplier.document,
+      y: 630 - 5 * 12,
+    });
+  }
 
   fillBox({
     ...leftProps,
@@ -189,7 +332,7 @@ export function generateOrder(
     size: 10,
     width: 100,
     height: 10,
-    text: 'No. Parte',
+    text: t('noParte'),
     font,
     page,
   });
@@ -200,7 +343,7 @@ export function generateOrder(
     size: 10,
     width: 100,
     height: 10,
-    text: 'Descripción',
+    text: t('description'),
     font,
     page,
   });
@@ -211,7 +354,7 @@ export function generateOrder(
     size: 10,
     width: 100,
     height: 10,
-    text: 'Cantidad',
+    text: t('quantity'),
     font,
     page,
   });
@@ -222,7 +365,7 @@ export function generateOrder(
     size: 10,
     width: 100,
     height: 10,
-    text: 'Precio',
+    text: t('price'),
     font,
     page,
   });
@@ -233,7 +376,7 @@ export function generateOrder(
     size: 10,
     width: 100,
     height: 10,
-    text: 'Importe',
+    text: t('importe'),
     font,
     page,
   });
@@ -314,33 +457,35 @@ export function generateOrder(
     borderColor: rgb(0, 0, 0),
   });
 
-  fillBox({
-    x: leftMargin,
-    y: y - 40,
-    size: 10,
-    width: 200,
-    height: 10,
-    text: 'IMPORTE EN LETRA',
-    font,
-    page,
-  });
+  if (business.lang === 'es') {
+    fillBox({
+      x: leftMargin,
+      y: y - 40,
+      size: 10,
+      width: 200,
+      height: 10,
+      text: 'IMPORTE EN LETRA',
+      font,
+      page,
+    });
 
-  const numbers = String(Number(data.total).toFixed(2)).split('.');
-  const currencies = {
-    USD: 'Dolares',
-    MXN: 'Pesos',
-  };
+    const numbers = String(Number(data.total).toFixed(2)).split('.');
+    const currencies = {
+      USD: t('dollars'),
+      MXN: t('pesos'),
+    };
 
-  fillBox({
-    x: leftMargin,
-    y: y - 60,
-    size: 10,
-    width: 360,
-    height: 10,
-    text: `${numberToWords(Number(numbers[0]))} ${currencies[data.currency]} ${numbers[1]}/100 ${data.currency}`.toUpperCase(),
-    font,
-    page,
-  });
+    fillBox({
+      x: leftMargin,
+      y: y - 60,
+      size: 10,
+      width: 360,
+      height: 10,
+      text: `${numberToWords(Number(numbers[0]))} ${currencies[data.currency]} ${numbers[1]}/100 ${data.currency}`.toUpperCase(),
+      font,
+      page,
+    });
+  }
 
   fillBox({
     x: 455,
@@ -348,21 +493,23 @@ export function generateOrder(
     size: 10,
     width: 100,
     height: 10,
-    text: 'Subtotal:',
+    text: t('subtotal'),
     font,
     page,
   });
 
-  fillBox({
-    x: 455,
-    y: y - 45,
-    size: 10,
-    width: 100,
-    height: 10,
-    text: `IVA ${formatNumber(data.iva, 0)}%:`,
-    font,
-    page,
-  });
+  if (business.lang === 'es') {
+    fillBox({
+      x: 455,
+      y: y - 45,
+      size: 10,
+      width: 100,
+      height: 10,
+      text: `IVA ${formatNumber(data.iva, 0)}%:`,
+      font,
+      page,
+    });
+  }
 
   fillBox({
     x: 455,
@@ -387,17 +534,19 @@ export function generateOrder(
     align: 'right',
   });
 
-  fillBox({
-    x: rightMargin - 60,
-    y: y - 45,
-    size: 10,
-    width: 60,
-    height: 10,
-    text: `$${formatNumber(data.tax)}`,
-    font,
-    page,
-    align: 'right',
-  });
+  if (business.lang === 'es') {
+    fillBox({
+      x: rightMargin - 60,
+      y: y - 45,
+      size: 10,
+      width: 60,
+      height: 10,
+      text: `$${formatNumber(data.tax)}`,
+      font,
+      page,
+      align: 'right',
+    });
+  }
 
   fillBox({
     x: rightMargin - 60,
@@ -422,14 +571,16 @@ export function generateOrder(
     page,
   });
 
-  fillBox({
-    x: leftMargin,
-    y: 60,
-    size: 8,
-    width: page.getWidth() - leftMargin * 2,
-    height: 8,
-    text: 'HORARIO DE CONTRARECIBOS: LOS DIAS LUNES DE 11:AM A 1:00PM ANEXAR COPIA DE ORDEN DE LA COMPRA Al ENTREGAR LOS ARTICULOS Y/O MATERIALES EN ALMACEN DE REFACCIONES, ANEXAR COPIA DE ORDEN DE LA COMPRA',
-    font,
-    page,
-  });
+  if (business.lang === 'es') {
+    fillBox({
+      x: leftMargin,
+      y: 60,
+      size: 8,
+      width: page.getWidth() - leftMargin * 2,
+      height: 8,
+      text: 'HORARIO DE CONTRARECIBOS: LOS DIAS LUNES DE 11:AM A 1:00PM ANEXAR COPIA DE ORDEN DE LA COMPRA Al ENTREGAR LOS ARTICULOS Y/O MATERIALES EN ALMACEN DE REFACCIONES, ANEXAR COPIA DE ORDEN DE LA COMPRA',
+      font,
+      page,
+    });
+  }
 }

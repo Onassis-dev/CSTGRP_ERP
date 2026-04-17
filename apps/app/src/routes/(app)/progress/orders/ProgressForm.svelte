@@ -19,6 +19,7 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { PlusCircle } from 'lucide-svelte';
 	import { cn } from '$lib/utils';
+	import CompleteOrder from './CompleteOrder.svelte';
 
 	interface Props {
 		show?: boolean;
@@ -29,6 +30,7 @@
 	let data: any = $state([]);
 	let showCaptureProgress: boolean = $state(false);
 	let selectedOperation: any = $state({});
+	let showCompleteOrder: boolean = $state(false);
 
 	async function fetchData() {
 		data = (await api.get('/progress/orders/' + selectedOrder.id)).data;
@@ -43,7 +45,7 @@
 
 <Dialog bind:open={show}>
 	<DialogContent>
-		<DialogHeader title={`${data?.ref} (${data?.amount}pz)`} />
+		<DialogHeader title={`${data?.ref} (${data?.prodAmount}pz)`} />
 
 		<DialogBody>
 			<Table>
@@ -57,8 +59,9 @@
 						<TableRow class="border-l">
 							<TableCell>{operation.code}</TableCell>
 							<TableCell
-								class={cn(Number(operation.progress) === Number(data.amount) && 'text-green-700')}
-								>{operation.progress}</TableCell
+								class={cn(
+									Number(operation.progress) === Number(data.prodAmount) && 'text-green-700'
+								)}>{operation.progress}</TableCell
 							>
 							<TableCell class="p-0">
 								<Button
@@ -75,8 +78,16 @@
 				</TableBody>
 			</Table>
 		</DialogBody>
-		<DialogFooter hideFunc={() => (show = false)} />
+		<DialogFooter hideFunc={() => (show = false)}>
+			<Button
+				onclick={() => {
+					showCompleteOrder = true;
+					show = false;
+				}}>Completar orden</Button
+			>
+		</DialogFooter>
 	</DialogContent>
 </Dialog>
 
 <CaptureProgress bind:show={showCaptureProgress} {selectedOperation} reload={fetchData} />
+<CompleteOrder bind:show={showCompleteOrder} {selectedOrder} reload={fetchData} />

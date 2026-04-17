@@ -214,6 +214,8 @@ const valueTraduccion = {
   contractors: 'Contratistas',
   contractorAmount: 'Cantidad de contratista',
   contractorId: 'Contratista',
+  measurement: 'Medida',
+  business: 'Empresa',
 };
 
 export const getTraducction = (value: string | number) => {

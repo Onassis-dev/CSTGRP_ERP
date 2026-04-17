@@ -38,8 +38,6 @@ export const exportSchema = z.object({
   due: z.string(),
   areaId: idSchema,
   clientId: idSchema,
-  contractorId: idSchema.nullish(),
-  contractorAmount: signedNumberSchema,
   materials: z
     .array(
       z.object({

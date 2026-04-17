@@ -10,3 +10,8 @@ export const captureProgressSchema = z.object({
 export const updateHistorySchema = captureProgressSchema.extend({
   id: idSchema,
 });
+
+export const completeOrderSchema = z.object({
+  id: idSchema,
+  date: dateSchema,
+});

@@ -13,6 +13,7 @@ import { ContextProvider } from 'src/interceptors/context.provider';
 import path from 'path';
 import { PDFDocument, StandardFonts } from 'pdf-lib';
 import { generateOrder } from './orders.generate';
+import { convertMeasurements } from './orders.utils';
 
 @Injectable()
 export class OrdersService {
@@ -55,10 +56,17 @@ export class OrdersService {
       })} returning id`;
 
       for (const product of products) {
-        const [row] =
-          await sql`select "materialId" from purchaseproducts where id = ${product.id}`;
-        if (row?.materialId)
-          await sql`insert into materialmovements ("materialId", "purchaseId", amount, "realAmount") values (${row.materialId}, ${order.id}, ${Math.abs(product.quantity)}, ${Math.abs(product.quantity)})`;
+        const [productRow] =
+          await sql`select "materialId", measurement as "purchaseMeasurement", (select measurement from materials where id = "materialId") as "materialMeasurement" from purchaseproducts where id = ${product.id}`;
+
+        if (productRow?.materialId) {
+          const amount = convertMeasurements({
+            amount: Math.abs(product.quantity),
+            from: productRow.purchaseMeasurement,
+            to: productRow.materialMeasurement,
+          });
+          await sql`insert into materialmovements ("materialId", "purchaseId", amount, "realAmount") values (${productRow.materialId}, ${order.id}, ${amount}, ${amount})`;
+        }
       }
 
       await this.req.record(`Creo la orden ${lastOrder.ref + 1}`, sql);
@@ -109,10 +117,17 @@ export class OrdersService {
 
       await sql`delete from materialmovements where "purchaseId" = ${body.id}`;
       for (const product of products) {
-        const [row] =
-          await sql`select "materialId" from purchaseproducts where id = ${product.id}`;
-        if (row?.materialId)
-          await sql`insert into materialmovements ("materialId", "purchaseId", amount, "realAmount") values (${row.materialId}, ${body.id}, ${Math.abs(product.quantity)}, ${Math.abs(product.quantity)})`;
+        const [productRow] =
+          await sql`select "materialId", measurement as "purchaseMeasurement", (select measurement from materials where id = "materialId") as "materialMeasurement" from purchaseproducts where id = ${product.id}`;
+
+        if (productRow?.materialId) {
+          const amount = convertMeasurements({
+            amount: Math.abs(product.quantity),
+            from: productRow.purchaseMeasurement,
+            to: productRow.materialMeasurement,
+          });
+          await sql`insert into materialmovements ("materialId", "purchaseId", amount, "realAmount") values (${productRow.materialId}, ${body.id}, ${amount}, ${amount})`;
+        }
       }
       await this.req.record(`Edito la orden ${body.id}`, sql);
     });
@@ -187,7 +202,10 @@ export class OrdersService {
     const pdfDoc = await PDFDocument.load(template);
     const [page] = pdfDoc.getPages();
 
-    const imagePathName = order.business === 1 ? 'bcpet.png' : 'mpm.png';
+    let imagePathName: string = '';
+    if (order.business === 1) imagePathName = 'bcpet.png';
+    if (order.business === 2) imagePathName = 'mpm.png';
+    if (order.business === 3) imagePathName = 'cstech.png';
 
     const imageBytes = await fs.readFile(
       path.resolve(

@@ -41,9 +41,8 @@
 			filterAssistances();
 			return null;
 		},
-		refetchInterval: 6000
+		refetchInterval: 5000
 	});
-
 	$positionQuery.data;
 
 	const positionsQuery = createQuery({ queryKey: ['positions'], queryFn: getPositions });
@@ -81,7 +80,12 @@
 			hours1: parseInt(filteredAssistances[i].hours1),
 			hours2: parseInt(filteredAssistances[i].hours2),
 			hours3: parseInt(filteredAssistances[i].hours3),
-			hours4: parseInt(filteredAssistances[i].hours4)
+			hours4: parseInt(filteredAssistances[i].hours4),
+			supportmin0: parseInt(filteredAssistances[i].supportmin0),
+			supportmin1: parseInt(filteredAssistances[i].supportmin1),
+			supportmin2: parseInt(filteredAssistances[i].supportmin2),
+			supportmin3: parseInt(filteredAssistances[i].supportmin3),
+			supportmin4: parseInt(filteredAssistances[i].supportmin4)
 		});
 	}
 
@@ -171,6 +175,7 @@
 						bind:areaId={filteredAssistances[i].areaId0}
 						bind:value={filteredAssistances[i].incidenceId0}
 						bind:hours={filteredAssistances[i].hours0}
+						bind:supportmin={filteredAssistances[i].supportmin0}
 						onValueChange={() => editAssistance(i)}
 					/>
 				</TableCell>
@@ -181,6 +186,7 @@
 						bind:areaId={filteredAssistances[i].areaId1}
 						bind:value={filteredAssistances[i].incidenceId1}
 						bind:hours={filteredAssistances[i].hours1}
+						bind:supportmin={filteredAssistances[i].supportmin1}
 						onValueChange={() => editAssistance(i)}
 					/>
 				</TableCell>
@@ -191,6 +197,7 @@
 						bind:areaId={filteredAssistances[i].areaId2}
 						bind:value={filteredAssistances[i].incidenceId2}
 						bind:hours={filteredAssistances[i].hours2}
+						bind:supportmin={filteredAssistances[i].supportmin2}
 						onValueChange={() => editAssistance(i)}
 					/>
 				</TableCell>
@@ -201,6 +208,7 @@
 						bind:areaId={filteredAssistances[i].areaId3}
 						bind:value={filteredAssistances[i].incidenceId3}
 						bind:hours={filteredAssistances[i].hours3}
+						bind:supportmin={filteredAssistances[i].supportmin3}
 						onValueChange={() => editAssistance(i)}
 					/>
 				</TableCell>
@@ -211,6 +219,7 @@
 						bind:areaId={filteredAssistances[i].areaId4}
 						bind:value={filteredAssistances[i].incidenceId4}
 						bind:hours={filteredAssistances[i].hours4}
+						bind:supportmin={filteredAssistances[i].supportmin4}
 						onValueChange={() => editAssistance(i)}
 					/>
 				</TableCell>

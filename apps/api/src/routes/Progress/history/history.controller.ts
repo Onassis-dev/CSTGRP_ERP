@@ -10,7 +10,11 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 import { HistoryService } from './history.service';
-import { captureProgressSchema, updateHistorySchema } from './history.schema';
+import {
+  captureProgressSchema,
+  completeOrderSchema,
+  updateHistorySchema,
+} from './history.schema';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import { idObjectSchema } from 'src/utils/schemas';
 
@@ -27,6 +31,11 @@ export class HistoryController {
   @Post()
   post(@Body(new ZodPiPe(captureProgressSchema)) body) {
     return this.historyService.post(body);
+  }
+
+  @Post('complete')
+  complete(@Body(new ZodPiPe(completeOrderSchema)) body) {
+    return this.historyService.completeOrder(body);
   }
 
   @Put()

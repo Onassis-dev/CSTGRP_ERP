@@ -93,7 +93,7 @@
 		<TableHead class="w-[25%]">Cliente</TableHead>
 	</TableHeader>
 	<TableBody>
-		{#each $orders?.data as row, i}
+		{#each $orders?.data as row}
 			<TableRow>
 				<OptionsCell
 					extraButtons={[

@@ -28,4 +28,9 @@ export const editSchema = z.object({
   hours2: z.number().int(),
   hours3: z.number().int(),
   hours4: z.number().int(),
+  supportmin0: z.number().int(),
+  supportmin1: z.number().int(),
+  supportmin2: z.number().int(),
+  supportmin3: z.number().int(),
+  supportmin4: z.number().int(),
 });

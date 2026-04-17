@@ -6,7 +6,7 @@ export async function calculateProgress(id, dbInstance: any) {
     where id = ${id} returning progress`;
 
   const [order] =
-    await dbInstance`select (select amount from jobs where id = operations."orderId") as amount from operations where id = ${id}`;
+    await dbInstance`select (select "prodAmount" from jobs where id = operations."orderId") as amount from operations where id = ${id}`;
 
   console.log(operation, order);
   if (operation.progress > order.amount) {

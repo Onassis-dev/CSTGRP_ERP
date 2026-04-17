@@ -2,7 +2,6 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import { showError } from '$lib/utils/showToast';
-	import { Check } from 'lucide-svelte';
 	import { untrack } from 'svelte';
 
 	interface Props {
@@ -11,6 +10,7 @@
 		value: any;
 		areaId: any;
 		hours: any;
+		supportmin: any;
 		onValueChange: () => void;
 	}
 
@@ -20,10 +20,12 @@
 		value = $bindable(),
 		areaId = $bindable(),
 		hours = $bindable(0),
+		supportmin = $bindable(570),
 		onValueChange
 	}: Props = $props();
 
 	let inputValue = $state(0);
+	let inputSupportmin = $state(supportmin || 570);
 	let previousHours = $state(hours);
 
 	$effect(() => {
@@ -88,21 +90,28 @@
 			<DropdownMenu.SubTrigger class="text-red-500">APOYO</DropdownMenu.SubTrigger>
 			<DropdownMenu.SubContent>
 				{#each areas as area}
-					<DropdownMenu.Item
-						onSelect={() => {
-							if (area.value === areaId) {
-								areaId = null;
-							} else {
-								areaId = area.value;
-							}
-							onValueChange();
-						}}
-					>
-						{area.name}
-						{#if area.value === areaId}
-							<Check class="ml-auto size-3.5" />
-						{/if}
-					</DropdownMenu.Item>
+					<DropdownMenu.Sub>
+						<DropdownMenu.SubTrigger>{area.name}</DropdownMenu.SubTrigger>
+						<DropdownMenu.SubContent class="flex flex-col gap-2">
+							<Input bind:value={inputSupportmin} type="number" />
+							<DropdownMenu.Item
+								class="flex w-full items-center justify-center bg-primary text-primary-foreground hover:bg-primary/90"
+								onclick={() => {
+									const newValue = Number(inputSupportmin);
+									if (newValue > hours) {
+										showError(null, 'El apoyo no puede ser mayor al tiempo de trabajo');
+										inputSupportmin = 0;
+									} else {
+										supportmin = newValue;
+										areaId = area.value;
+										onValueChange();
+									}
+								}}
+							>
+								Guardar
+							</DropdownMenu.Item>
+						</DropdownMenu.SubContent>
+					</DropdownMenu.Sub>
 				{/each}
 			</DropdownMenu.SubContent>
 		</DropdownMenu.Sub>

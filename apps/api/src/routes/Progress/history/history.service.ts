@@ -1,7 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import sql from 'src/utils/db';
 import { z } from 'zod/v4';
-import { captureProgressSchema, updateHistorySchema } from './history.schema';
+import {
+  captureProgressSchema,
+  updateHistorySchema,
+  completeOrderSchema,
+} from './history.schema';
 import { ContextProvider } from 'src/interceptors/context.provider';
 import { calculateProgress } from './history.utils';
 import { idObjectSchema } from 'src/utils/schemas';
@@ -24,6 +28,26 @@ export class HistoryService {
     await sql.begin(async (sql) => {
       await sql`insert into progressmovements ${sql(body)}`;
       await calculateProgress(body.operationId, sql);
+    });
+  }
+
+  async completeOrder(body: z.infer<typeof completeOrderSchema>) {
+    const [order] =
+      await sql`select "prodAmount" from jobs where id = ${body.id}`;
+    if (!order || !order.prodAmount) {
+      throw new HttpException('Orden no encontrada', 404);
+    }
+
+    await sql.begin(async (sql) => {
+      const rows =
+        await sql`insert into progressmovements (date, "operationId", added) 
+      select ${body.date}, id, (select "prodAmount" from jobs where id = "orderId") - progress from operations 
+      where "orderId" = ${body.id} and progress < (select "prodAmount" from jobs where id = "orderId")
+      returning "operationId"`;
+
+      for (const row of rows) {
+        await calculateProgress(row.operationId, sql);
+      }
     });
   }
 

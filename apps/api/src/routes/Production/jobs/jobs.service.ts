@@ -88,18 +88,6 @@ export class JobsService {
   }
 
   async post(body: z.infer<typeof exportSchema>) {
-    if (Number(body.contractorAmount) > Number(body.amount))
-      throw new HttpException(
-        'La cantidad de contratista no puede ser mayor a la cantidad total',
-        400,
-      );
-
-    if (Number(body.contractorAmount) && !body.contractorId)
-      throw new HttpException(
-        'Selecciona un contratista para asignar su cantidad',
-        400,
-      );
-
     const materials = body.materials.map((item: any) => item.code);
     if (body.productId) body.part = null;
 
@@ -129,8 +117,7 @@ export class JobsService {
           produccionTime: body.produccionTime,
           calidadTime: body.calidadTime,
           serigrafiaTime: body.serigrafiaTime,
-          contractorId: body.contractorId,
-          contractorAmount: body.contractorAmount,
+          contractorAmount: 0,
         })} returning id`;
 
         for (const material of body.materials) {
@@ -194,18 +181,6 @@ export class JobsService {
       await sql`select permissions from users where id = ${this.req.userId}`;
     if (user.permissions.jobs < 3) throw new HttpException('', 403);
 
-    if (Number(body.contractorAmount) > Number(body.amount))
-      throw new HttpException(
-        'La cantidad de contratista no puede ser mayor a la cantidad total',
-        400,
-      );
-
-    if (Number(body.contractorAmount) && !body.contractorId)
-      throw new HttpException(
-        'Selecciona un contratista para asignar su cantidad',
-        400,
-      );
-
     const materials: {
       materialId: number;
       jobId: number;
@@ -254,8 +229,7 @@ export class JobsService {
         produccionTime: body.produccionTime,
         calidadTime: body.calidadTime,
         serigrafiaTime: body.serigrafiaTime,
-        contractorId: body.contractorId,
-        contractorAmount: body.contractorAmount,
+        contractorAmount: 0,
       })} where id = ${body.id} returning id, ref, programation, part`;
 
       // Update Materials

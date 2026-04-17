@@ -59,7 +59,8 @@
 
 	const businesses = [
 		{ value: 1, name: 'BC PET TREATS', color: 'green' },
-		{ value: 2, name: 'MPM BAJA', color: 'red' }
+		{ value: 2, name: 'MPM BAJA', color: 'red' },
+		{ value: 3, name: 'CSTECH', color: 'gray' }
 	];
 
 	const productsQuery = createQuery({
@@ -84,7 +85,7 @@
 
 		try {
 			products = JSON.parse(selectedDevice.products);
-		} catch (error) {
+		} catch {
 			products = selectedDevice.products;
 		}
 		products = products.map((product) => {

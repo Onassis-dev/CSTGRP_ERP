@@ -24,25 +24,9 @@
 
 - Solo produccion
 
-- Autollenar modulo de progreso
-
 - Se necesita generar un pase de salida, con eso se editaran los jobs seleccionados,
   con es se registratran las ordenes, se registraran las entregas.
   Tambien se podran poner precios por cliente/producto (no se pueden hacer pases con precios que no existen)
   Finalmente se podra seleccionar las entregas y generar pago.
 
 - Para las exportacione se deberia de eliminar el PO, y seleccionar los pallets a exportar.
-
-- Para compras hay que agregar la empresa (cambiar el logo, direccion) y estandarizar las OC.
-
-- Para ivan tengo que hacer un formato (SO, PO)
-
-- Tengo que permitir apoyos en asistencia, pero por fracciones del dia.
-
-### HOY
-
-- # Formato de ivan
-- Autorellenado de efrain
-- Compartir asistencia
-- Agregar empresa de compras
-- Eliminar contratistas del job

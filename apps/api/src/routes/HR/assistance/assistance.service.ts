@@ -14,11 +14,15 @@ export class AssistanceService {
     const [firstDate] = getWeekDays(body.date);
 
     const assistance =
-      await sql`SELECT assistance.id, "incidenceId0", "incidenceId1", "incidenceId2", "incidenceId3", "incidenceId4", assistance."areaId", assistance."positionId",
-      "areaId0", "areaId1", "areaId2", "areaId3", "areaId4", "hours0", "hours1", "hours2", "hours3", "hours4",
+      await sql`SELECT assistance.id, assistance."areaId", assistance."positionId", "noEmpleado",
       CONCAT(name, ' ', "paternalLastName", ' ', "maternalLastName") as name,
-      "noEmpleado",
-      employees."areaId" as "actualAreaId"
+      employees."areaId" as "actualAreaId",
+
+      "incidenceId0", "incidenceId1", "incidenceId2", "incidenceId3", "incidenceId4",
+      "areaId0", "areaId1", "areaId2", "areaId3", "areaId4",
+      "hours0", "hours1", "hours2", "hours3", "hours4",
+      "supportmin0", "supportmin1", "supportmin2", "supportmin3", "supportmin4"
+      
       from assistance
       join employees on employees.id = assistance."employeeId"
       WHERE "mondayDate" = ${firstDate}
@@ -65,6 +69,15 @@ export class AssistanceService {
   }
 
   async editSingle(body: z.infer<typeof editSchema>) {
+    for (let i = 0; i < 5; i++) {
+      if (body[`supportmin${i}`] > 0 && !body[`areaId${i}`]) {
+        throw new HttpException(
+          'Se asigno tiempo de soporte, pero no se asigno el area',
+          400,
+        );
+      }
+    }
+
     await sql.begin(async (sql) => {
       const [week] =
         await sql`update assistance set ${sql(body)} where id = ${body.id} returning "mondayDate"`;

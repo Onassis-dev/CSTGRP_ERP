@@ -7,7 +7,7 @@ import {
   getDayDataSchema,
 } from './areas.schema';
 import { ContextProvider } from 'src/interceptors/context.provider';
-import { getWeekDays } from 'src/utils/functions';
+import { getWeekDays, weeklyMinutes } from 'src/utils/functions';
 
 @Injectable()
 export class AreasService {
@@ -20,36 +20,8 @@ export class AreasService {
     SELECT 
       a.id,
       a.name,
-      SUM(
-        CASE 
-          WHEN (s."areaId" = a.id AND s."areaId0" IS NULL) OR s."areaId0" = a.id
-          THEN COALESCE(s.hours0,0) ELSE 0
-        END
-      ) AS "mondayMinutes",
-      SUM(
-        CASE 
-          WHEN (s."areaId" = a.id AND s."areaId1" IS NULL) OR s."areaId1" = a.id
-          THEN COALESCE(s.hours1,0) ELSE 0
-        END
-      ) AS "tuesdayMinutes",
-      SUM(
-        CASE 
-          WHEN (s."areaId" = a.id AND s."areaId2" IS NULL) OR s."areaId2" = a.id
-          THEN COALESCE(s.hours2,0) ELSE 0
-        END
-      ) AS "wednesdayMinutes",
-      SUM(
-        CASE 
-          WHEN (s."areaId" = a.id AND s."areaId3" IS NULL) OR s."areaId3" = a.id
-          THEN COALESCE(s.hours3,0) ELSE 0
-        END
-      ) AS "thursdayMinutes",
-      SUM(
-        CASE 
-          WHEN (s."areaId" = a.id AND s."areaId4" IS NULL) OR s."areaId4" = a.id
-          THEN COALESCE(s.hours4,0) ELSE 0
-        END
-      ) AS "fridayMinutes"
+      ${weeklyMinutes}
+       
     FROM assistance s
     JOIN areas a ON TRUE
     JOIN positions p ON (s."positionId" = p.id)
@@ -99,36 +71,8 @@ export class AreasService {
     SELECT 
       a.id,
       a.name,
-      SUM(
-        CASE 
-          WHEN (s."areaId" = a.id AND s."areaId0" IS NULL) OR s."areaId0" = a.id
-          THEN COALESCE(s.hours0,0) ELSE 0
-        END
-      ) AS "mondayMinutes",
-      SUM(
-        CASE 
-          WHEN (s."areaId" = a.id AND s."areaId1" IS NULL) OR s."areaId1" = a.id
-          THEN COALESCE(s.hours1,0) ELSE 0
-        END
-      ) AS "tuesdayMinutes",
-      SUM(
-        CASE 
-          WHEN (s."areaId" = a.id AND s."areaId2" IS NULL) OR s."areaId2" = a.id
-          THEN COALESCE(s.hours2,0) ELSE 0
-        END
-      ) AS "wednesdayMinutes",
-      SUM(
-        CASE 
-          WHEN (s."areaId" = a.id AND s."areaId3" IS NULL) OR s."areaId3" = a.id
-          THEN COALESCE(s.hours3,0) ELSE 0
-        END
-      ) AS "thursdayMinutes",
-      SUM(
-        CASE 
-          WHEN (s."areaId" = a.id AND s."areaId4" IS NULL) OR s."areaId4" = a.id
-          THEN COALESCE(s.hours4,0) ELSE 0
-        END
-      ) AS "fridayMinutes"
+      ${weeklyMinutes}
+
     FROM assistance s
     JOIN areas a ON TRUE
     JOIN positions p ON (s."positionId" = p.id)
@@ -170,9 +114,13 @@ export class AreasService {
       SELECT 
       SUM(
         CASE 
-          WHEN (s."areaId" = a.id AND s.${sql('areaId' + body.day)} IS NULL) OR s.${sql('areaId' + body.day)} = a.id
-          THEN COALESCE(s.${sql('hours' + body.day)}, 0) 
+          WHEN (s."areaId" = a.id)
+          THEN COALESCE(s.${sql('hours' + body.day)}, 0) - COALESCE(s.${sql('supportmin' + body.day)}, 0)
           ELSE 0
+        END
+      ) + SUM(
+        CASE WHEN (s.${sql('areaId' + body.day)} = a.id)
+          THEN COALESCE(s.${sql('supportmin' + body.day)},0) ELSE 0
         END
       ) AS "minutes",
       a.name as "areaName"

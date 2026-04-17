@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import sql from 'src/utils/db';
 import { ContextProvider } from 'src/interceptors/context.provider';
-import { getWeekDays } from 'src/utils/functions';
+import { getWeekDays, weeklyMinutes } from 'src/utils/functions';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { getHistorySchema } from './history.schema';
@@ -26,36 +26,8 @@ export class HistoryService {
     SELECT 
       a.id,
       a.name as area,
-      SUM(
-        CASE 
-          WHEN (s."areaId" = a.id AND s."areaId0" IS NULL) OR s."areaId0" = a.id
-          THEN COALESCE(s.hours0,0) ELSE 0
-        END
-      ) AS "mondayMinutes",
-      SUM(
-        CASE 
-          WHEN (s."areaId" = a.id AND s."areaId1" IS NULL) OR s."areaId1" = a.id
-          THEN COALESCE(s.hours1,0) ELSE 0
-        END
-      ) AS "tuesdayMinutes",
-      SUM(
-        CASE 
-          WHEN (s."areaId" = a.id AND s."areaId2" IS NULL) OR s."areaId2" = a.id
-          THEN COALESCE(s.hours2,0) ELSE 0
-        END
-      ) AS "wednesdayMinutes",
-      SUM(
-        CASE 
-          WHEN (s."areaId" = a.id AND s."areaId3" IS NULL) OR s."areaId3" = a.id
-          THEN COALESCE(s.hours3,0) ELSE 0
-        END
-      ) AS "thursdayMinutes",
-      SUM(
-        CASE 
-          WHEN (s."areaId" = a.id AND s."areaId4" IS NULL) OR s."areaId4" = a.id
-          THEN COALESCE(s.hours4,0) ELSE 0
-        END
-      ) AS "fridayMinutes"
+      ${weeklyMinutes}
+      
     FROM assistance s
     JOIN areas a ON TRUE
     JOIN positions p ON (s."positionId" = p.id)

@@ -165,3 +165,49 @@ export async function calculateVacationDays(id?: number, dbInstance?: any) {
     ${id ? sql`AND employees.id = ${id}` : sql``}
   `;
 }
+
+export const weeklyMinutes = sql`
+      SUM(
+        CASE WHEN (s."areaId" = a.id)
+          THEN COALESCE(s.hours0,0) - COALESCE(s.supportmin0,0) ELSE 0 END
+      ) +
+      SUM(
+        CASE WHEN (s."areaId0" = a.id)
+          THEN COALESCE(s.supportmin0,0) ELSE 0 END
+      )  AS "mondayMinutes",
+
+      SUM(
+        CASE WHEN (s."areaId" = a.id)
+          THEN COALESCE(s.hours1,0) - COALESCE(s.supportmin1,0) ELSE 0 END
+      ) +
+      SUM(
+        CASE WHEN (s."areaId1" = a.id)
+          THEN COALESCE(s.supportmin1,0) ELSE 0 END
+      ) AS "tuesdayMinutes",
+
+      SUM(
+        CASE WHEN (s."areaId" = a.id)
+          THEN COALESCE(s.hours2,0) - COALESCE(s.supportmin2,0) ELSE 0 END
+      ) +
+      SUM(
+        CASE WHEN (s."areaId2" = a.id)
+          THEN COALESCE(s.supportmin2,0) ELSE 0 END
+      ) AS "wednesdayMinutes",
+
+      SUM(
+        CASE WHEN (s."areaId" = a.id)
+          THEN COALESCE(s.hours3,0) - COALESCE(s.supportmin3,0) ELSE 0 END
+      ) +
+      SUM(
+        CASE WHEN (s."areaId3" = a.id)
+          THEN COALESCE(s.supportmin3,0) ELSE 0 END
+      ) AS "thursdayMinutes",
+
+      SUM(
+        CASE WHEN (s."areaId" = a.id)
+          THEN COALESCE(s.hours4,0) - COALESCE(s.supportmin4,0) ELSE 0 END
+      ) +
+      SUM(
+        CASE WHEN (s."areaId4" = a.id)
+          THEN COALESCE(s.supportmin4,0) ELSE 0 END
+      ) AS "fridayMinutes"`;
