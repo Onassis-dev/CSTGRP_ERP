@@ -6,6 +6,8 @@ import sql from 'src/utils/db';
 import { formatDate, getWeekDays } from 'src/utils/functions';
 import { editSchema, getSingleSchema, weekSchema } from './assistance.schema';
 import { ContextProvider } from 'src/interceptors/context.provider';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 @Injectable()
 export class AssistanceService {
   constructor(private readonly req: ContextProvider) {}
@@ -83,7 +85,7 @@ export class AssistanceService {
         await sql`update assistance set ${sql(body)} where id = ${body.id} returning "mondayDate"`;
 
       await this.req.record(
-        `Editó una semana de asistencia para el ${week.mondayDate}`,
+        `Editó una semana de asistencia para el ${format(week.mondayDate, 'PPP', { locale: es })}`,
         sql,
       );
     });

@@ -50,8 +50,7 @@ export class ProgressService {
       const [order] = await sql`select SUM(${sql(body.area)})::integer as done,
          (select "prodAmount" from jobs where id = ${body.orderId}) as amount,
          (select ref from jobs where id = ${body.orderId})
-          from ordermovements where "progressId" = ${body.orderId}
-          returning (select ref from jobs where id = ${body.orderId})`;
+          from ordermovements where "progressId" = ${body.orderId}`;
 
       if (order.done + body.amount > order.amount)
         throw new BadRequestException(
