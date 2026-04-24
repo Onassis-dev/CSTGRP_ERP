@@ -248,7 +248,8 @@
 							<Select
 								items={[
 									{ value: 'apex', name: 'APEX' },
-									{ value: 'mpm', name: 'MPM' }
+									{ value: 'mpm', name: 'MPM' },
+									{ value: 'cstgrp', name: 'CST GROUP' }
 								]}
 								bind:value={formData.address}
 							/>

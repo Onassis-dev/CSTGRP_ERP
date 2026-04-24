@@ -31,6 +31,7 @@ const businessList = {
   3: {
     name: 'CST',
     address: 'Calle Dos Oriente #134 CD Industrial Tijuana B.C, C.P 22444',
+    billingName: 'CST GROUP INC',
     billAddress: '2364 Paseo de las Americas #104-1009 San Diego, CA 92154',
     lang: 'en' as Lang,
   },
@@ -44,6 +45,10 @@ const destinations = {
   mpm: {
     name: 'MPM BAJA S DE RL DE CV',
     address: 'Calle Dos Oriente #134 CD Industrial Tijuana B.C, C.P 22444',
+  },
+  cstgrp: {
+    name: 'CST GROUP INC',
+    address: '2364 Paseo de las Americas #104-1009 San Diego, CA 92154',
   },
 };
 
@@ -284,13 +289,19 @@ export function generateOrder(
       text: t('billAddress'),
       font: font,
       size: 12,
-      y: 575,
+      y: 582,
+    });
+
+    fillBox({
+      ...rightProps,
+      text: business.billingName,
+      y: 567,
     });
 
     fillBox({
       ...rightProps,
       text: business.billAddress,
-      y: 586 - 2 * 12,
+      y: 581 - 2 * 12,
     });
   }
 

@@ -24,10 +24,14 @@
 
 # IDEAS
 
-<!-- Produccion y calidad deben completarse las piezas de orden, las previas con las piezas totales. -->
+- Se tomara el precio del job, no el actual
 
-Se necesita generar un pase de salida, con eso se editaran los jobs seleccionados,
-con el se registratran las ordenes, se registraran las entregas.
-Tambien se podran poner precios por cliente/producto (no se pueden hacer pases con precios que no existen).
+- Se podra descargar un pdf del pase de salida
 
-Finalmente se podra seleccionar las entregas y generar pago.
+- Se agregara un folio a los pases de salida, y a los pagos
+
+- Se hara una tabla de pagos, con la que sabremos si ya pagamos
+
+- Se generara un pdf por cada pago, agrupando los contratistas
+
+- (Checa si te aparecen jobs que ya tienen pase de salida)
