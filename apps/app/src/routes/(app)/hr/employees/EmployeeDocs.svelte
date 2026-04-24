@@ -229,7 +229,7 @@
 		</TableRow>
 
 		{#each contracts as contract, i}
-			{#if new Date() >= new Date(employee.admissionDate).setDate(new Date(employee.admissionDate).getDate() + 30 * (i - 9))}
+			{#if Number(new Date()) >= Number(new Date(employee.admissionDate).setDate(new Date(employee.admissionDate).getDate() + 30 * i - 9))}
 				<TableRow>
 					<TableCell class={'cursor-pointer border-l'} onclick={() => downloadContract(i)}>
 						<div class="flex items-center gap-3">

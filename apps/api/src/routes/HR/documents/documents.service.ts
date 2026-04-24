@@ -21,7 +21,7 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { createCanvas, registerFont } from 'canvas';
 import { loadImage } from 'canvas';
-import { numberToWords } from './documents.utils';
+import { numberToWordsES } from './documents.utils';
 import { generateApplication } from './documents.generate';
 import { PDFDocument, StandardFonts } from 'pdf-lib';
 import { idObjectSchema } from 'src/utils/schemas';
@@ -165,7 +165,7 @@ export class DocumentsService {
     }
 
     const numbers = String(employee.nominaSalary).split('.');
-    let textSalary = numberToWords(Number(numbers[0]));
+    let textSalary = numberToWordsES(Number(numbers[0]));
     if (numbers[1] && numbers[1] !== '00')
       textSalary += ` con ${numbers[1]}/100 M.N.`;
     else textSalary += ' M.N.';
