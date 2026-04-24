@@ -16,10 +16,16 @@
 	import Badge from '$lib/components/ui/badge/badge.svelte';
 	import DeletePopUp from '$lib/components/complex/DeletePopUp.svelte';
 	import { showSuccess } from '$lib/utils/showToast';
+	import { userData } from '$lib/utils/store';
+	import { Button } from '$lib/components/ui/button';
+	import ContractorPaymentForm from './ContractorPaymentForm.svelte';
+
+	const canDownloadPayments = ($userData?.permissions.contractors_payments || 0) == 2;
 
 	let showForm: boolean = $state(false);
 	let selectedMovement: any = $state({});
 	let showDelete: boolean = $state(false);
+	let showGeneratePayment: boolean = $state(false);
 
 	let filters = $state({
 		programation: '',
@@ -76,6 +82,12 @@
 			class="w-40"
 		/>
 	</div>
+
+	{#snippet right()}
+		{#if canDownloadPayments}
+			<Button size="action" onclick={() => (showGeneratePayment = true)}>Generar pagos</Button>
+		{/if}
+	{/snippet}
 </MenuBar>
 <CusTable>
 	<TableHeader>
@@ -116,6 +128,8 @@
 </CusTable>
 
 <DeliveriesForm bind:show={showForm} bind:selectedMovement />
+
+<ContractorPaymentForm bind:show={showGeneratePayment} />
 
 <DeletePopUp
 	bind:show={showDelete}

@@ -216,6 +216,9 @@
 				<Label name="P. Pases de salida">
 					<Select items={permissions} bind:value={formData.permissions.contractors_exitPass} />
 				</Label>
+				<Label name="P. Pagos">
+					<Select items={permissions} bind:value={formData.permissions.contractors_payments} />
+				</Label>
 			</div>
 
 			<div class={cardClass}>

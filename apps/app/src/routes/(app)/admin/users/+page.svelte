@@ -123,6 +123,7 @@
 		<TableHead class="w-[12.5%]">Ordenes</TableHead>
 		<TableHead class="w-[12.5%]">Entregas</TableHead>
 		<TableHead class="w-[12.5%]">Pases de salida</TableHead>
+		<TableHead class="w-[12.5%]">Pagos</TableHead>
 		<TableHead class="w-[12.5%]">Compras</TableHead>
 		<TableHead class="w-[12.5%]">Modificaciones</TableHead>
 		<TableHead class="w-[12.5%]">Sistemas</TableHead>

@@ -33,7 +33,8 @@ export const baseUser = {
 		modify_purchases: 0,
 		contractors_orders: 0,
 		contractors_deliveries: 0,
-		contractors_exitPass: 0
+		contractors_exitPass: 0,
+		contractors_payments: 0
 	},
 	assistance_areas: [],
 	prod_areas: [],

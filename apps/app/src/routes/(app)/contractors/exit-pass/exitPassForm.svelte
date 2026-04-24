@@ -208,10 +208,10 @@
 				<span class="text-sm font-medium leading-none">Jobs</span>
 				<Table divClass="h-auto overflow-visible">
 					<TableHeader>
-						<TableHead>Job</TableHead>
-						<TableHead class="w-28">Parte</TableHead>
-						<TableHead class="w-28">Cantidad</TableHead>
-						<TableHead class="w-36">Cant. contratista</TableHead>
+						<TableHead class="w-1/3">Job</TableHead>
+						<TableHead class="w-full">Parte</TableHead>
+						<TableHead class="">Cantidad</TableHead>
+						<TableHead class="">Cant. contratista</TableHead>
 						<TableHead class="w-1 p-0"></TableHead>
 					</TableHeader>
 					<TableBody>
