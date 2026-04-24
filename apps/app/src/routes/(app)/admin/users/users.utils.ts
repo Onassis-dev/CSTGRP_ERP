@@ -30,7 +30,10 @@ export const baseUser = {
 		progress: 0,
 		maintenance: 0,
 		material_adjustments: 0,
-		modify_purchases: 0
+		modify_purchases: 0,
+		contractors_orders: 0,
+		contractors_deliveries: 0,
+		contractors_exitPass: 0
 	},
 	assistance_areas: [],
 	prod_areas: [],

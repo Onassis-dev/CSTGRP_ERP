@@ -291,7 +291,7 @@
 				</Accordion.Content>
 			</Accordion.Item>
 		{/if}
-		{#if false}
+		{#if hasAccess('contractors_orders') || hasAccess('contractors_deliveries') || hasAccess('contractors_exitPass')}
 			<Accordion.Item value="contractors" class="border-none">
 				<Accordion.Trigger
 					class="mb-[1px] h-8 rounded-md p-2 text-sm hover:bg-muted hover:no-underline"
@@ -301,8 +301,15 @@
 				</Accordion.Trigger>
 
 				<Accordion.Content>
-					<Accordion.Option href="/contractors/orders" />
-					<Accordion.Option href="/contractors/deliveries" />
+					{#if hasAccess('contractors_orders')}
+						<Accordion.Option href="/contractors/orders" />
+					{/if}
+					{#if hasAccess('contractors_deliveries')}
+						<Accordion.Option href="/contractors/deliveries" />
+					{/if}
+					{#if hasAccess('contractors_exitPass')}
+						<Accordion.Option href="/contractors/exit-pass" />
+					{/if}
 				</Accordion.Content>
 			</Accordion.Item>
 		{/if}

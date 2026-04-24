@@ -45,14 +45,23 @@ export class HistoryService {
     await sql.begin(async (sql) => {
       const [order] = await sql`select *,
          (select SUM(${sql(body.area)})::integer from ordermovements om2 where om2."progressId" = ordermovements."progressId") as done,
-         (select "prodAmount" from jobs where id = ordermovements."progressId") as amount,
+         (select "prodAmount" from jobs where id = ordermovements."progressId"),
+         (select "amount" from jobs where id = ordermovements."progressId"),
          (select ref from jobs where id = ordermovements."progressId") as ref
          from ordermovements where id = ${body.id}`;
 
-      if (order.done - order[body.area] + body.amount > order.amount)
-        throw new BadRequestException(
-          'El progreso no puede ser mayor al total',
-        );
+      //check to not surpass previous areas
+      if (body.area === 'calidad' || body.area === 'produccion') {
+        if (order.done - order[body.area] + body.amount > order.prodAmount)
+          throw new BadRequestException(
+            'El progreso no puede ser mayor al total',
+          );
+      } else {
+        if (order.done - order[body.area] + body.amount > order.amount)
+          throw new BadRequestException(
+            'El progreso no puede ser mayor al total',
+          );
+      }
 
       await sql`update ordermovements set ${sql(body.area)} = ${body.amount} where id = ${body.id}`;
       await updateOrderAmounts(order.progressId, sql);

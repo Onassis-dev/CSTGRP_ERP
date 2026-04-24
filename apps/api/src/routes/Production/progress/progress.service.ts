@@ -17,6 +17,11 @@ export class ProgressService {
   async getOrders(body: z.infer<typeof getProgressSchema>) {
     await validatePerm(body.area, this.req.userId, 1);
 
+    const amountColumn =
+      body.area === 'calidad' || body.area === 'produccion'
+        ? 'prodAmount'
+        : 'amount';
+
     const jobs = await sql`select *,
        CASE 
          WHEN ${getTijuanaDate()} >= due - INTERVAL '2 days' AND ${getTijuanaDate()} <= due THEN 1
@@ -25,7 +30,7 @@ export class ProgressService {
        END as "state"
        from jobs
        where ${sql(`${body.area}Time`)} <> 0
-       ${body.completed ? sql`AND (jobs.completed = true OR ${sql('jobs.' + body.area)} = jobs."prodAmount")` : sql`AND jobs.completed = false AND ${sql('jobs.' + body.area)} < jobs."prodAmount"`}
+       ${body.completed ? sql`AND (jobs.completed = true OR ${sql('jobs.' + body.area)} = jobs.${sql(amountColumn)})` : sql`AND jobs.completed = false AND ${sql('jobs.' + body.area)} < jobs.${sql(amountColumn)}`}
        ${body.job ? sql`AND jobs.ref LIKE ${'%' + body.job + '%'}` : sql``}
        ${body.programation ? sql`AND jobs.programation LIKE ${'%' + body.programation + '%'}` : sql``}
        ${body.filterArea ? sql`AND jobs."areaId" = ${body.filterArea}` : sql``}
@@ -48,16 +53,23 @@ export class ProgressService {
 
     await sql.begin(async (sql) => {
       const [order] = await sql`select SUM(${sql(body.area)})::integer as done,
-         (select "prodAmount" from jobs where id = ${body.orderId}) as amount,
+         (select "prodAmount" from jobs where id = ${body.orderId}),
+         (select "amount" from jobs where id = ${body.orderId}),
          (select ref from jobs where id = ${body.orderId})
           from ordermovements where "progressId" = ${body.orderId}`;
 
-      if (order.done + body.amount > order.amount)
-        throw new BadRequestException(
-          'El progreso no puede ser mayor al total',
-        );
-
       //check to not surpass previous areas
+      if (body.area === 'calidad' || body.area === 'produccion') {
+        if (order.done + body.amount > order.prodAmount)
+          throw new BadRequestException(
+            'El progreso no puede ser mayor al total',
+          );
+      } else {
+        if (order.done + body.amount > order.amount)
+          throw new BadRequestException(
+            'El progreso no puede ser mayor al total',
+          );
+      }
 
       await sql`insert into ordermovements (date, "progressId", ${sql(body.area)}) values (${body.date}, ${body.orderId}, ${body.amount})`;
       await updateOrderAmounts(body.orderId, sql);

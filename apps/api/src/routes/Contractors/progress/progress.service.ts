@@ -16,7 +16,7 @@ export class ProgressService {
   async getOrders(body: z.infer<typeof getProgressSchema>) {
     const jobs = await sql`select *
        from jobs
-       where "contractorId" is not null
+       where "contractorAmount" > 0
        ${body.completed ? sql`AND jobs."completedContractor" = true` : sql`AND jobs."completedContractor" = false`}
        ${body.job ? sql`AND jobs.ref LIKE ${'%' + body.job + '%'}` : sql``}
        ${body.programation ? sql`AND jobs.programation LIKE ${'%' + body.programation + '%'}` : sql``}

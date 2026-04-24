@@ -9,7 +9,7 @@ import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
 import { AuthGuard } from 'src/interceptors/auth/authorization.guard';
 
 @Controller('contractors/progress')
-@UseGuards(new AuthGuard())
+@UseGuards(new AuthGuard('contractors_orders'))
 export class ProgressController {
   constructor(private readonly progressService: ProgressService) {}
 

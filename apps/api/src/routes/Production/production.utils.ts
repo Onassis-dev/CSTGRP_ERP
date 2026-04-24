@@ -20,9 +20,9 @@ export const updateOrderAmounts = async (id: number, sql2: postgres.Sql) => {
 
   "completed" = (
       ((COALESCE("produccionTime", 0) > 0 AND "produccion" = "prodAmount") OR COALESCE("produccionTime", 0) = 0) AND
-      ((COALESCE("serigrafiaTime", 0) > 0 AND "serigrafia" = "prodAmount") OR COALESCE("serigrafiaTime", 0) = 0) AND
-      ((COALESCE("corteTime", 0) > 0 AND "corte" = "prodAmount") OR COALESCE("corteTime", 0) = 0) AND
-      ((COALESCE("cortesVariosTime", 0) > 0 AND "cortesVarios" = "prodAmount") OR COALESCE("cortesVariosTime", 0) = 0) AND
+      ((COALESCE("serigrafiaTime", 0) > 0 AND "serigrafia" = "amount") OR COALESCE("serigrafiaTime", 0) = 0) AND
+      ((COALESCE("corteTime", 0) > 0 AND "corte" = "amount") OR COALESCE("corteTime", 0) = 0) AND
+      ((COALESCE("cortesVariosTime", 0) > 0 AND "cortesVarios" = "amount") OR COALESCE("cortesVariosTime", 0) = 0) AND
       ((COALESCE("calidadTime", 0) > 0 AND "calidad" = "prodAmount") OR COALESCE("calidadTime", 0) = 0)
     )
 

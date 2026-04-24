@@ -8,7 +8,7 @@ import {
 import { DeliveriesService } from './deliveries.service';
 
 @Controller('contractors/deliveries')
-@UseGuards(new AuthGuard())
+@UseGuards(new AuthGuard('contractors_deliveries'))
 export class DeliveriesController {
   constructor(private readonly deliveriesService: DeliveriesService) {}
 

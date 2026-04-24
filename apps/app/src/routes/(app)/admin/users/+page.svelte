@@ -83,6 +83,7 @@
 		<TableHead colspan={7}>Producción</TableHead>
 		<TableHead colspan={6}>Almacen</TableHead>
 		<TableHead colspan={3}>Import-Export</TableHead>
+		<TableHead colspan={3}>Contratistas</TableHead>
 		<TableHead colspan={2}>Compras</TableHead>
 		<TableHead colspan={1}>-</TableHead>
 	</TableHeader>
@@ -119,6 +120,9 @@
 		<TableHead class="w-[12.5%]">Importaciones</TableHead>
 		<TableHead class="w-[12.5%]">Exportaciones</TableHead>
 		<TableHead class="w-[12.5%]">Opciones</TableHead>
+		<TableHead class="w-[12.5%]">Ordenes</TableHead>
+		<TableHead class="w-[12.5%]">Entregas</TableHead>
+		<TableHead class="w-[12.5%]">Pases de salida</TableHead>
 		<TableHead class="w-[12.5%]">Compras</TableHead>
 		<TableHead class="w-[12.5%]">Modificaciones</TableHead>
 		<TableHead class="w-[12.5%]">Sistemas</TableHead>
@@ -408,6 +412,34 @@
 						color={getBadgeColor(user.permissions.ie_options)}
 					>
 						{@const SvelteComponent_11 = badgeTexts[user.permissions.ie_options]}
+						<SvelteComponent_11 class="size-3.5" />
+					</Badge></TableCell
+				>
+
+				<TableCell class="p-1.5 text-center"
+					><Badge
+						class="flex h-full w-full items-center justify-center p-1"
+						color={getBadgeColor(user.permissions.contractors_orders)}
+					>
+						{@const SvelteComponent_11 = badgeTexts[user.permissions.contractors_orders]}
+						<SvelteComponent_11 class="size-3.5" />
+					</Badge></TableCell
+				>
+				<TableCell class="p-1.5 text-center"
+					><Badge
+						class="flex h-full w-full items-center justify-center p-1"
+						color={getBadgeColor(user.permissions.contractors_deliveries)}
+					>
+						{@const SvelteComponent_11 = badgeTexts[user.permissions.contractors_deliveries]}
+						<SvelteComponent_11 class="size-3.5" />
+					</Badge></TableCell
+				>
+				<TableCell class="p-1.5 text-center"
+					><Badge
+						class="flex h-full w-full items-center justify-center p-1"
+						color={getBadgeColor(user.permissions.contractors_exitPass)}
+					>
+						{@const SvelteComponent_11 = badgeTexts[user.permissions.contractors_exitPass]}
 						<SvelteComponent_11 class="size-3.5" />
 					</Badge></TableCell
 				>
