@@ -243,6 +243,17 @@
 					<Label name="Comentarios" class="col-span-4 resize-none">
 						<Textarea bind:value={formData.comments} />
 					</Label>
+					{#if formData.business === 3}
+						<Label name="Direccion" class="col-span-3">
+							<Select
+								items={[
+									{ value: 'apex', name: 'APEX' },
+									{ value: 'mpm', name: 'MPM' }
+								]}
+								bind:value={formData.address}
+							/>
+						</Label>
+					{/if}
 				</div>
 			</div>
 			<Card class="flex w-full max-w-full flex-col overflow-hidden shadow-none">

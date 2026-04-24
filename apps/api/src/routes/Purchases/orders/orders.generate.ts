@@ -2,7 +2,10 @@ import { toZonedTime } from 'date-fns-tz';
 import { format } from 'date-fns';
 import { PDFImage, PDFPage, rgb } from 'pdf-lib';
 import { PDFFont } from 'pdf-lib';
-import { numberToWords } from 'src/routes/HR/documents/documents.utils';
+import {
+  numberToWordsEN,
+  numberToWordsES,
+} from 'src/routes/HR/documents/documents.utils';
 import { fillBox } from 'src/utils/pdf';
 import { formatNumber } from './orders.utils';
 import { HttpException } from '@nestjs/common';
@@ -26,10 +29,21 @@ const businessList = {
     buyer: 'Aracely Varguez',
   },
   3: {
+    name: 'CST',
+    address: 'Calle Dos Oriente #134 CD Industrial Tijuana B.C, C.P 22444',
+    billAddress: '2364 Paseo de las Americas #104-1009 San Diego, CA 92154',
+    lang: 'en' as Lang,
+  },
+};
+
+const destinations = {
+  apex: {
+    name: 'M&M APEX SERVICES',
+    address: 'At`n Pablo Reyna 1701 Landmark RD San Diego, CA 92154',
+  },
+  mpm: {
     name: 'MPM BAJA S DE RL DE CV',
     address: 'Calle Dos Oriente #134 CD Industrial Tijuana B.C, C.P 22444',
-    billAdress: '2364 Paseo de las Americas #104-1009 San Diego, CA 92154',
-    lang: 'en' as Lang,
   },
 };
 
@@ -68,7 +82,7 @@ const translations = {
   },
   deliveryAddress: {
     es: 'Direccion de entrega:',
-    en: 'Delivery Address:',
+    en: 'Ship To:',
   },
   buyer: {
     es: 'Comprador:',
@@ -116,7 +130,11 @@ const translations = {
   },
   billAddress: {
     es: 'Direccion de facturacion:',
-    en: 'Billing Address:',
+    en: 'Bill To:',
+  },
+  importeEnLetra: {
+    es: 'IMPORTE EN LETRA',
+    en: 'AMOUNT IN WORDS',
   },
 } as const;
 
@@ -215,15 +233,24 @@ export function generateOrder(
     y: 635,
   });
 
+  let destinationName = '';
+  let destinationAddress = '';
+  if (business.lang === 'es') {
+    destinationName = business.name;
+    destinationAddress = business.address;
+  } else {
+    destinationName = destinations[data.address].name;
+    destinationAddress = destinations[data.address].address;
+  }
   fillBox({
     ...rightProps,
-    text: business.name,
+    text: destinationName,
     y: 630 - 1 * 12,
   });
 
   fillBox({
     ...rightProps,
-    text: business.address,
+    text: destinationAddress,
     y: 630 - 2 * 12,
   });
 
@@ -243,7 +270,7 @@ export function generateOrder(
     });
   }
 
-  if (business.rfc) {
+  if (business.lang === 'es') {
     fillBox({
       ...rightProps,
       text: `RFC: ${business.rfc}`,
@@ -251,7 +278,7 @@ export function generateOrder(
     });
   }
 
-  if (business.billAdress) {
+  if (business.billAddress) {
     fillBox({
       ...rightProps,
       text: t('billAddress'),
@@ -262,7 +289,7 @@ export function generateOrder(
 
     fillBox({
       ...rightProps,
-      text: business.billAdress,
+      text: business.billAddress,
       y: 586 - 2 * 12,
     });
   }
@@ -457,48 +484,55 @@ export function generateOrder(
     borderColor: rgb(0, 0, 0),
   });
 
+  fillBox({
+    x: leftMargin,
+    y: y - 40,
+    size: 10,
+    width: 200,
+    height: 10,
+    text: t('importeEnLetra'),
+    font,
+    page,
+  });
+
+  const numbers = String(Number(data.total).toFixed(2)).split('.');
+  const currencies = {
+    USD: t('dollars'),
+    MXN: t('pesos'),
+  };
+
+  let wordsOfNumber = '';
   if (business.lang === 'es') {
-    fillBox({
-      x: leftMargin,
-      y: y - 40,
-      size: 10,
-      width: 200,
-      height: 10,
-      text: 'IMPORTE EN LETRA',
-      font,
-      page,
-    });
-
-    const numbers = String(Number(data.total).toFixed(2)).split('.');
-    const currencies = {
-      USD: t('dollars'),
-      MXN: t('pesos'),
-    };
-
-    fillBox({
-      x: leftMargin,
-      y: y - 60,
-      size: 10,
-      width: 360,
-      height: 10,
-      text: `${numberToWords(Number(numbers[0]))} ${currencies[data.currency]} ${numbers[1]}/100 ${data.currency}`.toUpperCase(),
-      font,
-      page,
-    });
+    wordsOfNumber =
+      `${numberToWordsES(Number(numbers[0]))} ${currencies[data.currency]} ${numbers[1]}/100 ${data.currency}`.toUpperCase();
+  } else {
+    wordsOfNumber =
+      `${numberToWordsEN(Number(numbers[0]))} ${currencies[data.currency]} ${numbers[1]}/100 ${data.currency}`.toUpperCase();
   }
 
   fillBox({
-    x: 455,
-    y: y - 30,
+    x: leftMargin,
+    y: y - 60,
     size: 10,
-    width: 100,
+    width: 360,
     height: 10,
-    text: t('subtotal'),
+    text: wordsOfNumber,
     font,
     page,
   });
 
   if (business.lang === 'es') {
+    fillBox({
+      x: 455,
+      y: y - 30,
+      size: 10,
+      width: 100,
+      height: 10,
+      text: t('subtotal'),
+      font,
+      page,
+    });
+
     fillBox({
       x: 455,
       y: y - 45,
@@ -522,17 +556,19 @@ export function generateOrder(
     page,
   });
 
-  fillBox({
-    x: rightMargin - 60,
-    y: y - 30,
-    size: 10,
-    width: 60,
-    height: 10,
-    text: `$${formatNumber(data.net)}`,
-    font,
-    page,
-    align: 'right',
-  });
+  if (business.lang === 'es') {
+    fillBox({
+      x: rightMargin - 60,
+      y: y - 30,
+      size: 10,
+      width: 60,
+      height: 10,
+      text: `$${formatNumber(data.net)}`,
+      font,
+      page,
+      align: 'right',
+    });
+  }
 
   if (business.lang === 'es') {
     fillBox({

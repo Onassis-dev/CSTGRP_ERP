@@ -17,6 +17,7 @@ export const createSchema = z.object({
   iva: intSchema,
   comments: z.string().nullable(),
   business: intSchema,
+  address: z.string().nullish(),
   products: z
     .array(
       z.object({

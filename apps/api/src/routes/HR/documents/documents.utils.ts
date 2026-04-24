@@ -1,4 +1,6 @@
-export function numberToWords(num) {
+import converter from 'number-to-words';
+
+export function numberToWordsES(num: number) {
   const unidades = [
     '',
     'Uno',
@@ -78,14 +80,14 @@ export function numberToWords(num) {
   if (num >= 1000000) {
     const millones = Math.floor(num / 1000000);
     partes.push(
-      millones === 1 ? 'un millón' : `${numberToWords(millones)} millones`,
+      millones === 1 ? 'un millón' : `${numberToWordsES(millones)} millones`,
     );
     num = num % 1000000;
   }
   if (num >= 1000) {
     const miles = Math.floor(num / 1000);
     if (miles === 1) partes.push('mil');
-    else partes.push(`${numberToWords(miles)} mil`);
+    else partes.push(`${numberToWordsES(miles)} mil`);
     num = num % 1000;
   }
   if (num > 0) {
@@ -93,4 +95,8 @@ export function numberToWords(num) {
   }
 
   return partes.join(' ').trim();
+}
+
+export function numberToWordsEN(num: number) {
+  return converter.toWords(num);
 }
