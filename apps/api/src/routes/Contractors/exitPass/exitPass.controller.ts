@@ -1,8 +1,10 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
+  Param,
   Post,
   Put,
   Query,
@@ -41,5 +43,19 @@ export class ExitPassController {
   @Delete('')
   delete(@Body(new ZodPiPe(idObjectSchema)) body) {
     return this.exitPassService.delete(body);
+  }
+
+  @Get('available-jobs')
+  getJobs() {
+    return this.exitPassService.getJobs();
+  }
+
+  @Get(':id/jobs')
+  getJobsForPass(@Param('id') id: string) {
+    const exitId = Number(id);
+    if (!Number.isInteger(exitId) || exitId <= 0) {
+      throw new BadRequestException('Id invalido');
+    }
+    return this.exitPassService.getJobsForExitPass(exitId);
   }
 }

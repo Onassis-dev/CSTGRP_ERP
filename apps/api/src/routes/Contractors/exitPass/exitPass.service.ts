@@ -111,4 +111,26 @@ export class ExitPassService {
     });
     return;
   }
+
+  async getJobs() {
+    const jobs = await sql`
+    select jobs.id, jobs.ref, COALESCE(materials.code, jobs.part) as code, jobs.amount
+    from jobs
+    left join materialmovements on jobs."movementId" = materialmovements.id
+    left join materials on materialmovements."materialId" = materials.id
+    where "exitId" is null
+    order by due desc, ref desc
+    limit 500`;
+
+    return jobs;
+  }
+
+  async getJobsForExitPass(exitId: number) {
+    return sql`select jobs.id, jobs.ref, COALESCE(materials.code, jobs.part) as code, jobs.amount, jobs."contractorAmount"
+    from jobs
+    left join materialmovements on jobs."movementId" = materialmovements.id
+    left join materials on materialmovements."materialId" = materials.id
+    where "exitId" = ${exitId}
+    order by due desc, ref desc`;
+  }
 }
