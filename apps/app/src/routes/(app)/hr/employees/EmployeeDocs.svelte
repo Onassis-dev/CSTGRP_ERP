@@ -20,7 +20,7 @@
 	import api from '$lib/utils/server';
 	import { showError, showSuccess } from '$lib/utils/showToast';
 	import { Check, FileDown, Trash, Upload } from 'lucide-svelte';
-	import { downloadFile, openFilePreview, openLocalFile } from '$lib/utils/functions';
+	import { downloadFile, openFilePreview } from '$lib/utils/functions';
 	import { cn } from '$lib/utils';
 	import { format } from 'date-fns';
 	import { es } from 'date-fns/locale';
@@ -229,7 +229,7 @@
 		</TableRow>
 
 		{#each contracts as contract, i}
-			{#if new Date() >= new Date(employee.admissionDate).setDate(new Date(employee.admissionDate).getDate() + 30 * i - 4)}
+			{#if new Date() >= new Date(employee.admissionDate).setDate(new Date(employee.admissionDate).getDate() + 30 * (i - 9))}
 				<TableRow>
 					<TableCell class={'cursor-pointer border-l'} onclick={() => downloadContract(i)}>
 						<div class="flex items-center gap-3">
