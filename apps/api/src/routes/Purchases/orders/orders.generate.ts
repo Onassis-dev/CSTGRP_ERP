@@ -264,6 +264,7 @@ export function generateOrder(
 
   fillBox({
     ...rightProps,
+    width: 165,
     text: destinationAddress,
     y: 630 - 2 * 12,
   });
