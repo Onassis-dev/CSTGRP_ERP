@@ -83,9 +83,9 @@
 		<TableHead colspan={7}>Producción</TableHead>
 		<TableHead colspan={6}>Almacen</TableHead>
 		<TableHead colspan={3}>Import-Export</TableHead>
-		<TableHead colspan={3}>Contratistas</TableHead>
+		<TableHead colspan={4}>Contratistas</TableHead>
 		<TableHead colspan={2}>Compras</TableHead>
-		<TableHead colspan={1}>-</TableHead>
+		<TableHead colspan={3}>-</TableHead>
 	</TableHeader>
 	<TableHeader>
 		<OptionsHead />
@@ -441,6 +441,15 @@
 						color={getBadgeColor(user.permissions.contractors_exitPass)}
 					>
 						{@const SvelteComponent_11 = badgeTexts[user.permissions.contractors_exitPass]}
+						<SvelteComponent_11 class="size-3.5" />
+					</Badge></TableCell
+				>
+				<TableCell class="p-1.5 text-center"
+					><Badge
+						class="flex h-full w-full items-center justify-center p-1"
+						color={getBadgeColor(user.permissions.contractors_payments)}
+					>
+						{@const SvelteComponent_11 = badgeTexts[user.permissions.contractors_payments]}
 						<SvelteComponent_11 class="size-3.5" />
 					</Badge></TableCell
 				>

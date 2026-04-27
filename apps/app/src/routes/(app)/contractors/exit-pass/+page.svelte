@@ -77,6 +77,7 @@
 <CusTable>
 	<TableHeader>
 		<OptionsHead />
+		<TableHead class="">Folio</TableHead>
 		<TableHead class="">Fecha</TableHead>
 		<TableHead class="w-full">Contratista</TableHead>
 	</TableHeader>
@@ -93,6 +94,7 @@
 						showDelete = true;
 					}}
 				/>
+				<TableCell>{exitPass.folio}</TableCell>
 				<TableCell>{formatDate(exitPass.date)}</TableCell>
 				<TableCell>
 					<Badge color={$contractors?.data?.[exitPass.contractorId]?.color}>

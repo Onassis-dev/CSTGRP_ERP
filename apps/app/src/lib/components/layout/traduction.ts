@@ -30,7 +30,8 @@ import {
 	Scissors,
 	Slice,
 	History,
-	Hammer
+	Hammer,
+	DollarSign
 } from 'lucide-svelte';
 
 export interface Traduction {
@@ -95,7 +96,8 @@ export const traductions: Record<string, Traduction> = {
 	machines: { text: 'Maquinas', icon: FileText },
 	contractors: { text: 'Contratistas', icon: FileText },
 	deliveries: { text: 'Entregas', icon: FileText },
-	'exit-pass': { text: 'Pases de salida', icon: FileText }
+	'exit-pass': { text: 'Pases de salida', icon: FileText },
+	payments: { text: 'Pagos', icon: DollarSign }
 };
 
 export function capitalize(string: string) {

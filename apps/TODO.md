@@ -11,16 +11,10 @@
 
 # IDEAS
 
-- Se tomara el precio del job, no el actual
+Que no se borre la cantidad del contratista despues de editarlo
 
-- Se podra descargar un pdf del pase de salida
+2. (que no se pueda eliminar pases de salida con movimientos)
 
-- Se agregara un folio a los pases de salida, y a los pagos
+3. Se podra descargar un pdf del pase de salida
 
-- Se hara una tabla de pagos, con la que sabremos si ya pagamos
-
-- Se generara un pdf por cada pago, agrupando los contratistas
-
-- (Checa si te aparecen jobs que ya tienen pase de salida)
-
-- (que no se pueda eliminar pases de salida con movimientos)
+---

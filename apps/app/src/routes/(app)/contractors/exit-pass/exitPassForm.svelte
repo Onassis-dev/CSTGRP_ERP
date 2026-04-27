@@ -192,7 +192,9 @@
 
 <Dialog bind:open={show}>
 	<DialogContent class="sm:max-w-3xl">
-		<DialogHeader title={formData?.id ? 'Pase de salida' : 'Registrar pase de salida'} />
+		<DialogHeader
+			title={formData?.id ? 'Pase de salida #' + formData.folio : 'Registrar pase de salida'}
+		/>
 
 		<DialogBody class="flex max-h-[85vh] flex-col gap-4 overflow-auto">
 			<div class="grid w-full gap-2 sm:grid-cols-2">

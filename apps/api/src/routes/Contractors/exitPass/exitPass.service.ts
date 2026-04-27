@@ -86,7 +86,8 @@ export class ExitPassService {
         }
       } else {
         const [insertedPass] =
-          await sql`insert into "exitPass" ${sql({ date: body.date, contractorId: body.contractorId })} returning id`;
+          await sql`insert into "exitPass" ("date", "contractorId", "folio") values
+          (${body.date}, ${body.contractorId}, (select COALESCE(max(folio), 0) from "exitPass") + 1) returning id`;
 
         for (const job of jobs) {
           await sql`update jobs set

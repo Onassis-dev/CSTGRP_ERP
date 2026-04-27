@@ -310,6 +310,9 @@
 					{#if hasAccess('contractors_exitPass')}
 						<Accordion.Option href="/contractors/exit-pass" />
 					{/if}
+					{#if hasAccess('contractors_payments')}
+						<Accordion.Option href="/contractors/payments" />
+					{/if}
 				</Accordion.Content>
 			</Accordion.Item>
 		{/if}

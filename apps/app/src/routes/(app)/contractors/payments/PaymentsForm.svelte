@@ -14,7 +14,8 @@
 	import { formatDate } from '$lib/utils/functions';
 	import api from '$lib/utils/server';
 	import { Checkbox } from '$lib/components/ui/checkbox';
-	import { showError } from '$lib/utils/showToast';
+	import { showError, showSuccess } from '$lib/utils/showToast';
+	import { refetch } from '$lib/utils/query';
 
 	type DeliveryForPayment = {
 		rejected: unknown;
@@ -46,10 +47,15 @@
 			showError(null, 'Selecciona al menos una entrega');
 			return;
 		}
-		window.open(
-			`${import.meta.env.VITE_BASEURL}/contractors/payments/download?deliveriesId=${ids.join(',')}`,
-			'_blank'
-		);
+
+		await api.post('/contractors/payments', {
+			startDate: formData.startDate,
+			endDate: formData.endDate,
+			deliveriesId: ids
+		});
+		showSuccess('Pago creado');
+		refetch(['contractors-payments']);
+		show = false;
 	}
 
 	async function getDeliveries() {
