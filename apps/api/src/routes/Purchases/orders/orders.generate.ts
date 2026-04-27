@@ -57,7 +57,7 @@ const destinations = {
   },
   cstmexico: {
     name: 'CST MEXICO S.A DE C.V',
-    addres: 'Calle 2 Oriente #134 Cd. Industrial Tijuana, BC 22444',
+    address: 'Calle 2 Oriente #134 Cd. Industrial Tijuana, BC 22444',
   },
 };
 
