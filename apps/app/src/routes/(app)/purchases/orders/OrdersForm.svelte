@@ -249,7 +249,9 @@
 								items={[
 									{ value: 'apex', name: 'APEX' },
 									{ value: 'mpm', name: 'MPM' },
-									{ value: 'cstgrp', name: 'CST GROUP' }
+									{ value: 'cstgrp', name: 'CST GROUP' },
+									{ value: 'cstech', name: 'CSTECH' },
+									{ value: 'cstmexico', name: 'CST MEXICO' }
 								]}
 								bind:value={formData.address}
 							/>

@@ -50,6 +50,15 @@ const destinations = {
     name: 'CST GROUP INC',
     address: '2364 Paseo de las Americas #104-1009 San Diego, CA 92154',
   },
+  cstech: {
+    name: 'CSTech MEXICO S.A DE C.V',
+    address:
+      'Mision de San Javier 10643 Suite 400, Zona Urbana Rio TIjuana, BC 22010',
+  },
+  cstmexico: {
+    name: 'CST MEXICO S.A DE C.V',
+    addres: 'Calle 2 Oriente #134 Cd. Industrial Tijuana, BC 22444',
+  },
 };
 
 const translations = {
