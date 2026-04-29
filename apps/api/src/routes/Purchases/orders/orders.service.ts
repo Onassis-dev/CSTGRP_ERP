@@ -50,7 +50,7 @@ export class OrdersService {
         comments: body.comments,
         iva: body.iva,
         business: body.business,
-        address: body.address,
+        address: body.address || null,
         net,
         products: JSON.stringify(products),
         supplier: JSON.stringify(supplier),
