@@ -10,7 +10,7 @@
 	import { refetch } from '$lib/utils/query';
 	import OptionsHead from '$lib/components/basic/OptionsHead.svelte';
 	import { formatDate } from '$lib/utils/functions';
-	import { getClients, getOptions } from '$lib/utils/queries';
+	import { getContractors, getOptions } from '$lib/utils/queries';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Select from '$lib/components/basic/Select.svelte';
 	import Badge from '$lib/components/ui/badge/badge.svelte';
@@ -24,7 +24,7 @@
 	let filters = $state({
 		programation: '',
 		jobpo: '',
-		clientId: '',
+		contractorId: '',
 		approved: 'false'
 	});
 
@@ -48,12 +48,12 @@
 		refetch(['contractors-deliveries']);
 	});
 
-	const clients = createQuery({
-		queryKey: ['clients'],
-		queryFn: getClients
+	const contractors = createQuery({
+		queryKey: ['contractors'],
+		queryFn: getContractors
 	});
 
-	const clientsQuery = $derived(getOptions($clients.data));
+	const contractorsQuery = $derived(getOptions($contractors.data));
 </script>
 
 <MenuBar>
@@ -61,30 +61,30 @@
 		<Input menu bind:value={filters.programation} placeholder="Programación" class="max-w-32" />
 		<Input menu bind:value={filters.jobpo} placeholder="Job" class="max-w-32" />
 		<Select
-			placeholder="Cliente"
-			menu
-			items={clientsQuery}
-			bind:value={filters.clientId}
-			allowDeselect
-			class="w-40"
-		/>
-		<Select
 			placeholder="Completado"
 			menu
 			items={approvedOptions}
 			bind:value={filters.approved}
 			class="w-40"
 		/>
+		<Select
+			placeholder="Contratista"
+			menu
+			items={contractorsQuery}
+			bind:value={filters.contractorId}
+			allowDeselect
+			class="min-w-48"
+		/>
 	</div>
 </MenuBar>
 <CusTable>
 	<TableHeader>
 		<OptionsHead />
-		<TableHead class="">Cliente</TableHead>
+		<TableHead class="">Contratista</TableHead>
 		<TableHead class="">Programación</TableHead>
 		<TableHead class="">Job/PO</TableHead>
 		<TableHead class="min-w-52">Parte</TableHead>
-		<TableHead class="">Due date</TableHead>
+		<TableHead class="">Fecha</TableHead>
 		<TableHead class="">Cantidad</TableHead>
 		<TableHead class="">Rechazado</TableHead>
 		<TableHead class="w-full">Total</TableHead>
@@ -99,14 +99,14 @@
 					}}
 				/>
 				<TableCell>
-					<Badge color={$clients?.data?.[delivery.clientId]?.color}>
-						{$clients?.data?.[delivery.clientId]?.name}
+					<Badge color="gray">
+						{$contractors?.data?.[delivery.contractorId]?.name}
 					</Badge>
 				</TableCell>
 				<TableCell>{delivery.programation}</TableCell>
 				<TableCell>{delivery.ref}</TableCell>
-				<TableCell>{delivery.clientId === 3 ? delivery.part : delivery.description}</TableCell>
-				<TableCell>{formatDate(delivery.due)}</TableCell>
+				<TableCell>{delivery.description}</TableCell>
+				<TableCell>{formatDate(delivery.date)}</TableCell>
 				<TableCell>{delivery.amount}</TableCell>
 				<TableCell>{delivery.rejected}</TableCell>
 				<TableCell>{delivery.accepted}</TableCell>

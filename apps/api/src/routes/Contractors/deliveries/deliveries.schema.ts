@@ -5,6 +5,7 @@ export const getDeliveriesSchema = z.object({
   approved: z.string().transform((val) => val === 'true'),
   job: z.string().nullish(),
   programation: z.string().nullish(),
+  contractorId: z.string().nullish(),
 });
 
 export const getHistorySchema = z.object({

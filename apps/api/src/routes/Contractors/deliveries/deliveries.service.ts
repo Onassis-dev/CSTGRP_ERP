@@ -13,15 +13,17 @@ export class DeliveriesService {
   constructor(private readonly req: ContextProvider) {}
 
   async get(body: z.infer<typeof getDeliveriesSchema>) {
-    const jobs = await sql`select contractormovements.*,
-     jobs.ref, jobs.programation, jobs.due, jobs.part, jobs.description
+    const jobs =
+      await sql`select contractormovements.*, "exitPass"."contractorId",
+     jobs.ref, jobs.programation, jobs.part, jobs.description
      from contractormovements
-
     join jobs on jobs.id = contractormovements."orderId"
+    join "exitPass" on "exitPass".id = jobs."exitId"
     WHERE TRUE
     ${body.approved ? sql`AND contractormovements.approved = true` : sql`AND contractormovements.approved = false`}
     ${body.job ? sql`AND jobs.ref LIKE ${'%' + body.job + '%'}` : sql``}
     ${body.programation ? sql`AND jobs.programation LIKE ${'%' + body.programation + '%'}` : sql``}
+    ${body.contractorId ? sql`AND "exitPass"."contractorId" = ${body.contractorId}` : sql``}
     limit 200
     `;
 
