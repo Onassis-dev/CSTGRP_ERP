@@ -16,6 +16,7 @@
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import { showError, showSuccess } from '$lib/utils/showToast';
 	import { refetch } from '$lib/utils/query';
+	import { CheckIcon, XIcon } from 'lucide-svelte';
 
 	type DeliveryForPayment = {
 		rejected: unknown;
@@ -24,6 +25,7 @@
 		ref: unknown;
 		contractor: unknown;
 		id: number;
+		description: string;
 	};
 
 	type DeliveryRow = DeliveryForPayment & { selected: boolean };
@@ -33,8 +35,8 @@
 	}
 
 	let formData = $state({
-		startDate: '',
-		endDate: ''
+		startDate: '2024-01-01',
+		endDate: '2028-01-01'
 	});
 
 	let deliveries = $state<DeliveryRow[]>([]);
@@ -73,7 +75,7 @@
 </script>
 
 <Dialog bind:open={show}>
-	<DialogContent>
+	<DialogContent class="sm:max-w-3xl">
 		<DialogHeader title={'Confirmar entrega'} />
 
 		<DialogBody grid="2">
@@ -85,21 +87,25 @@
 			</Label>
 			<div class="col-span-2 max-h-80">
 				<CusTable>
-					<TableHeader class="border-t">
-						<TableHead>Rechazado</TableHead>
-						<TableHead>Aceptado</TableHead>
+					<TableHeader class="border-l border-t">
+						<TableHead><CheckIcon class="size-4" /></TableHead>
+						<TableHead><XIcon class="size-4" /></TableHead>
 						<TableHead>Fecha</TableHead>
 						<TableHead>Ref</TableHead>
+						<TableHead class="w-full">Descripcion</TableHead>
 						<TableHead class="w-full">Contratista</TableHead>
 						<TableHead class="w-1 p-0 text-center" />
 					</TableHeader>
 					<TableBody>
 						{#each deliveries as delivery (delivery.id)}
-							<TableRow>
-								<TableCell>{delivery.rejected ?? ''}</TableCell>
+							<TableRow class="border-l">
 								<TableCell>{delivery.accepted ?? ''}</TableCell>
+								<TableCell>{delivery.rejected ?? ''}</TableCell>
 								<TableCell>{formatDate(delivery.date)}</TableCell>
 								<TableCell>{delivery.ref ?? ''}</TableCell>
+								<TableCell class="max-w-12 overflow-hidden text-ellipsis"
+									>{delivery.description ?? ''}</TableCell
+								>
 								<TableCell>{delivery.contractor ?? ''}</TableCell>
 								<TableCell class="w-1 p-0 text-center">
 									<Checkbox class="mx-auto" bind:checked={delivery.selected} />

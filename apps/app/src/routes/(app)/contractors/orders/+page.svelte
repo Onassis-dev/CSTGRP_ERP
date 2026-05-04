@@ -60,14 +60,14 @@
 	<div class="flex flex-col gap-1.5 lg:flex-row">
 		<Input menu bind:value={filters.programation} placeholder="Programación" class="max-w-32" />
 		<Input menu bind:value={filters.job} placeholder="Job" class="max-w-32" />
+		<Select menu items={completed} bind:value={filters.completed} class="min-w-36 max-w-36" />
 		<Select
 			menu
 			items={contractorsQuery}
 			bind:value={filters.contractorId}
 			allowDeselect
-			class="min-w-36 max-w-36"
+			class="min-w-52"
 		/>
-		<Select menu items={completed} bind:value={filters.completed} class="min-w-36 max-w-36" />
 	</div>
 </MenuBar>
 

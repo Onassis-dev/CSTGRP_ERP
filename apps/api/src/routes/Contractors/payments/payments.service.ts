@@ -52,6 +52,7 @@ export class PaymentsService {
   ) {
     const deliveries = await sql`select id, rejected, accepted, date, 
     (select ref from jobs where id = "orderId"),
+    (select description from jobs where id = "orderId"),
     (select name from contractors where id = 
       (select "contractorId" from "exitPass" where id = 
         (select "exitId" from jobs where id = "orderId"))) as contractor

@@ -20,6 +20,9 @@ Que no se borre la cantidad del contratista despues de editarlo
 JUUUAN
 1
 2
-4
+
+# 4
+
 5
-7
+
+# 7
