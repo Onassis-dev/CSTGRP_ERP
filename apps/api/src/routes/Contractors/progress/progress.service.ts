@@ -14,12 +14,14 @@ export class ProgressService {
   constructor(private readonly req: ContextProvider) {}
 
   async getOrders(body: z.infer<typeof getProgressSchema>) {
-    const jobs = await sql`select *
+    const jobs = await sql`select jobs.*, "exitPass"."contractorId"
        from jobs
+       left join "exitPass" on "exitPass"."id" = jobs."exitId"
        where "contractorAmount" > 0
        ${body.completed ? sql`AND jobs."completedContractor" = true` : sql`AND jobs."completedContractor" = false`}
        ${body.job ? sql`AND jobs.ref LIKE ${'%' + body.job + '%'}` : sql``}
        ${body.programation ? sql`AND jobs.programation LIKE ${'%' + body.programation + '%'}` : sql``}
+       ${body.contractorId ? sql`AND "exitPass"."contractorId" = ${body.contractorId}` : sql``}
        order by jobs.ref desc limit 200`;
 
     return jobs;

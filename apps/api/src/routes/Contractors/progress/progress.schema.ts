@@ -5,6 +5,7 @@ export const getProgressSchema = z.object({
   completed: z.string().transform((val) => val === 'true'),
   job: z.string().nullable(),
   programation: z.string().nullable(),
+  contractorId: z.string().nullable(),
 });
 
 export const getHistorySchema = z.object({

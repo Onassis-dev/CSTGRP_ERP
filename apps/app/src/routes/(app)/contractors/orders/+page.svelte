@@ -14,20 +14,16 @@
 	import { PlusCircle } from 'lucide-svelte';
 	import ProgressForm from './ProgressForm.svelte';
 	import MovementCard from './MovementCard.svelte';
-	import { Badge, type BadgeVariant } from '$lib/components/ui/badge';
+	import { Badge } from '$lib/components/ui/badge';
+	import { getContractors, getOptions } from '$lib/utils/queries';
 
 	const completed = [
 		{ name: 'Completado', value: 'true', color: 'green' },
 		{ name: 'Pendiente', value: 'false', color: 'yellow' }
 	];
 
-	const dateStates: Record<number, BadgeVariant> = {
-		0: 'outline',
-		1: 'yellow',
-		2: 'red'
-	};
-
 	let filters = $state({
+		contractorId: '',
 		job: '',
 		programation: '',
 		completed: 'false'
@@ -47,6 +43,13 @@
 			).data
 	});
 
+	const contractors = createQuery({
+		queryKey: ['contractors'],
+		queryFn: getContractors
+	});
+
+	const contractorsQuery = $derived(getOptions($contractors.data));
+
 	$effect(() => {
 		({ ...filters });
 		refetch(['contractors-orders']);
@@ -57,6 +60,13 @@
 	<div class="flex flex-col gap-1.5 lg:flex-row">
 		<Input menu bind:value={filters.programation} placeholder="Programación" class="max-w-32" />
 		<Input menu bind:value={filters.job} placeholder="Job" class="max-w-32" />
+		<Select
+			menu
+			items={contractorsQuery}
+			bind:value={filters.contractorId}
+			allowDeselect
+			class="min-w-36 max-w-36"
+		/>
 		<Select menu items={completed} bind:value={filters.completed} class="min-w-36 max-w-36" />
 	</div>
 </MenuBar>
@@ -66,6 +76,7 @@
 		<OptionsHead />
 		<TableHead class="w-1/6">Job/PO</TableHead>
 		<TableHead class="w-1/6">Programacion</TableHead>
+		<TableHead class="w-1/6">Contratista</TableHead>
 		<TableHead class="w-1/6">Parte</TableHead>
 		<TableHead class="w-1/6">Cantidad</TableHead>
 		<TableHead class="w-1/6">Completado</TableHead>
@@ -93,6 +104,9 @@
 				/>
 				<TableCell>{device.ref}</TableCell>
 				<TableCell>{device.programation}</TableCell>
+				<TableCell
+					><Badge color="gray">{$contractors?.data?.[device.contractorId]?.name}</Badge></TableCell
+				>
 				<TableCell>{device.clientId === 3 ? device.part : device.description}</TableCell>
 				<TableCell>{device.contractorAmount}</TableCell>
 				<TableCell>{device.contractor}</TableCell>
