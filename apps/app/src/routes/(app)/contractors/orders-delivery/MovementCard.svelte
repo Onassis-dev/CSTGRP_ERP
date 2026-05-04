@@ -16,6 +16,10 @@
 	} from '$lib/components/ui/table';
 	import { formatDate } from '$lib/utils/functions';
 	import api from '$lib/utils/server';
+	import { format } from 'date-fns';
+	import { es } from 'date-fns/locale';
+	import { CheckIcon } from 'lucide-svelte';
+	import { XIcon } from 'lucide-svelte';
 
 	interface Props {
 		show: boolean;
@@ -50,16 +54,20 @@
 		<DialogBody class="h-full max-w-full">
 			<Table>
 				<TableHeader class="sticky top-0 border-t">
-					<TableHead class="border-l">Cantidad</TableHead>
+					<TableHead class="border-l"><CheckIcon class="size-4" /></TableHead>
+					<TableHead class="border-l"><XIcon class="size-4" /></TableHead>
 					<TableHead>Fecha</TableHead>
 					<TableHead>Capturado</TableHead>
 				</TableHeader>
 				<TableBody>
 					{#each movements as row}
-						<TableRow>
-							<TableCell class="border-l">{row.amount}</TableCell>
+						<TableRow class="border-l">
+							<TableCell>{row.accepted}</TableCell>
+							<TableCell>{row.rejected}</TableCell>
 							<TableCell>{formatDate(row.date)}</TableCell>
-							<TableCell>{new Date(row.created_at).toLocaleString()}</TableCell>
+							<TableCell
+								>{format(new Date(row.created_at), 'dd/MM/yyyy HH:mm', { locale: es })}</TableCell
+							>
 						</TableRow>
 					{/each}
 				</TableBody>
