@@ -82,14 +82,16 @@ export class PaymentsService {
 
     for (const row of rows) {
       const [job] = await sql`
-        select COALESCE(materials.code, jobs.part) as part, jobs.ref, jobs."contractorPrice"
+        select COALESCE(materials.code, jobs.part) as part, jobs.ref, jobs."contractorPrice", jobs.description
         from jobs
         left join materialmovements on jobs."movementId" = materialmovements.id
         left join materials on materialmovements."materialId" = materials.id
         where jobs.id = ${row.orderId}`;
       if (!job) throw new HttpException('Job no encontrado', 400);
 
+      row.ref = job.ref;
       row.part = job.part;
+      row.description = job.description;
       row.price = job.contractorPrice;
       row.total = row.accepted * job.contractorPrice;
     }
@@ -138,8 +140,6 @@ export class PaymentsService {
       contractorsGroups[row.contractor].push(row);
     }
 
-    console.log(contractorsGroups);
-
     let tableHTML = '';
 
     for (const contractor of Object.keys(contractorsGroups)) {
@@ -150,7 +150,8 @@ export class PaymentsService {
       </thead>
       <thead class="subheader">
         <th>Fecha</th>
-        <th>Parte</th>
+        <th>Orden</th>
+        <th>Descripcion</th>
         <th>Precio C/U</th>
         <th>Aceptado</th>
         <th>Rechazado</th>
@@ -162,7 +163,8 @@ export class PaymentsService {
           (row) => `
         <tr>
           <td>${format(row.date, 'dd/MM/yyyy')}</td>
-          <td>${row.part}</td>
+          <td>${row.ref}</td>
+          <td class="description">${row.description}</td>
           <td>${row.price}</td>
           <td>${row.accepted}</td>
           <td>${row.rejected}</td>

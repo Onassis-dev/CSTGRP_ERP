@@ -15,6 +15,12 @@ Que no se borre la cantidad del contratista despues de editarlo
 
 2. (que no se pueda eliminar pases de salida con movimientos)
 
-3. Se podra descargar un pdf del pase de salida
-
 ---
+
+JUUUAN
+1
+2
+3
+4
+5
+7
