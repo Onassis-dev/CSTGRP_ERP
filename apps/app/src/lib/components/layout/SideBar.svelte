@@ -301,14 +301,14 @@
 				</Accordion.Trigger>
 
 				<Accordion.Content>
+					{#if hasAccess('contractors_exitPass')}
+						<Accordion.Option href="/contractors/exit-pass" />
+					{/if}
 					{#if hasAccess('contractors_orders')}
-						<Accordion.Option href="/contractors/orders" />
+						<Accordion.Option href="/contractors/orders-delivery" />
 					{/if}
 					{#if hasAccess('contractors_deliveries') || hasAccess('contractors_payments')}
 						<Accordion.Option href="/contractors/deliveries" />
-					{/if}
-					{#if hasAccess('contractors_exitPass')}
-						<Accordion.Option href="/contractors/exit-pass" />
 					{/if}
 					{#if hasAccess('contractors_payments')}
 						<Accordion.Option href="/contractors/payments" />

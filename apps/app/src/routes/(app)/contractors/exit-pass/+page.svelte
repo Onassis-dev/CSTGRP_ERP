@@ -97,7 +97,7 @@
 				<TableCell>{exitPass.folio}</TableCell>
 				<TableCell>{formatDate(exitPass.date)}</TableCell>
 				<TableCell>
-					<Badge color={$contractors?.data?.[exitPass.contractorId]?.color}>
+					<Badge color="gray">
 						{$contractors?.data?.[exitPass.contractorId]?.name}
 					</Badge>
 				</TableCell>

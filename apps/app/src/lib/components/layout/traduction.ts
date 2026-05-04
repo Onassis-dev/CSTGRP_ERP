@@ -95,9 +95,10 @@ export const traductions: Record<string, Traduction> = {
 	preforms: { text: 'Proformas', icon: FileText },
 	machines: { text: 'Maquinas', icon: FileText },
 	contractors: { text: 'Contratistas', icon: FileText },
-	deliveries: { text: 'Entregas', icon: FileText },
+	deliveries: { text: 'Liberacion', icon: FileText },
 	'exit-pass': { text: 'Pases de salida', icon: FileText },
-	payments: { text: 'Pagos', icon: DollarSign }
+	payments: { text: 'Pagos', icon: DollarSign },
+	'orders-delivery': { text: 'Ordenes y entregas', icon: FileText }
 };
 
 export function capitalize(string: string) {
