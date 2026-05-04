@@ -1,9 +1,13 @@
+import { promises as fs } from 'fs';
+import path from 'path';
+import { PDFDocument, StandardFonts } from 'pdf-lib';
 import { HttpException, Injectable } from '@nestjs/common';
 import { z } from 'zod/v4';
 import { ContextProvider } from 'src/interceptors/context.provider';
 import { editPassSchema, getPassesSchema } from './exitPass.schema';
 import sql from 'src/utils/db';
 import { idObjectSchema } from 'src/utils/schemas';
+import { fillExitPass } from './exitPass.generate';
 
 @Injectable()
 export class ExitPassService {
@@ -133,5 +137,40 @@ export class ExitPassService {
     left join materials on materialmovements."materialId" = materials.id
     where "exitId" = ${exitId}
     order by due desc, ref desc`;
+  }
+
+  async download(body: z.infer<typeof idObjectSchema>) {
+    const [data] =
+      await sql`select *, (select name from contractors where id = "contractorId") as contractor from "exitPass" where id = ${body.id}`;
+
+    data.jobs =
+      await sql`select jobs.ref, jobs.description, jobs."contractorAmount"
+    from jobs
+    where "exitId" = ${body.id}
+    order by due desc, ref desc`;
+
+    console.log(data);
+
+    const templatePath = path.resolve(
+      __dirname,
+      '..',
+      '..',
+      '..',
+      '..',
+      'static',
+      'templates',
+      'exitPass.pdf',
+    );
+
+    const template = await fs.readFile(templatePath);
+    const pdfDoc = await PDFDocument.load(template);
+    const [page] = pdfDoc.getPages();
+    const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+    fillExitPass(page, font, data);
+
+    const pdfBytes = await pdfDoc.save();
+
+    return pdfBytes;
   }
 }

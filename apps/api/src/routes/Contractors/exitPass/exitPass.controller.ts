@@ -4,6 +4,7 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
   Param,
   Post,
   Put,
@@ -57,5 +58,12 @@ export class ExitPassController {
       throw new BadRequestException('Id invalido');
     }
     return this.exitPassService.getJobsForExitPass(exitId);
+  }
+
+  @Get('/download')
+  @Header('Content-Type', 'application/pdf')
+  @Header('Content-Disposition', 'inline; filename="salida-contratista.pdf"')
+  download(@Query(new ZodPiPe(idObjectSchema)) params) {
+    return this.exitPassService.download(params);
   }
 }

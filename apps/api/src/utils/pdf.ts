@@ -21,6 +21,7 @@ interface FillBoxProps {
   maxLines?: number;
   color?: RGB;
   rotate?: number;
+  oneLine?: boolean;
 }
 
 export const fillBox = ({
@@ -35,6 +36,7 @@ export const fillBox = ({
   align = 'left',
   maxLines,
   rotate = 0,
+  oneLine = false,
   color = rgb(0.2, 0.2, 0.2),
 }: FillBoxProps) => {
   let alignment;
@@ -49,7 +51,7 @@ export const fillBox = ({
     bounds: { width, height, x, y },
   });
 
-  if (lines.length === 1) {
+  if (lines.length === 1 || oneLine) {
     page.drawText(lines[0].text, {
       x: lines[0].x,
       y: y + (height - size) / 2,

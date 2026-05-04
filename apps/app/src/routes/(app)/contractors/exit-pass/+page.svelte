@@ -17,7 +17,7 @@
 	import DeletePopUp from '$lib/components/complex/DeletePopUp.svelte';
 	import { showSuccess } from '$lib/utils/showToast';
 	import { Button } from '$lib/components/ui/button';
-	import { PlusCircle } from 'lucide-svelte';
+	import { FileDown, PlusCircle } from 'lucide-svelte';
 
 	let showForm: boolean = $state(false);
 	let selectedExitPass: any = $state({});
@@ -85,6 +85,20 @@
 		{#each $exitPassQuery?.data as exitPass}
 			<TableRow>
 				<OptionsCell
+					extraButtons={[
+						{
+							fn: () => {
+								window.open(
+									import.meta.env.VITE_BASEURL +
+										'/contractors/exit-pass/download?id=' +
+										exitPass.id,
+									'_blank'
+								);
+							},
+							name: 'Descargar',
+							icon: FileDown
+						}
+					]}
 					editFunc={() => {
 						selectedExitPass = exitPass;
 						showForm = true;
