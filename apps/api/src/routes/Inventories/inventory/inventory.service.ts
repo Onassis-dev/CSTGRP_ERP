@@ -21,6 +21,14 @@ export class InventoryService {
         COALESCE(
           jobs.ref, 
           imports.ref, 
+          CASE
+            WHEN requisitions.folio IS NULL THEN NULL
+            ELSE CONCAT('REQ-', requisitions.folio::text)
+          END,
+          CASE
+            WHEN purchaseorders.ref IS NULL THEN NULL
+            ELSE CONCAT('OC-', purchaseorders.ref::text)
+          END,
           CASE materialmovements.type
             WHEN 'return' THEN 'RETORNO'
             WHEN 'scrap' THEN 'SCRAP'
@@ -41,6 +49,8 @@ export class InventoryService {
         JOIN materials ON materials.id = materialmovements."materialId"
         LEFT JOIN jobs ON jobs.id = materialmovements."jobId"
         LEFT JOIN imports ON imports.id = materialmovements."importId"
+        LEFT JOIN requisitions on requisitions.id = materialmovements."reqId"
+        LEFT JOIN purchaseorders on purchaseorders.id = materialmovements."purchaseId"
 
         WHERE
             materials.id = ${body.id} 
