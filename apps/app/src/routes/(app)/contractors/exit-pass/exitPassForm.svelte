@@ -70,7 +70,12 @@
 
 	const jobsQuery = createQuery({
 		queryKey: ['contractors-exit-pass-jobs'],
-		queryFn: async () => (await api.get('/contractors/exit-pass/available-jobs')).data
+		queryFn: async () =>
+			(
+				await api.get('/contractors/exit-pass/available-jobs', {
+					params: { contractorId: formData.contractorId }
+				})
+			).data
 	});
 
 	const jobsCatalog = $derived.by(() => {
@@ -183,10 +188,22 @@
 	}
 
 	$effect(() => {
-		if (!show) return;
-		untrack(() => {
-			void setFormData();
-		});
+		if (show) {
+			untrack(() => {
+				void setFormData();
+			});
+		} else {
+			untrack(() => {
+				formData = {};
+				jobRows = [];
+				passJobsSnapshot = [];
+			});
+		}
+	});
+	$effect(() => {
+		if (formData?.contractorId || true) {
+			refetch(['contractors-exit-pass-jobs']);
+		}
 	});
 </script>
 

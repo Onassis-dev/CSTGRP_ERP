@@ -16,3 +16,7 @@ export const createPassSchema = z.object({
 export const editPassSchema = createPassSchema.extend({
   id: idSchema,
 });
+
+export const getJobsSchema = z.object({
+  contractorId: idSchema.nullish(),
+});

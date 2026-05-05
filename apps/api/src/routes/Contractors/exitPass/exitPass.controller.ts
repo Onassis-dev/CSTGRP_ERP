@@ -14,6 +14,7 @@ import {
 import {
   createPassSchema,
   editPassSchema,
+  getJobsSchema,
   getPassesSchema,
 } from './exitPass.schema';
 import { ZodPiPe } from 'src/interceptors/validation/validation.pipe';
@@ -47,8 +48,8 @@ export class ExitPassController {
   }
 
   @Get('available-jobs')
-  getJobs() {
-    return this.exitPassService.getJobs();
+  getJobs(@Query(new ZodPiPe(getJobsSchema)) query) {
+    return this.exitPassService.getJobs(query);
   }
 
   @Get(':id/jobs')

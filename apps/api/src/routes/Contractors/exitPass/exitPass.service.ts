@@ -4,7 +4,11 @@ import { PDFDocument, StandardFonts } from 'pdf-lib';
 import { HttpException, Injectable } from '@nestjs/common';
 import { z } from 'zod/v4';
 import { ContextProvider } from 'src/interceptors/context.provider';
-import { editPassSchema, getPassesSchema } from './exitPass.schema';
+import {
+  editPassSchema,
+  getJobsSchema,
+  getPassesSchema,
+} from './exitPass.schema';
 import sql from 'src/utils/db';
 import { idObjectSchema } from 'src/utils/schemas';
 import { fillExitPass } from './exitPass.generate';
@@ -117,26 +121,35 @@ export class ExitPassService {
     return;
   }
 
-  async getJobs() {
+  async getJobs(body: z.infer<typeof getJobsSchema>) {
+    if (!body.contractorId) return [];
+
     const jobs = await sql`
-    select jobs.id, jobs.ref, COALESCE(materials.code, jobs.part) as code, jobs.amount
-    from jobs
-    left join materialmovements on jobs."movementId" = materialmovements.id
-    left join materials on materialmovements."materialId" = materials.id
-    where "exitId" is null
-    order by due desc, ref desc
-    limit 500`;
+    SELECT * FROM (
+      select jobs.id, jobs.ref, COALESCE(materials.code, jobs.part) as code, jobs.amount
+      from jobs
+      left join materialmovements on jobs."movementId" = materialmovements.id
+      left join materials on materialmovements."materialId" = materials.id
+      where "exitId" is null
+      order by due desc, ref desc
+      limit 500
+    ) 
+      WHERE code is not null
+      AND code in (select part from contractor_prices where "contractorId" = ${body.contractorId})
+    `;
 
     return jobs;
   }
 
   async getJobsForExitPass(exitId: number) {
-    return sql`select jobs.id, jobs.ref, COALESCE(materials.code, jobs.part) as code, jobs.amount, jobs."contractorAmount"
-    from jobs
-    left join materialmovements on jobs."movementId" = materialmovements.id
-    left join materials on materialmovements."materialId" = materials.id
-    where "exitId" = ${exitId}
-    order by due desc, ref desc`;
+    return sql`
+      select jobs.id, jobs.ref, COALESCE(materials.code, jobs.part) as code, jobs.amount, jobs."contractorAmount"
+      from jobs
+      left join materialmovements on jobs."movementId" = materialmovements.id
+      left join materials on materialmovements."materialId" = materials.id
+      where "exitId" = ${exitId}
+      order by due desc, ref desc
+`;
   }
 
   async download(body: z.infer<typeof idObjectSchema>) {
