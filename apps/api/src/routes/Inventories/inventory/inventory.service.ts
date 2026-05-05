@@ -63,9 +63,8 @@ export class InventoryService {
     }));
 
     worksheet.columns = [
-      { header: 'Job', key: 'jobpo', width: 15 },
+      { header: 'Ref', key: 'ref', width: 15 },
       { header: 'Programación', key: 'programation', width: 15 },
-      { header: 'Importación', key: 'import', width: 15 },
       { header: 'Cantidad Job', key: 'amount', width: 15 },
       { header: 'Cantidad Real', key: 'realAmount', width: 15 },
       { header: 'Fecha', key: 'activeDate', width: 15 },
