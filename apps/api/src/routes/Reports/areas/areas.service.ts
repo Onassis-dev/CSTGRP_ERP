@@ -71,6 +71,12 @@ export class AreasService {
     SELECT 
       a.id,
       a.name,
+      CASE 
+        WHEN a.name = 'CORTE' THEN 1140 
+        WHEN a.name = 'SERIGRAFIA' THEN 1710 
+        ELSE 0
+       END 
+      AS "minutes",
       ${weeklyMinutes}
 
     FROM assistance s
@@ -96,11 +102,11 @@ export class AreasService {
       const [{ prod: fridayProd }] = await sql`
         select SUM(ordermovements.${sql(process)} * (${sql(process + 'Time')} / amount)) as prod from ordermovements join jobs on jobs.id = ordermovements."progressId" where "date" = ${addDays(mondayDate, 4)} and ordermovements.${sql(process)} is not null`;
 
-      area.mondayAvg = mondayProd / area.mondayMinutes;
-      area.tuesdayAvg = tuesdayProd / area.tuesdayMinutes;
-      area.wednesdayAvg = wednesdayProd / area.wednesdayMinutes;
-      area.thursdayAvg = thursdayProd / area.thursdayMinutes;
-      area.fridayAvg = fridayProd / area.fridayMinutes;
+      area.mondayAvg = mondayProd / area.minutes;
+      area.tuesdayAvg = tuesdayProd / area.minutes;
+      area.wednesdayAvg = wednesdayProd / area.minutes;
+      area.thursdayAvg = thursdayProd / area.minutes;
+      area.fridayAvg = fridayProd / area.minutes;
     }
 
     return areas;
@@ -158,6 +164,12 @@ export class AreasService {
 
     const [commentRow] =
       await sql`select * from prod_comments where "areaId" = ${body.areaId} and "date" = ${date}`;
+
+    if (day?.areaName === 'CORTE') {
+      day.minutes = 1140;
+    } else if (day?.areaName === 'SERIGRAFIA') {
+      day.minutes = 1710;
+    }
 
     return {
       date,
