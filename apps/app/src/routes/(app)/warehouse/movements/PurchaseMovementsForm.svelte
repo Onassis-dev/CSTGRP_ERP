@@ -12,6 +12,7 @@
 	import api from '$lib/utils/server';
 	import { showSuccess } from '$lib/utils/showToast';
 	import { refetch } from '$lib/utils/query';
+	import DeletePopUp from '$lib/components/complex/DeletePopUp.svelte';
 
 	interface Props {
 		show: boolean;
@@ -21,7 +22,16 @@
 	let { show = $bindable(), selectedMovement }: Props = $props();
 
 	let formData: any = $state({});
+	let showDelete = $state(false);
 
+	async function deleteMovement() {
+		await api.delete(`/materialmovements/delete-purchase`, {
+			data: { id: selectedMovement?.id }
+		});
+		refetch(['material-movements']);
+		showSuccess(`Compra eliminada`);
+		showDelete = false;
+	}
 	$effect(() => {
 		formData = {
 			amount: selectedMovement?.amount || '',
@@ -56,7 +66,12 @@
 				<Input bind:value={selectedMovement.amount} />
 			</Label>
 
+			<Button onclick={() => (showDelete = true)} variant="destructive" class="mt-4 w-full"
+				>Eliminar compra</Button
+			>
 			<Button onclick={submit} variant="default" class="mt-4 w-full">Guardar cambios</Button>
 		</DialogBody>
 	</DialogContent>
 </Dialog>
+
+<DeletePopUp bind:show={showDelete} deleteFunc={deleteMovement} text="Eliminar compra" />

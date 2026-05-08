@@ -343,6 +343,26 @@ export class MovementsService {
     });
   }
 
+  async deletePurchaseMovement(body: z.infer<typeof idObjectSchema>) {
+    const [user] =
+      await sql`select permissions from users where id = ${this.req.userId}`;
+    if (user.permissions.modify_purchases < 2) throw new HttpException('', 403);
+
+    await sql.begin(async (sql) => {
+      const [movement] = await sql`
+        delete from materialmovements where id = ${body.id} and "purchaseId" is not null and active = false
+        returning (select code from materials where id = "materialId")`;
+
+      if (!movement)
+        throw new HttpException('Este movimiento ya fue surtido', 400);
+
+      await this.req.record(
+        `Elimino un movimiento de compra de ${movement.code}`,
+        sql,
+      );
+    });
+  }
+
   async exportPending() {
     const workbook = new exceljs.Workbook();
     const worksheet = workbook.addWorksheet('Inventario');

@@ -90,6 +90,11 @@ export class MovementsController {
     return this.movementsService.updatePurchaseAmount(body);
   }
 
+  @Delete('delete-purchase')
+  deletePurchaseMovement(@Body(new ZodPiPe(idObjectSchema)) body) {
+    return this.movementsService.deletePurchaseMovement(body);
+  }
+
   @Delete('')
   deleteMovement(@Body(new ZodPiPe(idObjectSchema)) body) {
     return this.movementsService.deleteMovement(body);
