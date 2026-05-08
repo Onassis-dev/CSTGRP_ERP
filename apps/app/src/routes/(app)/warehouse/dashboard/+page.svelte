@@ -18,7 +18,11 @@
 	import { format } from 'date-fns';
 	import { es } from 'date-fns/locale';
 	import { FileDown } from 'lucide-svelte';
-	import { getClients } from '$lib/utils/queries';
+	import { getClients, getOptions } from '$lib/utils/queries';
+	import Select from '$lib/components/basic/Select.svelte';
+
+	let clientFilterId = $state('');
+
 	const stockWarningsQuery = createQuery({
 		queryKey: ['stockwarnings'],
 		queryFn: async () => (await api.get('/inventorystats/stockwarnings')).data
@@ -38,9 +42,36 @@
 		queryKey: ['clients'],
 		queryFn: getClients
 	});
+
+	const clientsQuery = $derived(getOptions($clients.data));
+
+	function filterRowsByClient(rows: any[] | undefined, clientId: string): any[] {
+		const list = rows ?? [];
+		if (!clientId) return list;
+		const n = parseInt(clientId, 10);
+		return list.filter((row) => parseInt(String(row.clientId), 10) === n);
+	}
+
+	const filteredOutOfStock = $derived(filterRowsByClient($outOfStockQuery?.data, clientFilterId));
+	const filteredStockWarnings = $derived(
+		filterRowsByClient($stockWarningsQuery?.data, clientFilterId)
+	);
+	const filteredOutOfStockWithoutLeftover = $derived(
+		filterRowsByClient($outOfStockWithoutLeftoverQuery?.data, clientFilterId)
+	);
 </script>
 
 <MenuBar>
+	{#snippet left()}
+		<Select
+			placeholder="Cliente"
+			menu
+			items={clientsQuery}
+			bind:value={clientFilterId}
+			allowDeselect
+			class="w-40"
+		/>
+	{/snippet}
 	{#snippet right()}
 		<Button
 			onclick={() =>
@@ -59,6 +90,7 @@
 		<CardHeader>
 			<CardTitle>Material faltante para completar ordenes</CardTitle>
 		</CardHeader>
+
 		<CardContent class="overflow-y-auto px-0 pb-0 " card>
 			<Table class="w-full">
 				<TableHeader class="sticky top-0 border-t">
@@ -73,7 +105,7 @@
 					<TableHead class="border-r-0">Medida</TableHead>
 				</TableHeader>
 				<TableBody>
-					{#each $outOfStockQuery?.data as row}
+					{#each filteredOutOfStock as row}
 						<TableRow>
 							<TableCell
 								><Badge color={$clients?.data?.[row.clientId]?.color}
@@ -111,7 +143,7 @@
 					<TableHead>Medida</TableHead>
 				</TableHeader>
 				<TableBody>
-					{#each $stockWarningsQuery?.data as row}
+					{#each filteredStockWarnings as row}
 						<TableRow class="border-l">
 							<TableCell
 								><Badge color={$clients?.data?.[row.clientId]?.color}
@@ -152,7 +184,7 @@
 					<TableHead class="border-r-0">Medida</TableHead>
 				</TableHeader>
 				<TableBody>
-					{#each $outOfStockWithoutLeftoverQuery?.data as row}
+					{#each filteredOutOfStockWithoutLeftover as row}
 						<TableRow>
 							<TableCell
 								><Badge color={$clients?.data?.[row.clientId]?.color}

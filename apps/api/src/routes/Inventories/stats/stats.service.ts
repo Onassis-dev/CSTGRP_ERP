@@ -11,7 +11,7 @@ export class StatsService {
         SUM(materialmovements.amount) as total_amount
     FROM materialmovements
     JOIN materials ON materials.id = materialmovements."materialId"
-    WHERE materialmovements.active = false
+    WHERE materialmovements.active = false and materialmovements."jobId" is not null
     GROUP BY materials.id
     )   
 
@@ -69,7 +69,7 @@ export class StatsService {
         SUM(materialmovements.amount) as total_amount
     FROM materialmovements
     JOIN materials ON materials.id = materialmovements."materialId"
-    WHERE materialmovements.active = false
+    WHERE materialmovements.active = false and materialmovements."jobId" is not null
     GROUP BY materials.id
     )   
 
