@@ -201,6 +201,7 @@ export class EmployeesService {
     const data = {
       ...body,
       bcpet: body.admissionDate,
+      contract: 0,
       active: true,
       quitDate: null,
       quitStatus: null,
