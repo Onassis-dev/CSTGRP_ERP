@@ -200,6 +200,7 @@ export class EmployeesService {
     delete body.formatDate;
     const data = {
       ...body,
+      bcpet: body.admissionDate,
       active: true,
       quitDate: null,
       quitStatus: null,
