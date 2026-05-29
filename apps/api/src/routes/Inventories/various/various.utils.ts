@@ -38,36 +38,46 @@ export function processImport(text: string) {
   const materials: Array<object> = [];
   linesArray.forEach((element: string, i: number) => {
     if (element.includes('•')) {
-      let code = linesArray[i + 1].replaceAll(' ', '');
+      let code = linesArray[i + 1]?.split(' ')[0];
       if (code.endsWith('-CA')) {
         code += linesArray[i + 2].replaceAll(' ', '');
       }
+
+      console.log(code, !/^[A-Z]{3}-.{1,30}$/.test(code));
+
       if (!/^[A-Z]{3}-.{1,30}$/.test(code)) return;
       if (code.length === 13 && code[12] === 'F') return;
       if (code.length === 15 && code[14] === 'M') return;
 
-      let amount: number;
+      let amount: number = NaN;
       for (let j = i; j < i + 20; j++) {
+        const [amountString, unitString] = (linesArray[j] ?? '')
+          .replaceAll(',', '')
+          .trim()
+          .split(' ');
+
         if (
-          !isNaN(parseNumber(linesArray[j].split(' ')[0])) &&
-          !/\d/.test(linesArray[j].split(' ')[1]) &&
-          linesArray[j].split(' ')[1] &&
-          linesArray[j].split(' ')[1] !== '•'
+          amountString &&
+          unitString &&
+          /^\d+\.\d{2,4}$/.test(amountString) &&
+          !/\d/.test(unitString) &&
+          unitString !== '•'
         ) {
           amount = parseFloat(linesArray[j].split(' ')[0].replaceAll(',', ''));
           if (code.length === 13 && code[12] === 'M') {
             code = code.slice(0, -1);
             amount = amount * 2;
           }
-          materials.push({
-            code,
-            amount: amount.toString(),
-            active: false,
-            activeDate: null,
-          });
           break;
         }
       }
+
+      materials.push({
+        code,
+        amount: amount.toString(),
+        active: false,
+        activeDate: null,
+      });
     }
   });
 
