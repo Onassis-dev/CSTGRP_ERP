@@ -116,7 +116,7 @@ export class CategoriesService {
     const orders = [];
     for (const order of body.ordenes) {
       const vendors = {
-        '62': 'Aracely Varguez',
+        '62': 'Jaziret Rodríguez',
         '61': 'Efrain Lopez',
       };
 

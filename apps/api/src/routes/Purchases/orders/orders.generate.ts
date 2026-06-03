@@ -18,7 +18,7 @@ const businessList = {
     rfc: 'BPT130606JY0',
     email: 'compras@bcpet.mx',
     lang: 'es' as Lang,
-    buyer: 'Aracely Varguez',
+    buyer: 'Jaziret Rodríguez',
   },
   2: {
     name: 'MPM BAJA S DE RL DE CV',
@@ -26,7 +26,7 @@ const businessList = {
     rfc: 'MBA231027MP6',
     email: 'compras@mpmtj.com',
     lang: 'es' as Lang,
-    buyer: 'Aracely Varguez',
+    buyer: 'Jaziret Rodríguez',
   },
   3: {
     name: 'CST',
