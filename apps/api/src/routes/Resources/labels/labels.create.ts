@@ -469,10 +469,10 @@ export function createLabel(
   }
 
   if (type === 'codigo-kawasaki') {
-    const x = [125, 0, 0, 700, 0, 700];
-    const y = [500, 190, 370, 105, 210, 500];
+    const x = [125, 0, 0, 700, 0, 700, 420];
+    const y = [485, 190, 370, 110, 210, 485, 485];
     const height = 520;
-    const adjustments = [0, 0, 0];
+    const adjustments = [-5, 0, 0];
 
     for (let i = 0; i < 3; i++) {
       const verticalOffset = height * i + adjustments[i];
@@ -486,6 +486,7 @@ export function createLabel(
       ctx.fillText(formatDate(info.date), x[3], y[3] + verticalOffset);
       ctx.fillText(info.jobpo, x[0], y[0] + verticalOffset);
       ctx.fillText(info.po || '', x[5], y[5] + verticalOffset);
+      ctx.fillText('QTY: 1', x[6], y[6] + verticalOffset);
 
       const barcodeCanvas = createCanvas(0, 0);
       JsBarcode(barcodeCanvas, info.code.replace(/-/g, ''), {
