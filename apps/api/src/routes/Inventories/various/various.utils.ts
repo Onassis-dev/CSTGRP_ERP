@@ -43,8 +43,6 @@ export function processImport(text: string) {
         code += linesArray[i + 2].replaceAll(' ', '');
       }
 
-      console.log(code, !/^[A-Z]{3}-.{1,30}$/.test(code));
-
       if (!/^[A-Z]{3}-.{1,30}$/.test(code)) return;
       if (code.length === 13 && code[12] === 'F') return;
       if (code.length === 15 && code[14] === 'M') return;
@@ -203,7 +201,6 @@ export async function processJob(text: string) {
       Number(element) > Number(materialNumber) &&
       Number(element) < Number(materialNumber + 21)
     ) {
-      console.log(materialNumber);
       materialNumber = parseInt(element);
       const excludedValues = ['PATTERN', 'SAMPLE', 'IS', 'FREIGHT', 'SCRN'];
       if (

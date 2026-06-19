@@ -602,7 +602,7 @@ export function createLabel(
       y: 310,
     });
 
-    const POText = `P${info.po || '123456'}REL${info.rel.padStart(4, '0')}`;
+    const POText = `P${info.po || '123456'}REL${info?.rel?.padStart(4, '0')}`;
     ctx.fillText(POText, 280, 520);
     drawCode(ctx, {
       code: 'K' + POText,
@@ -612,7 +612,7 @@ export function createLabel(
       y: 535,
     });
 
-    const LicText = `${info.jobpo}${format(info.date, 'yy')}${getDayOfYear(info.date).toString().padStart(3, '0')}${info.boxNo.padStart(4, '0')}`;
+    const LicText = `${info.jobpo}${format(info.date, 'yy')}${getDayOfYear(info.date).toString()?.padStart(3, '0')}${info.boxNo?.padStart(4, '0')}`;
     ctx.fillText(LicText, 260, 740);
     drawCode(ctx, {
       code: '1J' + LicText,

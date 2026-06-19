@@ -54,8 +54,8 @@
 
 	let selectedLabels: LabelButton[] = $derived.by(() => {
 		if (!job) return [];
-		const part = job.part;
-		const bastones: number = job.bastones.length;
+		const part = job.part || '';
+		const bastones: number = job.bastones?.length || 0;
 
 		let usedLabels: (keyof typeof labelList)[] = [];
 
@@ -149,14 +149,15 @@
 				}
 			} else if (label === 'polaris') {
 				let previousBoxNo = 0;
-				job.destinations.forEach((destination: any) => {
-					const destinationBoxes = Math.ceil(Number(destination.amount) / job.perBox);
+				job.destinations?.forEach((destination: any) => {
+					const destinationBoxes = Math.ceil(Number(destination?.amount || 0) / job?.perBox);
+					if (destinationBoxes === Infinity) return;
 
 					for (let i = 0; i < destinationBoxes; i++) {
 						const boxAmount =
-							(i + 1) * job.perBox <= Number(destination.amount)
+							(i + 1) * job?.perBox <= Number(destination?.amount || 0)
 								? job.perBox
-								: Number(destination.amount) % job.perBox;
+								: Number(destination?.amount || 0) % job?.perBox;
 
 						buttons.push({
 							name: label,
