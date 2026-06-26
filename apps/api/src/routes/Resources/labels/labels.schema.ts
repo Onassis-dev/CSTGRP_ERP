@@ -11,7 +11,7 @@ export const downloadLabelSchema = z.object({
     description: z.string(),
     date: z.string(),
     jobpo: z.string(),
-    amount: z.number().nullish(),
+    amount: z.coerce.number().nullish(),
     so: z.string().nullish(),
     po: z.string().nullish(),
     rev: z.string().nullish(),

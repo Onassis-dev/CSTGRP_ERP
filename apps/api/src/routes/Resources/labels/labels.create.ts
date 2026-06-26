@@ -606,7 +606,7 @@ export function createLabel(
     ctx.fillText(POText, 280, 520);
     drawCode(ctx, {
       code: 'K' + POText,
-      width: 2.5,
+      width: 2,
       height: 100,
       x: 150,
       y: 535,
