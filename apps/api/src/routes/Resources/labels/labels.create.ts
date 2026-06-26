@@ -662,18 +662,6 @@ export function createLabel(
     if (lines.length > 0) ctx.fillText(lines[0], 1090, 260);
     if (lines.length > 1) ctx.fillText(lines[1], 1090, 260 + 32);
     if (lines.length > 2) ctx.fillText(lines[2], 1090, 260 + 64);
-
-    const w = ctx.canvas.width;
-    const h = ctx.canvas.height;
-    const snapshot = createCanvas(w, h);
-    snapshot.getContext('2d').drawImage(ctx.canvas, 0, 0);
-    ctx.clearRect(0, 0, w, h);
-    ctx.save();
-    ctx.translate(w / 2, h / 2);
-    ctx.rotate(Math.PI);
-    ctx.translate(-w / 2, -h / 2);
-    ctx.drawImage(snapshot, 0, 0);
-    ctx.restore();
   }
 
   if (type === 'codigo-chaparral') {
