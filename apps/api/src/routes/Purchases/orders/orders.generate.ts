@@ -250,11 +250,11 @@ export function generateOrder(
   let destinationName = '';
   let destinationAddress = '';
   if (business.lang === 'es') {
-    destinationName = business.name;
-    destinationAddress = business.address;
+    destinationName = business?.name;
+    destinationAddress = business?.address;
   } else {
-    destinationName = destinations[data.address].name;
-    destinationAddress = destinations[data.address].address;
+    destinationName = destinations[data.address]?.name;
+    destinationAddress = destinations[data.address]?.address;
   }
   fillBox({
     ...rightProps,
@@ -270,7 +270,7 @@ export function generateOrder(
     y: 630 - 2 * 12,
   });
 
-  if (business.buyer) {
+  if (business?.buyer) {
     fillBox({
       ...rightProps,
       text: t('buyer') + ' ' + business.buyer,
@@ -327,13 +327,13 @@ export function generateOrder(
 
   fillBox({
     ...leftProps,
-    text: data.supplier.name || '',
+    text: data.supplier?.name || '',
     y: 630 - 1 * 12,
   });
 
   fillBox({
     ...leftProps,
-    text: data.supplier.atention
+    text: data.supplier?.atention
       ? `${t('contact')} ${data.supplier.atention}`
       : '',
     y: 630 - 2 * 12,
