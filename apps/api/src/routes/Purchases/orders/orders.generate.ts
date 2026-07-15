@@ -247,8 +247,8 @@ export function generateOrder(
     y: 635,
   });
 
-  let destinationName = '';
-  let destinationAddress = '';
+  let destinationName: string | undefined;
+  let destinationAddress: string | undefined;
   if (business.lang === 'es') {
     destinationName = business?.name;
     destinationAddress = business?.address;
@@ -258,7 +258,7 @@ export function generateOrder(
   }
   fillBox({
     ...rightProps,
-    text: destinationName,
+    text: destinationName || '',
     y: 630 - 1 * 12,
   });
 
@@ -266,7 +266,7 @@ export function generateOrder(
     ...rightProps,
     width: 165,
     x: rightMargin - 165,
-    text: destinationAddress,
+    text: destinationAddress || '',
     y: 630 - 2 * 12,
   });
 
