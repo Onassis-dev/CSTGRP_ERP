@@ -187,21 +187,31 @@ export class ToolsService {
           const x = 62 + col * 58.25;
           const y = 73 + row * 58.25;
 
-          pages[pageNo].drawText(String(body.year), {
-            x,
-            y: y - 12,
-            size: 11,
-            color: rgb(0.2, 0.2, 0.2),
-            font,
-          });
+          if (body.text) {
+            pages[pageNo].drawText(body.text, {
+              x: x + 1,
+              y: y - 6,
+              size: 12,
+              color: rgb(0.2, 0.2, 0.2),
+              font,
+            });
+          } else {
+            pages[pageNo].drawText(String(body.year), {
+              x,
+              y: y - 12,
+              size: 11,
+              color: rgb(0.2, 0.2, 0.2),
+              font,
+            });
 
-          pages[pageNo].drawText('S-' + String(body.week), {
-            x,
-            y,
-            size: 11,
-            color: rgb(0.2, 0.2, 0.2),
-            font,
-          });
+            pages[pageNo].drawText('S-' + String(body.week), {
+              x,
+              y,
+              size: 11,
+              color: rgb(0.2, 0.2, 0.2),
+              font,
+            });
+          }
         }
       }
     }

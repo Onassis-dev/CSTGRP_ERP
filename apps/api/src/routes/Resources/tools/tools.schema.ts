@@ -15,9 +15,10 @@ export const generateUlineSchema = z.object({
 });
 
 export const generateUlineRoundSchema = z.object({
-  year: intSchema,
-  week: intSchema,
-  pages: intSchema,
+  year: intSchema.nullish(),
+  week: intSchema.nullish(),
+  pages: intSchema.nullish(),
+  text: z.string().nullish(),
 });
 
 export const generateIELabelsSchema = z.object({

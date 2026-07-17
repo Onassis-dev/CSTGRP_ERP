@@ -17,7 +17,8 @@
 	let formData = $state({
 		year: String(new Date().getFullYear()),
 		week: '',
-		pages: ''
+		pages: '',
+		text: ''
 	});
 
 	async function handleSubmit() {
@@ -30,17 +31,20 @@
 
 <Dialog bind:open={show}>
 	<DialogContent class="z-[51]">
-		<DialogHeader title="Etiquetas de Uline" />
+		<DialogHeader title="Etiquetas redondas" />
 
 		<DialogBody grid="2">
 			<Label name="Semana">
-				<Input type="number" bind:value={formData.week} />
+				<Input type="number" bind:value={formData.week} disabled={!!formData.text.length} />
 			</Label>
 			<Label name="Páginas">
 				<Input type="number" bind:value={formData.pages} />
 			</Label>
-			<Label name="Año" class="col-span-full">
-				<Input type="number" bind:value={formData.year} />
+			<Label name="Año">
+				<Input type="number" bind:value={formData.year} disabled={!!formData.text.length} />
+			</Label>
+			<Label name="Texto">
+				<Input type="text" bind:value={formData.text} maxlength={3} />
 			</Label>
 		</DialogBody>
 		<DialogFooter submitFunc={handleSubmit} hideFunc={() => (show = false)} />
