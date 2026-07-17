@@ -20,29 +20,28 @@
 </script>
 
 <td
-	class={cn(
-		'flex h-[35px] items-center justify-center gap-2 border-r px-3 align-middle',
-		className
-	)}
+	class={cn('h-[35px] border-r px-3 align-middle', className)}
 	{...rest}
 	onclick={() => (show = !show)}
 >
-	{#if password}
-		<button
-			class="flex h-full w-full items-center justify-center"
-			onclick={(e) => {
-				e.preventDefault();
-				e.stopPropagation();
-				navigator.clipboard.writeText(password);
-				showSuccess('Copiado');
-			}}
-		>
-			<CopyIcon class="h-4 w-4" />
-		</button>
-		{#if show}
-			{password}
-		{:else}
-			<span class="text-sm">●●●●●●●●●</span>
+	<div class="flex h-full w-full items-center justify-end gap-2">
+		{#if password}
+			<button
+				class="flex aspect-square h-full items-center justify-center"
+				onclick={(e) => {
+					e.preventDefault();
+					e.stopPropagation();
+					navigator.clipboard.writeText(password);
+					showSuccess('Copiado');
+				}}
+			>
+				<CopyIcon class="h-4 w-4" />
+			</button>
+			{#if show}
+				{password}
+			{:else}
+				<span class="text-sm">●●●●●●●●●</span>
+			{/if}
 		{/if}
-	{/if}
+	</div>
 </td>
