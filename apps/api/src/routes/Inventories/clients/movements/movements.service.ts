@@ -13,8 +13,10 @@ export class MovementsService {
   async getMaterialComparison(body: z.infer<typeof idObjectSchema>) {
     const clientId = await getClientId(this.req.userId.toString());
 
+    const startDate = new Date('2025-03-01'); // Juan said
+
     const movements = await sql`SELECT 
-        materialmovements."activeDate" as due,
+        COALESCE(imports.due, materialmovements."activeDate") as due,
         materialmovements."jobId",
           COALESCE(
             jobs.ref, 
@@ -44,7 +46,7 @@ export class MovementsService {
               WHERE m."materialId" = materialmovements."materialId" AND m."jobId" = materialmovements."jobId"
             )
             END
-        )) OVER (ORDER BY materialmovements."activeDate" ASC, materialmovements.id ASC) AS balance
+        )) OVER (ORDER BY COALESCE(imports.due, materialmovements."activeDate") ASC, materialmovements.id ASC) AS balance
          
     FROM materialmovements
     JOIN materials ON materials.id = materialmovements."materialId"
@@ -56,16 +58,13 @@ export class MovementsService {
         AND materialmovements.extra = false
         AND (materialmovements.type IS NULL OR materialmovements.type <> 'return')
         AND materials."clientId" = ${clientId}
+        AND COALESCE(imports.due, materialmovements."activeDate") >= ${startDate}
 
     ORDER BY
-        materialmovements."activeDate" DESC,
+        COALESCE(imports.due, materialmovements."activeDate") DESC,
         materialmovements.id DESC`;
 
-    //TODO: Fix this to be in sql
-    const startDate = new Date('2025-03-01'); // Juan said
-
-    const result = movements.filter((movement) => movement?.due >= startDate);
-    return result;
+    return movements;
   }
 
   async getInventory() {

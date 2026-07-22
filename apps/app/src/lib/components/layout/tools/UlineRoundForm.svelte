@@ -44,7 +44,7 @@
 				<Input type="number" bind:value={formData.year} disabled={!!formData.text.length} />
 			</Label>
 			<Label name="Texto">
-				<Input type="text" bind:value={formData.text} maxlength={3} />
+				<Input type="text" bind:value={formData.text} maxlength={5} />
 			</Label>
 		</DialogBody>
 		<DialogFooter submitFunc={handleSubmit} hideFunc={() => (show = false)} />
